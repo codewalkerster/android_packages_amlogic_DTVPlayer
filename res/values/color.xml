@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="hilite">#ff0764b0</color>
+	<color name="light">#64c6d4ef</color>
+	<color name="transparent_background">#60000000</color>
+	<color name="event_background">#80000000</color>
+	<color name="program_background">#00FFFFFF</color>
+</resources>
