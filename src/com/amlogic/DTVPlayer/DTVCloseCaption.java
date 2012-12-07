@@ -11,7 +11,7 @@ import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
 
-public class DTVCloseCaption extends TVActivity{
+public class DTVCloseCaption extends DTVActivity{
 	private static final String TAG="DTVCloseCaption";
 	
 	public void onCreate(Bundle savedInstanceState){

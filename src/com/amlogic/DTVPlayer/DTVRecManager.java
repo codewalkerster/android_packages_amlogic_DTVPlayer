@@ -11,7 +11,7 @@ import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
 
-public class DTVRecManager extends TVActivity{
+public class DTVRecManager extends DTVActivity{
 	private static final String TAG="DTVRecManager";
 	
 	public void onCreate(Bundle savedInstanceState){

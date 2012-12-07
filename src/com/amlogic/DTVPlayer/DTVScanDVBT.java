@@ -11,7 +11,7 @@ import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
 
-public class DTVScanDVBT extends TVActivity{
+public class DTVScanDVBT extends DTVActivity{
 	private static final String TAG="DTVScanDVBT";
 	
 	public void onCreate(Bundle savedInstanceState){

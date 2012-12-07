@@ -11,7 +11,7 @@ import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
 
-public class DTVVChip extends TVActivity{
+public class DTVVChip extends DTVActivity{
 	private static final String TAG="DTVVChip";
 	
 	public void onCreate(Bundle savedInstanceState){
