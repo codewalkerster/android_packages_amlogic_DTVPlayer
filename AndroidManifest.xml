@@ -29,7 +29,7 @@
 		<activity android:name=".DTVTimeshifting"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVPvrPlayer"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVRecManager"	android:theme="@style/Transparent"/> 
-		<activity android:name=".DTVProgramaManager"	android:theme="@style/Transparent"/> 
+		<activity android:name=".DTVProgramManager"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVScanDVBC"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVScanDVBT"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVScanDVBS"	android:theme="@style/Transparent"/>
