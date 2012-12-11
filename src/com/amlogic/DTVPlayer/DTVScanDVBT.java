@@ -18,8 +18,8 @@ public class DTVScanDVBT extends DTVActivity{
 		Log.d(TAG, "onCreate");
 
 		super.onCreate(savedInstanceState);
+		
 
-		setContentView(R.layout.test);
 
 	}
 
@@ -53,5 +53,6 @@ public class DTVScanDVBT extends DTVActivity{
 	
 		}
 	}
+	
 }
 

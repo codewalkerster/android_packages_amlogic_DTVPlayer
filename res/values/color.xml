@@ -5,4 +5,12 @@
 	<color name="transparent_background">#60000000</color>
 	<color name="event_background">#80000000</color>
 	<color name="program_background">#00FFFFFF</color>
+	<color name="yellow">#FFFF00</color>
+	<color name="red">#FFFF00</color>
+    <drawable name="blue">#0000FF</drawable>
+    <drawable name="black">#000000</drawable>
+    <drawable name="white">#FFFFFFFF</drawable>
+    <color name ="transparent" >#0000</color>   
+    <color name="background">#0000</color>
+    <color name="dim_gray">#696969</color>
 </resources>

@@ -1,0 +1,1904 @@
+package com.amlogic.DTVPlayer;
+
+import android.util.Log;
+import android.os.Bundle;
+import com.amlogic.tvutil.TVMessage;
+import com.amlogic.tvutil.TVConst;
+import com.amlogic.tvutil.TVProgram;
+import com.amlogic.tvutil.TVProgramNumber;
+import com.amlogic.tvactivity.TVActivity;
+import com.amlogic.tvutil.TVChannelParams;
+import com.amlogic.tvutil.TVScanParams;
+import com.amlogic.tvutil.TVConst;
+
+public class DTVScanDVBT extends DTVActivity{
+	private static final String TAG="DTVScanDVBT";
+	
+	public void onCreate(Bundle savedInstanceState){
+		Log.d(TAG, "onCreate");
+
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.dtvscandvbt);
+
+
+
+	}
+
+	public void onConnected(){
+		Log.d(TAG, "connected");
+		
+	}
+
+	public void onDisconnected(){
+		Log.d(TAG, "disconnected");
+	}
+
+	public void onMessage(TVMessage msg){
+		Log.d(TAG, "message "+msg.getType());
+		switch (msg.getType()) {
+			case TVMessage.TYPE_SCAN_PROGRESS:
+				
+				break;
+			case TVMessage.TYPE_SCAN_STORE_BEGIN:
+				Log.d(TAG, "Storing ...");
+				break;
+			case TVMessage.TYPE_SCAN_STORE_END:
+				Log.d(TAG, "Store Done !");
+				
+				break;
+			case TVMessage.TYPE_SCAN_END:
+				Log.d(TAG, "Scan End");
+				break;
+			default:
+				break;
+	
+		}
+	}
+
+
+	private TextView Title;
+    ListView list;
+
+	IconAdapter myAdapt;
+	
+    private static int cur_select_item = -1;
+    
+    private static final String TAG = "#####dvbsearch";
+
+    private static final int DVB_SEARCH_MODULES= 18;
+
+	public static final int SETTINGS_AUTO_SEARCH = 1;
+	public static final int SETTINGS_MANU_SEARCH = 2;
+	public static final int SETTINGS_AREA = 3;
+	public static final int SETTINGS_LCN = 4;
+
+	public static final int SETTINGS_BY_CHANNELID = 1;
+	public static final int SETTINGS_SCAN_BAND = 2;
+	public static final int SETTINGS_CHNO = 3;
+	public static final int SETTINGS_FREQUENCY = 4;
+	public static final int SETTINGS_BANDWIDTH = 5;
+	public static final int SETTINGS_SEARCH = 6;
+
+	
+	public static final int SETTINGS_BY_FREQUENCY = 1;
+
+  
+    private ArrayList<Object> serviceList;
+    //
+    private static SharedPreferences mLast = null;
+	//
+	
+     
+    private ArrayList<Object> list3 = null;//frequency list
+    //private ArrayList<Object> list4 = null;//bandwidth list 
+	
+   
+    private boolean sortByLcn = false;
+	private int dvbUIDisplay = 0;//0:setting;1:manu by channel id;2:manu by edit frequence
+	private int channelId = 0;
+	private int channelPos = 0;
+	private int freqency = 0;
+	private int bandwidth = 0;
+	private int countryIndex = 0;
+	private int bandScan = MyDBHelper.V_WAVE;
+
+	private ChannelSort channelSort=null;
+	private AlertDialog.Builder editBuilder;
+	 private EditText editText;
+
+	private void initListData()
+	{
+		
+		System.out.println("initListData enter......");
+		if (serviceList != null)
+		{
+			Title.setText(R.string.scan_setting_dialog_title);
+			serviceList.clear();
+			nameList nl = new nameList();
+			nl.name = this.getResources().getString(R.string.scan_auto);
+			serviceList.add(nl);
+			
+			nl = new nameList();
+			nl.name= this.getResources().getString(R.string.scan_manual);
+			serviceList.add(nl);
+
+			nl = new nameList();
+			nl.name= this.getResources().getString(R.string.dvb_erea);
+			serviceList.add(nl);
+
+			nl = new nameList();
+			nl.name= this.getResources().getString(R.string.dvb_lcn);
+			serviceList.add(nl);
+
+			list.setSelection(0);
+			myAdapt.notifyDataSetChanged();
+		}
+	}
+
+	
+	private void initListDataByChannelID()
+	{
+		System.out.println("initListDataByChannelID enter......");
+		if (serviceList != null)
+		{
+			Title.setText(R.string.scan_manual);
+			serviceList.clear();
+			nameList nl = new nameList();
+			nl.name = this.getResources().getString(R.string.dvb_scan_mode);
+			serviceList.add(nl);
+			
+			nl = new nameList();
+			nl.name = this.getResources().getString(R.string.dvb_scan_Band);
+			serviceList.add(nl);
+
+			nl = new nameList();
+			nl.name = this.getResources().getString(R.string.dvb_channel_no);
+			serviceList.add(nl);
+
+			nl = new nameList();
+			nl.name = this.getResources().getString(R.string.dvb_base_frequence);
+			serviceList.add(nl);
+
+			nl = new nameList();
+			nl.name = this.getResources().getString(R.string.dvb_bandwidth);
+			serviceList.add(nl);
+			
+			nl = new nameList();
+			nl.name = this.getResources().getString(R.string.dvb_begain_search);
+			serviceList.add(nl);
+			
+			list.setSelection(0);
+			myAdapt.notifyDataSetChanged();
+		}		
+	}
+
+	class nameList{
+		String name;
+		};
+	
+    public void onCreate(Bundle savedInstanceState) {
+	   	Log.d(TAG,"onCreate");	
+        super.onCreate(savedInstanceState);
+		
+      
+		setContentView(R.layout.settings_main);
+			
+
+		setDvbUIDisplay(0);
+		
+	  			
+		Title=(TextView)findViewById(R.id.title);
+		list = (ListView) findViewById(android.R.id.list);
+
+		
+        if (null == serviceList)
+        {
+        	serviceList = new ArrayList<Object>();             
+
+			
+            if (null == myAdapt)
+	        {
+	     	   myAdapt = new IconAdapter(this,serviceList);
+	        }
+            list.setAdapter(myAdapt);
+
+        }      
+        
+        list.setAdapter(myAdapt);
+        list.setItemsCanFocus(false);
+        list.setClickable(true);
+        list.setFocusable(true);
+		list.setOnItemSelectedListener(mOnSelectedListener);
+		list.setOnItemClickListener(new listOnClickListener());
+		//list.setOnKeyListener(new listOnKeyListener());
+		list.requestFocus();
+		 
+    }
+	
+	void loadDefaultData()
+	{
+
+	   initSearchFrequency();
+	   
+	   this.sortByLcn = mLast.getBoolean("LCNSTATUS", true);
+	   this.channelId = mLast.getInt("CURCHID", -1);
+	   this.countryIndex = mLast.getInt("COUNTRY", 3);
+	   
+	   if (getChannelId() == MyDBHelper.EXTERNAL_CHANNELID)
+	   {
+	   		String extChid = mLast.getString("EXTCHID", null);
+			SearchPara sp = getSearchParaByExtChannelID(extChid);
+			if (sp == null)
+			{
+				setChannelId(-1);
+				setChannelPos(0);
+				setBandScan(MyDBHelper.V_WAVE);
+			}
+			else
+			{
+				setFreqency(sp.frequency);
+				setBandwidth(sp.bandwidth);
+				setBandScan(sp.waveband);
+			}
+			
+	   }
+	   else
+	   {
+	   	  SearchPara sp1 = getSearchParaByChannelID(getChannelId());
+		  if (sp1 == null)
+		  {
+			  setChannelId(-1);
+			  setChannelPos(0);
+			  setBandScan(MyDBHelper.V_WAVE);
+		  }
+		  else
+		  {
+			  setFreqency(sp1.frequency);
+			  setBandwidth(sp1.bandwidth);
+			  setBandScan(sp1.waveband);
+		  }
+	   }
+	}
+
+	void saveDefaultData()
+	{
+		if (getChannelId() == MyDBHelper.EXTERNAL_CHANNELID)
+		{
+			SearchPara sp = getSearchParaByChannelID(getChannelId());
+			mLast.edit().putString("EXTCHID", sp.externalCHID).commit();
+		}
+		mLast.edit().putInt("CURCHID", getChannelId()).commit();
+		mLast.edit().putBoolean("LCNSTATUS", isSortByLcn()).commit();
+		mLast.edit().putInt("COUNTRY", getCountryIndex()).commit();
+	}
+	
+	  private AdapterView.OnItemSelectedListener mOnSelectedListener = new AdapterView.OnItemSelectedListener()
+	  {
+		public void onItemSelected(AdapterView<?> parent, View v, int position, long id)
+		{
+		  System.out.println("cur_select_item " + cur_select_item + "  position " + position);
+		  if (cur_select_item != position)
+		  {
+			myAdapt.notifyDataSetChanged();
+		  }
+		  
+		  cur_select_item = position;
+		  
+		}
+		public void onNothingSelected(AdapterView<?> parent)
+		{
+			;
+		}
+	};	  
+	protected void onStart()
+	{
+		super.onStart();
+		
+		mScanDvb = new DVBClient(this, dvbsearch.DVB_SERVICE_INTERFACE);
+		int ret = mScanDvb.connect();
+		if(ret<0)
+		{
+			new AlertDialog.Builder(this)
+			.setMessage(R.string.scan_start_service_fail)
+			.show();
+		}
+	}
+	
+	void initFrequenceInfo()
+	{
+		initAUFrequenceInfo();
+		initFRFrequenceInfo();
+		initTWFrequenceInfo();
+		initUKFrequenceInfo();
+		initITFrequenceInfo();
+	}
+
+	void insert2Database(int db_country_id, int channel_id, int frequency, int bandwidth, int waveband)
+	{
+		ContentValues values = new ContentValues();
+		values.put("db_country_id", db_country_id);
+		values.put("channel_id", channel_id);
+		values.put("frequency", frequency);
+		values.put("bandwidth", bandwidth);
+		values.put("waveband", waveband);
+		getMyDBHelper().insertInfo(values);
+	}
+
+	
+	void insert2Database(int db_country_id, int channel_id, int frequency, int bandwidth, int waveband, String external_chid)
+	{
+		ContentValues values = new ContentValues();
+		values.put("db_country_id", db_country_id);
+		values.put("channel_id", channel_id);
+		values.put("frequency", frequency);
+		values.put("bandwidth", bandwidth);
+		values.put("waveband", waveband);
+		values.put("external_channel", external_chid);
+		getMyDBHelper().insertInfo(values);
+	}
+
+	void insertCountry2database(String name, int dbId)
+	{
+		ContentValues values = new ContentValues();
+		values.put("country_name", name);
+		values.put("db_country_id", dbId);	
+		getMyDBHelper().insertErea(values);
+	}
+
+	String getCountryNameByIndex(int index)
+	{
+		String name;
+		
+		switch(index)
+		{
+			case 0://uk
+				name = getResources().getString(R.string.dvb_scan_uk);
+				break;
+			case 1://australia
+				name = getResources().getString(R.string.dvb_scan_australia);
+				break;
+			case 2://italy
+				name = getResources().getString(R.string.dvb_scan_italy);
+				break;
+			case 3://france
+				name = getResources().getString(R.string.dvb_scan_france);
+				break;
+			case 4://taiwan
+				name = getResources().getString(R.string.dvb_scan_taiwan);
+				break;
+			default:
+				name = getResources().getString(R.string.dvb_scan_france);
+				break;
+		}
+
+		return name;
+	}
+
+	String getCountryLocalNameByIndex(int index)
+	{
+		String name;
+		
+		switch(index)
+		{
+			case 0://uk
+				name = MyDBHelper.AREA_UK;
+				break;
+			case 1://australia
+				name = myDbHelper.AREA_AUSTRALIA;
+				break;
+			case 2://italy
+				name = myDbHelper.AREA_ITALIAN;
+				break;
+			case 3://france
+				name = myDbHelper.AREA_FRANCE;
+				break;
+			case 4://taiwan
+				name = myDbHelper.AREA_TAIWAN;
+				break;
+			default:
+				name = myDbHelper.AREA_FRANCE;
+				break;
+		}
+
+		return name;
+	}
+	
+	void initCountryInfo()
+	{
+		Cursor c = getMyDBHelper().queryErea(new String[]{"country_name", "db_country_id"}, null, null);
+		if (c != null && c.getCount() >= 1)
+		{
+			if (c != null)
+			{
+				c.close();
+			}
+			Log.d(TAG, "initCountryInfo country list already created");
+			return;
+		}
+
+		if (c != null)
+		{
+			Log.d(TAG, "initCountryInfo get country list failed");
+			c.close();
+		}
+		try{
+			getMyDBHelper().onBeginTransaction();
+			insertCountry2database(myDbHelper.AREA_UK, 1);
+			insertCountry2database(myDbHelper.AREA_AUSTRALIA, 2);
+			insertCountry2database(myDbHelper.AREA_ITALIAN, 3);
+			insertCountry2database(myDbHelper.AREA_ITALIAN_EURO, 3);
+			insertCountry2database(myDbHelper.AREA_FRANCE, 4);
+			insertCountry2database(myDbHelper.AREA_FRANCE_EURO, 4);
+			insertCountry2database(myDbHelper.AREA_CHINA, 4);
+			insertCountry2database(myDbHelper.AREA_TAIWAN, 5);
+			getMyDBHelper().onSetTransactionSuccessful();
+		}
+		catch(Exception e)
+		{
+			Log.d(TAG, "Exception ", e);
+		}
+		finally
+		{
+			getMyDBHelper().onEndTransaction();
+		}
+		System.out.println("initCountryInfo insert compelte");
+	}
+
+	void initUKFrequenceInfo()
+	{
+		Cursor c = getMyDBHelper().queryErea(new String[]{"db_country_id"}, "country_name=?", new String[]{MyDBHelper.AREA_UK});
+		if (c == null || c.getCount() < 1)
+		{
+			if (c != null)
+			{
+				c.close();
+			}
+			System.out.println("initUKFrequenceInfo find db id failed");
+			return;
+		}
+		c.moveToFirst();
+		int db_country_id = c.getInt(0);
+		c.close();
+
+		c = getMyDBHelper().queryInfo(new String[]{"db_country_id"}, "db_country_id=?", new String[]{""+db_country_id}); 
+		if (c != null && c.getCount() >= 1)
+		{
+			if (c != null)
+			{
+				c.close();
+			}
+			System.out.println("initUKFrequenceInfo freq already exist");
+			return;
+		}
+		
+		if (c != null)
+		{
+			c.close();
+		}
+		
+		int frequency = 0;
+		int channel_id = 21;
+		try{
+			getMyDBHelper().onBeginTransaction();
+			for (int i = 0; i < 49; i++)
+			{
+				frequency = 474000 + 8 * i * 1000;
+				insert2Database(db_country_id, channel_id, frequency, DVBFrontEndPara.BANDWIDTH_8_MHZ, MyDBHelper.U_WAVE);
+				channel_id++;
+
+			}
+			getMyDBHelper().onSetTransactionSuccessful();
+		}
+		catch(Exception e)
+		{
+			Log.d(TAG, "Exception ", e);
+		}
+		finally
+		{
+			getMyDBHelper().onEndTransaction();
+		}
+		System.out.println("initUKFrequenceInfo insert complete " + db_country_id);
+	}
+
+
+	void initFRFrequenceInfo()
+	{
+		Cursor c = getMyDBHelper().queryErea(new String[]{"db_country_id"}, "country_name=?", new String[]{MyDBHelper.AREA_FRANCE});
+		if (c == null || c.getCount() < 1)
+		{
+			if (c != null)
+			{
+				c.close();
+			}
+			System.out.println("initFRFrequenceInfo find db id failed");
+			return;
+		}
+		c.moveToFirst();
+		int db_country_id = c.getInt(0);
+		c.close();
+
+		c = getMyDBHelper().queryInfo(new String[]{"db_country_id"}, "db_country_id=?", new String[]{""+db_country_id}); 
+		if (c != null && c.getCount() >= 1)
+		{
+			if (c != null)
+			{
+				c.close();
+			}
+			System.out.println("initFRFrequenceInfo freq exist");
+			return;
+		}
+		
+		if (c != null)
+		{
+			c.close();
+		}
+
+		
+		int frequency = 0;
+		int channel_id = 5;
+		try{
+		getMyDBHelper().onBeginTransaction();
+		for (int i = 0; i < 8; i++)
+		{
+			frequency = 177500 + 7 * i * 1000;
+			insert2Database(db_country_id, channel_id, frequency, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE);
+			channel_id++;
+		}
+
+		channel_id = 21;
+		for (int i = 0; i < 49; i++)
+		{
+			frequency = 474000 + 8 * i * 1000;
+			insert2Database(db_country_id, channel_id, frequency, DVBFrontEndPara.BANDWIDTH_8_MHZ, MyDBHelper.U_WAVE);
+			channel_id++;
+		}
+		getMyDBHelper().onSetTransactionSuccessful();
+		}
+		catch(Exception e)
+		{
+			Log.d(TAG, "Exception ", e);
+		}
+		finally
+		{
+			getMyDBHelper().onEndTransaction();
+		}
+		System.out.println("initFRFrequenceInfo insert complte " + db_country_id);
+	}
+
+	
+	void initAUFrequenceInfo()
+	{
+		Cursor c = getMyDBHelper().queryErea(new String[]{"db_country_id"}, "country_name=?", new String[]{MyDBHelper.AREA_AUSTRALIA});
+		if (c == null || c.getCount() < 1)
+		{
+			if (c != null)
+			{
+				c.close();
+			}
+			System.out.println("initAUFrequenceInfo find db id failed");
+			return;
+		}
+		c.moveToFirst();
+		int db_country_id = c.getInt(0);
+		c.close();
+
+		c = getMyDBHelper().queryInfo(new String[]{"db_country_id"}, "db_country_id=?", new String[]{""+db_country_id}); 
+		if (c != null && c.getCount() >= 1)
+		{
+			if (c != null)
+			{
+				c.close();
+			}
+			System.out.println("initAUFrequenceInfo freq exist");
+			return;
+		}
+		
+		if (c != null)
+		{
+			c.close();
+		}
+
+		System.out.println("initAUFrequenceInfo " + System.currentTimeMillis());
+		int frequency = 0;
+		int channel_id = 6;
+		try{
+		getMyDBHelper().onBeginTransaction();
+		for (int i = 0; i < 8; i++)
+		{
+			frequency = 177500 + 7 * i * 1000;
+			insert2Database(db_country_id, channel_id, frequency, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE);
+			channel_id++;
+		}
+
+		channel_id = 27;
+		for (int i = 0; i < 43; i++)
+		{
+			frequency = 522500 + 7 * i * 1000;
+			insert2Database(db_country_id, channel_id, frequency, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.U_WAVE);
+			channel_id++;
+		}
+
+		for (int i = 0; i < 7; i++)
+		{
+			frequency = 810000 + 8 * i * 1000;
+			insert2Database(db_country_id, channel_id, frequency, DVBFrontEndPara.BANDWIDTH_8_MHZ, MyDBHelper.U_WAVE);
+			channel_id++;
+		}
+		getMyDBHelper().onSetTransactionSuccessful();
+			}
+		catch(Exception e)
+		{
+			Log.d(TAG, "Exception ", e);
+		}
+		finally
+		{
+			getMyDBHelper().onEndTransaction();
+		}
+		
+		System.out.println("initAUFrequenceInfo inset compelte " + db_country_id);
+		System.out.println("initAUFrequenceInfo " + System.currentTimeMillis());
+	}
+
+	
+	void initTWFrequenceInfo()
+	{
+		Cursor c = getMyDBHelper().queryErea(new String[]{"db_country_id"}, "country_name=?", new String[]{MyDBHelper.AREA_TAIWAN});
+		if (c == null || c.getCount() < 1)
+		{
+			if (c != null)
+			{
+				c.close();
+			}
+			System.out.println("initTWFrequenceInfo find db id failed");
+			return;
+		}
+		c.moveToFirst();
+		int db_country_id = c.getInt(0);
+		c.close();
+
+		c = getMyDBHelper().queryInfo(new String[]{"db_country_id"}, "db_country_id=?", new String[]{""+db_country_id}); 
+		if (c != null && c.getCount() >= 1)
+		{
+			if (c != null)
+			{
+				c.close();
+			}
+			System.out.println("initTWFrequenceInfo freq exist");
+			return;
+		}
+		
+		if (c != null)
+		{
+			c.close();
+		}
+
+		
+		int frequency = 0;
+		int channel_id = 14;
+		try{
+			getMyDBHelper().onBeginTransaction();
+			for (int i = 0; i < 65; i++)
+			{
+				frequency = 473000 + 6 * i * 1000;
+				insert2Database(db_country_id, channel_id, frequency, DVBFrontEndPara.BANDWIDTH_6_MHZ, MyDBHelper.U_WAVE);
+				channel_id++;
+			}
+			getMyDBHelper().onSetTransactionSuccessful();
+		}
+		catch(Exception e)
+		{
+			Log.d(TAG, "Exception ", e);
+		}
+		finally
+		{
+			getMyDBHelper().onEndTransaction();
+		}
+		System.out.println("initTWFrequenceInfo inset complete " + db_country_id);
+	}
+
+	
+	void initITFrequenceInfo()
+	{
+		Cursor c = getMyDBHelper().queryErea(new String[]{"db_country_id"}, "country_name=?", new String[]{MyDBHelper.AREA_ITALIAN});
+		if (c == null || c.getCount() < 1)
+		{
+			if (c != null)
+			{
+				c.close();
+			}
+			System.out.println("initITFrequenceInfo find db id failed");
+			return;
+		}
+		c.moveToFirst();
+		int db_country_id = c.getInt(0);
+		c.close();
+
+		c = getMyDBHelper().queryInfo(new String[]{"db_country_id"}, "db_country_id=?", new String[]{""+db_country_id}); 
+		if (c != null && c.getCount() >= 1)
+		{
+			if (c != null)
+			{
+				c.close();
+			}
+			System.out.println("initITFrequenceInfo freq exist");
+			return;
+		}
+		
+		if (c != null)
+		{
+			c.close();
+		}
+
+		
+		int frequency = 0;
+		int channel_id = 5;
+		/*
+		for (int i = 0; i < 8; i++)
+		{
+			frequency = 177500 + 7 * i * 1000;
+			insert2Database(db_country_id, channel_id, frequency, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE);
+			channel_id++;
+		}*/
+		try{
+			getMyDBHelper().onBeginTransaction();
+			
+			insert2Database(db_country_id, MyDBHelper.EXTERNAL_CHANNELID, 177500, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE, "D");
+			insert2Database(db_country_id, 6, 184500, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE);
+			insert2Database(db_country_id, MyDBHelper.EXTERNAL_CHANNELID, 186500, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE, "E");
+			insert2Database(db_country_id, 7, 191500, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE);
+			insert2Database(db_country_id, MyDBHelper.EXTERNAL_CHANNELID, 194500, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE, "F");
+			insert2Database(db_country_id, 8, 198500, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE);
+			insert2Database(db_country_id, MyDBHelper.EXTERNAL_CHANNELID, 203500, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE, "G");
+			insert2Database(db_country_id, 9, 205500, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE);
+			insert2Database(db_country_id, MyDBHelper.EXTERNAL_CHANNELID, 212500, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE, "H1");
+			insert2Database(db_country_id, MyDBHelper.EXTERNAL_CHANNELID, 219500, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE, "H2");
+			insert2Database(db_country_id, MyDBHelper.EXTERNAL_CHANNELID, 226500, DVBFrontEndPara.BANDWIDTH_7_MHZ, MyDBHelper.V_WAVE, "H3");
+
+			channel_id = 21;
+			for (int i = 0; i < 49; i++)
+			{
+				frequency = 474000 + 8 * i * 1000;
+				insert2Database(db_country_id, channel_id, frequency, DVBFrontEndPara.BANDWIDTH_8_MHZ, MyDBHelper.U_WAVE);
+				channel_id++;
+			}
+			getMyDBHelper().onSetTransactionSuccessful();
+		}
+		catch(Exception e)
+		{
+			Log.d(TAG, "Exception ", e);
+		}
+		finally
+		{
+			getMyDBHelper().onEndTransaction();
+		}
+		
+		System.out.println("initITFrequenceInfo inset compelte " + db_country_id);
+	}
+
+	
+	SearchPara getSearchParaByExtChannelID(String extChannelId)
+	{
+		SearchPara sp = null;
+
+		if (null == extChannelId)
+		{
+			return null;
+		}
+		
+		for (int i = 0; i < list3.size(); i++)
+		{
+			sp = (SearchPara)list3.get(i);
+			if (sp != null && sp.externalCHID != null && sp.externalCHID.equals(extChannelId))
+			{
+				System.out.println("getSearchParaByExtChannelID get channel info success channelId" + channelId);
+				setChannelPos(i);
+				return sp;
+			}
+		}
+		return null;
+	}
+	SearchPara getSearchParaByChannelID(int channelId)
+	{
+		if (list3.size() <= 0)
+		{
+			System.out.println("getSearchParaByChannelID no freq data");
+			return null;
+		}
+
+		if (channelId == -1)
+		{
+			return getSearchParaByPosition(0);
+		}
+		else if (channelId == MyDBHelper.EXTERNAL_CHANNELID)
+		{
+			return getSearchParaByPosition(getChannelPos());
+		}
+
+		SearchPara sp = null;
+		for (int i = 0; i < list3.size(); i++)
+		{
+			sp = (SearchPara)list3.get(i);
+			if (sp != null && sp.channelId == channelId)
+			{
+				System.out.println("getSearchParaByChannelID get channel info success channelId" + channelId);
+				setChannelPos(i);
+				return sp;
+			}
+		}
+		System.out.println("getSearchParaByChannelID get channel info fail");
+		return sp;
+	}
+	
+	SearchPara getSearchParaByPosition(int pos)
+	{
+		if (pos >= list3.size() || pos < 0)
+		{
+			System.out.println("getSearchParaByChannelID pos error "+ pos);
+			return null;
+		}
+
+		setChannelPos(pos);
+		return (SearchPara)list3.get(pos);
+	}
+	
+	
+	class SearchPara
+	{
+		int frequency;
+		int bandwidth;
+		int channelId;
+		int waveband;
+		String externalCHID;
+	};
+
+	boolean initFrequenceInfoByBand(int band)
+	{	
+		
+		System.out.println("*********initSearchFrequency ");
+
+		Cursor c = getMyDBHelper().queryErea(new String[]{"db_country_id"}, "country_name=?", new String[]{getLocalRegionName()});
+		if (c == null || c.getCount() < 1)
+		{
+			if(c != null) c.close();
+			
+			System.out.println("*********initSearchFrequency can't find db_country_id");
+			return false;
+		}
+		
+		c.moveToFirst();
+		int db_country_id = c.getInt(0);
+		System.out.println("*********initSearchFrequency db_country_id " + db_country_id);
+		c.close();
+
+		c = getMyDBHelper().queryInfo(new String[]{"frequency", "bandwidth", "channel_id", "waveband", "external_channel"}, "db_country_id=? and waveband=?", new String[]{""+db_country_id, ""+band});
+		if (c == null || c.getCount() < 1)
+		{
+			if(c != null) c.close();
+			
+			System.out.println("*********initSearchFrequency no freq data");
+			return false;
+		}
+		c.moveToFirst();
+
+		
+		if (list3 == null)
+		{
+			list3 = new ArrayList<Object>(); 
+		}
+		else
+		{
+			list3.clear();
+		}
+
+		for (int i = 0; i < c.getCount(); i++)
+		{
+			SearchPara sp = new SearchPara();
+			sp.bandwidth = c.getInt(1);
+			sp.frequency = c.getInt(0);
+			sp.waveband = c.getInt(3);
+			sp.channelId = c.getInt(2);
+			sp.externalCHID = c.getString(4);
+			list3.add(sp);
+			c.moveToNext();
+		}
+		c.close();
+		System.out.println("*********initSearchFrequency complete");
+		return true;
+	}
+	
+	void initSearchFrequency()
+	{	
+		
+		System.out.println("*********initSearchFrequency ");
+		if (list3 == null)
+		{
+			list3 = new ArrayList<Object>(); 
+		}
+		else
+		{
+			list3.clear();
+		}
+
+		Cursor c = getMyDBHelper().queryErea(new String[]{"db_country_id"}, "country_name=?", new String[]{getLocalRegionName()});
+		if (c == null || c.getCount() < 1)
+		{
+			if(c != null) c.close();
+			
+			System.out.println("*********initSearchFrequency can't find db_country_id");
+			return;
+		}
+		
+		c.moveToFirst();
+		int db_country_id = c.getInt(0);
+		System.out.println("*********initSearchFrequency db_country_id " + db_country_id);
+		c.close();
+
+		c = getMyDBHelper().queryInfo(new String[]{"frequency", "bandwidth", "channel_id", "waveband", "external_channel"}, "db_country_id=?", new String[]{""+db_country_id});
+		if (c == null || c.getCount() < 1)
+		{
+			if(c != null) c.close();
+			
+			System.out.println("*********initSearchFrequency no freq data");
+			return;
+		}
+		c.moveToFirst();
+		for (int i = 0; i < c.getCount(); i++)
+		{
+			SearchPara sp = new SearchPara();
+			sp.bandwidth = c.getInt(1);
+			sp.frequency = c.getInt(0);
+			sp.waveband = c.getInt(3);
+			sp.channelId = c.getInt(2);
+			sp.externalCHID = c.getString(4);
+			list3.add(sp);
+			c.moveToNext();
+		}
+		c.close();
+		System.out.println("*********initSearchFrequency complete");
+	}
+	
+    private void returnSearch()
+    {
+		if (getDvbUIDisplay() != 0)
+		{
+			 setDvbUIDisplay(0);
+			 initListData();
+		}
+		else
+		{
+			 Bundle bundle = new Bundle();	
+			 Intent Intent_dvblayer = new Intent();
+			 ComponentName comp = new ComponentName("com.amlogic.DVBPlayer","com.amlogic.DVBPlayer.DialogNoChannel");
+			 Intent_dvblayer.setComponent(comp);
+			 Intent_dvblayer.setAction("android.intent.action.VIEW");
+			 bundle.putString("activity_tag","settings");
+			 Intent_dvblayer.putExtras(bundle);
+			 startActivity(Intent_dvblayer);  
+			 
+			 this.finish();
+		}
+    }
+
+	/*disable HOME key*/
+	public void onAttachedToWindow()  
+	{  
+		//this.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_KEYGUARD);  
+		super.onAttachedToWindow();  
+	} 
+
+	private void onLeftKeyHandle()
+	{
+		if (getDvbUIDisplay() == 0)
+		{
+			if (cur_select_item == (dvbsearch.SETTINGS_LCN - 1))
+			{
+				SetSortByLcn(!isSortByLcn());
+				
+				if(mScanDvb!=null){
+					mScanDvb.setLcnStatus(isSortByLcn());
+					if(mScanDvb.getLcnStatus()){
+						channelSort.ChannelSortByLcn(true);
+					}
+					else{
+						channelSort.ChannelSortByLcn(false);
+					}
+					mScanDvb.syncDatabase(DVBClient.TABLE_SERVICE, -1);
+				}
+				
+				myAdapt.notifyDataSetChanged();
+			}
+			else if(cur_select_item == (dvbsearch.SETTINGS_AREA - 1))
+			{
+				if (getCountryIndex() > 0)
+				{
+					setCountryIndex(getCountryIndex() - 1);
+				}
+				else
+				{
+					setCountryIndex(MyDBHelper.MAX_AREA_NUMBER - 1);
+				}
+				//initSearchFrequency();
+				setChannelId(-1);
+				setChannelPos(0);
+				setBandScan(MyDBHelper.V_WAVE);
+				
+				myAdapt.notifyDataSetChanged();
+			}
+		}
+		
+		else if (getDvbUIDisplay() == 1)
+		{
+			if (cur_select_item == (dvbsearch.SETTINGS_BY_CHANNELID - 1))
+			{
+				setDvbUIDisplay(2);
+				initListDataByChannelID();
+			}
+			else if (cur_select_item == (dvbsearch.SETTINGS_SCAN_BAND - 1))
+			{
+				setBandScan((getBandScan()+1)%2);
+				if (initFrequenceInfoByBand(getBandScan()))
+				{
+					setChannelId(-1);
+					setChannelPos(0);
+					myAdapt.notifyDataSetChanged();
+				}
+				else
+				{
+					setBandScan((getBandScan()+1)%2);
+				}
+			}
+			else if (cur_select_item == (dvbsearch.SETTINGS_CHNO - 1))
+			{
+				SearchPara sp;
+				if ((getChannelPos() - 1) >= 0)
+				{
+					sp = getSearchParaByPosition(getChannelPos() - 1);
+					
+				}
+				else
+				{
+					sp = getSearchParaByPosition(list3.size() - 1);
+				}
+
+				if (sp != null)
+				{
+					setChannelId(sp.channelId);
+					myAdapt.notifyDataSetChanged();
+				}
+			}
+		}
+		else if (getDvbUIDisplay() == 2)
+		{
+			if (cur_select_item == (dvbsearch.SETTINGS_BY_FREQUENCY - 1))
+			{
+				setDvbUIDisplay(1);
+				initListDataByChannelID();
+			}
+			else if (cur_select_item == (dvbsearch.SETTINGS_SCAN_BAND - 1))
+			{
+				
+			}
+			else if (cur_select_item == (dvbsearch.SETTINGS_FREQUENCY - 1))
+			{
+				if (getFrequency() > 0)
+				{
+					setFreqency(getFrequency()/10);
+					myAdapt.notifyDataSetChanged();
+				}
+			}
+			else if (cur_select_item == (dvbsearch.SETTINGS_BANDWIDTH - 1))
+			{
+				if (getBandwidth() == 2)
+				{
+					setBandwidth(0);
+				}
+				else
+				{
+					setBandwidth(getBandwidth()+1);
+				}
+				myAdapt.notifyDataSetChanged();
+			}
+		}
+		
+	}
+ 
+	private void onRightKeyHandle()
+	{
+		
+		if (getDvbUIDisplay() == 0)
+		{
+			if (cur_select_item == (dvbsearch.SETTINGS_LCN - 1))
+			{
+				SetSortByLcn(!isSortByLcn());
+				if(mScanDvb!=null){
+					mScanDvb.setLcnStatus(isSortByLcn());
+					if(mScanDvb.getLcnStatus()){
+						channelSort.ChannelSortByLcn(true);
+					}
+					else{
+						channelSort.ChannelSortByLcn(false);
+					}
+					mScanDvb.syncDatabase(DVBClient.TABLE_SERVICE, -1);
+				}
+				myAdapt.notifyDataSetChanged();
+			}
+			
+			else if(cur_select_item == (dvbsearch.SETTINGS_AREA - 1))
+			{
+				setCountryIndex((getCountryIndex() + 1)%MyDBHelper.MAX_AREA_NUMBER);
+				//initSearchFrequency();
+				setChannelId(-1);
+				setChannelPos(0);
+				setBandScan(MyDBHelper.V_WAVE);
+				
+				myAdapt.notifyDataSetChanged();
+			}
+		}
+		else if (getDvbUIDisplay() == 1)
+		{
+			if (cur_select_item == (dvbsearch.SETTINGS_BY_CHANNELID - 1))
+			{
+				setDvbUIDisplay(2);
+				initListDataByChannelID();
+			}
+			else if (cur_select_item == (dvbsearch.SETTINGS_SCAN_BAND - 1))
+			{
+				setBandScan((getBandScan()+1)%2);
+				if (initFrequenceInfoByBand(getBandScan()))
+				{
+					setChannelId(-1);
+					setChannelPos(0);
+					myAdapt.notifyDataSetChanged();
+				}
+				else
+				{
+					setBandScan((getBandScan()+1)%2);
+				}
+				
+			}
+			else if (cur_select_item == (dvbsearch.SETTINGS_CHNO - 1))
+			{
+				SearchPara sp;
+				if ((getChannelPos() + 1) < list3.size())
+				{
+					sp = getSearchParaByPosition(getChannelPos() + 1);
+				}
+				else
+				{
+					sp = getSearchParaByPosition(0);
+				}
+				if (sp != null)
+				{
+					setChannelId(sp.channelId);
+					myAdapt.notifyDataSetChanged();
+				}
+			}
+		}
+		else if (getDvbUIDisplay() == 2)
+		{
+			if (cur_select_item == (dvbsearch.SETTINGS_BY_FREQUENCY - 1))
+			{
+				setDvbUIDisplay(1);
+				initListDataByChannelID();
+			}
+			else if (cur_select_item == (dvbsearch.SETTINGS_SCAN_BAND - 1))
+			{
+			}
+			else if (cur_select_item == (dvbsearch.SETTINGS_BANDWIDTH - 1))
+			{
+				if (getBandwidth() == 0)
+				{
+					setBandwidth(2);
+				}
+				else
+				{
+					setBandwidth(getBandwidth()-1);
+				}
+				myAdapt.notifyDataSetChanged();
+			}
+		}
+	}	
+	
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+    	System.out.println("keycode " + keyCode);
+    	
+        switch (keyCode)
+        {     
+        	
+			case KeyEvent.KEYCODE_DPAD_DOWN:			
+				if(cur_select_item== list.getCount()-1)
+			    	list.setSelection(0); 			
+				break;
+			case KeyEvent.KEYCODE_DPAD_UP:
+			  if(cur_select_item== 0)
+				list.setSelection(list.getCount()-1); 
+				break;
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+				onLeftKeyHandle();
+				break;
+			case KeyEvent.KEYCODE_DPAD_RIGHT:
+				onRightKeyHandle();
+				break;
+	        case KeyEvent.KEYCODE_DPAD_CENTER:
+			case KeyEvent.KEYCODE_ENTER:
+	        		break;
+			case KeyEvent.KEYCODE_BACK:
+				returnSearch();
+				break;
+			case KeyEvent.KEYCODE_0:
+			case KeyEvent.KEYCODE_1:
+			case KeyEvent.KEYCODE_2:
+			case KeyEvent.KEYCODE_3:
+			case KeyEvent.KEYCODE_4:
+			case KeyEvent.KEYCODE_5:
+			case KeyEvent.KEYCODE_6:
+			case KeyEvent.KEYCODE_7:
+			case KeyEvent.KEYCODE_8:
+			case KeyEvent.KEYCODE_9:
+				if ((getDvbUIDisplay() == 2) && (cur_select_item == dvbsearch.SETTINGS_FREQUENCY - 1))
+				{
+					int fre = getFrequency() * 10 + keyCode - KeyEvent.KEYCODE_0;
+					if (fre < 859000)
+					{
+						setFreqency(fre);
+						myAdapt.notifyDataSetChanged();
+					}
+				}
+				break;
+        }
+        
+        return true;
+    }
+            
+    protected void onStop()
+    {
+	   Log.d(TAG,"onStop");	
+	   if (mScanDvb!= null)
+   	   {
+   	   		mScanDvb.disconnect();
+   	   }
+	   saveDefaultData();
+       super.onStop();
+    }
+
+    public void onDestroy()
+    {
+		Log.d(TAG,"onDestroy");
+		if (myDbHelper != null)
+		{
+			myDbHelper.close();
+			myDbHelper=null;
+		}
+		super.onDestroy();
+    }
+
+		void enterFrequency()
+		{
+		   LinearLayout classify_set_layout = (LinearLayout) getLayoutInflater().inflate(R.layout.classify_set, null);      
+      		   editText = (EditText)classify_set_layout.findViewById(R.id.edittext_classify_name);
+		  
+		   editBuilder.setTitle(R.string.pro_enter_fre);
+		   editBuilder.setView(classify_set_layout);
+
+		   editText.setText("");
+		   editBuilder.setPositiveButton(R.string.scan_confirm, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				if (!editText.getText().toString().equals(""))
+					{
+				setFreqency(Integer.valueOf(editText.getText().toString()));
+				myAdapt.notifyDataSetChanged();}}
+		});
+		   	
+		  editBuilder.setNegativeButton(R.string.scan_cancel, new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		  AlertDialog alert = editBuilder.create();
+		  alert.setOnShowListener(new DialogInterface.OnShowListener(){
+								public void onShow(DialogInterface dialog) {
+
+
+									
+									}         
+									}); 	
+
+		   alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
+								public void onDismiss(DialogInterface dialog) {
+								}         
+								}); 	
+			
+
+		  alert.show();
+		  
+		  WindowManager m = getWindowManager();   
+		  Display d = m.getDefaultDisplay();  	
+		  WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+		  lp.dimAmount=0.0f;
+		  lp.width = (int) (d.getWidth() * 0.65);
+		  alert.getWindow().setAttributes(lp);
+		  alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+    }
+		
+
+	void listviewItemClicked(int position)
+	{
+		if (getDvbUIDisplay() == 0)
+		{
+			switch(cur_select_item+1)
+			{
+				case dvbsearch.SETTINGS_AUTO_SEARCH:
+					{
+						if (list3.size() > 0)
+						{
+							Bundle bundle = new Bundle();  
+							Intent Intent_dvblayer = new Intent();
+							ComponentName comp = new ComponentName("com.amlogic.dvbsearch","com.amlogic.dvbsearch.dvbsearchEx");
+							Intent_dvblayer.setComponent(comp);
+							Intent_dvblayer.setAction("android.intent.action.VIEW");
+							bundle.putInt("search_mode", dvbsearchEx.SEACH_MODE_AUTO);
+							bundle.putString("search_country", getCountryLocalNameByIndex(getCountryIndex()));	
+							Intent_dvblayer.putExtras(bundle);
+							startActivity(Intent_dvblayer);  
+							
+							dvbsearch.this.finish();
+						}
+						else
+						{
+							Toast toast = Toast.makeText(
+								dvbsearch.this,
+								R.string.dvb_scan_no_list,
+								Toast.LENGTH_SHORT);
+								toast.setGravity(Gravity.CENTER, 0, 0);
+								toast.show();
+						}
+					}
+					break;
+				case dvbsearch.SETTINGS_MANU_SEARCH:
+					setDvbUIDisplay(2);
+					if (initFrequenceInfoByBand(getBandScan()) == false)
+					{
+						setBandScan((getBandScan()+1)%2);
+						if (initFrequenceInfoByBand(getBandScan()))
+						{
+							setChannelId(-1);
+							setChannelPos(0);
+						}
+					}
+					initListDataByChannelID();
+					SearchPara sp = getSearchParaByChannelID(getChannelId());
+					if (sp != null)
+					{
+						setFreqency(sp.frequency);
+						setBandwidth(sp.bandwidth);
+					}
+					//myAdapt.notifyDataSetChanged();
+					break;
+					/*
+				case dvbsearch.SETTINGS_LCN:
+					
+					break;*/
+					default:
+					if (position !=cur_select_item)
+					{
+						cur_select_item = position;
+						myAdapt.notifyDataSetChanged();
+					}
+					break;
+			}
+		}
+		else
+		{
+			switch(cur_select_item+1)
+			{
+				case dvbsearch.SETTINGS_SEARCH:
+				{
+					Bundle bundle = new Bundle();  
+					Intent Intent_dvblayer = new Intent();
+					ComponentName comp = new ComponentName("com.amlogic.dvbsearch","com.amlogic.dvbsearch.dvbsearchEx");
+					Intent_dvblayer.setComponent(comp);
+					Intent_dvblayer.setAction("android.intent.action.VIEW");
+					bundle.putInt("search_mode", dvbsearchEx.SEACH_MODE_MANUAL);	
+					bundle.putInt("search_freq", getFrequency());
+					bundle.putInt("search_bandwidth", getBandwidth());
+					Intent_dvblayer.putExtras(bundle);
+					startActivity(Intent_dvblayer);  
+					
+					dvbsearch.this.finish();
+				}
+				break;
+				case dvbsearch.SETTINGS_FREQUENCY:
+					if (getDvbUIDisplay() == 2)
+					{
+				 		enterFrequency();
+					}
+				 break;
+				default:
+					if (position !=cur_select_item)
+					{
+						cur_select_item = position;
+						myAdapt.notifyDataSetChanged();
+					}
+					break;
+			}
+		}
+	}
+	
+	class listOnClickListener implements OnItemClickListener{
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
+		{
+			System.out.println("onItemClick---------" + position);
+			listviewItemClicked(position);
+			/*
+			if (cur_select_item != position)
+			{
+				cur_select_item = position;
+				listviewItemClicked();
+			}
+			else if (getDvbUIDisplay() == 2 && (cur_select_item+1)==dvbsearch.SETTINGS_FREQUENCY)
+			{
+				listviewItemClicked();
+			}*/
+		}
+	}
+	
+   class listOnKeyListener implements OnKeyListener{
+
+		public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
+			// TODO Auto-generated method stub
+
+			System.out.println("key2---------" + arg2);
+        	System.out.println("key1--------" + arg1);
+        	System.out.println("arg0--------" + arg0);
+
+			if ((arg1 == KeyEvent.KEYCODE_DPAD_CENTER || arg1 == KeyEvent.KEYCODE_ENTER) 
+				&& (arg2.getAction() == KeyEvent.ACTION_DOWN))
+			{
+				//listviewItemClicked();
+			}
+        	      	
+			return false;
+			
+		}
+    	 
+    }
+
+	protected void onListItemClick(ListView l, View v, int position, long id)
+	{
+		System.out.println("onListItemClick enter.....");
+			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
+	
+			final TextView info_cur = (TextView)v.findViewById(R.id.info);
+			if (getDvbUIDisplay() == 0)
+			{
+				switch(position+1)
+				{
+					case dvbsearch.SETTINGS_AUTO_SEARCH:
+						break;
+					case dvbsearch.SETTINGS_MANU_SEARCH:
+						//initListDataByChannelID();
+						//myAdapt.notifyDataSetChanged();
+						break;
+					case dvbsearch.SETTINGS_LCN:
+						
+						break;
+				}
+			}
+			else if (getDvbUIDisplay() == 1)
+			{
+			}
+			else
+			{
+			
+			}
+	}
+
+	public nameList getServiceInfoByPostion(int position)
+    {
+    	if (position > serviceList.size() || serviceList.size() <= 0)
+    	{
+    		return null;
+    	}
+    	
+    	return (nameList) serviceList.get(position);
+    }
+
+	public String getNameString(int id)
+	{
+		return this.getResources().getString(id);
+	}
+
+	private class IconAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+		private Bitmap mIcon1;
+		private Bitmap mIcon2;
+		private Bitmap mIcon3;
+		private Bitmap mIcon4;
+		private Bitmap mIcon5;
+		private Bitmap mIcon6;
+	
+		private Context cont;
+		List<Object> titles; 
+
+	 	class ViewHolder {
+			TextView text;
+			ImageView icon;
+		    TextView   info; 
+		    ImageView icon1;
+			ImageView icon2;
+		}
+	
+		public IconAdapter(Context context, List<Object> titles) {
+			super();
+			this.cont = context;
+			this.titles = titles;
+			mInflater=LayoutInflater.from(context);
+			mIcon1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.set_subtitle);
+			mIcon2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.set_picture_size);
+			mIcon3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.set_audio_track);
+			mIcon4 = BitmapFactory.decodeResource(context.getResources(), R.drawable.set_channel_search);
+			mIcon5 = BitmapFactory.decodeResource(context.getResources(), R.drawable.set_factory_data_reset);
+			mIcon6 = BitmapFactory.decodeResource(context.getResources(), R.drawable.set_factory_data_reset);
+		}
+
+		public int getCount() {
+
+			return titles.size();
+		}
+
+		public Object getItem(int position) {
+
+			return titles.get(position);
+		}
+	
+		public long getItemId(int position) {
+			return position;
+		}
+	
+
+		void displayIcon(ViewHolder vh, boolean display)
+		{
+			if (display)
+			{
+				vh.icon1.setVisibility(View.VISIBLE);
+		    	vh.icon1.setBackgroundResource(R.drawable.arrow_left);
+				vh.icon2.setVisibility(View.VISIBLE);
+		    	vh.icon2.setBackgroundResource(R.drawable.arrow_right);
+			}
+			else
+			{
+				vh.icon1.setVisibility(View.VISIBLE);
+		    	vh.icon1.setBackgroundResource(R.drawable.blank);
+				vh.icon2.setVisibility(View.VISIBLE);
+		    	vh.icon2.setBackgroundResource(R.drawable.blank);
+			}
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder holder=null;
+
+		if (convertView == null) {
+		   convertView = mInflater.inflate(R.layout.settings_list, null);
+
+		   if(getHeightPixcel()<480)
+			{
+			   convertView = mInflater.inflate(R.layout.settings_list_small, null);
+			}
+			else if((getHeightPixcel()>480)&&(getHeightPixcel()<=576))
+			{
+			   convertView = mInflater.inflate(R.layout.settings_list_small, null);
+			}
+			else if((getHeightPixcel()>576)&&(getHeightPixcel()<=720))
+			{
+			   convertView = mInflater.inflate(R.layout.settings_list, null);
+			}
+			else
+			{
+			   convertView = mInflater.inflate(R.layout.settings_list_large, null);
+			}
+
+		   
+		   holder = new ViewHolder();
+		   
+		   holder.text = (TextView) convertView.findViewById(R.id.text);
+		   holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+		   holder.info = (TextView)convertView.findViewById(R.id.info);
+		   holder.icon1 = (ImageView)convertView.findViewById(R.id.icon1);
+		   holder.icon2 = (ImageView)convertView.findViewById(R.id.icon2);
+		   convertView.setTag(holder);
+		}else {
+		  // Get the ViewHolder back to get fast access to the TextView
+		  // and the ImageView.
+		  holder = (ViewHolder) convertView.getTag();
+		  }
+		
+		  // Bind the data efficiently with the holder.
+		  nameList nl = getServiceInfoByPostion(position);
+		  holder.text.setText(nl.name);
+		  
+		  System.out.println("my lcn is set position " + position);
+		  SearchPara sp;
+		  if (getDvbUIDisplay() == 0)
+		  {
+			  switch(position+1)
+			  {
+			     case dvbsearch.SETTINGS_AUTO_SEARCH:
+			    	 holder.icon.setImageBitmap(mIcon1);
+					 holder.info.setVisibility(View.GONE);
+					 displayIcon(holder, false);
+			    	 break;
+			     case dvbsearch.SETTINGS_MANU_SEARCH:
+			    	 holder.icon.setImageBitmap(mIcon2);
+					 holder.info.setVisibility(View.GONE);
+					 displayIcon(holder, false);
+			    	 break;
+				 case dvbsearch.SETTINGS_AREA:
+				 	 holder.info.setVisibility(View.VISIBLE);
+					 holder.icon.setImageBitmap(mIcon3);
+					 holder.info.setText(getCountryNameByIndex(getCountryIndex()));
+					 holder.info.setTextColor(Color.WHITE);
+					 if (cur_select_item == position)
+					 {
+						 displayIcon(holder, true);
+						 holder.icon1.setOnClickListener(new OnClickListener(){          
+				          public void onClick(View v) {
+				        	  onLeftKeyHandle();
+				          }});
+
+						  holder.icon2.setOnClickListener(new OnClickListener(){          
+				          public void onClick(View v) {
+				        	  onRightKeyHandle();
+				          }});
+					 }
+					 else
+				 	 {
+				 	 	displayIcon(holder, false);
+				 	 }
+				 	break;
+			     case dvbsearch.SETTINGS_LCN:
+				 	 holder.info.setVisibility(View.VISIBLE);
+					 holder.icon.setImageBitmap(mIcon4);
+					 if (isSortByLcn())
+					 {
+					 	holder.info.setText(R.string.dvb_switch_on);
+					 }
+					 else
+				 	 {
+				 	 	holder.info.setText(R.string.dvb_switch_off);
+				 	 }
+					 holder.info.setTextColor(Color.WHITE);
+					 if (cur_select_item == position)
+					 {
+						 displayIcon(holder, true);
+						 holder.icon1.setOnClickListener(new OnClickListener(){          
+				          public void onClick(View v) {
+				        	  onLeftKeyHandle();
+				          }});
+
+						  holder.icon2.setOnClickListener(new OnClickListener(){          
+				          public void onClick(View v) {
+				        	  onRightKeyHandle();
+				          }});
+					 }
+					 else
+				 	 {
+				 	 	displayIcon(holder, false);
+				 	 }
+			    	 break;				 
+			  }
+		  }
+		  else
+	  	  {
+			  switch(position+1)
+			  {
+			     case dvbsearch.SETTINGS_BY_CHANNELID:
+			    	 holder.info.setVisibility(View.VISIBLE);
+					 holder.icon.setImageBitmap(mIcon1);
+					 if (getDvbUIDisplay() == 1)
+					 {
+					 	holder.info.setText(R.string.dvb_by_channel);
+					 }
+					 else
+				 	 {
+				 	 	holder.info.setText(R.string.dvb_by_frequence);
+				 	 }
+
+					 if (cur_select_item == position)
+					 {
+						 displayIcon(holder, true);
+						 holder.icon1.setOnClickListener(new OnClickListener(){          
+				          public void onClick(View v) {
+				        	  onLeftKeyHandle();
+				          }});
+
+						  holder.icon2.setOnClickListener(new OnClickListener(){          
+				          public void onClick(View v) {
+				        	  onRightKeyHandle();
+				          }});
+					 }
+					 else
+				 	 {
+				 	 	 displayIcon(holder, false);
+				 	 }
+				 	
+			    	 break;
+				 case dvbsearch.SETTINGS_SCAN_BAND:
+					 sp = getSearchParaByChannelID(getChannelId());
+			    	 holder.info.setVisibility(View.VISIBLE);
+					 holder.icon.setImageBitmap(mIcon2);
+					 if (sp != null && sp.waveband == MyDBHelper.V_WAVE)
+					 {
+						 holder.info.setText("VHF");
+					 }
+					 else
+				 	 {
+				 	 	holder.info.setText("UHF");
+				 	 }
+					 
+					 if (getDvbUIDisplay() == 1)
+					 {
+						 if (cur_select_item == position)
+						 {
+							 displayIcon(holder, true);
+							 holder.icon1.setOnClickListener(new OnClickListener(){          
+					          public void onClick(View v) {
+					        	  onLeftKeyHandle();
+					          }});
+
+							  holder.icon2.setOnClickListener(new OnClickListener(){          
+					          public void onClick(View v) {
+					        	  onRightKeyHandle();
+					          }});
+						 }
+						 else
+					 	 {
+					 	 	 displayIcon(holder, false);
+					 	 }
+						 holder.info.setTextColor(Color.WHITE);
+			  		 }
+					 else
+				 	 {
+				 	 	/*
+				 	 	if (sp != null)
+			 	 		{
+			 	 			setFreqency(sp.frequency);
+							setBandwidth(sp.bandwidth);
+			 	 		}*/
+			 	 		
+						holder.info.setTextColor(Color.DKGRAY);
+				 	 	displayIcon(holder, false);
+				 	 }
+			    	 break;
+				 case dvbsearch.SETTINGS_CHNO:
+			    	 holder.info.setVisibility(View.VISIBLE);
+					 holder.icon.setImageBitmap(mIcon3);
+					 sp = getSearchParaByChannelID(getChannelId());
+					 if (sp != null)
+				 	 {
+				 	 	setChannelId(sp.channelId);
+				 	 	if (sp.channelId == MyDBHelper.EXTERNAL_CHANNELID)
+			 	 		{
+			 	 			holder.info.setText("CH"+ sp.externalCHID +"("+sp.frequency+"KHZ)");
+			 	 		}
+						else
+						{
+				 	 		holder.info.setText("CH"+ sp.channelId+"("+sp.frequency+"KHZ)");
+						}
+				 	 }
+					 else
+					 {
+					   holder.info.setText("CH"+ getChannelId()+"("+getFrequency()+"KHZ)");
+					 }
+
+					 if (getDvbUIDisplay() == 1)
+					 {
+						 if (cur_select_item == position)
+						 {
+							 displayIcon(holder, true);
+							 holder.icon1.setOnClickListener(new OnClickListener(){          
+					          public void onClick(View v) {
+					        	  onLeftKeyHandle();
+					          }});
+
+							  holder.icon2.setOnClickListener(new OnClickListener(){          
+					          public void onClick(View v) {
+					        	  onRightKeyHandle();
+					          }});
+						 }
+						 else
+					 	 {
+					 	 	 displayIcon(holder, false);
+					 	 }
+						 holder.info.setTextColor(Color.WHITE);
+			  		 }
+					 else
+				 	 {
+				 	 	displayIcon(holder, false);
+						holder.info.setTextColor(Color.DKGRAY);
+				 	 }
+			    	 break;
+				 case dvbsearch.SETTINGS_FREQUENCY:
+			    	 holder.info.setVisibility(View.VISIBLE);
+					 holder.icon.setImageBitmap(mIcon4);
+					 if (getDvbUIDisplay() == 1)
+					 {
+						 sp = getSearchParaByChannelID(getChannelId());
+						 if (sp != null)
+						 {
+							 setFreqency(sp.frequency);
+						 }
+						 holder.info.setTextColor(Color.DKGRAY);
+					 }
+					 else
+				 	 {
+				 	 	holder.info.setTextColor(Color.WHITE);
+				 	 }
+
+					 if (getFrequency() == 0)
+				 	 {
+						 holder.info.setText(" ");
+				 	 }
+					 else
+					 {
+					 	holder.info.setText(getFrequency()+"");
+					 }
+				 	 displayIcon(holder, false);
+			    	 break;
+				 case dvbsearch.SETTINGS_BANDWIDTH:
+			    	 holder.info.setVisibility(View.VISIBLE);
+					 holder.icon.setImageBitmap(mIcon5);
+				
+					 if (getDvbUIDisplay() == 1)
+					 {
+						 sp = getSearchParaByChannelID(getChannelId());
+						 if (sp != null)
+						 {
+							 setBandwidth(sp.bandwidth);
+						 }
+					 }					 
+					 holder.info.setText((8 - getBandwidth())+"");
+					 if (getDvbUIDisplay() == 2)
+					 {
+					 	if (cur_select_item == position)
+						 {
+							 displayIcon(holder, true);
+							 holder.icon1.setOnClickListener(new OnClickListener(){          
+					          public void onClick(View v) {
+					        	  onLeftKeyHandle();
+					          }});
+
+							  holder.icon2.setOnClickListener(new OnClickListener(){          
+					          public void onClick(View v) {
+					        	  onRightKeyHandle();
+					          }});
+						 }
+						 else
+					 	 {
+					 	 	 displayIcon(holder, false);
+					 	 }
+						 holder.info.setTextColor(Color.WHITE);
+					 }
+					 else
+					 {
+				 	 	displayIcon(holder, false);
+						holder.info.setTextColor(Color.DKGRAY);
+					 }
+			    	 break;
+				 case dvbsearch.SETTINGS_SEARCH:
+			    	 holder.info.setVisibility(View.GONE);
+					 holder.icon.setImageBitmap(mIcon6);
+					 displayIcon(holder, false);
+			    	 break;
+			  }
+	  	  }
+		  return convertView;
+		}
+	}	
+
+	
+}
+

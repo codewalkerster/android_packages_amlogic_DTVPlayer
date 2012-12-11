@@ -5,6 +5,400 @@
 		android:layout_height="720px"
 		android:background="#00000000"
 		android:foreground="#00000000">
+   
+	<!--Radio background-->	
+	<RelativeLayout android:id="@+id/RelativeLayoutRadioBg"
+				android:layout_width="fill_parent" 
+    			android:layout_height="fill_parent"
+				android:gravity="center"
+				android:visibility="invisible"
+				>
+		<ImageView android:layout_width="fill_parent" 
+    			android:layout_height="fill_parent"
+				android:id="@+id/ImageViewRadioBg"
+				android:src="@drawable/dtvplayer_radio_bg"/>		
+	</RelativeLayout>	
+
+	<!--MainMenu-->
+	<RelativeLayout android:id="@+id/RelativeLayoutMainMenu"
+				android:layout_height="462px"
+				android:layout_width="149px"
+				android:background="@drawable/dtvplayer_main_menu_bg" 
+				android:layout_alignParentLeft="true"
+				android:layout_marginTop="90px"
+				android:layout_marginLeft="8px"
+				android:visibility="invisible">
+
+		<LinearLayout 
+			android:layout_width="fill_parent"  
+			android:layout_height="fill_parent"
+			android:orientation="horizontal" >
+			<LinearLayout 
+				android:layout_width="60px"  
+				android:layout_height="fill_parent"
+				android:gravity="center">       
+
+				<com.amlogic.widget.RotateableTextView
+					android:id="@+id/Text_button_info"
+					android:layout_width="300px"   
+					android:layout_height="300px" 
+					android:textSize="20px"  
+					android:singleLine="true"
+					android:gravity="center_vertical"
+					android:paddingBottom="70px"
+					android:textColor="@color/yellow">
+				</com.amlogic.widget.RotateableTextView>
+			</LinearLayout>
+
+			<LinearLayout 
+				android:layout_width="wrap_content"  
+				android:layout_height="fill_parent"
+				android:gravity="center">  
+				 
+				<LinearLayout 
+					        android:layout_width="wrap_content"  
+					        android:orientation="vertical" 
+					        android:layout_height="wrap_content">  
+					<Button android:id="@+id/Button_mainmenu_list"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_pro_list"
+							android:layout_marginLeft="2px" />
+					<Button android:id="@+id/Button_mainmenu_epg"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_epg"
+							android:layout_marginLeft="2px" />
+					<Button android:id="@+id/Button_mainmenu_settings"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_setting"
+							android:layout_marginLeft="2px" />		
+					<Button android:id="@+id/Button_mainmenu_program_manager"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_info" android:layout_marginLeft="5px" />
+					<Button android:id="@+id/Button_mainmenu_timeshift"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_timeshift"
+							android:layout_marginLeft="2px" />
+					<Button android:id="@+id/Button_mainmenu_prv"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_pvr"
+							android:layout_marginLeft="2px" />
+					<Button android:id="@+id/Button_mainmenu_manage"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_pvr_man"
+							android:layout_marginLeft="2px" />
+					<Button android:id="@+id/Button_mainmenu_skip"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_skip"
+							android:layout_marginLeft="2px" />
+				</LinearLayout>
+			</LinearLayout>
+		</LinearLayout>
+	</RelativeLayout>
+
 		
-  
+	<!--Inforbar display-->
+	<RelativeLayout android:id="@+id/RelativeLayoutInforbar"
+		android:layout_alignParentBottom="true"
+		android:layout_width="fill_parent"
+		android:layout_marginLeft="30px"
+		android:layout_marginRight="30px"
+		android:layout_marginBottom="10px"
+		android:background="@drawable/dtvplayer_bar_bg" 
+		android:layout_height="150px"
+		android:paddingBottom="13px"
+		android:visibility="invisible">
+
+		<RelativeLayout android:id="@+id/RelativeLayoutNextprogram" 
+			android:layout_height="26px" 
+			android:layout_marginRight="5px" 
+			android:layout_width="fill_parent" 
+			android:layout_marginLeft="5px"
+			android:layout_alignParentBottom="true"
+			android:layout_marginBottom="6px">
+			<TextView 
+			      android:id="@+id/Text_nextevent"
+			      android:text="@string/dtvplayer_no_next_event"
+			      android:layout_width="fill_parent"
+			      android:layout_height="26px"
+			      android:layout_below="@+id/Text_curevent"
+			      android:textSize="20px"  
+			      android:paddingLeft="33px"
+			      >
+			</TextView>	
+		</RelativeLayout>
+
+		<RelativeLayout android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:id="@+id/RelativeLayout_inforbar_line" 
+			android:background="@drawable/dtvplayer_line"
+			android:layout_marginRight="34px"
+			android:layout_marginLeft="17px"
+			android:layout_above="@+id/RelativeLayoutNextprogram">
+		</RelativeLayout>
+			
+		<RelativeLayout 
+			android:id="@+id/RelativeLayoutNoAndName" 
+			android:layout_width="400px" 
+			android:layout_height="100px" 
+			android:layout_marginTop="7px"
+			android:layout_marginRight="5px" 
+			android:layout_marginLeft="15px"
+			android:background="@drawable/dtvplayer_inforbar_bg_in">
+
+			<LinearLayout
+				android:id="@+id/LinearLayoutNoAndName" 
+				android:orientation="horizontal"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				> 
+
+				<LinearLayout    
+				   android:layout_width="wrap_content"    
+				   android:layout_height="wrap_content">
+				    <ImageView android:id="@+id/ImageView_icon_scrambled"
+						android:layout_width="26px"
+						android:layout_height="26px"
+						android:layout_gravity="center"
+						android:background="@drawable/dtvplayer_icon_scrambled" 
+						android:visibility="invisible"/>
+				    <ImageView android:id="@+id/ImageView_icon_fav"
+						android:layout_width="26px"
+						android:layout_height="26px"
+						android:layout_gravity="center"
+						android:background="@drawable/dtvplayer_icon_fav" 
+						android:visibility="invisible"/>
+				   <ImageView android:id="@+id/ImageView_icon_lock"
+						android:layout_width="26px"
+						android:layout_height="26px"
+						android:layout_gravity="center"
+						android:background="@drawable/dtvplayer_icon_lock" 
+						android:visibility="invisible"/>
+				</LinearLayout>  
+
+				<LinearLayout    
+					android:layout_width="wrap_content"    
+					android:layout_height="wrap_content"
+					android:layout_marginLeft="30px"
+					>
+					<ImageView android:id="@+id/ImageView_icon_epg"
+						android:layout_width="50px"
+						android:layout_height="26px"
+						android:layout_gravity="center"
+						android:background="@drawable/dtvplayer_icon_epg" 
+						android:visibility="gone"/>
+					<ImageView android:id="@+id/ImageView_icon_sub"
+						android:layout_width="50px"
+						android:layout_height="26px"
+						android:layout_gravity="center"
+						android:background="@drawable/dtvplayer_icon_sub" 
+						android:visibility="gone"/>
+					<ImageView android:id="@+id/ImageView_icon_txt"
+						android:layout_width="50px"
+						android:layout_height="26px"
+						android:layout_gravity="center"
+						android:background="@drawable/dtvplayer_icon_txt" 
+						android:visibility="gone"/>
+				</LinearLayout>  
+						
+				<TextView 
+					android:id="@+id/Text_channel_type"
+					android:layout_width="wrap_content"
+					android:layout_height="40px"
+					android:textSize="19px" 
+					android:padding="7px"
+					android:shadowColor="@android:color/white"
+					android:gravity="center"
+					>
+				</TextView>
+			</LinearLayout>
+			
+			<TextView 
+				android:id="@+id/Text_proname"
+				android:layout_width="fill_parent"
+				android:layout_height="40px"
+				android:textSize="32px"
+				android:layout_below="@+id/LinearLayoutNoAndName"
+				android:gravity="center"
+				android:shadowColor="@android:color/white"
+				>
+			</TextView>
+		</RelativeLayout>
+			
+		<RelativeLayout android:id="@+id/RelativeLayoutCurrentEvent"
+			android:layout_toRightOf="@+id/RelativeLayoutNoAndName"
+			android:layout_width="594px" 
+			android:layout_height="100px" 
+			android:layout_marginRight="45px" 
+			android:layout_marginTop="8px"
+			>
+			<ProgressBar android:id="@+id/progressBarHorizontal" 
+				 			 android:layout_height="0px" 
+				 			 android:layout_width="fill_parent" 
+								style="?android:attr/progressBarStyleHorizontal" />
+			<TextView 
+			      android:id="@+id/Text_curevent"
+			      android:text="@string/dtvplayer_no_current_event"
+			      android:layout_width="fill_parent"
+			      android:layout_height="25px"
+			      android:textSize="20px" 
+			      android:layout_marginTop="8px"
+			      android:paddingLeft="35px"
+			      android:shadowColor="@android:color/white"
+			      >
+			</TextView>
+			
+			<TextView 
+			      android:id="@+id/Text_title_info"
+			      android:text="@string/dtvplayer_title_info"
+			      android:layout_width="fill_parent"
+			      android:layout_height="25px"
+			      android:layout_below="@+id/Text_curevent"
+			      android:textSize="20px"
+			      android:paddingLeft="35px"
+			      >
+			</TextView>
+			<TextView 
+			      android:id="@+id/Text_detail_info"
+			      android:text="@string/dtvplayer_detail_info"
+			      android:layout_width="fill_parent"
+			      android:layout_height="25px"
+			      android:layout_below="@+id/Text_title_info"
+			      android:textSize="20px"
+			      android:paddingLeft="35px"
+			      >
+			</TextView>			
+		</RelativeLayout>
+			
+		<RelativeLayout
+			android:layout_toRightOf="@+id/RelativeLayoutCurrentEvent"			
+			android:layout_height="100px"
+			android:layout_width="200px"
+			android:layout_marginRight="16.5px"
+			android:layout_marginTop="15px"
+			>
+			<TextView 
+				android:id="@+id/Text_MTS_info" 
+				android:background="@drawable/dtvplayer_infobar_text_bg"
+				android:layout_alignParentTop="true" 
+				android:layout_width="78px" 
+				android:layout_height="24px"
+				android:layout_alignParentLeft="true"
+				android:textColor="@android:color/white"
+				android:textSize="18px"
+				android:gravity="center"
+
+				>
+			</TextView>
+			<TextView
+				android:id="@+id/Text_screentype_info" 
+				android:background="@drawable/dtvplayer_infobar_text_bg"
+				android:layout_width="78px" 
+				android:layout_height="24px"
+				android:layout_alignParentLeft="true"
+				android:textColor="@android:color/white"
+				android:textSize="18px"
+				android:gravity="center"
+				android:layout_below="@+id/MTS_info">
+			</TextView>
+
+			<TextView 
+					android:id="@+id/Text_parent_control_info_icon" 
+					android:background="@drawable/dtvplayer_infobar_text_bg"
+					android:layout_width="78px" 
+					android:layout_height="24px"
+					android:layout_alignParentLeft="true"
+					android:textColor="@android:color/white"
+					android:textSize="18px"
+					android:gravity="center"
+					android:layout_below="@+id/Text_screentype_info">
+			</TextView>
+		</RelativeLayout>
+	</RelativeLayout>
+		
+	<!--Program Number display-->	
+	<RelativeLayout android:id="@+id/RelativeLayoutProNumer"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:visibility="invisible">
+		<TextView 
+			android:id="@+id/Text_program_no"
+			android:textColor="@color/red"
+			android:layout_width="210px"
+			android:layout_height="70px"
+			android:layout_below="@+id/Text_curevent"
+			android:textSize="65px" 
+			android:gravity="center">
+		</TextView>
+	</RelativeLayout>
+
+		
+	<!--PvrIcon display-->	
+	<RelativeLayout android:id="@+id/RelativeLayoutPvrIcon"
+		android:layout_width="180px" 
+		android:layout_height="48px"
+		android:background="@drawable/dtvplayer_pvr_icon_bg"
+		android:layout_alignParentTop="true"
+		android:layout_marginTop="8px"
+		android:layout_alignParentRight="true"
+		android:layout_marginRight="50px"
+		android:gravity="center"
+		android:visibility="invisible">
+
+		<ImageView android:layout_width="48px" 
+			android:layout_height="fill_parent"
+			android:id="@+id/ImageView_recordingIcon" 
+			android:src="@drawable/dtvplayer_pvr_recording_icon"
+			android:layout_alignParentLeft="true"
+			android:layout_gravity="center_vertical"
+			android:padding="4px"
+			>
+		</ImageView>
+
+		<TextView 
+		      android:id="@+id/Text_recording_time"
+		      android:layout_width="fill_parent"
+		      android:layout_height="fill_parent"
+		      android:paddingLeft="10px"
+		      android:textSize="28px" 
+		      android:gravity="center"
+		      android:layout_toRightOf="@+id/ImageView_recordingIcon"
+		      >
+		</TextView>
+		<DigitalClock
+			android:id="@+id/DigitalClock"
+			android:layout_toRightOf="@+id/Text_recording_time"
+			android:textColor="@android:color/white"
+			android:layout_marginLeft="12px"
+			android:textSize="20sp"
+			android:shadowColor="@android:color/white"
+			android:shadowRadius="2.0"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>	
+	</RelativeLayout>
+		
+				
+	<!--loading icon-->
+	<RelativeLayout
+		android:orientation="horizontal"
+		android:id="@+id/RelativeLayoutLoadingIcon" 
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:gravity="center"
+		android:background="@android:color/transparent"
+		android:visibility="invisible">
+		<ProgressBar
+			android:id="@+id/ProgressBarLoad" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+		/>
+		<TextView  
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:text="@string/dtvplayer_loading"
+			android:layout_below="@+id/ProgressBarLoad"
+		/>	    
+	</RelativeLayout>
+		    
 </RelativeLayout>

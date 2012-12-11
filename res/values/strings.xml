@@ -1,7 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="hello">Hello World,DTVPlayer!</string>
     <string name="app_name">DTVPlayer</string>
+
+    <string name="dtvplayer_loading">Loading...</string>
+
+	<!--main menu button info--> 
+	<string name="dtvplayer_menu_button_list">Channel List</string>
+	<string name="dtvplayer_menu_button_epg">EPG</string>
+	<string name="dtvplayer_menu_button_settings">Settings</string>
+	<string name="dtvplayer_menu_button_program_manager">Program Manager</string>
+	<string name="dtvplayer_menu_button_timeshifting">Timeshifting</string>
+	<string name="dtvplayer_menu_button_epg_book_manager">EPG Manager</string>
+	<string name="dtvplayer_menu_button_pvr_manager">Pvr Manager</string>
+    <string name="dtvplayer_menu_button_hide">HIDE</string>
+
     
+	<string name="dtvplayer_skip_channel">Are you sure hide this channel</string>
+	<string name="dtvplayer_enter_pvr">Are you sure enter pvr</string>
+	<string name="dtvplayer_stop_pvr">Are you sure stop pvr</string>
+	<string name="dtvplayer_change_channel">Pvr is recording,Do you sure change current channel</string>
+	<string name="dtvplayer_pvr_is_running">Pvr is recording,please stop pvr recording first.</string>
+	<string name="dtvplayer_no_teletext">No Teletext</string>
+	<string name="dtvplayer_channel_is_hided">"Invalid Input,the program is hided</string>
+
+
+	<string name="dtvplayer_no_current_event">NOW: Information not available</string>
+	<string name="dtvplayer_no_next_event">NEXT: Information not available</string>
+	<string name="dtvplayer_title_info">No Title Information</string>
+  	<string name="dtvplayer_detail_info">No Detailed Information</string>
+
+	<string name="dtvplayer_no_channel_stored">No program,please scan first</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+
+	<string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
+	<string name="yes">Yes</string>
+	<string name="no">No</string>
+	
+    <string name="dtvplayer_str_time_null">00:00:00</string>
+  	<string name="dtvplayer_pvr_rec_time">Record Time</string>
+  	<string name="dtvplayer_pvr_set_start_time">You can set start time</string>
+    <string name="dtvplayer_pvr_rec_min">Min</string>
+	<string name="dtvplayer_pvr_start_time">Duration Time</string>
+	<string name="dtvplayer_pvr_record_dialog">Pvr will start,continue or ignore?</string>
+	<string name="dtvplayer_subscribe_play_dialog">Subscribed event will start,continue or ignore?</string>
+
+   
 </resources>
