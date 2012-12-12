@@ -41,10 +41,7 @@ public class DTVPlayer extends DTVActivity{
 					Intent Intent_scan = new Intent();
 					Bundle bundle = new Bundle();
 					Intent_scan.putExtras(bundle); 
-					Intent_scan.setClass(DTVPlayer.this, dvbMenuActivity.class);
-
-					Intent_scan.setAction("android.intent.action.dvbMenuActivity");
-					
+					Intent_scan.setClass(DTVPlayer.this, DTVScanDVBT.class);
 					startActivity(Intent_scan);
 					DTVPlayer.this.finish(); 
 					dialog.dismiss();

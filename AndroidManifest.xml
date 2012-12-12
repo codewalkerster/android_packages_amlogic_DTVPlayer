@@ -36,13 +36,6 @@
 		<activity android:name=".DTVCloseCaption"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVVChip"	android:theme="@style/Transparent"/> 
 
-		<activity android:name=".activity.dvbMenuActivity" android:theme="@style/transparentDialog">
-		    <intent-filter >
-		        <action android:name="android.intent.action.dvbMenuActivity"/>
-		        <category android:name="android.intent.category.DEFAULT"/>
-		    </intent-filter>
-		</activity>
-
     </application>
 
 </manifest>
