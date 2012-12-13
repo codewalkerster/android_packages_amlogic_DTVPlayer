@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+	
+	<LinearLayout 
+		android:id="@+id/RelativeLayoutBG"
+		android:layout_centerInParent="true"  
+		android:layout_width="644px" 
+		android:layout_height="472px"
+		android:background="@drawable/settings_bg"
+		android:orientation="vertical">  
+    
+ 	    <RelativeLayout android:id="@+id/RelativeLayoutTitle"
+			android:layout_alignParentTop="true"		
+			android:layout_centerInParent="true"  
+			android:layout_width="fill_parent" 
+			android:layout_height="50px">  
+			
+           <TextView 
+		      android:id="@+id/title"
+		      android:layout_width="644px"
+		      android:layout_height="fill_parent"
+		      android:gravity="center"
+		      android:textSize="24sp">
+		    </TextView>
+		</RelativeLayout>   
+           
+        <RelativeLayout
+				android:id="@+id/inforbar_line" 
+				android:layout_width="fill_parent"
+				android:layout_height="2px"
+				android:layout_marginRight="20px"
+				android:layout_marginLeft="20px"
+				android:background="@drawable/line"
+				>	
+		</RelativeLayout>   
+		<RelativeLayout android:id="@+id/RelativeLayoutList"
+    		android:layout_alignParentBottom="true"	
+			android:layout_centerInParent="true"  
+			android:layout_width="fill_parent" 
+			android:layout_height="370px"
+			android:paddingLeft="10px"
+			android:paddingRight="13px"
+			>		 
+			<ListView 
+				android:id="@+id/settings_list"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:cacheColorHint="#00000000"
+				android:divider="#0000"
+				android:dividerHeight="0px"
+				android:focusable="true"
+				android:listSelector="@anim/list_item_focus"
+				></ListView>     
+		</RelativeLayout>
+
+		<LinearLayout
+    		android:layout_width="fill_parent"
+			android:layout_height="50px"
+			android:layout_marginRight="20px"
+			android:layout_marginLeft="20px"
+    		android:orientation="vertical">
+			<RelativeLayout
+				android:id="@+id/inforbar_line" 
+				android:layout_width="fill_parent"
+				android:layout_height="2px"
+				android:background="@drawable/line"
+				>	
+			</RelativeLayout>
+	     
+  	     	<LinearLayout
+	    		android:layout_width="match_parent"
+	    		android:layout_height="match_parent"
+	    		android:orientation="horizontal"
+	    		android:layout_alignParentBottom="true"
+	    		android:gravity="center">
+    		
+	    		<ImageView 
+	    			android:layout_width="wrap_content"
+	    			android:layout_height="wrap_content"
+					android:background="@drawable/move"
+	    		>
+	    		</ImageView>
+	    		<TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center"
+			        android:text="@string/help_info_move"
+			        android:textColor="#FFFFFFFF"
+			        android:textSize="24sp" 
+			        android:layout_marginRight="30px"
+			        />
+	    		<ImageView 
+	    			android:layout_width="wrap_content"
+	    			android:layout_height="wrap_content"
+					android:background="@drawable/enter"
+	    		></ImageView>
+	    		<TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center"
+			        android:text="@string/help_info_select"
+			        android:textColor="#FFFFFFFF"
+			        android:textSize="24sp"
+			        android:layout_marginRight="30px"
+			        />
+	    		<ImageView 
+	    			android:layout_width="wrap_content"
+	    			android:layout_height="wrap_content"
+					android:background="@drawable/return_icon"
+	    		></ImageView>
+	    		<TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center"
+			        android:text="@string/help_info_return"
+			        android:textColor="#FFFFFFFF"
+			        android:textSize="24sp" />
+    		</LinearLayout>
+		</LinearLayout>	
+	</LinearLayout>
+</RelativeLayout>
+ 

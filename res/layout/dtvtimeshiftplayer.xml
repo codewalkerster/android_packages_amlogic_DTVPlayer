@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout_video"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/transparent"
+    android:foreground="@color/transparent">
+	
+		<RelativeLayout android:id="@+id/RelativeLayoutRadioBg"
+				android:layout_width="fill_parent" 
+    			android:layout_height="fill_parent"
+				android:gravity="center"
+				android:visibility="invisible"
+				>
+			<ImageView android:layout_width="fill_parent" 
+    			android:layout_height="fill_parent"
+				android:id="@+id/ImageViewRadioBg"
+				android:src="@drawable/dtvplayer_radio_bg"/>		
+		</RelativeLayout>	
+       
+		<RelativeLayout android:id="@+id/RelativeLayoutTimeshiftIcon"
+				android:layout_width="48px" android:layout_height="48px"
+				android:layout_alignParentTop="true"
+				android:layout_marginTop="8px"
+				android:layout_alignParentRight="true"
+				android:layout_marginRight="230px"
+				android:gravity="center"
+				android:visibility="invisible"
+				android:background="@drawable/dtvplayer_pvr_icon_bg"
+				>
+			<ImageView android:layout_width="fill_parent" 
+    					android:layout_height="fill_parent"
+						android:id="@+id/ImageViewTimeshiftIcon" 
+						android:src="@drawable/timeshifting_icon"
+						android:layout_alignParentLeft="true"
+						android:visibility="invisible"
+						android:padding="4px"
+						>
+			</ImageView>
+	</RelativeLayout>
+
+			
+	<RelativeLayout 
+		android:id="@+id/infobarLayout" 
+		android:background="@drawable/movie_play_bk"
+	 	android:layout_alignParentBottom="true"
+		android:layout_width="752px"
+		android:layout_height="150px"
+		android:paddingBottom="15px"
+		android:layout_marginBottom="15px"
+		android:layout_centerHorizontal ="true"
+	 	>
+			
+		<LinearLayout android:id="@+id/LinearLayout02"
+			 android:layout_height="wrap_content"
+			 android:layout_above="@+id/PlayBtn" 
+			 android:layout_marginLeft="15px" 
+			 android:layout_marginTop="15px"
+			 android:layout_width="fill_parent">
+			<TextView android:id="@+id/TextView03"
+			 android:layout_width="wrap_content" 
+			 android:layout_height="wrap_content" 
+			 android:layout_gravity="center_vertical" 
+			 android:text="@string/dtvplayer_str_time_null" 
+			 android:layout_weight="1"
+			 android:layout_marginLeft="10px">
+			</TextView>
+			<SeekBar android:id="@+id/SeekBar02"
+			 android:layout_height="wrap_content" 
+			 android:layout_width="wrap_content" 
+			 android:layout_weight="25"
+			 android:focusable="false">
+			</SeekBar>
+			<TextView android:id="@+id/TextView04"
+			 android:layout_width="wrap_content" 
+			 android:layout_height="wrap_content" 
+			 android:text="@string/dtvplayer_str_time_null" 
+			 android:layout_gravity="center_vertical" 
+			 android:layout_weight="1" 
+			 android:layout_marginRight="15px" 
+			 android:layout_marginLeft="10px">
+			 </TextView>
+		</LinearLayout>
+
+		<LinearLayout android:id="@+id/LinearLayout01"
+		 android:layout_width="wrap_content" 
+		 android:layout_height="wrap_content" 
+	
+		 android:layout_centerHorizontal ="true"
+		 android:layout_below="@+id/LinearLayout02">
+			 <ImageButton android:layout_width="wrap_content"
+			  android:layout_height="wrap_content" 
+			  android:id="@+id/FastReverse" 
+			  android:background="@drawable/reverse_button" 
+			  android:layout_below="@+id/LinearLayout02" 
+			  android:layout_marginLeft="10px">
+			 </ImageButton>
+			 <ImageButton android:layout_height="wrap_content" 
+			  android:layout_width="wrap_content" 
+			  android:id="@+id/PlayBtn" 
+			  android:background="@drawable/play_button">
+			 </ImageButton>
+			 <ImageButton android:layout_width="wrap_content"
+			  android:layout_height="wrap_content" 
+			  android:id="@+id/FastForward" 
+			  android:background="@drawable/forward_button" 
+			  android:layout_below="@+id/LinearLayout02" 
+			  android:layout_toRightOf="@+id/PlayBtn">
+			 </ImageButton>
+			 <ImageButton android:layout_width="wrap_content"
+			  android:layout_height="wrap_content" 
+			  android:id="@+id/moreBtn" 
+			  android:background="@drawable/more_button" 
+			  android:layout_toRightOf="@+id/FastForward" 
+			  android:layout_below="@+id/LinearLayout02">
+			 </ImageButton>
+	 	</LinearLayout>
+	</RelativeLayout>
+
+	<RelativeLayout
+		android:orientation="horizontal"
+		android:id="@+id/bufferLayout" 
+  		android:layout_width="wrap_content"
+  		android:layout_height="wrap_content"
+  		android:layout_gravity="center"
+  		android:gravity="center"
+  		android:background="@android:color/transparent"
+  		android:layout_centerInParent="true"
+  		>
+		<ProgressBar
+			android:id="@+id/ProgressBarLoad" 
+			android:layout_width="wrap_content" 
+		    android:layout_height="wrap_content" 
+		/>
+		<TextView  
+		    android:layout_width="wrap_content" 
+		    android:layout_height="wrap_content" 
+		    android:text="@string/dtvplayer_loading"
+		    android:layout_below="@+id/ProgressBarLoad"
+	    />
+	</RelativeLayout>
+	
+</RelativeLayout>

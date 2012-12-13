@@ -32,7 +32,7 @@ public class DTVPlayer extends DTVActivity{
 		
 		DTVPlayerUIInit();
 
-		if(isHavePragram()==false){
+		if(isHavePragram()==true){
 			AlertDialog.Builder builder = new AlertDialog.Builder(DTVPlayer.this);
 			builder.setMessage(R.string.dtvplayer_no_channel_stored)
 			.setCancelable(false)
@@ -388,10 +388,28 @@ public class DTVPlayer extends DTVActivity{
 			// TODO Auto-generated method stub	
 			switch (v.getId()) {
 				case R.id.Button_mainmenu_list:
+					break;
 				case R.id.Button_mainmenu_epg:
+					HideMainMenu();
+					HideControlBar();
+					Intent Intent_epg = new Intent();
+					Intent_epg.setClass(DTVPlayer.this, DTVEpg.class);
+					startActivity(Intent_epg);
+					break;
 				case R.id.Button_mainmenu_settings:
-				case R.id.Button_mainmenu_program_manager:	
+					Intent Intent_settings = new Intent();
+					Bundle bundle = new Bundle();
+					Intent_settings.putExtras(bundle); 
+					Intent_settings.setClass(DTVPlayer.this, DTVSettingsUI.class);
+					startActivity(Intent_settings);
+					break;
+				case R.id.Button_mainmenu_program_manager:
+					break;
 				case R.id.Button_mainmenu_timeshift:
+					Intent Intent_timeshift = new Intent();
+					Intent_timeshift.setClass(DTVPlayer.this, DTVTimeshifting.class);
+					startActivity(Intent_timeshift);
+					break;
 				case R.id.Button_mainmenu_prv:	
 				case R.id.Button_mainmenu_manage:
 				case R.id.Button_mainmenu_skip:				

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="1280px"
+android:layout_height="720px"
+android:id="@+id/epg_layout_parent"
+>
+
+	<LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="110px"
+	android:background ="@drawable/epg_title_bg"
+	android:id="@+id/epg_layout_top"
+	>
+			<LinearLayout
+			android:id="@+id/epg_layout_ProgNameAndDate"
+			android:layout_width="300px"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft ="40px"
+			android:layout_marginTop  ="30px"
+			android:orientation="vertical" >
+		   </LinearLayout>
+		   
+			<LinearLayout
+			android:id="@+id/epg_layout_EventNameAndDetailInfo"
+			android:layout_width="900px"
+			android:layout_height="fill_parent"
+			android:layout_marginTop  ="7px"
+			android:orientation="vertical" >
+		   </LinearLayout>
+	</LinearLayout>
+
+	<LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="525px"
+	android:id="@+id/epg_layout_mid"
+	
+	 >
+			   	<LinearLayout
+				android:id="@+id/epg_layout_Date"
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:background ="@drawable/epg_date_bg"
+				android:orientation="vertical" 
+				android:paddingLeft="16px">
+			   </LinearLayout>
+
+				<LinearLayout
+				android:id="@+id/epg_layout_eitlist"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:background="@drawable/epg_eit_list_bg"
+				android:orientation="vertical">
+						
+								<HorizontalScrollView 
+								android:id="@+id/horizontalScrollView1" 
+								
+								android:layout_width="wrap_content" 
+								android:layout_height="wrap_content">
+								
+									    <LinearLayout 
+									    android:id="@+id/HrzSVlinearLayout" 
+									    android:layout_width="match_parent" 
+									    android:layout_height="match_parent" 
+									    android:orientation="vertical">
+									    
+										    <LinearLayout 
+										    android:id="@+id/EitHourBglinearLayout" 
+										    android:layout_width="wrap_content" 
+										    android:layout_height="38px" 
+										    android:focusable = "false"
+										    android:orientation="horizontal">
+											</LinearLayout>
+											
+											<ListView 
+										    android:id="@+id/EitListView"
+										    android:layout_width="5760px" 
+										    android:layout_height="480px">
+										    </ListView>
+										</LinearLayout>
+								</HorizontalScrollView>
+				</LinearLayout>
+			
+	</LinearLayout>
+	
+	<LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="85px"
+	android:background ="@drawable/epg_bottom_bg"
+	android:id="@+id/epg_layout_bottom"
+	>
+
+
+	   <TextView
+	  	android:id="@+id/epg_tv_helpinfo"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+
+    
+ 
+	    android:textStyle="bold"   
+	    android:textColor="#FFFFFF"   
+	    android:shadowColor="#ff000000"  
+	    android:shadowDx="2"  
+
+	  	android:textSize="16sp"
+	  	android:gravity="center"
+	  	android:singleLine="true">
+		</TextView>
+
+
+		
+		
+	</LinearLayout>
+</LinearLayout>
+
+
+
+

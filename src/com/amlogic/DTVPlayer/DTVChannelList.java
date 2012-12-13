@@ -32,17 +32,22 @@ public class DTVChannelList extends DTVActivity{
 		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,true);
 	}
 
-	public void onCreate(Bundle savedInstanceState){
-		Log.d(TAG, "onCreate");
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dtvchannellist); 
-		/*get list data*/
+
+	private void DTVChannelListUIInit(){
 		getListData();
 		ListView_channel = (ListView) findViewById(R.id.ListView_channel);
 		myAdapter = new IconAdapter(DTVChannelList.this,null);
 		ListView_channel.setOnItemSelectedListener(mOnSelectedListener);
 		ListView_channel.setOnScrollListener(new listOnScroll()); 
 		ListView_channel.setAdapter(myAdapter);
+	}
+	
+	public void onCreate(Bundle savedInstanceState){
+		Log.d(TAG, "onCreate");
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.dtvchannellist); 
+		/*get list data*/
+		DTVChannelListUIInit();
 	}
 
 	public void onConnected(){

@@ -46,5 +46,89 @@
 	<string name="dtvplayer_pvr_record_dialog">Pvr will start,continue or ignore?</string>
 	<string name="dtvplayer_subscribe_play_dialog">Subscribed event will start,continue or ignore?</string>
 
-   
+  <!--settings help--> 
+    <string name="help_info_move">Move</string>
+  	<string name="help_info_select">Select</string>
+  	<string name="help_info_return">Return</string>
+  	<string name="help_info_number">Number</string>
+  	
+    <!--settings-->
+    <string name="settings_title">Settings</string>
+	<array name="settings_content" translatable="false">
+		<item>Channel Search</item>  
+		<item>Subtitle Switch</item>	    
+		<item>Picture Size</item>	
+		<item>Picture Size</item>
+		<item>Audio Track</item>
+		<item>Factory data reset</item>	
+		<item>Set password</item>	
+		<item>Select storage device</item>
+		<item>Timeshifting setting</item>
+		<item>Parental rating age</item>
+		<item>TTX Region</item>
+	</array>
+
+	<string name="invalid_input">Invalid Input</string>
+	<string name="invalid_password">Invalid password</string>
+	<string name="no_channel_stored">There are no channels stored, do you want to update the list of channels?</string>
+	<string name="all">All</string>
+         
+	<string name="subtitle">Subtitle</string>
+	<string name="subtitle_switch">Subtitle Switch</string>
+	<string name="screen_type ">Picture Size</string>
+	<string name="audio_track">Audio Track</string>
+	
+	<string name="scan_program">Channel Search</string>
+	<string name="factory_reset ">Factory data reset</string>
+	<string name="password_set ">Set password</string>
+	<string name="sure_factory_set">Are you sure factory reset</string>
+
+    <string name="sync_time_item">Update system time</string> 
+	<string name="sync_time">Are you sure synchronize system time by TDT time</string>
+	<string name="pvr_storage_select">Select storage device</string>
+    <string name="timeshift_time_set">Timeshifting setting</string>
+    <string name="parental_rating_set">Parental rating age</string>
+    <string name="ttx_region">TTX Region</string>
+    <string name="lcn_switch">LCN</string>	
+    
+
+    <string name="timeshift_when_recording">Now is recording,if you want to timeshifting,you must first stop pvr</string>
+    <string name="timeshift_when_radio">Now is radio, not support timeshifting</string>
+    <string name="timeshift_when_lock">Locked channel,please unlock first</string>
+    
+    <string name="auto">Auto</string>
+	<string name="type_4_3">4:3</string>
+	<string name="type_16_9">16:9</string>
+
+	<string name="mono">Mono</string>
+	<string name="SAP">SAP</string>	
+	<string name="stereo">Stereo</string>
+	<string name="left">Left</string>
+	<string name="right">Right</string>
+
+	<string name="enter_cur_password">Current password</string>
+	<string name="enter_new_password">New password</string>
+	<string name="confirm_password">Confirm password</string>
+	<string name="enter_lock_password">Enter your lock password</string>
+	<string name="enter_password">Enter Password</string>
+
+	<string name="vchip">VChip</string>
+	<string name="closed_caption">Closed Caption</string>	
+  <!--Timeshifting-->
+  <string name="timeshifting_exit_message">Do you want exit timeshifting</string>
+   	
+  <!--DTV EPG--> 	
+  	<string name="epg_sunday">Sunday</string>
+  	<string name="epg_monday">Monday</string>
+    <string name="epg_tuesday">Tuesday</string>
+    <string name="epg_wednesday">Wednesday</string>
+    <string name="epg_thursday">Thursday</string>
+    <string name="epg_friday">Friday</string>
+    <string name="epg_saturday">Saturday</string>
+    <string name="epg_loading">Loading EPG data......</string>
+    <string name="epg_waiting">Please wait......</string>
+    <string name="epg_no_epg_info">No EPG Info</string>
+    <string name="epg_operate_des01">OK--BookPlay/BookRecord     		  INFO--EIT Dtails</string>
+   	
+     	
 </resources>
