@@ -318,7 +318,8 @@
 		
 	<!--Program Number display-->	
 	<RelativeLayout android:id="@+id/RelativeLayoutProNumer"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
 		android:visibility="invisible">
 		<TextView 
@@ -400,5 +401,20 @@
 			android:layout_below="@+id/ProgressBarLoad"
 		/>	    
 	</RelativeLayout>
+
+	<RelativeLayout 
+		android:id="@+id/information"
+		android:layout_centerInParent="true"  
+		android:layout_width="300px" 
+		android:layout_height="50px"
+		android:visibility="gone">    
+		<TextView 
+			android:id="@+id/information_text"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:gravity="center"
+			android:textSize="24sp">
+		</TextView>
+	</RelativeLayout>   	
 		    
 </RelativeLayout>

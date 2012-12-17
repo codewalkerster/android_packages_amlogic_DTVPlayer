@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="1280px"
+    android:layout_height="720px">
 	
 	<LinearLayout 
 		android:id="@+id/RelativeLayoutBG"
 		android:layout_centerInParent="true"  
 		android:layout_width="644px" 
-		android:layout_height="472px"
+		android:layout_height="422px"
 		android:background="@drawable/settings_bg"
 		android:orientation="vertical">  
     
@@ -39,7 +39,7 @@
     		android:layout_alignParentBottom="true"	
 			android:layout_centerInParent="true"  
 			android:layout_width="fill_parent" 
-			android:layout_height="370px"
+			android:layout_height="320px"
 			android:paddingLeft="10px"
 			android:paddingRight="13px"
 			>		 

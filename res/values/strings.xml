@@ -2,8 +2,16 @@
 <resources>
     <string name="app_name">DTVPlayer</string>
 
-    <string name="dtvplayer_loading">Loading...</string>
+	<!--gobal-->
+	<string name="on">On</string>
+    <string name="off">Off</string>
+	<string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
+	<string name="yes">Yes</string>
+	<string name="no">No</string>
+	<string name="all">All</string>
 
+    <string name="dtvplayer_loading">Loading...</string>
 	<!--main menu button info--> 
 	<string name="dtvplayer_menu_button_list">Channel List</string>
 	<string name="dtvplayer_menu_button_epg">EPG</string>
@@ -13,8 +21,6 @@
 	<string name="dtvplayer_menu_button_epg_book_manager">EPG Manager</string>
 	<string name="dtvplayer_menu_button_pvr_manager">Pvr Manager</string>
     <string name="dtvplayer_menu_button_hide">HIDE</string>
-
-    
 	<string name="dtvplayer_skip_channel">Are you sure hide this channel</string>
 	<string name="dtvplayer_enter_pvr">Are you sure enter pvr</string>
 	<string name="dtvplayer_stop_pvr">Are you sure stop pvr</string>
@@ -22,22 +28,11 @@
 	<string name="dtvplayer_pvr_is_running">Pvr is recording,please stop pvr recording first.</string>
 	<string name="dtvplayer_no_teletext">No Teletext</string>
 	<string name="dtvplayer_channel_is_hided">"Invalid Input,the program is hided</string>
-
-
 	<string name="dtvplayer_no_current_event">NOW: Information not available</string>
 	<string name="dtvplayer_no_next_event">NEXT: Information not available</string>
 	<string name="dtvplayer_title_info">No Title Information</string>
   	<string name="dtvplayer_detail_info">No Detailed Information</string>
-
 	<string name="dtvplayer_no_channel_stored">No program,please scan first</string>
-    <string name="on">On</string>
-    <string name="off">Off</string>
-
-	<string name="cancel">Cancel</string>
-    <string name="ok">Ok</string>
-	<string name="yes">Yes</string>
-	<string name="no">No</string>
-	
     <string name="dtvplayer_str_time_null">00:00:00</string>
   	<string name="dtvplayer_pvr_rec_time">Record Time</string>
   	<string name="dtvplayer_pvr_set_start_time">You can set start time</string>
@@ -46,7 +41,7 @@
 	<string name="dtvplayer_pvr_record_dialog">Pvr will start,continue or ignore?</string>
 	<string name="dtvplayer_subscribe_play_dialog">Subscribed event will start,continue or ignore?</string>
 
-  <!--settings help--> 
+    <!--settings help--> 
     <string name="help_info_move">Move</string>
   	<string name="help_info_select">Select</string>
   	<string name="help_info_return">Return</string>
@@ -58,7 +53,6 @@
 		<item>Channel Search</item>  
 		<item>Subtitle Switch</item>	    
 		<item>Picture Size</item>	
-		<item>Picture Size</item>
 		<item>Audio Track</item>
 		<item>Factory data reset</item>	
 		<item>Set password</item>	
@@ -71,15 +65,13 @@
 	<string name="invalid_input">Invalid Input</string>
 	<string name="invalid_password">Invalid password</string>
 	<string name="no_channel_stored">There are no channels stored, do you want to update the list of channels?</string>
-	<string name="all">All</string>
+	
          
 	<string name="subtitle">Subtitle</string>
 	<string name="subtitle_switch">Subtitle Switch</string>
 	<string name="screen_type ">Picture Size</string>
 	<string name="audio_track">Audio Track</string>
 	
-	<string name="scan_program">Channel Search</string>
-	<string name="factory_reset ">Factory data reset</string>
 	<string name="password_set ">Set password</string>
 	<string name="sure_factory_set">Are you sure factory reset</string>
 
@@ -90,11 +82,6 @@
     <string name="parental_rating_set">Parental rating age</string>
     <string name="ttx_region">TTX Region</string>
     <string name="lcn_switch">LCN</string>	
-    
-
-    <string name="timeshift_when_recording">Now is recording,if you want to timeshifting,you must first stop pvr</string>
-    <string name="timeshift_when_radio">Now is radio, not support timeshifting</string>
-    <string name="timeshift_when_lock">Locked channel,please unlock first</string>
     
     <string name="auto">Auto</string>
 	<string name="type_4_3">4:3</string>
@@ -116,7 +103,10 @@
 	<string name="closed_caption">Closed Caption</string>	
   <!--Timeshifting-->
   <string name="timeshifting_exit_message">Do you want exit timeshifting</string>
-   	
+  <string name="timeshift_when_recording">Now is recording,if you want to timeshifting,you must first stop pvr</string>
+  <string name="timeshift_when_radio">Now is radio, not support timeshifting</string>
+  <string name="timeshift_when_lock">Locked channel,please unlock first</string>
+     	
   <!--DTV EPG--> 	
   	<string name="epg_sunday">Sunday</string>
   	<string name="epg_monday">Monday</string>

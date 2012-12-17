@@ -17,50 +17,24 @@ import android.view.animation.*;
 import android.widget.*;
 import android.app.*;
 import android.content.*;
+import android.os.*;
+import android.text.*;
+import android.text.method.*;
+import android.os.SystemProperties;
 
 public class DTVPlayer extends DTVActivity{
 	private static final String TAG="DTVPlayer";
+	private Toast toast=null;
 	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
-
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.dtvplayer);
-
+		SystemProperties.set("vplayer.hideStatusBar.enable", "true");
 		openVideo();
-		
 		DTVPlayerUIInit();
-
-		if(isHavePragram()==true){
-			AlertDialog.Builder builder = new AlertDialog.Builder(DTVPlayer.this);
-			builder.setMessage(R.string.dtvplayer_no_channel_stored)
-			.setCancelable(false)
-			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					Intent Intent_scan = new Intent();
-					Bundle bundle = new Bundle();
-					Intent_scan.putExtras(bundle); 
-					Intent_scan.setClass(DTVPlayer.this, DTVScanDVBT.class);
-					startActivity(Intent_scan);
-					DTVPlayer.this.finish(); 
-					dialog.dismiss();
-                }})
-				.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-					DTVPlayer.this.finish();  
-					dialog.dismiss();
-					}
-                });
-				AlertDialog alert = builder.create();
-				alert.show();	
-				WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-				lp.dimAmount=1.00f;
-				alert.getWindow().setAttributes(lp);
-				alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-
-				return;
-        }
+		if(isHavePragram()==true)
+			showNoProgramDia();
 	}
 
 	public void onConnected(){
@@ -87,19 +61,34 @@ public class DTVPlayer extends DTVActivity{
 				break;
 			case TVMessage.TYPE_SCAN_END:
 				Log.d(TAG, "Scan End");
-				
+				break;
+			case TVMessage.TYPE_PROGRAM_BLOCK:
+				break;
+			case TVMessage.TYPE_PROGRAM_UNBLOCK:
+				break;
+			case TVMessage.TYPE_SIGNAL_LOST:
+				break;
+			case TVMessage.TYPE_SIGNAL_RESUME:
+				break;	
+			case TVMessage.TYPE_DATA_LOST:
+				break;
+			case TVMessage.TYPE_DATA_RESUME:
+				break;
 			default:
 				break;
 		}
 	}
 
-
+	public void onDestroy() {
+        Log.d(TAG, "onDestroy");
+		SystemProperties.set("vplayer.hideStatusBar.enable", "false");
+        super.onDestroy();
+    }
 	public void onNewIntent(Intent intent){
 		Log.d(TAG, ">>>>>onNewIntent<<<<<");
 		super.onNewIntent(intent);
 	    setIntent(intent);
 	}
-
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event){
@@ -132,6 +121,7 @@ public class DTVPlayer extends DTVActivity{
 			case KeyEvent.KEYCODE_8:
 			case KeyEvent.KEYCODE_9:
 				Log.d(TAG,"KEYCODE_0----9");
+				DealDigtalKey(keyCode);
 				return true;
 			case KeyEvent.KEYCODE_BACK:
 				if(mainmenu_show_flag){
@@ -180,6 +170,7 @@ public class DTVPlayer extends DTVActivity{
 				return true;	
 			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE: //16:9/4:3
 				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_DISPAYMODE");
+				shortcut_key_deal("pictrue_mode");
 				return true;
 			case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
 				Log.d(TAG,"KEYCODE_MEDIA_PREVIOUS");	
@@ -206,7 +197,6 @@ public class DTVPlayer extends DTVActivity{
 		
 		return super.onKeyDown(keyCode, event);
 	}
-
 
 
 	private RelativeLayout RelativeLayout_inforbar=null;
@@ -240,7 +230,6 @@ public class DTVPlayer extends DTVActivity{
 	ImageView ImageView_icon_sub=null;
 	ImageView ImageView_icon_txt=null;
 
-	
 	ImageView ImageView_recordingIcon=null;
 	TextView Text_recording_time=null;
 	TextView Text_button_info=null;
@@ -383,6 +372,36 @@ public class DTVPlayer extends DTVActivity{
 		init_Animation();
 	}
 
+	private void showNoProgramDia(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(DTVPlayer.this);
+		builder.setMessage(R.string.dtvplayer_no_channel_stored)
+		.setCancelable(false)
+		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				Intent Intent_scan = new Intent();
+				Bundle bundle = new Bundle();
+				Intent_scan.putExtras(bundle); 
+				Intent_scan.setClass(DTVPlayer.this, DTVScanDVBT.class);
+				startActivity(Intent_scan);
+				DTVPlayer.this.finish(); 
+				dialog.dismiss();
+	        }})
+		.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+			DTVPlayer.this.finish();  
+			dialog.dismiss();
+			}
+        });
+		AlertDialog alert = builder.create();
+		alert.show();	
+		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+		lp.dimAmount=1.00f;
+		alert.getWindow().setAttributes(lp);
+		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		return;
+	}
+
 	class MouseClick implements OnClickListener{
 	    public void onClick(View v) {
 			// TODO Auto-generated method stub	
@@ -401,7 +420,7 @@ public class DTVPlayer extends DTVActivity{
 					Bundle bundle = new Bundle();
 					Intent_settings.putExtras(bundle); 
 					Intent_settings.setClass(DTVPlayer.this, DTVSettingsUI.class);
-					startActivity(Intent_settings);
+					startActivityForResult(Intent_settings,1);
 					break;
 				case R.id.Button_mainmenu_program_manager:
 					break;
@@ -417,6 +436,32 @@ public class DTVPlayer extends DTVActivity{
 			}
 		}
     }
+
+	private int bar_hide_count =0;
+	private int inforbar_distime=1000;
+	private int bar_auto_hide_duration=5;
+	private Handler	timer_handler = new Handler();   
+	private Runnable timer_runnable = new Runnable(){
+		public void run() {
+			if(inforbar_show_flag==true){	
+				if(bar_hide_count >= bar_auto_hide_duration){
+					HideControlBar();
+					HideProgramNo();
+				}
+				else{
+					bar_hide_count ++;
+				}		
+			} 
+		 
+			HideInformation();
+			//recording time
+			if(DTVPlayerIsRecording()){
+				DTVPlayerSetRecordingTime();
+			}	
+			timer_handler.postDelayed(this, inforbar_distime);  
+		}   
+	};
+
 
 	private Animation showAction;
 	private Animation hideAction;
@@ -500,9 +545,9 @@ public class DTVPlayer extends DTVActivity{
 			RelativeLayout_recording_icon.startAnimation(showPvrAction);
 			RelativeLayout_recording_icon.setVisibility(View.VISIBLE);
 		}
-
+		bar_hide_count = 0;
 		inforbar_show_flag = true;
-		//timer_handler.postDelayed(timer_runnable, inforbar_distime); 
+		timer_handler.postDelayed(timer_runnable, inforbar_distime); 
 	}
 
 	private void HideControlBar(){
@@ -548,6 +593,307 @@ public class DTVPlayer extends DTVActivity{
 		ImageView_icon_epg=(ImageView)findViewById(R.id.ImageView_icon_epg);
 		ImageView_icon_sub=(ImageView)findViewById(R.id.ImageView_icon_sub);
 		ImageView_icon_txt=(ImageView)findViewById(R.id.ImageView_icon_txt);
+	}
+
+	void ShowProgramNo(int value){
+		if(value!=0){
+			RelativeLayout RelativeLayoutProNumer = (RelativeLayout)findViewById(R.id.RelativeLayoutProNumer);
+			TextView Text_program_no = (TextView)findViewById(R.id.Text_program_no);
+			//if(dtv_standard_atsc)
+				//program_no.setText(getMajorAndMinorNumber(channel_number));	
+			//else
+				Text_program_no.setText(String.valueOf(value));
+			RelativeLayoutProNumer.setVisibility(View.VISIBLE);
+		}	
+	}
+
+	void HideProgramNo(){
+		RelativeLayout RelativeLayoutProNumer = (RelativeLayout)findViewById(R.id.RelativeLayoutProNumer);
+		RelativeLayoutProNumer.setVisibility(View.INVISIBLE);
+	}
+
+	private boolean showInformation_flag=false;
+	void ShowInformation(String text){
+		timer_handler.removeCallbacks(timer_runnable);
+		if(showInformation_flag==false){
+			RelativeLayout layout =  (RelativeLayout)findViewById(R.id.information);
+	
+			TextView information_text = (TextView)findViewById(R.id.information_text);
+			information_text.setText(text);
+			layout.setVisibility(View.VISIBLE);
+			showInformation_flag=true;
+		}	
+		else {
+			TextView information_text = (TextView)findViewById(R.id.information_text);
+			information_text.setText(text);
+		}
+		
+		timer_handler.postDelayed(timer_runnable, inforbar_distime); 	
+	}
+
+	void HideInformation(){
+		if(showInformation_flag==true){
+			RelativeLayout layout =  (RelativeLayout)findViewById(R.id.information);
+			layout.setVisibility(View.INVISIBLE);
+			layout.setVisibility(View.GONE);
+			showInformation_flag=false;
+		}	
+	}
+	
+	private void DTVPlayerSetRecordingTime(){
+		int cur_recording_time=0;
+		cur_recording_time = DTVPlayerGetRecordDuration();	
+		TextView Text_recording_time = (TextView) findViewById(R.id.Text_recording_time);
+		Text_recording_time.setText(secToTime(cur_recording_time,false));
+	}
+
+	private boolean DTVPlayerCheckNumerInputIsValid(int pronumber){
+		//pronumber is valid or hided
+
+		return true;
+	}
+
+	boolean number_key_down = false;
+    private Handler prono_timer_handler = new Handler();  
+	private Runnable prono_timer_runnable = new Runnable() {
+		public void run() {
+			if(number_key_down){	
+				//hidePasswordDialog();
+				if((DTVPlayerCheckNumerInputIsValid(pronumber)==false)||(pronumber<=0)){
+					toast = Toast.makeText(
+						DTVPlayer.this, 
+			    		R.string.invalid_input,
+			    		Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+						
+						pronumber = 0;					
+						HideProgramNo();
+				}
+				else{	
+					if(DTVPlayerIsRecording()){
+						AlertDialog.Builder builder = new AlertDialog.Builder(DTVPlayer.this); 
+							builder.setMessage(R.string.dtvplayer_change_channel)
+							.setCancelable(false)
+							.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener(){
+								public void onClick(DialogInterface dialog, int id) {						
+									DTVPlayerStopRecording();
+									DTVPlayerPlayByProNo(pronumber);
+									updateInforbar();
+									ShowControlBar();
+									dialog.cancel();
+								}        
+							 })        
+							.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int id) {
+										dialog.cancel();            
+									}        
+							 }); 
+						AlertDialog alert = builder.create();
+			            alert.show();
+
+						WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+						lp.dimAmount=0.0f;
+						alert.getWindow().setAttributes(lp);
+						alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+
+					}
+					else{
+						DTVPlayerPlayByProNo(pronumber);
+						updateInforbar();
+						ShowControlBar();
+					}
+					
+				}	
+				number_key_down = false;
+			}	
+			prono_timer_handler.removeCallbacks(prono_timer_runnable);		
+		}   
+	};
+    
+	private boolean DTVPlayerInTeletextStatus=false;
+	private int pronumber=0;
+	private void DealDigtalKey(int value){
+		int number_key_value=0;
+		
+		if(DTVPlayerInTeletextStatus==false){
+			prono_timer_handler.removeCallbacks(prono_timer_runnable);
+			number_key_value = value - KeyEvent.KEYCODE_0;
+			pronumber = pronumber*10+number_key_value;
+			if(pronumber>9999){
+				pronumber = number_key_value;
+			}	
+			ShowProgramNo(pronumber);
+			prono_timer_handler.postDelayed(prono_timer_runnable, 1000);
+			number_key_down = true;
+		}
+		else{
+			//deal number key in Teletext mode
+		}
+	}
+
+	private void DealLeftRihtKey(){
+
+	}
+
+	private void shortcut_key_deal(String key){
+		if(key.equals("pictrue_mode")){
+			
+			int mode = DTVGetScreenMode();
+			if(mode==0){
+				ShowInformation(getString(R.string.type_4_3));
+				DTVSetScreenMode(2);
+			}
+			else  if(mode==2){
+				ShowInformation(getString(R.string.type_16_9));		
+				DTVSetScreenMode(3);
+			}
+			else  if(mode==3){
+				ShowInformation(getString(R.string.auto));		
+				DTVSetScreenMode(0);
+			}
+		}
+		else if(key.equals("AUDIOTRACK")){
+			int mode = DTVGetAudioTrack();
+			if(mode==0){ 						
+			ShowInformation(getString(R.string.right));			
+			DTVSetAudioTrack(0);
+			}
+			else  if(mode==1){
+				ShowInformation(getString(R.string.stereo));			
+				DTVSetAudioTrack(1);
+			}
+			else  if(mode==2){
+				ShowInformation(getString(R.string.left));				
+				DTVSetAudioTrack(2);
+			}	
+		}
+	}
+
+	AlertDialog alert_password=null;
+	private boolean password_dialog_show_flag=false;
+	private String cur_password=null;
+	public void hidePasswordDialog(){
+		if(alert_password!=null){
+			alert_password.cancel();
+			password_dialog_show_flag=false;
+		}
+	}
+
+
+	private AlertDialog.Builder editBuilder;
+    private EditText editText;
+	public void showPasswordDialog(){	
+		if(password_dialog_show_flag==false){
+			editText = new EditText(this);
+			editText.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(4)});
+			editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+			editBuilder.setTitle(R.string.enter_password);
+			editBuilder.setView(editText); 
+
+			alert_password = editBuilder.create();
+			password_dialog_show_flag=true;
+			alert_password.setOnKeyListener( new DialogInterface.OnKeyListener(){
+				public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+					// TODO Auto-generated method stub
+					switch(keyCode)
+					{
+						case KeyEvent.KEYCODE_DPAD_UP:	
+							dispatchKeyEvent(event);
+							return true;
+						case KeyEvent.KEYCODE_DPAD_DOWN:				
+							dispatchKeyEvent(event);
+							return true;
+						case KeyEvent.KEYCODE_DPAD_CENTER:
+							String password = editText.getText().toString();
+							cur_password = DTVPlayerGetPassword();
+							if((cur_password==null))
+							{
+								if(password.equals("1234")||password.equals("0000")){
+									PlayLockedProgram();
+									alert_password.cancel();
+									password_dialog_show_flag = false;	
+								}
+								else
+								{
+									editText.setText(null);								
+									toast = Toast.makeText(
+										DTVPlayer.this, 
+										R.string.invalid_password,
+										Toast.LENGTH_SHORT);
+									toast.setGravity(Gravity.CENTER, 0, 0);
+									toast.show();
+								}
+							}
+							else
+							{
+								if(password.equals(cur_password)||password.equals("0000")){
+									PlayLockedProgram();
+									alert_password.cancel();
+									password_dialog_show_flag = false;
+								}
+								else{
+									editText.setText(null);
+									
+									toast = Toast.makeText(
+									DTVPlayer.this, 
+						    		R.string.invalid_password,
+						    		Toast.LENGTH_SHORT);
+									toast.setGravity(Gravity.CENTER, 0, 0);
+									toast.show();
+									
+								}
+							}
+							return true;
+						case  KeyEvent.KEYCODE_BACK:
+							alert_password.cancel();
+							password_dialog_show_flag = false;
+							ShowControlBar();
+							return true;
+					}
+				return false;
+				}
+			});	
+			alert_password.show();
+			alert_password.getWindow().setLayout(500, 400);
+			WindowManager.LayoutParams lp=alert_password.getWindow().getAttributes();
+			lp.dimAmount=0.5f;
+			alert_password.getWindow().setAttributes(lp);
+			alert_password.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		}	 
+	}
+
+	private boolean programIsLocked(){
+		return false;
+	}
+
+	private boolean programIsBlocked(){
+		return false;
+	}
+
+	private int getProgramServiceType(){
+		return 0;
+	}
+	
+	private void PlayLockedProgram(){
+		if(programIsLocked()||programIsBlocked()){
+			hidePasswordDialog();
+
+			if(getProgramServiceType()==0)
+				showRadioBg();
+			else
+				hideRadioBg();
+			
+			try {
+				int db_id = DTVPlayerGetCurrentProgramID();
+				DTVPlayerPlayById(db_id);
+				
+			}catch (NumberFormatException e){
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private boolean isHavePragram(){
