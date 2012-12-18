@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/DtvscandvbtLayout"
+	android:layout_width="1280px" 
+	android:layout_height="720px"
+	android:background="#00000000"
+	android:foreground="#00000000">
+
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/DtvscandvbtInsidelLayout"
+		android:layout_centerInParent="true"  
+		android:layout_width="704px" 
+		android:layout_height="472px"
+		android:background="@drawable/dtvscandvbt_bg">    
+
+			<RelativeLayout android:id="@+id/DtvscandvbtTitleLayout"
+				android:layout_alignParentTop="true"		
+				android:layout_centerInParent="true"  
+				android:layout_width="fill_parent" 
+				android:layout_height="50px">  
+					
+				<TextView 
+					android:id="@+id/DtvscandvbtTitleText"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:gravity="center"
+					android:textSize="24sp"
+					>
+				</TextView>
+			</RelativeLayout>   
+		           
+			<RelativeLayout android:id="@+id/DtvscandvbtListLayout"
+				android:layout_below="@+id/DtvscandvbtTitleLayout"	
+		    		android:layout_alignParentBottom="true"	
+				android:layout_centerInParent="true"  
+				android:layout_width="fill_parent" 
+				android:layout_height="422px"
+				android:padding="5px">		 
+					  
+				<ListView 
+					android:id="@+id/DtvscandvbtSettingList"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					>
+				</ListView>
+			</RelativeLayout>
+			
+	</RelativeLayout>
+ 	
+</RelativeLayout>
+

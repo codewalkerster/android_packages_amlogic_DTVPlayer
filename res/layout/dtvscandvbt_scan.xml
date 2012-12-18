@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/dvbscandvbt_layout"
+	android:background="@drawable/dtvscandvbt_bg"
+	android:orientation="vertical"
+	android:layout_gravity="center"  
+	android:layout_width="720px" 
+	android:layout_height="576px">    
+    
+	<LinearLayout android:id="@+id/dvbscandvbtscan_titlelayout"
+		android:layout_width="fill_parent" 
+		android:layout_height="50px">  
+			<TextView 
+				android:id="@+id/dvbscandvbtscan_title"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:gravity="center"
+				android:textSize="24sp"
+				>
+			</TextView>
+	</LinearLayout> 
+
+	<LinearLayout android:id="@+id/dvbscandvbtscan_listtitlelayout"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent" 
+		android:layout_height="50px">  
+			
+		<TextView 
+			android:id="@+id/dvbscandvbtscan_tvtitle"
+			android:layout_width="330px"
+			android:layout_height="fill_parent"
+			android:gravity="center"
+			android:textSize="20sp"
+			>
+		</TextView>
+		
+		<TextView 
+			android:layout_width="60px"
+			android:layout_height="fill_parent"
+			android:gravity="center"
+			android:textSize="20sp"
+			>
+		</TextView>
+		
+		<TextView 
+			android:id="@+id/dvbscandvbtscan_radiotitle"
+			android:layout_width="330px"
+			android:layout_height="fill_parent"
+			android:gravity="center"
+			android:textSize="20sp"
+			>
+		</TextView>
+	</LinearLayout> 
+           
+	<LinearLayout android:id="@+id/dvbscandvbtscan_listlayout"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent" 
+		android:layout_height="372px">		 
+			  
+			<ListView 
+				android:id="@+id/dvbscandvbtscan_listtv"
+				android:layout_width="330px"
+				android:layout_height="fill_parent"
+				>
+			</ListView>  
+			
+			<TextView 
+				android:layout_width="60px"
+				android:layout_height="fill_parent"
+				android:gravity="center"
+				android:textSize="24sp"
+				>
+			</TextView>
+
+			<ListView 
+				android:id="@+id/dvbscandvbtscan_listradio"
+				android:layout_width="330px"
+				android:layout_height="fill_parent"
+				>
+			</ListView> 
+	</LinearLayout>   
+     
+	<LinearLayout android:id="@+id/dvbscanprogress_layout"
+		android:layout_width="fill_parent" 
+		android:layout_height="40px">		 
+			  
+			<ProgressBar
+				android:id="@+id/dvbscanprogressbar"
+				style="?android:attr/progressBarStyleHorizontal"
+				android:background="@drawable/dtvscandvbt_progress_bg"	  
+				android:layout_gravity="center_vertical"
+				android:layout_width="600px"
+				android:layout_height="16px"	
+				android:gravity="center_vertical"
+				android:visibility="gone"
+				>
+			</ProgressBar>
+			<TextView 
+				android:id="@+id/dvbscandvbt_progresspercentage"
+				android:layout_width="120px"
+				android:layout_height="fill_parent"
+				android:layout_gravity="center_vertical"
+				android:gravity="center"
+				android:textSize="20sp"
+				>
+			</TextView>
+	</LinearLayout>
+
+	<LinearLayout android:id="@+id/dvbscandvbtscanfreqinfo_layout"
+		android:layout_width="fill_parent" 
+		android:layout_height="50px"
+		android:layout_marginTop = "5px">		 
+			<TextView 
+				android:id="@+id/dvbscandvbt_scanfreqinfo"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:gravity="center"
+				android:textSize="24sp"
+				>
+			</TextView>
+	</LinearLayout>
+    
+ </LinearLayout>
+     
+
