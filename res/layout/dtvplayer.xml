@@ -105,7 +105,7 @@
 		android:layout_marginBottom="10px"
 		android:background="@drawable/dtvplayer_bar_bg" 
 		android:layout_height="150px"
-		android:paddingBottom="6px"
+		android:paddingBottom="15px"
 		android:visibility="invisible">
 
 		<RelativeLayout android:id="@+id/RelativeLayoutNextprogram" 

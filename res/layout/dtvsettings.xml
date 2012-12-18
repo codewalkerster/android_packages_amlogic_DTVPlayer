@@ -5,9 +5,10 @@
 	
 	<LinearLayout 
 		android:id="@+id/RelativeLayoutBG"
-		android:layout_centerInParent="true"  
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="100px" 
 		android:layout_width="644px" 
-		android:layout_height="422px"
+		android:layout_height="458px"
 		android:background="@drawable/settings_bg"
 		android:orientation="vertical">  
     
@@ -17,13 +18,13 @@
 			android:layout_width="fill_parent" 
 			android:layout_height="50px">  
 			
-           <TextView 
+			<TextView 
 		      android:id="@+id/title"
 		      android:layout_width="644px"
 		      android:layout_height="fill_parent"
 		      android:gravity="center"
 		      android:textSize="24sp">
-		    </TextView>
+			</TextView>
 		</RelativeLayout>   
            
         <RelativeLayout
@@ -39,7 +40,7 @@
     		android:layout_alignParentBottom="true"	
 			android:layout_centerInParent="true"  
 			android:layout_width="fill_parent" 
-			android:layout_height="320px"
+			android:layout_height="356px"
 			android:paddingLeft="10px"
 			android:paddingRight="13px"
 			>		 
@@ -73,8 +74,8 @@
 	    		android:layout_width="match_parent"
 	    		android:layout_height="match_parent"
 	    		android:orientation="horizontal"
-	    		android:layout_alignParentBottom="true"
-	    		android:gravity="center">
+	    		android:gravity="center"
+	    		android:layout_marginBottom="8px">
     		
 	    		<ImageView 
 	    			android:layout_width="wrap_content"
@@ -88,7 +89,7 @@
 			        android:layout_gravity="center"
 			        android:text="@string/help_info_move"
 			        android:textColor="#FFFFFFFF"
-			        android:textSize="24sp" 
+			        android:textSize="20sp" 
 			        android:layout_marginRight="30px"
 			        />
 	    		<ImageView 
@@ -102,7 +103,7 @@
 			        android:layout_gravity="center"
 			        android:text="@string/help_info_select"
 			        android:textColor="#FFFFFFFF"
-			        android:textSize="24sp"
+			        android:textSize="20sp"
 			        android:layout_marginRight="30px"
 			        />
 	    		<ImageView 
@@ -116,7 +117,7 @@
 			        android:layout_gravity="center"
 			        android:text="@string/help_info_return"
 			        android:textColor="#FFFFFFFF"
-			        android:textSize="24sp" />
+			        android:textSize="20sp" />
     		</LinearLayout>
 		</LinearLayout>	
 	</LinearLayout>

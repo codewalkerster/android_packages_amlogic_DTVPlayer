@@ -132,7 +132,7 @@ public class DTVTimeshifting extends DTVActivity{
 				play_status = STAT_FF;
 			}
 			
-			DTVforwardTimeShifting(speed);
+			DTVTimeShiftingForward(speed);
 			
 			play.setBackgroundResource(R.drawable.play_button);
 			switch(speed)
@@ -164,7 +164,7 @@ public class DTVTimeshifting extends DTVActivity{
 			}
 			
 
-			DTVbackwardTimeShifting(speed);
+			DTVTimeShiftingBackward(speed);
 
 			play.setBackgroundResource(R.drawable.play_button);
 
@@ -195,21 +195,21 @@ public class DTVTimeshifting extends DTVActivity{
 				// TODO Auto-generated method stub
 				if (play_status == STAT_PLAY)
 				{
-					DTVpauseTimeShifting();
+					DTVTimeShiftingPause();
 					play_status = STAT_PAUSE;
 					play.setBackgroundResource(R.drawable.pause_button);
 					TimeshiftingIcon.setImageResource(R.drawable.timeshifting_pause);
 				}
 				else if (play_status == STAT_PAUSE)
 				{	
-					DTVresumeTimeShifting();
+					DTVTimeShiftingResume();
 					play_status = STAT_PLAY;
 					play.setBackgroundResource(R.drawable.play_button);
 					TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
 				}
 				else if (play_status == STAT_FF)
 				{
-					DTVforwardTimeShifting(0);
+					DTVTimeShiftingForward(0);
 					play_status = STAT_PLAY;
 					speed = 0;
 					play.setBackgroundResource(R.drawable.play_button);
@@ -218,7 +218,7 @@ public class DTVTimeshifting extends DTVActivity{
 				}
 				else if (play_status == STAT_FB)
 				{
-					DTVbackwardTimeShifting(0);
+					DTVTimeShiftingBackward(0);
 					play_status = STAT_PLAY;
 					speed = 0;
 					play.setBackgroundResource(R.drawable.play_button);
@@ -227,7 +227,7 @@ public class DTVTimeshifting extends DTVActivity{
 				}
 				else
 				{
-					DTVplayTimeShifting();
+					DTVTimeShiftingPlay();
 					play_status = STAT_PLAY;
 					play.setBackgroundResource(R.drawable.play_button);
 					TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
@@ -247,7 +247,7 @@ public class DTVTimeshifting extends DTVActivity{
 				int dest = myProgressBar.getProgress();
 				int pos = totaltime * dest / 100;
 				
-				DTVseekTimeShifting(pos);
+				DTVTimeShiftingSeek(pos);
 
 				myProgressBar_pos = curtime*100/totaltime/1000;
 			}
@@ -276,7 +276,7 @@ public class DTVTimeshifting extends DTVActivity{
 			.setCancelable(false)
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int id) {
-					DTVstopTimeShifting();
+					DTVTimeShiftingStop();
 					finish();	
 					dialog.dismiss();
 				}        
@@ -352,21 +352,21 @@ public class DTVTimeshifting extends DTVActivity{
 			
 			if (play_status == STAT_PLAY)
 			{
-				DTVpauseTimeShifting();
+				DTVTimeShiftingPause();
 				play_status = STAT_PAUSE;
 				play.setBackgroundResource(R.drawable.pause_button);
 				TimeshiftingIcon.setImageResource(R.drawable.timeshifting_pause);
 			}
 			else if (play_status == STAT_PAUSE)
 			{	
-				DTVresumeTimeShifting();
+				DTVTimeShiftingResume();
 				play_status = STAT_PLAY;
 				play.setBackgroundResource(R.drawable.play_button);
 				TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
 			}
 			else if (play_status == STAT_FF)
 			{
-				DTVforwardTimeShifting(0);
+				DTVTimeShiftingForward(0);
 				play_status = STAT_PLAY;
 				speed = 0;
 				play.setBackgroundResource(R.drawable.play_button);
@@ -375,7 +375,7 @@ public class DTVTimeshifting extends DTVActivity{
 			}
 			else if (play_status == STAT_FB)
 			{
-				DTVbackwardTimeShifting(0);
+				DTVTimeShiftingBackward(0);
 				play_status = STAT_PLAY;
 				speed = 0;
 				play.setBackgroundResource(R.drawable.play_button);
@@ -384,7 +384,7 @@ public class DTVTimeshifting extends DTVActivity{
 			}
 			else
 			{
-				DTVplayTimeShifting();
+				DTVTimeShiftingPlay();
 				play_status = STAT_PLAY;
 				play.setBackgroundResource(R.drawable.play_button);
 				TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
@@ -406,7 +406,7 @@ public class DTVTimeshifting extends DTVActivity{
 			}
 			
 
-			DTVbackwardTimeShifting(speed);
+			DTVTimeShiftingBackward(speed);
 
 			play.setBackgroundResource(R.drawable.play_button);
 
@@ -438,7 +438,7 @@ public class DTVTimeshifting extends DTVActivity{
 				play_status = STAT_FF;
 			}
 			
-			DTVforwardTimeShifting(speed);
+			DTVTimeShiftingForward(speed);
 
 			play.setBackgroundResource(R.drawable.play_button);
 			switch(speed)

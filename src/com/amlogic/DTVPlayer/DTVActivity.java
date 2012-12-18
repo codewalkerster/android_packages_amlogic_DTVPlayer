@@ -111,25 +111,26 @@ abstract public class DTVActivity extends TVActivity{
 	}
 
 	/**********Timeshifting*************/
-	public void DTVforwardTimeShifting(int speed){
+	public void DTVTimeShiftingForward(int speed){
 
 	}
 
-	public void DTVbackwardTimeShifting(int speed){
+	public void DTVTimeShiftingBackward(int speed){
 
 	}
 
-	public void DTVpauseTimeShifting(){
+	public void DTVTimeShiftingPause(){
 	}
 
-	public void DTVresumeTimeShifting(){}
-	public void DTVplayTimeShifting(){}
-	public void DTVseekTimeShifting(int pos){}
-
+	public void DTVTimeShiftingResume(){}
+	
+	public void DTVTimeShiftingPlay(){}
+	public void DTVTimeShiftingSeek(int pos){}
+	public void DTVTimeShiftingStop(){}
 
 	public void DTVSubtitleStop(){}
 	public void DTVTeletextStop(){}
-	public void DTVstopTimeShifting(){}
+
 
 	/***********DTV EPG****************/
 	public int DTVEpgGetID(){

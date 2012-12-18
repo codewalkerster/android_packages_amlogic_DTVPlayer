@@ -20,17 +20,18 @@ import android.content.*;
 import android.os.*;
 import android.text.*;
 import android.text.method.*;
-import android.os.SystemProperties;
+import android.graphics.Color;
 
 public class DTVPlayer extends DTVActivity{
 	private static final String TAG="DTVPlayer";
 	private Toast toast=null;
-	
+	private Bundle bundle;	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtvplayer);
 		SystemProperties.set("vplayer.hideStatusBar.enable", "true");
+		bundle = this.getIntent().getExtras();
 		openVideo();
 		DTVPlayerUIInit();
 		if(isHavePragram()==true)
@@ -40,10 +41,44 @@ public class DTVPlayer extends DTVActivity{
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		
+		if(bundle!=null){	
+			int db_id = DTVPlayerGetCurrentProgramID();
+			DTVPlayerPlayById(db_id);		
+			ShowControlBar();
+			updateInforbar();
+			ShowProgramNo(pronumber);
+		}
+		
+		if(DTVPlayerIsRecording()){
+			showPvrIcon();
+		}	
+		else{
+			hidePvrIcon();
+		}	 
+
+		int mode = DTVGetScreenMode();
+		if(mode==0){
+			DTVSetScreenMode(0);
+		}
+		else if(mode==2){
+			DTVSetScreenMode(2);
+		}
+		else if(mode==3){
+			DTVSetScreenMode(3);
+		}
 	}
 
+	
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
+
+		if(bundle!=null){	
+			int db_id = DTVPlayerGetCurrentProgramID();
+			DTVPlayerPlayById(db_id);		
+			ShowControlBar();
+			updateInforbar();
+			ShowProgramNo(pronumber);
+		}
 	}
 
 	public void onMessage(TVMessage msg){
@@ -88,6 +123,18 @@ public class DTVPlayer extends DTVActivity{
 		Log.d(TAG, ">>>>>onNewIntent<<<<<");
 		super.onNewIntent(intent);
 	    setIntent(intent);
+		if(intent!=null){
+			bundle = intent.getExtras();
+		}
+	
+		if(bundle!=null){	
+			bundle = this.getIntent().getExtras();
+			int db_id = DTVPlayerGetCurrentProgramID();
+			DTVPlayerPlayById(db_id);		
+			ShowControlBar();
+			updateInforbar();
+			ShowProgramNo(pronumber);
+		}
 	}
 
 	@Override
@@ -99,10 +146,13 @@ public class DTVPlayer extends DTVActivity{
 				break;
 			case KeyEvent.KEYCODE_DPAD_LEFT:
 				Log.d(TAG,"KEYCODE_DPAD_LEFT");
+				ShowControlBar();
+				updateInforbar();
 				break;
 			case KeyEvent.KEYCODE_DPAD_RIGHT:
 				Log.d(TAG,"KEYCODE_DPAD_RIGHT");
-				ShowMainMenu();
+				ShowControlBar();
+				updateInforbar();
 				break;
 			case KeyEvent.KEYCODE_DPAD_DOWN:
 				Log.d(TAG,"KEYCODE_DPAD_DOWN");
@@ -258,7 +308,6 @@ public class DTVPlayer extends DTVActivity{
 
 		ImageView_recordingIcon = (ImageView) findViewById(R.id.ImageView_recordingIcon);
 		Text_recording_time = (TextView) findViewById(R.id.Text_recording_time);
-
 		
 		Text_button_info = (TextView) findViewById(R.id.Text_button_info);
 		Button_mainmenu_list = (Button)findViewById(R.id.Button_mainmenu_list);
@@ -407,7 +456,16 @@ public class DTVPlayer extends DTVActivity{
 			// TODO Auto-generated method stub	
 			switch (v.getId()) {
 				case R.id.Button_mainmenu_list:
-					break;
+					HideMainMenu();
+					Intent pickerIntent = new Intent();
+					//if(SystemProperties.get("dtv.standard","DVB").equals("DVBS")){
+						//pickerIntent.setClass(DTVPlayer.this, DvbsProlist.class);
+					//}
+					//else{
+						pickerIntent.setClass(DTVPlayer.this, DTVChannelList.class);
+					//}
+ 		            startActivityForResult(pickerIntent,0);
+ 		            break;
 				case R.id.Button_mainmenu_epg:
 					HideMainMenu();
 					HideControlBar();
@@ -537,11 +595,10 @@ public class DTVPlayer extends DTVActivity{
 
 	private boolean inforbar_show_flag=true;
 	private void ShowControlBar(){
+		timer_handler.removeCallbacks(timer_runnable);
 		if((inforbar_show_flag==false)&&(RelativeLayout_inforbar!=null&&showAction!=null&&RelativeLayout_recording_icon!=null&&showPvrAction!=null)){	
-			
 			RelativeLayout_inforbar.startAnimation(showAction);   
 			RelativeLayout_inforbar.setVisibility(View.VISIBLE);
-		
 			RelativeLayout_recording_icon.startAnimation(showPvrAction);
 			RelativeLayout_recording_icon.setVisibility(View.VISIBLE);
 		}
@@ -610,6 +667,38 @@ public class DTVPlayer extends DTVActivity{
 	void HideProgramNo(){
 		RelativeLayout RelativeLayoutProNumer = (RelativeLayout)findViewById(R.id.RelativeLayoutProNumer);
 		RelativeLayoutProNumer.setVisibility(View.INVISIBLE);
+	}
+
+	void showPvrIcon(){
+		final Animation animation = new AlphaAnimation(0, 1); // Change alpha from fully visible to invisible
+		animation.setDuration(1000); // duration - half a second
+		animation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
+		animation.setRepeatCount(Animation.INFINITE); // Repeat animation infinitely
+		animation.setRepeatMode(Animation.REVERSE); // 
+
+		ImageView ImageView_recordingIcon = (ImageView) findViewById(R.id.ImageView_recordingIcon);
+		ImageView_recordingIcon.setVisibility(View.VISIBLE);
+		ImageView_recordingIcon.setAnimation(animation);
+
+		Text_recording_time = (TextView) findViewById(R.id.Text_recording_time);
+		Text_recording_time.setText("00:00:00");	
+		Text_recording_time.setVisibility(View.VISIBLE);
+		Text_recording_time.setTextColor(Color.RED);
+
+		RelativeLayout RelativeLayoutPvrIcon = (RelativeLayout)findViewById(R.id.RelativeLayoutPvrIcon);
+		RelativeLayoutPvrIcon.setVisibility(View.VISIBLE);
+		timer_handler.postDelayed(timer_runnable, inforbar_distime);
+	}
+
+
+	void hidePvrIcon(){
+		ImageView ImageView_recordingIcon = (ImageView) findViewById(R.id.ImageView_recordingIcon);
+		Text_recording_time = (TextView) findViewById(R.id.Text_recording_time);
+		RelativeLayout RelativeLayoutPvrIcon = (RelativeLayout)findViewById(R.id.RelativeLayoutPvrIcon);
+	
+		ImageView_recordingIcon.setVisibility(View.INVISIBLE);
+		Text_recording_time.setVisibility(View.INVISIBLE);
+		RelativeLayoutPvrIcon.setVisibility(View.INVISIBLE);
 	}
 
 	private boolean showInformation_flag=false;
@@ -733,8 +822,8 @@ public class DTVPlayer extends DTVActivity{
 		}
 	}
 
-	private void DealLeftRihtKey(){
-
+	private void DealLeftAndRightKey(){
+		
 	}
 
 	private void shortcut_key_deal(String key){
@@ -757,8 +846,8 @@ public class DTVPlayer extends DTVActivity{
 		else if(key.equals("AUDIOTRACK")){
 			int mode = DTVGetAudioTrack();
 			if(mode==0){ 						
-			ShowInformation(getString(R.string.right));			
-			DTVSetAudioTrack(0);
+				ShowInformation(getString(R.string.right));			
+				DTVSetAudioTrack(0);
 			}
 			else  if(mode==1){
 				ShowInformation(getString(R.string.stereo));			
@@ -809,15 +898,13 @@ public class DTVPlayer extends DTVActivity{
 						case KeyEvent.KEYCODE_DPAD_CENTER:
 							String password = editText.getText().toString();
 							cur_password = DTVPlayerGetPassword();
-							if((cur_password==null))
-							{
+							if((cur_password==null)){
 								if(password.equals("1234")||password.equals("0000")){
 									PlayLockedProgram();
 									alert_password.cancel();
 									password_dialog_show_flag = false;	
 								}
-								else
-								{
+								else{
 									editText.setText(null);								
 									toast = Toast.makeText(
 										DTVPlayer.this, 
@@ -843,17 +930,16 @@ public class DTVPlayer extends DTVActivity{
 						    		Toast.LENGTH_SHORT);
 									toast.setGravity(Gravity.CENTER, 0, 0);
 									toast.show();
-									
 								}
 							}
 							return true;
-						case  KeyEvent.KEYCODE_BACK:
+						case KeyEvent.KEYCODE_BACK:
 							alert_password.cancel();
 							password_dialog_show_flag = false;
 							ShowControlBar();
 							return true;
 					}
-				return false;
+					return false;
 				}
 			});	
 			alert_password.show();

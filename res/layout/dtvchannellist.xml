@@ -4,14 +4,16 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     
-	<RelativeLayout
-			android:id="@+id/RelativeLayout01"
-			android:layout_centerInParent="true"  
+	<LinearLayout 
+			android:id="@+id/RelativeLayout01" 
+			android:layout_centerHorizontal="true"
+			android:layout_marginTop="100px" 
 			android:layout_width="486px" 
-			android:layout_height="421px"
-			 android:background="@drawable/dtvchannellist_bg">
+			android:layout_height="429px"
+			android:orientation="vertical"
+			android:background="@drawable/settings_bg">
 	    
-	 	    <RelativeLayout android:id="@+id/RelativeLayout02"
+	 	    <RelativeLayout
 				android:layout_alignParentTop="true"		
 				android:layout_centerInParent="true"  
 				android:layout_width="fill_parent" 
@@ -40,11 +42,10 @@
 		    </RelativeLayout>   
 		    
 		    <RelativeLayout android:id="@+id/RelativeLayout03"
-	    		android:layout_below="@+id/RelativeLayout02"	
 	    		android:layout_alignParentBottom="true"	
 				android:layout_centerInParent="true"  
 				android:layout_width="fill_parent" 
-				android:layout_height="378px"
+				android:layout_height="336px"
 				>		
 			    <ListView 
 			      android:id="@+id/ListView_channel"
@@ -53,6 +54,70 @@
 			      
 			    ></ListView>
 	    	</RelativeLayout>
-     </RelativeLayout>
+	    	<LinearLayout
+	    		android:layout_width="fill_parent"
+				android:layout_height="50px"
+				android:layout_marginRight="20px"
+				android:layout_marginLeft="20px"
+	    		android:orientation="vertical">
+				<RelativeLayout
+					android:id="@+id/inforbar_line" 
+					android:layout_width="fill_parent"
+					android:layout_height="2px"
+					android:background="@drawable/line"
+					>	
+				</RelativeLayout>
+		     
+	  	     	<LinearLayout
+		    		android:layout_width="match_parent"
+		    		android:layout_height="match_parent"
+		    		android:orientation="horizontal"
+		    		android:gravity="center"
+		    		android:layout_marginBottom="8px">
+	    		
+		    		<ImageView 
+		    			android:layout_width="wrap_content"
+		    			android:layout_height="wrap_content"
+						android:background="@drawable/move"
+		    		>
+		    		</ImageView>
+		    		<TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:text="@string/help_info_move"
+				        android:textColor="#FFFFFFFF"
+				        android:textSize="20sp" 
+				        android:layout_marginRight="30px"
+				        />
+		    		<ImageView 
+		    			android:layout_width="wrap_content"
+		    			android:layout_height="wrap_content"
+						android:background="@drawable/enter"
+		    		></ImageView>
+		    		<TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:text="@string/help_info_select"
+				        android:textColor="#FFFFFFFF"
+				        android:textSize="20sp"
+				        android:layout_marginRight="30px"
+				        />
+		    		<ImageView 
+		    			android:layout_width="wrap_content"
+		    			android:layout_height="wrap_content"
+						android:background="@drawable/return_icon"
+		    		></ImageView>
+		    		<TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:text="@string/help_info_return"
+				        android:textColor="#FFFFFFFF"
+				        android:textSize="20sp" />
+	    		</LinearLayout>
+			</LinearLayout>	
+     </LinearLayout>
 </RelativeLayout>
  
