@@ -26,6 +26,8 @@ public class DTVPlayer extends DTVActivity{
 	private static final String TAG="DTVPlayer";
 	private Toast toast=null;
 	private Bundle bundle;	
+	AlertDialog mAlertDialog=null;  //no signal or no data
+
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
@@ -102,12 +104,16 @@ public class DTVPlayer extends DTVActivity{
 			case TVMessage.TYPE_PROGRAM_UNBLOCK:
 				break;
 			case TVMessage.TYPE_SIGNAL_LOST:
+				showDia(1);
 				break;
 			case TVMessage.TYPE_SIGNAL_RESUME:
+				dismissDialog(1);
 				break;	
 			case TVMessage.TYPE_DATA_LOST:
+				showDia(2);
 				break;
 			case TVMessage.TYPE_DATA_RESUME:
+				dismissDialog(2);
 				break;
 			default:
 				break;
@@ -123,6 +129,10 @@ public class DTVPlayer extends DTVActivity{
 		Log.d(TAG, ">>>>>onNewIntent<<<<<");
 		super.onNewIntent(intent);
 	    setIntent(intent);
+
+		if(isHavePragram()==false)
+			showNoProgramDia();
+		
 		if(intent!=null){
 			bundle = intent.getExtras();
 		}
@@ -414,8 +424,8 @@ public class DTVPlayer extends DTVActivity{
             }
         });
 		
-		//findViewById(R.id.RelativeLayout_video).setOnClickListener(new MouseClick());
-		RelativeLayout_inforbar.setVisibility(View.VISIBLE);
+		findViewById(R.id.RelativeLayout_video).setOnClickListener(new MouseClick());
+		RelativeLayout_inforbar.setVisibility(View.INVISIBLE);
 		RelativeLayout_radio_bg.setVisibility(View.INVISIBLE);
 		
 		init_Animation();
@@ -432,7 +442,7 @@ public class DTVPlayer extends DTVActivity{
 				Intent_scan.putExtras(bundle); 
 				Intent_scan.setClass(DTVPlayer.this, DTVScanDVBT.class);
 				startActivity(Intent_scan);
-				DTVPlayer.this.finish(); 
+				//DTVPlayer.this.finish(); 
 				dialog.dismiss();
 	        }})
 		.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -455,16 +465,19 @@ public class DTVPlayer extends DTVActivity{
 	    public void onClick(View v) {
 			// TODO Auto-generated method stub	
 			switch (v.getId()) {
+				case R.id.RelativeLayout_video:
+					if(inforbar_show_flag==false){
+						ShowControlBar();
+					}
+					else if(mainmenu_show_flag==false){
+						ShowMainMenu();
+					}
+					break;
 				case R.id.Button_mainmenu_list:
 					HideMainMenu();
 					Intent pickerIntent = new Intent();
-					//if(SystemProperties.get("dtv.standard","DVB").equals("DVBS")){
-						//pickerIntent.setClass(DTVPlayer.this, DvbsProlist.class);
-					//}
-					//else{
-						pickerIntent.setClass(DTVPlayer.this, DTVChannelList.class);
-					//}
- 		            startActivityForResult(pickerIntent,0);
+					pickerIntent.setClass(DTVPlayer.this, DTVChannelList.class);
+ 		            startActivityForResult(pickerIntent,1);
  		            break;
 				case R.id.Button_mainmenu_epg:
 					HideMainMenu();
@@ -478,7 +491,7 @@ public class DTVPlayer extends DTVActivity{
 					Bundle bundle = new Bundle();
 					Intent_settings.putExtras(bundle); 
 					Intent_settings.setClass(DTVPlayer.this, DTVSettingsUI.class);
-					startActivityForResult(Intent_settings,1);
+					startActivityForResult(Intent_settings,2);
 					break;
 				case R.id.Button_mainmenu_program_manager:
 					break;
@@ -591,9 +604,8 @@ public class DTVPlayer extends DTVActivity{
 		}
 		mainmenu_show_flag = false;
 	}
-
-
-	private boolean inforbar_show_flag=true;
+	
+	private boolean inforbar_show_flag=false;
 	private void ShowControlBar(){
 		timer_handler.removeCallbacks(timer_runnable);
 		if((inforbar_show_flag==false)&&(RelativeLayout_inforbar!=null&&showAction!=null&&RelativeLayout_recording_icon!=null&&showPvrAction!=null)){	
@@ -979,6 +991,85 @@ public class DTVPlayer extends DTVActivity{
 			}catch (NumberFormatException e){
 				e.printStackTrace();
 			}
+		}
+	}
+
+	@Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+	        case 1:
+				mAlertDialog = new AlertDialog.Builder(DTVPlayer.this).create();
+				TextView text = new TextView(this);
+				text.setText(R.string.dtvplayer_no_signal);
+				text.setTextSize(27); 
+				text.setGravity(Gravity.CENTER);
+				mAlertDialog.setView(text);
+
+				WindowManager.LayoutParams lp=mAlertDialog.getWindow().getAttributes();
+				lp.dimAmount=0.0f; 
+				mAlertDialog.getWindow().setAttributes(lp);
+				mAlertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);			
+						
+				mAlertDialog.setOnKeyListener( new DialogInterface.OnKeyListener(){
+					public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+						// TODO Auto-generated method stub
+						dialog.cancel();
+						//mAlertDialog_flag = false;
+						dispatchKeyEvent(event);
+						return true;
+					}
+				});
+			    return 	mAlertDialog;
+			case 2:
+				mAlertDialog = new AlertDialog.Builder(DTVPlayer.this).create();
+				TextView text1 = new TextView(this);
+				text1.setText(R.string.dtvplayer_no_program);
+				text1.setTextSize(27); 
+				text1.setGravity(Gravity.CENTER);
+				mAlertDialog.setView(text1);
+				mAlertDialog.setOnKeyListener( new DialogInterface.OnKeyListener(){
+					public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+						// TODO Auto-generated method stub
+						dialog.cancel();
+						//mAlertDialog_avdata_flag = false;
+						dispatchKeyEvent(event);
+						return true;
+					}
+				});
+			    return 	mAlertDialog;
+			case 3:
+		        mAlertDialog = new AlertDialog.Builder(DTVPlayer.this).create();
+				TextView text2 = new TextView(this);
+				text2.setText(R.string.dtvplayer_scrambled);
+				text2.setTextSize(27); 
+				text2.setGravity(Gravity.CENTER);
+				mAlertDialog.setView(text2);		
+				mAlertDialog.setOnKeyListener( new DialogInterface.OnKeyListener(){
+					public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+						// TODO Auto-generated method stub
+						dialog.cancel();
+						//mAlertDialog_avscamble_flag = false;
+						dispatchKeyEvent(event);
+						return true;
+					}
+				});
+			    return 	mAlertDialog;
+		}
+        return null;
+    }
+
+	private void showDia(int id){
+		mAlertDialog = (AlertDialog)onCreateDialog(id);
+		if(mAlertDialog!=null){
+			showDialog(id);
+			mAlertDialog.getWindow().setLayout(500,100);
+			WindowManager.LayoutParams lp=mAlertDialog.getWindow().getAttributes();
+			Log.d(TAG,"x="+lp.x+"y="+lp.y);
+			lp.x=0;
+			lp.y=0;
+			lp.dimAmount=0.0f;
+			mAlertDialog.getWindow().setAttributes(lp);
+			mAlertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		}
 	}
 

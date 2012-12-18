@@ -94,7 +94,6 @@
 			</LinearLayout>
 		</LinearLayout>
 	</RelativeLayout>
-
 		
 	<!--Inforbar display-->
 	<RelativeLayout android:id="@+id/RelativeLayoutInforbar"
@@ -124,7 +123,7 @@
 			      android:textSize="20px"  
 			      android:paddingLeft="33px"
 			      >
-			</TextView>	
+			</TextView>
 		</RelativeLayout>
 
 		<RelativeLayout android:layout_width="fill_parent" 
@@ -144,7 +143,6 @@
 			android:layout_marginRight="5px" 
 			android:layout_marginLeft="15px"
 			android:background="@drawable/dtvplayer_inforbar_bg_in">
-
 			<LinearLayout
 				android:id="@+id/LinearLayoutNoAndName" 
 				android:orientation="horizontal"
@@ -152,7 +150,6 @@
 				android:layout_height="wrap_content"
 				android:gravity="center"
 				> 
-
 				<LinearLayout    
 				   android:layout_width="wrap_content"    
 				   android:layout_height="wrap_content">
@@ -299,7 +296,7 @@
 				android:textColor="@android:color/white"
 				android:textSize="18px"
 				android:gravity="center"
-				android:layout_below="@+id/MTS_info">
+				android:layout_below="@+id/Text_MTS_info">
 			</TextView>
 
 			<TextView 
@@ -332,8 +329,7 @@
 			android:gravity="center">
 		</TextView>
 	</RelativeLayout>
-
-		
+	
 	<!--PvrIcon display-->	
 	<RelativeLayout android:id="@+id/RelativeLayoutPvrIcon"
 		android:layout_width="180px" 
@@ -366,19 +362,8 @@
 		      android:layout_toRightOf="@+id/ImageView_recordingIcon"
 		      >
 		</TextView>
-		<DigitalClock
-			android:id="@+id/DigitalClock"
-			android:layout_toRightOf="@+id/Text_recording_time"
-			android:textColor="@android:color/white"
-			android:layout_marginLeft="12px"
-			android:textSize="20sp"
-			android:shadowColor="@android:color/white"
-			android:shadowRadius="2.0"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>	
 	</RelativeLayout>
-		
-				
+					
 	<!--loading icon-->
 	<RelativeLayout
 		android:orientation="horizontal"

@@ -41,6 +41,22 @@
 	<string name="dtvplayer_pvr_record_dialog">Pvr will start,continue or ignore?</string>
 	<string name="dtvplayer_subscribe_play_dialog">Subscribed event will start,continue or ignore?</string>
 
+	<string name="dtvplayer_no_program">No program</string>
+	<string name="dtvplayer_no_signal"> No signal</string>
+	<string name="dtvplayer_scrambled">Scrambled program</string>
+
+
+	<!--device browser-->
+	<string name="download_sel_confirm">Save recorded stream on selected storage device?</string>
+	<string name="usb_removed">USB device removed. Please check</string>
+	<string name="usb_mounted">Testing to USB device</string>	
+	<string name="selected_help">Please choose the storage device and press OK</string>	
+	<string name="volume">Removable disk</string>
+	<string name="pls_insert_usb">Please insert USB device</string>	
+	<string name="volume_total">Total space:</string>
+	<string name="volume_available">Available space:</string>	
+
+	
     <!--settings help--> 
     <string name="help_info_move">Move</string>
   	<string name="help_info_select">Select</string>

@@ -145,7 +145,6 @@ public class DTVSettingsUI extends DTVSettings{
 		}
 	}
 
-
 	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 			
@@ -160,40 +159,39 @@ public class DTVSettingsUI extends DTVSettings{
 			    case SETTINGS_SUBTILE_SWITCH:
 				{
 					
-				    	if(DTVSettingsUI.super.getSubtitleStatus()==false)
-				    	{
-				    		image_cur.setBackgroundResource(R.drawable.select_round_2);
-				    		info_cur.setText(R.string.on);
-				    		//DVBPlayer.getConnect().setSubtitleStatus(true);
-							//DVBPlayer.getStaticSubtitle().startSubtitle();
-				    	}
-				    	else if(DTVSettingsUI.super.getSubtitleStatus())
-				    	{
-				    		image_cur.setBackgroundResource(R.drawable.select_round_1);
-				    		info_cur.setText(R.string.off);
-				    		//DVBPlayer.getConnect().setSubtitleStatus(false);
-							//DVBPlayer.getStaticSubtitle().stop();
-				    	}	
+			    	if(DTVSettingsUI.super.getSubtitleStatus()==false)
+			    	{
+			    		image_cur.setBackgroundResource(R.drawable.select_round_2);
+			    		info_cur.setText(R.string.on);
+			    		//DVBPlayer.getConnect().setSubtitleStatus(true);
+						//DVBPlayer.getStaticSubtitle().startSubtitle();
+			    	}
+			    	else if(DTVSettingsUI.super.getSubtitleStatus())
+			    	{
+			    		image_cur.setBackgroundResource(R.drawable.select_round_1);
+			    		info_cur.setText(R.string.off);
+			    		//DVBPlayer.getConnect().setSubtitleStatus(false);
+						//DVBPlayer.getStaticSubtitle().stop();
+			    	}	
 				}
-			    	break;
+			    break;
 				case SETTINGS_SCREEN_TYPE:
 					{
 						int mode = DTVSettingsUI.super.getScreenMode();
 						int pos = 0;
 
-						
-						 if(mode==0)
-						 {
-							 pos = 2;
-						 }
-						 else  if(mode==2)
-						 {
+						if(mode==0)
+						{
+							pos = 2;
+						}
+						else  if(mode==2)
+						{
 							pos = 0;
-						 }
-						 else  if(mode==3)
-						 {
+						}
+						else  if(mode==3)
+						{
 							pos = 1;
-						 }
+						}
 
 
 					     builder.setTitle(R.string.screen_type);
@@ -252,9 +250,7 @@ public class DTVSettingsUI extends DTVSettings{
 		 								DTVSettingsUI.super.setScreenMode(3);
 		 							 }
 				 				}
-				        	 });	
-							
-							
+				        	 });								
 							
 							 AlertDialog dialog = builder.create();
 							 dialog.setOnShowListener(new DialogInterface.OnShowListener(){
@@ -407,10 +403,10 @@ public class DTVSettingsUI extends DTVSettings{
 					showSetPasswordDialog();
 					break;
 				case SETTINGS_SELECT_STORAGE:
-					//Intent Intent_path_select = new Intent();
-	        		//Intent_path_select.setClass(DTVSettingsUI.this, DeviceBrowser.class);
-	        		//startActivity(Intent_path_select);
-					//DTVSettingsUI.this.finish();
+					Intent Intent_path_select = new Intent();
+	        		Intent_path_select.setClass(DTVSettingsUI.this, DTVDeviceBrowser.class);
+	        		startActivity(Intent_path_select);
+					DTVSettingsUI.this.finish();
 					break;
 				 case SETTINGS_TIMESHIFT_TIME_SET:
 				 	{

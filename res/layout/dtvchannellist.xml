@@ -50,8 +50,7 @@
 			    <ListView 
 			      android:id="@+id/ListView_channel"
 			      android:layout_width="wrap_content"
-			      android:layout_height="fill_parent"
-			      
+			      android:layout_height="fill_parent"		      
 			    ></ListView>
 	    	</RelativeLayout>
 	    	<LinearLayout
