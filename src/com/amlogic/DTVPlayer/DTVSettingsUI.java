@@ -383,15 +383,7 @@ public class DTVSettingsUI extends DTVSettings{
 				case SETTINGS_START_SCAN:
 					{
 					
-						Intent Intent_scan = new Intent();
-						ComponentName comp_scan = new ComponentName("com.amlogic.dvbsearch","com.amlogic.dvbsearch.dvbsearch");
-						Intent_scan.setComponent(comp_scan);
-						Intent_scan.setAction("android.intent.action.VIEW");
-						Intent_scan.addCategory("android.intent.category.DEFAULT");
-
-						Bundle bundle_scan = new Bundle();
-						Intent_scan.putExtras(bundle_scan);
-						startActivity(Intent_scan);
+						DTVSetting_GotoDTVScanDvbt();
 						
 						DTVSettingsUI.this.finish();
 					}	
@@ -1308,6 +1300,14 @@ public class DTVSettingsUI extends DTVSettings{
 		return super.onKeyDown(keyCode, event);
 	}	
 
+
+	private void DTVSetting_GotoDTVScanDvbt()
+	{
+		Intent intent = new Intent();
+		intent.setClass(this, DTVScanDVBT.class);
+		
+		startActivityForResult(intent, 1);	
+	}
 	
 }
 
