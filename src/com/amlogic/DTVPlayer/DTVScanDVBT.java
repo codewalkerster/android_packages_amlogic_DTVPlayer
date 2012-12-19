@@ -1213,12 +1213,14 @@ public class DTVScanDVBT extends DTVActivity{
 		{
 			serviceinfo.setId(++ui_dvbsandvbt_scantv_srv_list_index);
 			ui_dvbsandvbt_scantv_srv_list.add(serviceinfo); 
+			ui_dvbsandvbt_scantv_list.setSelection(ui_dvbsandvbt_scantv_srv_list_index - 1);
 			ui_dvbsandvbt_scantv_list_adapter.notifyDataSetChanged();
 		}
 		else
 		{
 			serviceinfo.setId(++ui_dvbsandvbt_scanradio_srv_list_index);
 			ui_dvbsandvbt_scanradio_srv_list.add(serviceinfo); 
+			ui_dvbsandvbt_scanradio_list.setSelection(ui_dvbsandvbt_scanradio_srv_list_index - 1);
 			ui_dvbsandvbt_scanradio_list_adapter.notifyDataSetChanged();
 		}
 	}	
@@ -1349,7 +1351,9 @@ public class DTVScanDVBT extends DTVActivity{
 		Intent intent = new Intent();
 		intent.setClass(this, DTVPlayer.class);
 		
-		startActivityForResult(intent, 1);		
+		startActivityForResult(intent, 1);
+
+		finish();
 	}
 	
 }
