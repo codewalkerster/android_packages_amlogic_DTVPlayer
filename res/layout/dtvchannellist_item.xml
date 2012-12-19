@@ -22,7 +22,7 @@
    <TextView       
          android:id="@+id/ItemText"
          android:layout_gravity="center_vertical"
- 		     android:layout_width="280px"
+ 		     android:layout_width="380px"
   		   android:layout_height="42px" 
   		   android:textSize="20sp"
   		   android:layout_marginLeft="10px"
@@ -30,15 +30,15 @@
 		   android:ellipsize="marquee">  
    </TextView>  
    
-    <ImageView android:id="@+id/icon_scrambled"
-  			android:layout_width="30px"
-		 	 android:layout_height="30px"
-		 	 android:layout_gravity="center"/>
-    <ImageView android:id="@+id/icon_fav"
-  			android:layout_width="30px"
-		 	 android:layout_height="30px"
-		 	 android:layout_gravity="center"/>		 	 
-   <ImageView android:id="@+id/icon"
+	<ImageView android:id="@+id/icon_scrambled"
+			android:layout_width="30px"
+	 	 android:layout_height="30px"
+	 	 android:layout_gravity="center"/>
+	<ImageView android:id="@+id/icon_fav"
+			android:layout_width="30px"
+	 	 android:layout_height="30px"
+	 	 android:layout_gravity="center"/>		 	 
+	<ImageView android:id="@+id/icon"
   			android:layout_width="30px"
 		 	 android:layout_height="30px"
 		 	 android:layout_gravity="center"

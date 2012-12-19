@@ -214,9 +214,11 @@
 				android:id="@+id/Text_proname"
 				android:layout_width="fill_parent"
 				android:layout_height="40px"
+				android:paddingLeft="30px"
+				android:paddingRight="30px"
 				android:textSize="32px"
 				android:layout_below="@+id/LinearLayoutNoAndName"
-				android:gravity="center"
+				android:gravity="left"
 				android:shadowColor="@android:color/white"
 				>
 			</TextView>

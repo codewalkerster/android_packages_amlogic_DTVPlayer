@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">	
+	<ImageView 
+		android:id="@+id/device_grid_item_imageview"
+		android:layout_gravity="top|center_horizontal"
+		android:layout_width="260px"
+		android:layout_height="300px"
+		android:layout_marginTop="10px"
+		android:paddingLeft="7px" android:paddingRight="7px"
+		android:paddingTop="7px" android:paddingBottom="7px"		
+		android:scaleType="fitCenter" android:background="@drawable/device_selector" />
+
+	<TextView android:id="@+id/device_grid_item_textview"
+		android:layout_marginTop="3px"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:textSize="20sp"
+		android:singleLine="true"
+		android:gravity="center"
+		android:ellipsize="marquee"
+		android:marqueeRepeatLimit="marquee_forever" 
+		android:textColor="#FFFFFF"
+		android:layout_gravity="center_horizontal"
+		android:maxWidth="400px" 
+		android:layout_below="@id/device_grid_item_imageview"/>	
+	<TextView android:id="@+id/device_grid_item_total"
+		android:layout_marginTop="3px" 
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:textSize="20sp"
+		android:singleLine="true" 
+		android:gravity="center"
+		android:ellipsize="marquee"
+		android:marqueeRepeatLimit="marquee_forever"
+		android:textColor="#FFFFFF"
+		android:layout_gravity="center_horizontal" 
+		android:maxWidth="400px"
+		android:layout_below="@id/device_grid_item_textview"/>	
+	<TextView android:id="@+id/device_grid_item_spare"
+		android:layout_marginTop="3px" 
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:textSize="20sp"
+		android:singleLine="true" 
+		android:gravity="center" 
+		android:ellipsize="marquee"
+		android:marqueeRepeatLimit="marquee_forever"
+		android:textColor="#FFFFFF"
+		android:layout_gravity="center_horizontal" 
+		android:maxWidth="400px" 
+		android:layout_below="@id/device_grid_item_total"/>		
+</RelativeLayout>
+

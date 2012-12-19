@@ -28,6 +28,8 @@ public class DTVPlayer extends DTVActivity{
 	private Bundle bundle;	
 	AlertDialog mAlertDialog=null;  //no signal or no data
 
+	/**channel data**/
+
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
@@ -36,12 +38,14 @@ public class DTVPlayer extends DTVActivity{
 		bundle = this.getIntent().getExtras();
 		openVideo();
 		DTVPlayerUIInit();
-		if(isHavePragram()==true)
+		if(isHavePragram()==false)
 			showNoProgramDia();
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
+		//set input source on DTV
+		setInputSource(TVConst.SourceInput.SOURCE_DTV);
 		
 		if(bundle!=null){	
 			int db_id = DTVPlayerGetCurrentProgramID();
@@ -74,13 +78,6 @@ public class DTVPlayer extends DTVActivity{
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
 
-		if(bundle!=null){	
-			int db_id = DTVPlayerGetCurrentProgramID();
-			DTVPlayerPlayById(db_id);		
-			ShowControlBar();
-			updateInforbar();
-			ShowProgramNo(pronumber);
-		}
 	}
 
 	public void onMessage(TVMessage msg){
@@ -114,6 +111,11 @@ public class DTVPlayer extends DTVActivity{
 				break;
 			case TVMessage.TYPE_DATA_RESUME:
 				dismissDialog(2);
+				break;
+			case TVMessage.TYPE_PROGRAM_START:
+				DTVPlayerGetCurrentProgramData();
+				updateInforbar();
+				ShowControlBar();
 				break;
 			default:
 				break;
@@ -165,11 +167,74 @@ public class DTVPlayer extends DTVActivity{
 				updateInforbar();
 				break;
 			case KeyEvent.KEYCODE_DPAD_DOWN:
-				Log.d(TAG,"KEYCODE_DPAD_DOWN");
-				break;
+				if(mainmenu_show_flag){
+					break;
+				}
+				else{
+					if(DTVPlayerIsRecording()){
+							AlertDialog.Builder builder = new AlertDialog.Builder(DTVPlayer.this); 
+								builder.setMessage(R.string.dtvplayer_change_channel)
+								.setCancelable(false)
+								.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener(){
+									public void onClick(DialogInterface dialog, int id) {						
+										DTVPlayerStopRecording();
+										DTVPlayerPlayDown();
+										dialog.cancel();
+									}        
+								 })        
+								.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog, int id) {
+											dialog.cancel();            
+										}        
+								 }); 
+							AlertDialog alert = builder.create();
+				            alert.show();
+
+							WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+							lp.dimAmount=0.0f;
+							alert.getWindow().setAttributes(lp);
+							alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+						}
+					else{
+						DTVPlayerPlayDown();
+					}
+					return true;
+				}
 			case KeyEvent.KEYCODE_DPAD_UP:
 				Log.d(TAG,"KEYCODE_DPAD_UP");
-				break;
+				if(mainmenu_show_flag){
+					break;
+				}
+				else{
+					if(DTVPlayerIsRecording()){
+						AlertDialog.Builder builder = new AlertDialog.Builder(DTVPlayer.this); 
+							builder.setMessage(R.string.dtvplayer_change_channel)
+							.setCancelable(false)
+							.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener(){
+								public void onClick(DialogInterface dialog, int id) {						
+									DTVPlayerStopRecording();
+									DTVPlayerPlayUp();
+									dialog.cancel();
+								}        
+							 })        
+							.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int id) {
+										dialog.cancel();            
+									}        
+							 }); 
+							AlertDialog alert = builder.create();
+							alert.show();
+
+							WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+							lp.dimAmount=0.0f;
+							alert.getWindow().setAttributes(lp);
+							alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+					}
+					else{
+						DTVPlayerPlayUp();
+					}
+					return true;
+				}
 			case KeyEvent.KEYCODE_0:
 			case KeyEvent.KEYCODE_1:
 			case KeyEvent.KEYCODE_2:
@@ -191,7 +256,7 @@ public class DTVPlayer extends DTVActivity{
 					HideControlBar();
 				}
 				else{
-					finish();
+					finishPlayer();
 				}	
 				Log.d(TAG,"KEYCODE_BACK");
 				return true;
@@ -202,9 +267,11 @@ public class DTVPlayer extends DTVActivity{
 				}
 				else{
 					Intent pickerIntent = new Intent();
+					Bundle bundle_list = new Bundle();
+					bundle_list.putInt("db_id", DTVPlayerGetCurrentProgramID());
+					pickerIntent.putExtras(bundle_list);
 					pickerIntent.setClass(DTVPlayer.this, DTVChannelList.class);
-					//pickerIntent.putExtras(bundle_list);
-			        startActivityForResult(pickerIntent,0);	
+ 		            startActivity(pickerIntent);	
 				}
 				return true;
 			case KeyEvent.KEYCODE_ENTER:
@@ -476,8 +543,11 @@ public class DTVPlayer extends DTVActivity{
 				case R.id.Button_mainmenu_list:
 					HideMainMenu();
 					Intent pickerIntent = new Intent();
+					Bundle bundle_list = new Bundle();
+					bundle_list.putInt("db_id", DTVPlayerGetCurrentProgramID());
+					pickerIntent.putExtras(bundle_list);
 					pickerIntent.setClass(DTVPlayer.this, DTVChannelList.class);
- 		            startActivityForResult(pickerIntent,1);
+ 		            startActivity(pickerIntent);
  		            break;
 				case R.id.Button_mainmenu_epg:
 					HideMainMenu();
@@ -662,6 +732,27 @@ public class DTVPlayer extends DTVActivity{
 		ImageView_icon_epg=(ImageView)findViewById(R.id.ImageView_icon_epg);
 		ImageView_icon_sub=(ImageView)findViewById(R.id.ImageView_icon_sub);
 		ImageView_icon_txt=(ImageView)findViewById(R.id.ImageView_icon_txt);
+
+		TextView Text_proname = (TextView) findViewById(R.id.Text_proname);
+
+		if(dtvplayer_pronumber>=0)	
+		Text_proname.setText(Integer.toString(dtvplayer_pronumber)+"  "+dtvplayer_name);
+
+		if(dtvplayer_b_fav)
+			ImageView_icon_fav.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_fav.setVisibility(View.INVISIBLE);
+
+		if(dtvplayer_b_scrambled)
+			ImageView_icon_scrambled.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_scrambled.setVisibility(View.INVISIBLE);
+
+		if(dtvplayer_b_lock)
+			ImageView_icon_lock.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_lock.setVisibility(View.INVISIBLE);
+		
 	}
 
 	void ShowProgramNo(int value){
@@ -750,7 +841,7 @@ public class DTVPlayer extends DTVActivity{
 
 	private boolean DTVPlayerCheckNumerInputIsValid(int pronumber){
 		//pronumber is valid or hided
-
+		//TVProgram mTVProgram = DTVPlayerGetCurrentProgramData()
 		return true;
 	}
 
@@ -767,8 +858,7 @@ public class DTVPlayer extends DTVActivity{
 			    		Toast.LENGTH_SHORT);
 						toast.setGravity(Gravity.CENTER, 0, 0);
 						toast.show();
-						
-						pronumber = 0;					
+						pronumber = 0;				
 						HideProgramNo();
 				}
 				else{	
@@ -780,8 +870,6 @@ public class DTVPlayer extends DTVActivity{
 								public void onClick(DialogInterface dialog, int id) {						
 									DTVPlayerStopRecording();
 									DTVPlayerPlayByProNo(pronumber);
-									updateInforbar();
-									ShowControlBar();
 									dialog.cancel();
 								}        
 							 })        
@@ -792,20 +880,15 @@ public class DTVPlayer extends DTVActivity{
 							 }); 
 						AlertDialog alert = builder.create();
 			            alert.show();
-
 						WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
 						lp.dimAmount=0.0f;
 						alert.getWindow().setAttributes(lp);
 						alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-
-
 					}
 					else{
 						DTVPlayerPlayByProNo(pronumber);
-						updateInforbar();
-						ShowControlBar();
+						pronumber = 0;
 					}
-					
 				}	
 				number_key_down = false;
 			}	
@@ -814,7 +897,7 @@ public class DTVPlayer extends DTVActivity{
 	};
     
 	private boolean DTVPlayerInTeletextStatus=false;
-	private int pronumber=0;
+
 	private void DealDigtalKey(int value){
 		int number_key_value=0;
 		
@@ -1074,7 +1157,41 @@ public class DTVPlayer extends DTVActivity{
 	}
 
 	private boolean isHavePragram(){
+		TVProgram[]  mTVProgramList=null;
+		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,false);
+		if(mTVProgramList.length!=0)
+			return true;
+		else{
+			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,false);
+			if(mTVProgramList.length!=0)
+				return true;
+		}
 		return false;
+	}
+
+	private int pronumber=0;
+	private int dtvplayer_pronumber=0;
+	private String dtvplayer_name=" ";
+	private String dtvplayer_cur_event="";
+	private String dtvplayer_next_event=" ";
+	private boolean dtvplayer_b_lock=false;
+	private boolean dtvplayer_b_fav=false;
+	private boolean dtvplayer_b_scrambled=false;
+	private boolean dtvplayer_b_epg=false;
+	private boolean dtvplyaer_b_txt=false;
+	private boolean dtvplayer_b_sub=false;
+		
+	private void DTVPlayerGetCurrentProgramData(){
+		TVProgram mTVProgram=DTVPlayerGetDataByCurrentID();
+		dtvplayer_pronumber= mTVProgram.getNumber().getNumber();
+		dtvplayer_name = mTVProgram.getName();
+		dtvplayer_b_lock = mTVProgram.getLockFlag();
+		dtvplayer_b_fav = mTVProgram.getLockFlag();
+	}
+
+	private void finishPlayer(){
+		DTVPlayerStopPlay();
+		finish();
 	}
 
 }

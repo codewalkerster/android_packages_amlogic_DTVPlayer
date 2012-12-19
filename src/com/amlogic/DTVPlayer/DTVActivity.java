@@ -34,6 +34,7 @@ import java.lang.reflect.Field;
  */
 abstract public class DTVActivity extends TVActivity{
     private static final String TAG="DTVActivity";
+	private TVProgram TVProgram=null;
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
@@ -103,11 +104,23 @@ abstract public class DTVActivity extends TVActivity{
 	}
 
 	public void DTVPlayerPlayByProNo(int pronumber){
-
+		TVProgramNumber mTVProgramNumber = new TVProgramNumber(pronumber);
+		playProgram(mTVProgramNumber);
+	}
+	public void DTVPlayerPlayById(int db_id){
+		playProgram(db_id);
 	}
 
-	public void DTVPlayerPlayById(int db_id){
+	public void DTVPlayerPlayDown(){
+		channelDown();
+	}
 
+	public void DTVPlayerPlayUp(){
+		channelUp();
+	}
+
+	public void DTVPlayerStopPlay(){
+		stopPlaying();
 	}
 
 	/**********Timeshifting*************/
@@ -268,7 +281,15 @@ abstract public class DTVActivity extends TVActivity{
 	}
 
 	public int DTVPlayerGetCurrentProgramID(){
-		return 0;
+		return getCurrentId();
+	}
+
+	public TVProgram DTVPlayerGetDataByCurrentID(){
+		int db_id=-1;
+		db_id=DTVPlayerGetCurrentProgramID();
+		Log.d(TAG,"current id="+db_id);
+	
+		return TVProgram.selectByID(this,db_id);
 	}
 
 }

@@ -8,48 +8,57 @@
 			android:id="@+id/RelativeLayout01" 
 			android:layout_centerHorizontal="true"
 			android:layout_marginTop="100px" 
-			android:layout_width="486px" 
+			android:layout_width="644px" 
 			android:layout_height="429px"
 			android:orientation="vertical"
 			android:background="@drawable/settings_bg">
 	    
-	 	    <RelativeLayout
+	 	    <LinearLayout 
 				android:layout_alignParentTop="true"		
-				android:layout_centerInParent="true"  
+				android:orientation="horizontal"    
 				android:layout_width="fill_parent" 
 				android:layout_height="43px">  
 				
-	           <ImageView android:id="@+id/arrow_left"
-				android:layout_width="32px" android:layout_height="43px"
-				android:layout_alignParentBottom="true"
-				android:background="@drawable/dtvchannellist_button_arrow_left"
-				android:layout_toRightOf="@+id/RelativeLayout02" />		      
-	            
+	           <ImageView 
+		           	android:id="@+id/arrow_left"
+					android:layout_width="32px"
+					android:layout_height="43px"
+					android:layout_weight="1"
+					android:layout_marginLeft="20px"
+					android:layout_alignParentBottom="true"
+					android:background="@drawable/dtvchannellist_button_arrow_left"/>		      
+		            
 	           <TextView 
-			      android:id="@+id/mPath"
-			      android:layout_width="420px"
-			      android:layout_height="fill_parent"
-			      android:layout_toRightOf="@+id/arrow_left"
-			      android:gravity="center"
-			      android:textSize="24sp">
+					android:id="@+id/mPath"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:layout_weight="6"
+					android:gravity="center"
+					android:textSize="24sp">
 			    </TextView>
 	            
-				<ImageView android:id="@+id/arrow_right"
-				android:layout_width="32px" android:layout_height="43px"
-				android:layout_alignParentBottom="true"
-				android:background="@drawable/dtvchannellist_button_arrow_right"
-				android:layout_toRightOf="@+id/mPath" />	
-		    </RelativeLayout>   
+				<ImageView 
+					android:id="@+id/arrow_right"
+					android:layout_width="32px"
+					android:layout_height="43px"
+					android:layout_weight="1"
+					android:layout_marginRight="20px"
+					android:layout_alignParentBottom="true"
+					android:background="@drawable/dtvchannellist_button_arrow_right"
+				 />	
+		    </LinearLayout>   
 		    
 		    <RelativeLayout android:id="@+id/RelativeLayout03"
 	    		android:layout_alignParentBottom="true"	
 				android:layout_centerInParent="true"  
 				android:layout_width="fill_parent" 
 				android:layout_height="336px"
+				android:paddingLeft="10px"
+				android:paddingRight="13px"
 				>		
 			    <ListView 
 			      android:id="@+id/ListView_channel"
-			      android:layout_width="wrap_content"
+			      android:layout_width="fill_parent"
 			      android:layout_height="fill_parent"		      
 			    ></ListView>
 	    	</RelativeLayout>

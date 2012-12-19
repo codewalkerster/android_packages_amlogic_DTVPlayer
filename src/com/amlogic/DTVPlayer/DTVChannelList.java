@@ -27,20 +27,47 @@ public class DTVChannelList extends DTVActivity{
 	private int cur_select_item=0;
 	private IconAdapter myAdapter=null;
 	private TVProgram[]  mTVProgramList=null;
+
+	int db_id=-1;
 	
 	private void getListData(){
 		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,true);
 	}
 
 
-	private void DTVChannelListUIInit(){
+	private void DTVChannelListUIInit(){		
+	    Bundle bundle = this.getIntent().getExtras();
+		if(bundle!=null){
+	    	db_id = bundle.getInt("db_id");
+		}	
+		Log.d(TAG,"db_id="+db_id);
 		getListData();
 		ListView_channel = (ListView) findViewById(R.id.ListView_channel);
 		myAdapter = new IconAdapter(DTVChannelList.this,null);
 		ListView_channel.setOnItemSelectedListener(mOnSelectedListener);
 		ListView_channel.setOnScrollListener(new listOnScroll()); 
+		ListView_channel.setOnItemClickListener(mOnItemClickListener);
 		ListView_channel.setAdapter(myAdapter);
+		setFocusPosition();
 	}
+
+	public void setFocusPosition(){
+		int i = 0;
+		if(mTVProgramList!=null){
+			for(i=0;i<mTVProgramList.length;i++){
+				if(db_id == mTVProgramList[i].getID()){
+					ListView_channel.setFocusableInTouchMode(true);
+	   			  	ListView_channel.requestFocus();
+	   			  	ListView_channel.requestFocusFromTouch();
+	        		ListView_channel.setSelection(i);
+					cur_select_item = i;
+					break;
+				}
+			}	
+		}
+	}
+
+
 	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
@@ -77,8 +104,7 @@ public class DTVChannelList extends DTVActivity{
 		}
 	}
   
-  	private AdapterView.OnItemSelectedListener mOnSelectedListener = new AdapterView.OnItemSelectedListener()
-	{
+  	private AdapterView.OnItemSelectedListener mOnSelectedListener = new AdapterView.OnItemSelectedListener(){
 		public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
 			ListView_channel = (ListView) findViewById(R.id.ListView_channel);
 			if(ListView_channel.hasFocus() == true){
@@ -88,7 +114,18 @@ public class DTVChannelList extends DTVActivity{
 		public void onNothingSelected(AdapterView<?> parent){
 		}
 	};
-  	
+
+	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
+		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
+
+				int db_id=mTVProgramList[position].getID();
+				DTVPlayerPlayById(db_id);
+				DTVChannelList.this.finish();
+		}
+	};
+	
+
+	
 	private class IconAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Context cont;
@@ -155,10 +192,9 @@ public class DTVChannelList extends DTVActivity{
 			holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber()));
 			holder.text.setText(mTVProgramList[position].getName());
 
-			int db_id=0;
 			if(db_id == mTVProgramList[position].getID()){  
 				//convertView.setBackgroundColor(Color.RED);  
-				holder.text.setTextColor(Color.RED);
+				holder.text.setTextColor(Color.YELLOW);
 			}	
 			else{
 				//convertView.setBackgroundColor(Color.TRANSPARENT); 
@@ -200,21 +236,7 @@ public class DTVChannelList extends DTVActivity{
 			//reset_timer();
 		}
     }	
-
-
-	protected void onListItemClick(ListView l, View v, int position, long id){	
-		/*
-		Bundle bundle = new Bundle();
-		bundle.putInt("db_id",db_id);
-		bundle.putString("activity_tag","prolist");
-		Intent in = new Intent();
-		in.setClass(prolist.this, DVBPlayer.class);
-		in.putExtras(bundle);
-		startActivity(in);
-		finish();
-		*/
-	}
-
+	
 	class MouseClick implements OnClickListener{    
 		public void onClick(View v) {
 				// TODO Auto-generated method stub	

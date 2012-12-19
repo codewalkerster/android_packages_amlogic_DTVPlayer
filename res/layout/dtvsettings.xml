@@ -52,7 +52,6 @@
 				android:divider="#0000"
 				android:dividerHeight="0px"
 				android:focusable="true"
-				android:listSelector="@anim/list_item_focus"
 				></ListView>     
 		</RelativeLayout>
 
