@@ -29,7 +29,7 @@
 					android:background="@drawable/dtvchannellist_button_arrow_left"/>		      
 		            
 	           <TextView 
-					android:id="@+id/mPath"
+					android:id="@+id/Text_title"
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent"
 					android:layout_weight="6"

@@ -123,6 +123,37 @@ abstract public class DTVActivity extends TVActivity{
 		stopPlaying();
 	}
 
+	/*************TeleText**************/
+
+	public void DTVTTShow(){
+		ttShow();
+	}
+
+	public void DTVTTHide(){
+		ttHide();
+	}
+
+	public void DTVTTGotoNextPage() {
+        ttGotoNextPage();
+    }
+	
+    public void DTVTTGotoPreviousPage() {
+      ttGotoPreviousPage();
+    }
+	
+    public void DTVTTGotoPage(int page) {
+        ttGotoPage(page);
+    }
+
+    public void DTVTTGoHome() {
+        ttGoHome();
+    }
+	
+    public void DTVTTGotoColorLink(int color) {
+        ttGotoColorLink(color);
+    }
+
+
 	/**********Timeshifting*************/
 	public void DTVTimeShiftingForward(int speed){
 
@@ -225,7 +256,11 @@ abstract public class DTVActivity extends TVActivity{
 
 	/*********settings************/
 	public boolean DTVGetSubtitleStatus(){
-		return true;
+		return getBooleanConfig("tv:subtitle:enable");
+	}
+
+	public void DTVSetSubtitleStatus(boolean value){
+		setConfig("tv:subtitle:enable",value);
 	}
 
 	public int DTVGetScreenMode(){
@@ -281,7 +316,7 @@ abstract public class DTVActivity extends TVActivity{
 	}
 
 	public int DTVPlayerGetCurrentProgramID(){
-		return getCurrentId();
+		return getCurrentProgramID();
 	}
 
 	public TVProgram DTVPlayerGetDataByCurrentID(){

@@ -34,14 +34,18 @@ public class DTVChannelList extends DTVActivity{
 		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,true);
 	}
 
+	private void initListData(){
+		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,true);
+	}
 
-	private void DTVChannelListUIInit(){		
+	private void DTVChannelListUIInit(){	
+		TextView Text_title=(TextView)findViewById(R.id.Text_title);
 	    Bundle bundle = this.getIntent().getExtras();
 		if(bundle!=null){
 	    	db_id = bundle.getInt("db_id");
 		}	
 		Log.d(TAG,"db_id="+db_id);
-		getListData();
+		initListData();
 		ListView_channel = (ListView) findViewById(R.id.ListView_channel);
 		myAdapter = new IconAdapter(DTVChannelList.this,null);
 		ListView_channel.setOnItemSelectedListener(mOnSelectedListener);
@@ -66,8 +70,6 @@ public class DTVChannelList extends DTVActivity{
 			}	
 		}
 	}
-
-
 	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
@@ -123,9 +125,7 @@ public class DTVChannelList extends DTVActivity{
 				DTVChannelList.this.finish();
 		}
 	};
-	
 
-	
 	private class IconAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Context cont;
@@ -201,24 +201,21 @@ public class DTVChannelList extends DTVActivity{
 				holder.text.setTextColor(Color.WHITE);
 			}	
 		
-			//if(mTVProgramList[position].getLockStatus()){
-			if(true){
+			if(mTVProgramList[position].getLockFlag()){
 				holder.icon.setBackgroundResource(R.drawable.dtvplayer_icon_lock); 
 			}	
 			else{
 				holder.icon.setBackgroundResource(Color.TRANSPARENT);
 			}
 
-			//if(mTVProgramList[position].getLockStatus()){
-			if(true){
+			if(mTVProgramList[position].getLockFlag()){
 				holder.icon_fav.setBackgroundResource(R.drawable.dtvplayer_icon_fav); 
 			}	
 			else{
 				holder.icon_fav.setBackgroundResource(Color.TRANSPARENT);
 			}	
 
-			//if(mTVProgramList[position].getLockStatus()){
-			if(true){
+			if(mTVProgramList[position].getLockFlag()){
 				holder.icon_scrambled.setBackgroundResource(R.drawable.dtvplayer_icon_scrambled); 
 			}	
 			else{
@@ -254,12 +251,14 @@ public class DTVChannelList extends DTVActivity{
 		//reset_timer();
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_DPAD_LEFT:
-				
-				//setFocusPosition();
+				if(myAdapter!=null)
+					myAdapter.notifyDataSetChanged();
+				setFocusPosition();
 				break;		
-			case KeyEvent.KEYCODE_DPAD_RIGHT:	
-				
-				//setFocusPosition();
+			case KeyEvent.KEYCODE_DPAD_RIGHT:
+				if(myAdapter!=null)
+					myAdapter.notifyDataSetChanged();
+				setFocusPosition();
 				break;
 			case KeyEvent.KEYCODE_DPAD_DOWN:			
 				if(cur_select_item== ListView_channel.getCount()-1)

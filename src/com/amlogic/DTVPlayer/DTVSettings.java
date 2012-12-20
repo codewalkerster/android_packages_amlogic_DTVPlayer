@@ -48,9 +48,16 @@ public class DTVSettings extends DTVActivity{
 				break;
 		}
 	}
-
+	
 	public boolean getSubtitleStatus(){
-		return true;
+		if(getBooleanConfig("tv:subtitle:enable"))
+			return true;
+		else 
+			return false;
+	}
+
+	public void setSubtitleStatus(boolean value){
+		setConfig("tv:subtitle:enable",value);
 	}
 
 	public int getScreenMode(){
@@ -96,7 +103,6 @@ public class DTVSettings extends DTVActivity{
 	public void forceParentalRatingCheck(){
 		return ;
 	}
-
 
 }
 

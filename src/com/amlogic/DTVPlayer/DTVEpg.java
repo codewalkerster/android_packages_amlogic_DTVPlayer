@@ -710,7 +710,7 @@ public class DTVEpg extends DTVActivity{
 				}
 			}
 			TempLP.bottomMargin = EIT_ITEM_BOTTOMMARGINOF_DATEBG;
-			TempLP.leftMargin   = EIT_ITEM_LEFTMARGINOF_DATEBG;
+			TempLP.leftMargin   = 0;//EIT_ITEM_LEFTMARGINOF_DATEBG;
 			
 			TextView TempTexView;
 			TempTexView = new TextView(DTVEpg.this);

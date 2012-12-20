@@ -45,6 +45,8 @@
 	<string name="dtvplayer_no_signal"> No signal</string>
 	<string name="dtvplayer_scrambled">Scrambled program</string>
 
+	<string name="dtvplayer_subtitle_language_set">Subtitle language set</string>
+
 
 	<!--device browser-->
 	<string name="download_sel_confirm">Save recorded stream on selected storage device?</string>

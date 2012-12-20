@@ -171,7 +171,11 @@ public class DTVPlayer extends DTVActivity{
 					break;
 				}
 				else{
-					if(DTVPlayerIsRecording()){
+					if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){
+						DTVTTGotoPreviousPage();
+					}	
+					
+					else if(DTVPlayerIsRecording()){
 							AlertDialog.Builder builder = new AlertDialog.Builder(DTVPlayer.this); 
 								builder.setMessage(R.string.dtvplayer_change_channel)
 								.setCancelable(false)
@@ -206,7 +210,10 @@ public class DTVPlayer extends DTVActivity{
 					break;
 				}
 				else{
-					if(DTVPlayerIsRecording()){
+					if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){
+						DTVTTGotoNextPage();
+					}	
+					else if(DTVPlayerIsRecording()){
 						AlertDialog.Builder builder = new AlertDialog.Builder(DTVPlayer.this); 
 							builder.setMessage(R.string.dtvplayer_change_channel)
 							.setCancelable(false)
@@ -246,7 +253,7 @@ public class DTVPlayer extends DTVActivity{
 			case KeyEvent.KEYCODE_8:
 			case KeyEvent.KEYCODE_9:
 				Log.d(TAG,"KEYCODE_0----9");
-				DealDigtalKey(keyCode);
+				DTVDealDigtalKey(keyCode);
 				return true;
 			case KeyEvent.KEYCODE_BACK:
 				if(mainmenu_show_flag){
@@ -255,6 +262,10 @@ public class DTVPlayer extends DTVActivity{
 				else if(inforbar_show_flag){
 					HideControlBar();
 				}
+				else if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){	
+					DTVTTHide();
+					DTVPlayerInTeletextStatus=false;
+				}	
 				else{
 					finishPlayer();
 				}	
@@ -279,12 +290,24 @@ public class DTVPlayer extends DTVActivity{
 				break;		 
 			case KeyEvent.KEYCODE_ZOOM_IN:	
 				Log.d(TAG,"KEYCODE_ZOOM_IN");
+				if(dtvplyaer_b_txt){
+					Log.d(TAG,"111111111111");
+					if(DTVPlayerInTeletextStatus==false){
+						DTVTTShow();
+						DTVPlayerInTeletextStatus=true;
+					}	
+					else{
+						DTVTTHide();
+						DTVPlayerInTeletextStatus=false;
+					}	
+				}	
 				return true;
 			case KeyEvent.KEYCODE_ZOOM_OUT:
 				Log.d(TAG,"KEYCODE_ZOOM_OUT");
 				return true;
 			case KeyEvent.KEYCODE_TV_REPEAT:
 				Log.d(TAG,"KEYCODE_TV_REPEAT");
+				showSubtitleSettingMenu();
 				return true;
 			case KeyEvent.KEYCODE_MEDIA_REWIND:
 				Log.d(TAG,"KEYCODE_MEDIA_REWIND");
@@ -309,8 +332,9 @@ public class DTVPlayer extends DTVActivity{
 				Log.d(TAG,"KEYCODE_MEDIA_NEXT");	
 				return true;
 			case KeyEvent.KEYCODE_TV_SUBTITLE:
-				Log.d(TAG,"KEYCODE_TV_SUBTITLE");	
-				break;	
+				Log.d(TAG,"KEYCODE_TV_SUBTITLE");
+				shortcut_key_deal("SUBTITLE");
+				return true;	
 			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
 				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_VOICEMODE");
 				break;	
@@ -752,7 +776,22 @@ public class DTVPlayer extends DTVActivity{
 			ImageView_icon_lock.setVisibility(View.VISIBLE);
 		else
 			ImageView_icon_lock.setVisibility(View.INVISIBLE);
-		
+
+		if(dtvplayer_b_epg)
+			ImageView_icon_epg.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_epg.setVisibility(View.INVISIBLE);
+
+		if(dtvplyaer_b_txt)
+			ImageView_icon_txt.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_txt.setVisibility(View.INVISIBLE);
+
+		if(dtvplayer_b_sub)
+			ImageView_icon_sub.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_sub.setVisibility(View.INVISIBLE);
+
 	}
 
 	void ShowProgramNo(int value){
@@ -898,7 +937,7 @@ public class DTVPlayer extends DTVActivity{
     
 	private boolean DTVPlayerInTeletextStatus=false;
 
-	private void DealDigtalKey(int value){
+	private void DTVDealDigtalKey(int value){
 		int number_key_value=0;
 		
 		if(DTVPlayerInTeletextStatus==false){
@@ -913,7 +952,15 @@ public class DTVPlayer extends DTVActivity{
 			number_key_down = true;
 		}
 		else{
-			//deal number key in Teletext mode
+			prono_timer_handler.removeCallbacks(prono_timer_runnable);
+			number_key_value = value - KeyEvent.KEYCODE_0;
+			pronumber = pronumber*10+number_key_value;
+			if(pronumber>9999){
+				pronumber = number_key_value;
+			}	
+			DTVTTGotoPage(pronumber);
+			prono_timer_handler.postDelayed(prono_timer_runnable, 1000);
+			number_key_down = true;
 		}
 	}
 
@@ -952,6 +999,16 @@ public class DTVPlayer extends DTVActivity{
 				ShowInformation(getString(R.string.left));				
 				DTVSetAudioTrack(2);
 			}	
+		}
+		else if(key.equals("SUBTITLE")){
+			if(DTVGetSubtitleStatus()){
+				DTVSetSubtitleStatus(false);
+				ShowInformation(getString(R.string.off));	
+			}
+			else{
+				DTVSetSubtitleStatus(true);
+				ShowInformation(getString(R.string.on));	
+			}
 		}
 	}
 
@@ -1159,12 +1216,21 @@ public class DTVPlayer extends DTVActivity{
 	private boolean isHavePragram(){
 		TVProgram[]  mTVProgramList=null;
 		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,false);
-		if(mTVProgramList.length!=0)
-			return true;
-		else{
-			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,false);
+		if(mTVProgramList!=null){
 			if(mTVProgramList.length!=0)
 				return true;
+			else{
+				mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,false);
+				if(mTVProgramList==null)
+					return false;
+				else if(mTVProgramList.length!=0)
+					return true;
+			}
+		}
+		else{
+			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,false);
+			if(mTVProgramList==null)
+				return false;
 		}
 		return false;
 	}
@@ -1180,19 +1246,159 @@ public class DTVPlayer extends DTVActivity{
 	private boolean dtvplayer_b_epg=false;
 	private boolean dtvplyaer_b_txt=false;
 	private boolean dtvplayer_b_sub=false;
-		
+	TVProgram.Subtitle mSubtitle[]=null;
+	TVProgram.Teletext mTeletext[]=null;
+	private int mSubtitleCount=0;
+	private int mTeletextCount=0;
+	private int mSubtitleIndex=0;
+	
 	private void DTVPlayerGetCurrentProgramData(){
 		TVProgram mTVProgram=DTVPlayerGetDataByCurrentID();
 		dtvplayer_pronumber= mTVProgram.getNumber().getNumber();
 		dtvplayer_name = mTVProgram.getName();
 		dtvplayer_b_lock = mTVProgram.getLockFlag();
 		dtvplayer_b_fav = mTVProgram.getLockFlag();
+		dtvplayer_b_scrambled = mTVProgram.getLockFlag();
+
+		//mTVProgram.getSubtitle();
+		mSubtitleCount=mTVProgram.getSubtitleCount();
+		if(mSubtitleCount>0){
+			dtvplayer_b_sub=true;
+			mSubtitle = new TVProgram.Subtitle[mSubtitleCount];
+			mSubtitleLang = new String[mSubtitleCount];
+			for(int i=0;i<mSubtitleCount;i++){
+				mSubtitle[i]=mTVProgram.getSubtitle(i);
+				mSubtitleLang[i]= mSubtitle[i].getLang();
+				Log.d(TAG,"sub Lang:"+mSubtitleLang[i]);
+			}
+		}	
+		else
+			dtvplayer_b_sub=false;
+
+		//mTVProgram.getTeletext();
+		int mTeletextCount = mTVProgram.getTeletextCount();
+		if(mTeletextCount>0){
+			dtvplyaer_b_txt=true;
+			mTeletext = new TVProgram.Teletext[mTeletextCount];
+		}	
+		else
+			dtvplyaer_b_txt=false;
+
+		//TVEvent mTVEvent=TVEvent.selectByID(this,DTVPlayerGetCurrentProgramID());	
+		
 	}
+
+
+	private int cur=0;
+	private Button BtnSubtitleLanguage=null;
+	private String mSubtitleLang[]=null;
+	private void showSubtitleLanguageDialog(){
+		if(mSubtitleCount>0){
+			AlertDialog.Builder builder = new AlertDialog.Builder(DTVPlayer.this); 
+		 	builder.setTitle(R.string.dtvplayer_subtitle_language_set);
+			builder.setIcon( android.R.drawable.ic_dialog_info);
+			builder.setSingleChoiceItems(mSubtitleLang,mSubtitleIndex, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {	
+				cur= which;
+				}
+			});
+			builder.setNegativeButton(R.string.cancel, new  DialogInterface.OnClickListener(){	
+				//@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					 dialog.dismiss();
+				}
+			});
+			builder.setPositiveButton(R.string.ok, new  DialogInterface.OnClickListener(){
+
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					Log.d("#####","#####"+which);
+				mSubtitleIndex= cur;
+				BtnSubtitleLanguage.setText(mSubtitle[mSubtitleIndex].getLang());
+				dialog.dismiss();
+				}
+			});	
+						
+			AlertDialog dialog = builder.create();
+			dialog.show();  
+			dialog.getWindow().setLayout(400,-1);
+
+			WindowManager.LayoutParams lp=dialog.getWindow().getAttributes();
+			lp.dimAmount=0.0f;
+			dialog.getWindow().setAttributes(lp);
+			dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		}
+	}
+
+	
+	void showSubtitleSettingMenu(){	
+		AlertDialog.Builder settingBuilder = new AlertDialog.Builder(this);
+		LayoutInflater layoutInflater = LayoutInflater.from(this);  
+		View subtitle_settings;
+
+		if(mSubtitleCount>0)
+		 	subtitle_settings = layoutInflater.inflate(R.layout.dtv_subtitle_settings, null); 
+		else
+			subtitle_settings = layoutInflater.inflate(R.layout.dtv_subtitle_settings_no_lan, null); 
+		settingBuilder.setTitle(R.string.dtvplayer_subtitle_language_set);
+		settingBuilder.setView(subtitle_settings);
+
+		BtnSubtitleLanguage =(Button)subtitle_settings.findViewById(R.id.BtnSubtitleLanguage);
+		Log.d(TAG,"index0="+mSubtitleIndex);
+		String ss = mSubtitleLang[mSubtitleIndex];
+		BtnSubtitleLanguage.setText(ss);
+
+		BtnSubtitleLanguage.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+	        	 showSubtitleLanguageDialog();
+	          }});
+		
+		final CheckBox checkboxSubtitleSwitch = (CheckBox)subtitle_settings.findViewById(R.id.checkSubtitleSwitch);
+		if(DTVGetSubtitleStatus()){
+			checkboxSubtitleSwitch.setChecked(true);
+		}
+		else{
+			checkboxSubtitleSwitch.setChecked(false);
+		}
+		
+		settingBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {			
+				 public void onClick(DialogInterface dialog, int which) {
+					if(checkboxSubtitleSwitch.isChecked()){
+						DTVSetSubtitleStatus(true);
+						switchSubtitle(mSubtitleIndex);
+					}
+					else{
+						DTVSetSubtitleStatus(false);	
+					}
+						
+					dialog.dismiss();
+			}
+		});
+			 
+		settingBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener(		) {
+			
+			public void onClick(DialogInterface dialog, int which) {				
+			}
+		});
+
+
+		AlertDialog alert = settingBuilder.create();
+		alert.show();	
+		
+		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+		lp.dimAmount=0.00f;
+		alert.getWindow().setAttributes(lp);
+		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+	}
+	
 
 	private void finishPlayer(){
 		DTVPlayerStopPlay();
 		finish();
 	}
 
+	
 }
 
