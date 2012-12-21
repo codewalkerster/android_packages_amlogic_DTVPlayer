@@ -74,7 +74,6 @@ public class DTVPlayer extends DTVActivity{
 		}
 	}
 
-	
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
 
@@ -864,7 +863,6 @@ public class DTVPlayer extends DTVActivity{
 		timer_handler.postDelayed(timer_runnable, inforbar_distime);
 	}
 
-
 	void hidePvrIcon(){
 		ImageView ImageView_recordingIcon = (ImageView) findViewById(R.id.ImageView_recordingIcon);
 		Text_recording_time = (TextView) findViewById(R.id.Text_recording_time);
@@ -1025,7 +1023,6 @@ public class DTVPlayer extends DTVActivity{
 				ShowInformation(getString(R.string.right));			
 				DTVSetAudioTrack(0);
 				Text_MTS_info.setText(getString(R.string.right));			
-
 			}
 			else  if(mode==1){
 				ShowInformation(getString(R.string.stereo));			
@@ -1043,7 +1040,6 @@ public class DTVPlayer extends DTVActivity{
 				DTVSetSubtitleStatus(false);
 				ShowInformation(getString(R.string.off));	
 				Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));	
-
 			}
 			else{
 				DTVSetSubtitleStatus(true);
@@ -1341,7 +1337,6 @@ public class DTVPlayer extends DTVActivity{
 		else
 			dtvplayer_b_sub=false;
 
-		//mTVProgram.getTeletext();
 		int mTeletextCount = mTVProgram.getTeletextCount();
 		if(mTeletextCount>0){
 			dtvplyaer_b_txt=true;
@@ -1529,7 +1524,6 @@ public class DTVPlayer extends DTVActivity{
 			dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		}			
 	}
-
 
 	private void finishPlayer(){
 		DTVPlayerStopPlay();
