@@ -10,7 +10,22 @@
 	<string name="yes">Yes</string>
 	<string name="no">No</string>
 	<string name="all">All</string>
+	<string name="tv">TV</string>
+	<string name="radio">Radio</string>
+	<string name="favorite">Favorite</string>
+	<string name="unfavorite">Move Favorite</string>
 
+	<string name="auto">Auto</string>
+	<string name="type_4_3">4:3</string>
+	<string name="type_16_9">16:9</string>
+
+	<string name="mono">Mono</string>
+	<string name="SAP">SAP</string>	
+	<string name="stereo">Stereo</string>
+	<string name="left">Left</string>
+	<string name="right">Right</string>	
+	
+	
     <string name="dtvplayer_loading">Loading...</string>
 	<!--main menu button info--> 
 	<string name="dtvplayer_menu_button_list">Channel List</string>
@@ -46,6 +61,7 @@
 	<string name="dtvplayer_scrambled">Scrambled program</string>
 
 	<string name="dtvplayer_subtitle_language_set">Subtitle language set</string>
+	<string name="dtvplayer_audio_language_set">Audio language set</string>
 
 
 	<!--device browser-->
@@ -101,15 +117,7 @@
     <string name="ttx_region">TTX Region</string>
     <string name="lcn_switch">LCN</string>	
     
-    <string name="auto">Auto</string>
-	<string name="type_4_3">4:3</string>
-	<string name="type_16_9">16:9</string>
-
-	<string name="mono">Mono</string>
-	<string name="SAP">SAP</string>	
-	<string name="stereo">Stereo</string>
-	<string name="left">Left</string>
-	<string name="right">Right</string>
+   
 
 	<string name="enter_cur_password">Current password</string>
 	<string name="enter_new_password">New password</string>

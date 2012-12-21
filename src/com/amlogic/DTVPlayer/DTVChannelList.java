@@ -24,28 +24,59 @@ import android.graphics.Color;
 public class DTVChannelList extends DTVActivity{
 	private static final String TAG="DTVChannelList";
 	ListView ListView_channel=null;
+	TextView Text_title=null;
+	private int class_total=0;
+	private int cur_class_no=-1;
+	private String[] class_name=null;
 	private int cur_select_item=0;
 	private IconAdapter myAdapter=null;
 	private TVProgram[]  mTVProgramList=null;
 
 	int db_id=-1;
+	private int service_type=TVProgram.TYPE_TV;
+	private boolean favor=false;
 	
-	private void getListData(){
-		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,true);
+	private void getListData(int type){
+		if(type==0)
+			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,true);
+		else if(type==1)
+			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,true);
 	}
 
-	private void initListData(){
-		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,true);
+	private void getListFavorite(){
+		mTVProgramList=null;
+		
 	}
 
-	private void DTVChannelListUIInit(){	
-		TextView Text_title=(TextView)findViewById(R.id.Text_title);
+	private int getListProgramClass(){
+		return 0;
+	}
+
+	private void getClassData(int class_no){
+
+	}
+
+	private void DTVChannelListUIInit(){
 	    Bundle bundle = this.getIntent().getExtras();
 		if(bundle!=null){
 	    	db_id = bundle.getInt("db_id");
+			service_type=getCurrentProgramType();
 		}	
-		Log.d(TAG,"db_id="+db_id);
-		initListData();
+		Log.d(TAG,"db_id="+db_id+"   service_type="+service_type);
+
+		Text_title=(TextView)findViewById(R.id.Text_title);
+		Text_title.setTextColor(Color.YELLOW);
+		class_total = getListProgramClass();
+		if(service_type == TVProgram.TYPE_RADIO){
+			getListData(1);
+			Text_title.setText(R.string.radio);
+		}	
+		else{
+			service_type = TVProgram.TYPE_TV;
+			getListData(0);
+			Text_title.setText(R.string.tv);
+		}
+		
 		ListView_channel = (ListView) findViewById(R.id.ListView_channel);
 		myAdapter = new IconAdapter(DTVChannelList.this,null);
 		ListView_channel.setOnItemSelectedListener(mOnSelectedListener);
@@ -208,14 +239,14 @@ public class DTVChannelList extends DTVActivity{
 				holder.icon.setBackgroundResource(Color.TRANSPARENT);
 			}
 
-			if(mTVProgramList[position].getLockFlag()){
+			if(mTVProgramList[position].getFavoriteFlag()){
 				holder.icon_fav.setBackgroundResource(R.drawable.dtvplayer_icon_fav); 
 			}	
 			else{
 				holder.icon_fav.setBackgroundResource(Color.TRANSPARENT);
 			}	
 
-			if(mTVProgramList[position].getLockFlag()){
+			if(mTVProgramList[position].getScrambledFlag()){
 				holder.icon_scrambled.setBackgroundResource(R.drawable.dtvplayer_icon_scrambled); 
 			}	
 			else{
@@ -251,14 +282,10 @@ public class DTVChannelList extends DTVActivity{
 		//reset_timer();
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_DPAD_LEFT:
-				if(myAdapter!=null)
-					myAdapter.notifyDataSetChanged();
-				setFocusPosition();
+				DTVListDealLeftAndRightKey(0);
 				break;		
-			case KeyEvent.KEYCODE_DPAD_RIGHT:
-				if(myAdapter!=null)
-					myAdapter.notifyDataSetChanged();
-				setFocusPosition();
+			case KeyEvent.KEYCODE_DPAD_RIGHT:	
+				DTVListDealLeftAndRightKey(1);
 				break;
 			case KeyEvent.KEYCODE_DPAD_DOWN:			
 				if(cur_select_item== ListView_channel.getCount()-1)
@@ -274,6 +301,128 @@ public class DTVChannelList extends DTVActivity{
 		}
 		return super.onKeyDown(keyCode, event);
 	}	  
- 
+
+	private void DTVListDealLeftAndRightKey(int mode){
+		switch(mode){
+			case 0:  //left
+				if((service_type == TVProgram.TYPE_RADIO)&&(favor!=true)){
+					//mTVProgramList.clear();
+					getListData(0);
+					Text_title.setText(R.string.tv);
+					service_type = TVProgram.TYPE_TV;
+					myAdapter.notifyDataSetChanged();
+				}
+				else if((service_type == TVProgram.TYPE_TV)&&(favor!=true)){
+					Log.d(TAG,"##########"+class_total);
+					//mTVProgramList.clear();
+					if(class_total>0)
+					{	
+						service_type = -1;
+					   	cur_class_no = class_total-1;
+						Text_title.setText(class_name[cur_class_no]);
+						getClassData(cur_class_no);
+						myAdapter.notifyDataSetChanged();
+					}
+					else
+					{					
+						Text_title.setText(R.string.favorite);
+						getListFavorite();
+						myAdapter.notifyDataSetChanged();
+						favor=true;
+					}	
+				}	
+				else if((favor!=true)&&(service_type != TVProgram.TYPE_TV)&&(service_type != TVProgram.TYPE_RADIO)){
+					//mTVProgramList.clear();
+					if(cur_class_no>0&&class_total>0)
+					{
+						service_type = -1;
+						cur_class_no --;
+						Text_title.setText(class_name[cur_class_no]);
+						getClassData(cur_class_no);
+						myAdapter.notifyDataSetChanged();
+						
+					}
+					else
+					{
+						Text_title.setText(R.string.favorite);
+						getListFavorite();
+						myAdapter.notifyDataSetChanged();
+						favor=true;
+					}
+				}
+				else if(favor==true)
+				{
+					//mTVProgramList.clear();
+					getListData(1);
+					Text_title.setText(R.string.radio);
+					service_type = TVProgram.TYPE_RADIO;
+					myAdapter.notifyDataSetChanged();
+					favor=false;
+				}	
+				setFocusPosition();
+				break;	
+			case 1:
+				if(service_type == TVProgram.TYPE_TV)
+				{
+					//mTVProgramList.clear();
+					getListData(1);
+					Text_title.setText(R.string.radio);
+					service_type = TVProgram.TYPE_RADIO;
+					myAdapter.notifyDataSetChanged();
+				}
+				else if((service_type == TVProgram.TYPE_RADIO)&&(favor==false)){
+					//mTVProgramList.clear();
+					Text_title.setText(R.string.favorite);
+					getListFavorite();
+					myAdapter.notifyDataSetChanged();
+					favor=true;
+				}
+				else if(favor==true)
+				{
+					Log.d(TAG,"##########"+class_total);
+					//mTVProgramList.clear();
+					if(class_total>0)
+					{	
+						service_type = -1;
+					    cur_class_no = 0;
+						Text_title.setText(class_name[cur_class_no]);
+						getClassData(cur_class_no);
+						myAdapter.notifyDataSetChanged();
+					}
+					else
+					{
+						
+						getListData(0);
+						Text_title.setText(R.string.tv);
+						service_type = TVProgram.TYPE_TV;
+						myAdapter.notifyDataSetChanged();
+					}	
+					favor=false;
+				}	
+				else
+				{
+					//mTVProgramList.clear();	
+					if(cur_class_no<(class_total-1))
+					{
+						service_type = -1;
+						cur_class_no ++;
+						Text_title.setText(class_name[cur_class_no]);
+						getClassData(cur_class_no);
+						myAdapter.notifyDataSetChanged();
+
+					}
+					else
+					{
+						getListData(0);
+						Text_title.setText(R.string.tv);
+						service_type = TVProgram.TYPE_TV;
+						myAdapter.notifyDataSetChanged();
+					}
+					
+				}	
+				setFocusPosition();
+				break;
+		}
+	}
 }
 

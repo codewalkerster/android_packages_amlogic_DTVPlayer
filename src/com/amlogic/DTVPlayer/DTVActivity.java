@@ -123,6 +123,18 @@ abstract public class DTVActivity extends TVActivity{
 		stopPlaying();
 	}
 
+	public boolean DTVPlayerSetFav(boolean f){
+		int db_id=-1;
+		db_id=DTVPlayerGetCurrentProgramID();
+		TVProgram mTVProgram = TVProgram.selectByID(this,db_id);
+		if(mTVProgram.getFavoriteFlag()!=f){
+			mTVProgram.setFavoriteFlag(f);
+			return true;
+		}	
+		else
+			return false;
+	}
+
 	/*************TeleText**************/
 
 	public void DTVTTShow(){
@@ -174,6 +186,7 @@ abstract public class DTVActivity extends TVActivity{
 
 	public void DTVSubtitleStop(){}
 	public void DTVTeletextStop(){}
+
 
 
 	/***********DTV EPG****************/
