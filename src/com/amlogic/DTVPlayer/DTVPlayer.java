@@ -10,6 +10,7 @@ import com.amlogic.tvactivity.TVActivity;
 import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
+import com.amlogic.tvutil.TVEvent;
 
 import android.view.*;
 import android.view.View.*;
@@ -103,18 +104,20 @@ public class DTVPlayer extends DTVActivity{
 				showDia(1);
 				break;
 			case TVMessage.TYPE_SIGNAL_RESUME:
-				dismissDialog(1);
+				if(mAlertDialog!=null)
+					dismissDialog(1);
 				break;	
 			case TVMessage.TYPE_DATA_LOST:
 				showDia(2);
 				break;
 			case TVMessage.TYPE_DATA_RESUME:
-				dismissDialog(2);
+				if(mAlertDialog!=null)
+					dismissDialog(2);
 				break;
 			case TVMessage.TYPE_PROGRAM_START:
 				DTVPlayerGetCurrentProgramData();
-				updateInforbar();
 				ShowControlBar();
+				updateInforbar();
 				break;
 			default:
 				break;
@@ -759,6 +762,32 @@ public class DTVPlayer extends DTVActivity{
 		ImageView_icon_txt=(ImageView)findViewById(R.id.ImageView_icon_txt);
 
 		TextView Text_proname = (TextView) findViewById(R.id.Text_proname);
+		Text_proname.setTextColor(Color.YELLOW);
+
+		TextView Text_curevent = (TextView) findViewById(R.id.Text_curevent);
+		Text_curevent.setTextColor(Color.YELLOW);
+		if(dtvplayer_cur_event==null)
+			Text_curevent.setText(getString(R.string.dtvplayer_no_current_event));
+		else
+			Text_curevent.setText(dtvplayer_cur_event);
+		
+		TextView Text_title_info = (TextView) findViewById(R.id.Text_title_info);
+		if(dtvplayer_event_des==null)
+			Text_title_info.setText(getString(R.string.dtvplayer_title_info));
+		else
+			Text_title_info.setText(dtvplayer_event_des);
+	
+		TextView Text_detail_info = (TextView) findViewById(R.id.Text_detail_info);
+		if(dtvplayer_event_ext_des==null)
+			Text_detail_info.setText(getString(R.string.dtvplayer_detail_info));
+		else
+			Text_detail_info.setText(dtvplayer_event_ext_des);
+
+		TextView Text_nextevent = (TextView) findViewById(R.id.Text_nextevent);
+		if(dtvplayer_next_event==null)
+			Text_nextevent.setText(getString(R.string.dtvplayer_no_next_event));
+		else
+			Text_nextevent.setText(dtvplayer_next_event);
 
 		if(dtvplayer_pronumber>=0)	
 		Text_proname.setText(Integer.toString(dtvplayer_pronumber)+"  "+dtvplayer_name);
@@ -822,6 +851,8 @@ public class DTVPlayer extends DTVActivity{
 		else{
 			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
 		}
+
+
 		
 	}
 
@@ -1283,8 +1314,10 @@ public class DTVPlayer extends DTVActivity{
 	private int pronumber=0;
 	private int dtvplayer_pronumber=0;
 	private String dtvplayer_name=" ";
-	private String dtvplayer_cur_event="";
-	private String dtvplayer_next_event=" ";
+	private String dtvplayer_cur_event=null;
+	private String dtvplayer_next_event=null;
+	private String dtvplayer_event_des=null;
+	private String dtvplayer_event_ext_des=null;
 	private boolean dtvplayer_b_lock=false;
 	private boolean dtvplayer_b_fav=false;
 	private boolean dtvplayer_b_scrambled=false;
@@ -1345,7 +1378,20 @@ public class DTVPlayer extends DTVActivity{
 		else
 			dtvplyaer_b_txt=false;
 
-		//TVEvent mTVEvent=TVEvent.selectByID(this,DTVPlayerGetCurrentProgramID());	
+		TVEvent[] mTVEvent=mTVProgram.getScheduleEvents(this,getUTCTime(),getUTCTime()*24*60*60*1000);	
+		if(mTVEvent!=null){
+			dtvplayer_cur_event=null;
+			dtvplayer_event_des=null;
+			dtvplayer_event_ext_des=null;
+			dtvplayer_next_event=null;
+			if(mTVEvent.length>=1){
+				dtvplayer_cur_event=mTVEvent[0].getName();
+				dtvplayer_event_des=mTVEvent[0].getEventDescr();
+				dtvplayer_event_ext_des=mTVEvent[0].getEventExtDescr();
+			}
+			if(mTVEvent.length>=2)
+				dtvplayer_next_event=mTVEvent[1].getName();
+		}
 	}
 
 	private boolean DTVPlayerSetFav(){
@@ -1405,7 +1451,6 @@ public class DTVPlayer extends DTVActivity{
 			AlertDialog dialog = builder.create();
 			dialog.show();  
 			dialog.getWindow().setLayout(400,-1);
-
 			WindowManager.LayoutParams lp=dialog.getWindow().getAttributes();
 			lp.dimAmount=0.0f;
 			dialog.getWindow().setAttributes(lp);
@@ -1474,7 +1519,6 @@ public class DTVPlayer extends DTVActivity{
 
 		AlertDialog alert = settingBuilder.create();
 		alert.show();	
-		
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
 		lp.dimAmount=0.00f;
 		alert.getWindow().setAttributes(lp);
@@ -1514,10 +1558,8 @@ public class DTVPlayer extends DTVActivity{
 			 });	
 
 			AlertDialog dialog = builder.create();
-
 			dialog.show();  
 			dialog.getWindow().setLayout(400,-1);
-
 			WindowManager.LayoutParams lp=dialog.getWindow().getAttributes();
 			lp.dimAmount=0.0f;
 			dialog.getWindow().setAttributes(lp);
