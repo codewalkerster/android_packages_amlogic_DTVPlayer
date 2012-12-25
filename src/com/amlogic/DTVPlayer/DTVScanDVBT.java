@@ -39,7 +39,7 @@ public class DTVScanDVBT extends DTVActivity{
 	public static final int SETTINGS_MAX = 4;
 
 	/*in DTVSCANDVBT_SETTING_MANU_SCAN_MODE*/
-	public static final int SETTINGS_BY_CHANNELID = 0;
+	public static final int SETTINGS_MANU_SCANMODE = 0;
 	public static final int SETTINGS_SCAN_BAND = 1;
 	public static final int SETTINGS_CHNO = 2;
 	public static final int SETTINGS_FREQUENCY = 3;
@@ -434,7 +434,7 @@ public class DTVScanDVBT extends DTVActivity{
 
 	private void DTVScanDVBT_SettingListItemClickedAutoScanStart()
 	{
-		
+		DTVScanDVBTUiScanInit();
 	}
 
 	private void DTVScanDVBT_SettingListItemClickedManuScan()
@@ -518,6 +518,10 @@ public class DTVScanDVBT extends DTVActivity{
 				{
 					switch(ui_dvbsandvbt_setting_list_curitem)
 					{
+						case SETTINGS_MANU_SCANMODE:
+							DTVScanDVBT_SettingListItemArrowScanMode();
+							break;
+							
 						case DTVScanDVBT.SETTINGS_BANDWIDTH:
 							DTVScanDVBT_SettingListItemLeftArrowBandw();
 							break;
@@ -559,6 +563,10 @@ public class DTVScanDVBT extends DTVActivity{
 				{
 					switch(ui_dvbsandvbt_setting_list_curitem)
 					{
+						case SETTINGS_MANU_SCANMODE:
+							DTVScanDVBT_SettingListItemArrowScanMode();
+							break;
+					
 						case DTVScanDVBT.SETTINGS_BANDWIDTH:
 							DTVScanDVBT_SettingListItemRightArrowBandw();
 							break;
@@ -646,6 +654,20 @@ public class DTVScanDVBT extends DTVActivity{
 			dvbscandvbt_manu_bandwidth = SETTINGS_BANDWIDTH_8_MHZ;
 		}	
 
+		ui_dvbsandvbt_setting_list_adapt.notifyDataSetChanged();	
+	}
+
+	private void DTVScanDVBT_SettingListItemArrowScanMode()
+	{
+		if(dvbscandvbt_manu_scanmode == SETTINGS_MANU_SCANMODE_FREQ)
+		{
+			dvbscandvbt_manu_scanmode = SETTINGS_MANU_SCANMODE_CHAN;
+		}else if(dvbscandvbt_manu_scanmode == SETTINGS_MANU_SCANMODE_CHAN)
+		{
+			dvbscandvbt_manu_scanmode = SETTINGS_MANU_SCANMODE_FREQ;
+		}
+
+		
 		ui_dvbsandvbt_setting_list_adapt.notifyDataSetChanged();	
 	}	
 
@@ -769,7 +791,7 @@ public class DTVScanDVBT extends DTVActivity{
 					{
 						  switch(position)
 						  {
-							case DTVScanDVBT.SETTINGS_BY_CHANNELID:
+							case DTVScanDVBT.SETTINGS_MANU_SCANMODE:
 								holder.info.setVisibility(View.VISIBLE);
 								displayinfoscanmode(holder);
 
@@ -914,7 +936,7 @@ public class DTVScanDVBT extends DTVActivity{
 					{
 						switch(position)
 						{
-							case DTVScanDVBT.SETTINGS_BY_CHANNELID:	
+							case DTVScanDVBT.SETTINGS_MANU_SCANMODE:	
 								vh.icon.setImageBitmap(mIcon_setting);
 								break;
 							case DTVScanDVBT.SETTINGS_SCAN_BAND:	
@@ -988,7 +1010,7 @@ public class DTVScanDVBT extends DTVActivity{
 					{
 						switch(position)
 						{
-							case DTVScanDVBT.SETTINGS_BY_CHANNELID:	
+							case DTVScanDVBT.SETTINGS_MANU_SCANMODE:	
 								vh.text.setText(R.string.dtvscandvbt_scan_mode);
 								break;
 							case DTVScanDVBT.SETTINGS_SCAN_BAND:	
@@ -1312,13 +1334,19 @@ public class DTVScanDVBT extends DTVActivity{
 	private void DTVScanDVBT_StartAutoScan()
 	{
 		Log.d(TAG, "DTVScanDVBT_StartAutoScan");
+
+		TVScanParams sp;	
+
+		sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_OFDM);
+
+		startScan(sp);
 	}
 
 	private void DTVScanDVBT_StartManuScan()
 	{
-		TVScanParams sp;	
-
 		Log.d(TAG, "DTVScanDVBT_StartManuScan");
+	
+		TVScanParams sp;	
 
 		switch(dvbscandvbt_manu_bandwidth)
 		{
