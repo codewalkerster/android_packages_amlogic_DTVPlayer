@@ -10,6 +10,7 @@ import com.amlogic.tvactivity.TVActivity;
 import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
+import com.amlogic.tvutil.TVEvent;
 
 import java.util.*;
 import java.text.*;
@@ -80,7 +81,6 @@ public class DTVEpg extends DTVActivity{
 	private int EIT_ITEM_CONTENT_HEIGHT  = EIT_ITEM_HEIGHTOF_DATEBG;
 	private int EIT_ITEMWIDTH_PERMINUTE  = EIT_ITEM_WIDTHOF_HOURBG/60; // (EIT_ITEM_WIDTHOF_HOURBG/60);
 	
-	
 	private Handler  currenttimer_handler;
 	private Runnable currenttimer_runnable;
 	
@@ -98,7 +98,7 @@ public class DTVEpg extends DTVActivity{
 	
 	/********db var*********/
 	private Cursor srv_Cursor;  
-	private Cursor eit_Cursor[];
+	private TVEvent[][] mTVEvent=new TVEvent[7][];
 	private int cur_service_id=-1;
 	private int cur_source_id;
 
@@ -114,16 +114,16 @@ public class DTVEpg extends DTVActivity{
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.dtvepg);
+		DTVEpgUIInit();
 	}
 
 	public void onStart(){
 		super.onStart();
-		DTVEpgUIInit();
+		
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
-		
 	}
 
 	public void onDisconnected(){
@@ -285,8 +285,7 @@ public class DTVEpg extends DTVActivity{
 
 
 	private long get_firstmillisofcurrentday(){
-		Date date1 = new Date();
-		Date date2 = new Date(date1.getTime());
+		Date date1 = new Date(get_current_datetime());
 
 		date1.setHours(0);
 		date1.setMinutes(0);
@@ -313,53 +312,75 @@ public class DTVEpg extends DTVActivity{
 	
 	private int get_current_event_index(){
 		int value = 0;
-		Cursor PassedEit_Cursor = DTVEpg_select_passedeit(get_currentdb_srv_id(), 
-			get_firstmillisofcurrentday()/1000, get_current_datetime().getTime()/1000);
+		TVEvent[]  PassedEit = DTVEpg_getDateEIT(get_firstmillisofcurrentday(), get_current_datetime()-get_firstmillisofcurrentday());
 
-		if(PassedEit_Cursor!=null){
-			if (PassedEit_Cursor.getCount()>0){
-				PassedEit_Cursor.moveToFirst();
-				if(PassedEit_Cursor.getLong(PassedEit_Cursor.getColumnIndex("start")) >  (get_firstmillisofcurrentday()/1000))
-					value = PassedEit_Cursor.getCount()+1;
+		if(PassedEit!=null){
+			if (PassedEit.length>0){
+			
+				if((PassedEit[0].getStartTime())>  (get_firstmillisofcurrentday()))
+					value = PassedEit.length+1;
 				else
-					value = PassedEit_Cursor.getCount();
+					value = PassedEit.length;
 			}	
 			else
 				value = 0; 
-			
-			PassedEit_Cursor.close();
-		}	
-		value = 0;
+		}
+		Log.d(TAG,"value="+value);
 		return value;
 
 	}
 
-	private void moveto_currentevent(){
-		View TempButton = DTVEpg.this.getCurrentFocus();
-    	if (TempButton == null)
-			Log.d("moveto_currentevent >>>>>>>", "TempButton is null");
-		else{	
-			Log.d("moveto_currentevent>>>>>>>", TempButton.toString());			
 
-			if (get_current_event_index()>1){
-	        	for(int i = 0; i<get_current_event_index()-1; i++)
-	    		{
-	    			if (TempButton.focusSearch(View.FOCUS_RIGHT) != null)
-	        		{	
-	        			TempButton = TempButton.focusSearch(View.FOCUS_RIGHT);
-						Log.d("moveto_currentevent >>>>>>>>>", TempButton.toString());
+	private void moveto_currentevent(){
+        View TempButton = DTVEpg.this.getCurrentFocus();
+        if (TempButton != null){
+            Log.d("moveto_currentevent >>>", TempButton.toString());
+
+            if (get_current_event_index()>=1){
+				if(TempButton.toString().startsWith("android.widget.ListView")){
+
+					TempButton = ((ListView)TempButton).getChildAt(0);
+					if(TempButton !=null){
+                        TempButton = ((View)TempButton).findViewById(1);
+                        if(TempButton !=null){
+							(TempButton).requestFocus();
+                        }	
+                        else{
+                            for(int i = 0; i<get_current_event_index()-1; i++){
+                                if (TempButton.focusSearch(View.FOCUS_RIGHT) != null){
+                                        TempButton = TempButton.focusSearch(View.FOCUS_RIGHT);
+                                        Log.d("moveto_currentevent >>>>---", TempButton.toString());
+                                }
+                                else{
+                                        Log.d("moveto_currentevent>>>>", "null");
+                                }
+                                Log.d("moveto_currentevent>>>>>", ""+i);
+                            }
+                            (TempButton).requestFocus();
+                        }
+                	}
+        		}
+				else {	
+					Log.d("moveto_currentevent>>>>>>>", TempButton.toString());			
+
+					if (get_current_event_index()>=1){
+			        	for(int i = 0; i<get_current_event_index(); i++){
+			    			if (TempButton.focusSearch(View.FOCUS_RIGHT) != null){	
+			        			TempButton = TempButton.focusSearch(View.FOCUS_RIGHT);
+								Log.d("moveto_currentevent >>>>>>>>>", TempButton.toString());
+							}
+							else{
+								Log.d("moveto_currentevent>>>>>>>>>", "null");
+							}
+							Log.d("moveto_currentevent>>>>>>>", ""+i);
+						}
+						
+						(TempButton).requestFocus();
 					}
-					else
-					{
-						Log.d("moveto_currentevent>>>>>>>>>", "null");
-					}
-					Log.d("moveto_currentevent>>>>>>>", ""+i);
 				}
-				
-				(TempButton).requestFocus();
-			}
-		}
-    }
+    		}
+    	}
+	}
 	
 	private void create_proganddate(){
 		LinearLayout proganddate_view  = (LinearLayout)findViewById(R.id.epg_layout_ProgNameAndDate);
@@ -456,13 +477,14 @@ public class DTVEpg extends DTVActivity{
 	
 	/******************used after connect service*******************/
 
-	private Date get_current_datetime(){
-		Date date = new Date();
-		return date;
+	private long get_current_datetime(){
+		//Date date = new Date();
+		//return date;
+		return getUTCTime();
 	}
 	
 	private void refresh_currenttime(){		
-		Date date = new Date();
+		Date date = new Date(getUTCTime());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
 		String today = sdf.format(date); 
 		TextView TempTexView; 
@@ -476,32 +498,32 @@ public class DTVEpg extends DTVActivity{
 		TempTexView.setText(DTVEpg_get_currentprogname());
 	}
 	
-	private void setup_db(){        
-		eit_Cursor = new Cursor[7];
-        
-        eit_Cursor[0] = DTVEpg_getCurrentDateEIT(get_currentdb_srv_id(), 
-        						get_current_datetime().getTime()/1000,get_firstmillisofcurrentday()/1000);
-		Log.d("eit_Cursor[0]:",""+eit_Cursor[0].getCount());
-        eit_Cursor[1] = DTVEpg_getDateEIT(get_currentdb_srv_id(), 
-        						get_firstmillisofcurrentday()/1000+ 1 * 24 * 60 * 60);
-		Log.d("eit_Cursor[1]:",""+eit_Cursor[1].getCount());
-        eit_Cursor[2] = DTVEpg_getDateEIT(get_currentdb_srv_id(), 
-        						get_firstmillisofcurrentday()/1000+ 2 * 24 * 60 * 60);
-		Log.d("eit_Cursor[2]:",""+eit_Cursor[2].getCount());
-        eit_Cursor[3] = DTVEpg_getDateEIT(get_currentdb_srv_id(), 
-        						get_firstmillisofcurrentday()/1000+ 3 * 24 * 60 * 60);
-		Log.d("eit_Cursor[3]:",""+eit_Cursor[3].getCount());
-        eit_Cursor[4] = DTVEpg_getDateEIT(get_currentdb_srv_id(), 
-        						get_firstmillisofcurrentday()/1000+ 4 * 24 * 60 * 60);
-		Log.d("eit_Cursor[4]:",""+eit_Cursor[4].getCount());
-        eit_Cursor[5] = DTVEpg_getDateEIT(get_currentdb_srv_id(), 
-        						get_firstmillisofcurrentday()/1000+ 5 * 24 * 60 * 60);
-		Log.d("eit_Cursor[5]:",""+eit_Cursor[5].getCount());
-        eit_Cursor[6] = DTVEpg_getDateEIT(get_currentdb_srv_id(), 
-        						get_firstmillisofcurrentday()/1000+ 6 * 24 * 60 * 60);
-		Log.d("eit_Cursor[6]:",""+eit_Cursor[6].getCount());
-
-		if (eit_Cursor[0].getCount() >0)
+	private void setup_db(){
+	     
+        mTVEvent[0] = DTVEpg_getDateEIT(get_current_datetime()
+        						,get_firstmillisofcurrentday()+ 1 * 24 * 60 * 60*1000-get_current_datetime());
+		Log.d("mTVEvent[0]:",""+mTVEvent[0].length);
+		
+        mTVEvent[1] = DTVEpg_getDateEIT(get_firstmillisofcurrentday()+ 1 * 24 * 60 * 60*1000,
+        						 1 * 24 * 60 * 60*1000);
+		Log.d("mTVEvent[1]:",""+mTVEvent[1].length);
+        mTVEvent[2] = DTVEpg_getDateEIT(get_firstmillisofcurrentday()+ 2 * 24 * 60 * 60*1000,
+        						1 * 24 * 60 * 60*1000);
+		Log.d("mTVEvent[2]:",""+mTVEvent[2].length);
+        mTVEvent[3] = DTVEpg_getDateEIT( get_firstmillisofcurrentday()+ 3 * 24 * 60 * 60*1000,
+        						1 * 24 * 60 * 60*1000);
+		Log.d("mTVEvent[3]:",""+mTVEvent[3].length);
+        mTVEvent[4] = DTVEpg_getDateEIT( get_firstmillisofcurrentday()+ 4 * 24 * 60 * 60*1000,
+        						1 * 24 * 60 * 60*1000);
+		Log.d("mTVEvent[4]:",""+mTVEvent[4].length);
+        mTVEvent[5] = DTVEpg_getDateEIT( get_firstmillisofcurrentday()+ 5 * 24 * 60 * 60*1000,
+        						1 * 24 * 60 * 60*1000);
+		Log.d("mTVEvent[5]:",""+mTVEvent[5].length);
+        mTVEvent[6] = DTVEpg_getDateEIT( get_firstmillisofcurrentday()+ 6 * 24 * 60 * 60*1000,
+        						1 * 24 * 60 * 60*1000);
+		Log.d("mTVEvent[6]:",""+mTVEvent[6].length);
+		
+		if (mTVEvent[0].length > 0)
 			HelpInfoTextView.setText(R.string.epg_operate_des01);
 		else
 			HelpInfoTextView.setText(R.string.epg_no_epg_info);
@@ -573,7 +595,6 @@ public class DTVEpg extends DTVActivity{
 		};
 	    currenttimer_handler.postDelayed(currenttimer_runnable, 1000);
 	}
-	
 	
 	private void create_eventnameanddetailinfo(){
 		LinearLayout eventname_detailinfo_view  = (LinearLayout)findViewById(R.id.epg_layout_EventNameAndDetailInfo);
@@ -816,23 +837,21 @@ public class DTVEpg extends DTVActivity{
 			
 			TempTexView.setWidth(EIT_ITEM_WIDTHOF_HOURBG);
 			TempTexView.setHeight(EIT_ITEM_HEIGHTOF_HOURBG);
-			switch(Layout_size)
-			{
-			case LAYOUT_SMALL:
-			case LAYOUT_SMALL576:		
-				TempTexView.setHeight(24);
-			break;
-			
-			case LAYOUT_MID:
-				TempTexView.setHeight(EIT_ITEM_HEIGHTOF_HOURBG);
-			break;
-			
-			case LAYOUT_LARGE:
-				TempTexView.setHeight(59);//EIT_ITEM_HEIGHTOF_HOURBG*1.5
-			break;
-			}
+			switch(Layout_size){
+				case LAYOUT_SMALL:
+				case LAYOUT_SMALL576:		
+					TempTexView.setHeight(24);
+				break;
 				
-		
+				case LAYOUT_MID:
+					TempTexView.setHeight(EIT_ITEM_HEIGHTOF_HOURBG);
+				break;
+				
+				case LAYOUT_LARGE:
+					TempTexView.setHeight(59);//EIT_ITEM_HEIGHTOF_HOURBG*1.5
+				break;
+			}
+					
 			TempTexView.setBackgroundResource(R.drawable.epg_hour_bg);
 			((LinearLayout)HoursView).addView(TempTexView); 
 		}
@@ -921,20 +940,19 @@ public class DTVEpg extends DTVActivity{
 				convertView = create_eit_content();
 			}
 
-			if(eit_Cursor[position]!=null){
-				if (eit_Cursor[position].getCount()>0){	
+			if(mTVEvent[position]!=null){
+				if (mTVEvent[position].length>0){	
 
 					int TempInt = 0;
-					for(int i=0;((i<EIT_ITEM_CONTENT_MAXCOUNT)&&(i<eit_Cursor[position].getCount()));i++)
+					for(int i=0;((i<EIT_ITEM_CONTENT_MAXCOUNT)&&(i<mTVEvent[position].length));i++)
 					{
 						Button TempButton;
 						long TempLong;
 						
-						eit_Cursor[position].moveToPosition(i);
 						if (
 							(i == 0 ) && 
 							(
-							        eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("start")) 
+							        mTVEvent[position][i].getStartTime() 
 									> 
 							        (get_firstmillisofcurrentday()/1000+ position * 24 * 60 * 60))
 							)
@@ -942,7 +960,7 @@ public class DTVEpg extends DTVActivity{
 							TempButton = (Button)((LinearLayout)convertView).findViewById(0);
 							TempInt = 1;
 							
-							TempLong = eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("start")) 
+							TempLong =  mTVEvent[position][i].getStartTime() 
 							                - (get_firstmillisofcurrentday()/1000+ position * 24 * 60 * 60);
 							
 							TempButton.setHeight(EIT_ITEM_CONTENT_HEIGHT);
@@ -960,21 +978,21 @@ public class DTVEpg extends DTVActivity{
 							return convertView;
 						}
 
-						if ((i == (eit_Cursor[position].getCount() - 1) )||(i == 0))
+						if ((i == (mTVEvent[position].length - 1) )||(i == 0))
 						{
 						
-							if (eit_Cursor[position].getCount() == 1)
+							if (mTVEvent[position].length == 1)
 							{
 
-								if (eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("start")) 
+								if ( mTVEvent[position][i].getStartTime()  
 									< (get_firstmillisofcurrentday()/1000+ position * 24 * 60 * 60) )
 								{
 
-									if ( eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("end")) 
+									if ( mTVEvent[position][i].getEndTime()
 										< (get_firstmillisofcurrentday()/1000+ (position+1) * 24 * 60 * 60)
 										)
 										{
-											TempLong = eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("end")) 
+											TempLong = mTVEvent[position][i].getEndTime() 
 										           - (get_firstmillisofcurrentday()/1000+ position * 24 * 60 * 60);
 										}
 
@@ -986,18 +1004,18 @@ public class DTVEpg extends DTVActivity{
 								else
 								{
 
-									if(	eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("end")) 
+									if(mTVEvent[position][i].getEndTime()
 											>
 							           (get_firstmillisofcurrentday()/1000+ (position+1) * 24 * 60 * 60) )
 									{
 										TempLong = (get_firstmillisofcurrentday()/1000+ (position+1) * 24 * 60 * 60)
-									       - eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("start"));	
+									       - mTVEvent[position][i].getStartTime() ;	
 									}
 
 									else
 									{
-										TempLong = eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("end")) 
-								          - eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("start"));
+										TempLong = mTVEvent[position][i].getEndTime()
+								          - mTVEvent[position][i].getStartTime() ;
 									}
 								}
 							}	
@@ -1006,41 +1024,39 @@ public class DTVEpg extends DTVActivity{
 							{
 								if ((i == 0 ) && 
 								(
-								        eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("start")) 
+								        mTVEvent[position][i].getStartTime()  
 										<
 								        (get_firstmillisofcurrentday()/1000+ position * 24 * 60 * 60))
 								)	
 								{
-									TempLong = eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("end")) 
+									TempLong = mTVEvent[position][i].getEndTime()
 								           - (get_firstmillisofcurrentday()/1000+ position * 24 * 60 * 60);
 								}
 								else
-								if((i == (eit_Cursor[position].getCount() - 1) ) && 
+								if((i == (mTVEvent[position].length - 1) ) && 
 								(
-								        eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("end")) 
+								        mTVEvent[position][i].getEndTime()
 										>
 								        (get_firstmillisofcurrentday()/1000+ (position+1) * 24 * 60 * 60))
 								)	
 								{
 									TempLong = (get_firstmillisofcurrentday()/1000+ (position+1) * 24 * 60 * 60)
-									       - eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("start"));
+									       - mTVEvent[position][i].getStartTime() ;
 								}
 								else{
 
 									
 									
 									
-									if((i < (eit_Cursor[position].getCount() - 1) ))
+									if((i < (mTVEvent[position].length - 1) ))
 									{
-										long start = eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("start"));
-										eit_Cursor[position].moveToPosition(i+1);
-										long end =  eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("start")); 
-										eit_Cursor[position].moveToPosition(i);
+										long start = mTVEvent[position][i].getStartTime() ;
+										long end =  mTVEvent[position][i+1].getStartTime(); 
 										TempLong = end-start;	
 									}
 									else{
-										TempLong = eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("end")) 
-							          - eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("start"));
+										TempLong = mTVEvent[position][i].getEndTime() 
+							          - mTVEvent[position][i].getStartTime() ;
 
 									}
 								}	
@@ -1049,14 +1065,12 @@ public class DTVEpg extends DTVActivity{
 						}
 						else
 						{
-							long start = eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("start"));
-							eit_Cursor[position].moveToPosition(i+1);
-							long end =  eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("start")); 
-							eit_Cursor[position].moveToPosition(i);
-							TempLong = end-start;	
+							long start = mTVEvent[position][i].getStartTime() ;
+							long end =  mTVEvent[position][i+1].getStartTime(); 
+							TempLong = end-start;		
 							/*
-							TempLong = eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("end")) 
-							          - eit_Cursor[position].getLong(eit_Cursor[position].getColumnIndex("start"));
+							TempLong = mTVEvent[position].getLong(mTVEvent[position].getEndTime()) 
+							          - mTVEvent[position].getLong(mTVEvent[position].getStartTime());
 							*/          
 						}
 
@@ -1068,7 +1082,7 @@ public class DTVEpg extends DTVActivity{
 						TempButton.setHeight(EIT_ITEM_CONTENT_HEIGHT);
 						TempButton.setWidth(((int)TempLong/60)*EIT_ITEMWIDTH_PERMINUTE - 1);
 						TempButton.setHint(""+i);
-						TempButton.setText(""+eit_Cursor[position].getString(eit_Cursor[position].getColumnIndex("name")));	
+						TempButton.setText(""+mTVEvent[position][i].getName());	
 
 						//TempButton.setWidth(((int)TempLong/60)*EIT_ITEMWIDTH_PERMINUTE - 1);	
 
@@ -1076,6 +1090,7 @@ public class DTVEpg extends DTVActivity{
 						TempButton.setVisibility(View.VISIBLE);
 
 						final int pos = position;
+						final int item = i;
 						TempButton.setOnKeyListener(new OnKeyListener() { 
 						public boolean onKey(View v, int keyCode, KeyEvent event) {		
 					
@@ -1083,7 +1098,7 @@ public class DTVEpg extends DTVActivity{
 							{
 								case KeyEvent.KEYCODE_TAB: //info
 									if (event.getAction() == KeyEvent.ACTION_DOWN) {
-										showInfoDia(v,pos);	
+										showInfoDia(v,pos,item);	
 																		}
 									return true;	
 							} 
@@ -1092,7 +1107,7 @@ public class DTVEpg extends DTVActivity{
 
 						
 
-						switch(eit_Cursor[position].getInt(eit_Cursor[position].getColumnIndex("sub_flag")))
+						switch(mTVEvent[position][i].getSubFlag())
 						{
 							case 0:
 								refresh_bookstatus(TempButton, 0);
@@ -1112,14 +1127,13 @@ public class DTVEpg extends DTVActivity{
 	} 
 
 	AlertDialog.Builder builder=null;
-    	private void showInfoDia(View v,int pos){
+    	private void showInfoDia(View v,int pos,int i){
 
-		String message = eit_Cursor[pos].getString(eit_Cursor[pos].getColumnIndex("descr"))+"\n"+eit_Cursor[pos].getString(eit_Cursor[pos].getColumnIndex("ext_descr"));
+		String message = mTVEvent[pos][i].getEventDescr()+"\n"+mTVEvent[pos][i].getEventExtDescr();
 				
 		builder = new AlertDialog.Builder(DTVEpg.this) ;
 		builder.setTitle((((Button)v).getText().toString()!=null&&!(((Button)v).getText().toString().equals("")))?((Button)v).getText().toString():"--");
-		//builder.setMessage((eit_Cursor[pos].getString(eit_Cursor[pos].getColumnIndex("ext_descr"))!=null&&!(eit_Cursor[pos].getString(eit_Cursor[pos].getColumnIndex("ext_descr")).equals("")))?
-					//eit_Cursor[pos].getString(eit_Cursor[pos].getColumnIndex("ext_descr")):eit_Cursor[pos].getString(eit_Cursor[pos].getColumnIndex("descr")));
+		//builder.setMessage((mTVEvent[pos].getString(mTVEvent[pos].getColumnIndex("ext_descr"))!=null&&!(mTVEvent[pos].getString(mTVEvent[pos].getColumnIndex("ext_descr")).equals("")))?
 		builder.setMessage(message);
 		builder.setPositiveButton("ok", null);
 
@@ -1152,33 +1166,30 @@ public class DTVEpg extends DTVActivity{
     {
 	        public void onClick(View v) 
 	       {
-	        	if (Integer.valueOf(((Button)v).getHint().toString()) != -1)
+	       		final int i=Integer.valueOf(((Button)v).getHint().toString());
+	        	if (i != -1)
 	        	{	
 	        		try 
 					{
 			        	int TempInt = EitListView.getPositionForView(v);
 
-			        	eit_Cursor[TempInt].moveToPosition(Integer.valueOf(((Button)v).getHint().toString()));
-
-			    		Date dt_start =  new Date(eit_Cursor[TempInt].getLong(eit_Cursor[TempInt].getColumnIndex("start"))*1000);
-			    		Date dt_end   =  new Date(eit_Cursor[TempInt].getLong(eit_Cursor[TempInt].getColumnIndex("end"))*1000);
+			    		Date dt_start =  new Date(mTVEvent[TempInt][i].getStartTime()*1000);
+			    		Date dt_end   =  new Date((mTVEvent[TempInt][i].getEndTime())*1000);
 			    		
 			    		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
 			    		String str_start = sdf.format(dt_start); 
 			    		String str_end   = sdf.format(dt_end); 
 			        	
 					    refresh_eventnameanddetailinfo(((Button)v).getText().toString() + "[" + str_start + "--" + str_end +"]", 
-					    		get_detailinfo(eit_Cursor[TempInt].getInt(eit_Cursor[TempInt].getColumnIndex("db_id"))));
+					    		get_detailinfo(mTVEvent[TempInt][i].getID()));
 						
 
 	        		}
-					catch(Exception e)
-					{
-					    Log.d("EitItemOnClick Exception#################################################", e.getMessage());
+					catch(Exception e){
+					    Log.d(">>>EitItemOnClick Exception<<<", e.getMessage());
 					}
 
-					try
-					{
+					try{
 						TempItemView = v;
 						final CharSequence[] book_items = {"No Book", "BookPlay", "BookRecord"};
 						Dialog dialog = null;  
@@ -1205,19 +1216,19 @@ public class DTVEpg extends DTVActivity{
 											{
 
 													case 0:
-														update_bookstatus(eit_Cursor[TempInt].getInt(eit_Cursor[TempInt].getColumnIndex("db_id")),0);
+														update_bookstatus(mTVEvent[TempInt][i].getID(),0);
 													break;
 													
 													case 1:
-														update_bookstatus(eit_Cursor[TempInt].getInt(eit_Cursor[TempInt].getColumnIndex("db_id")),1);
+														update_bookstatus(mTVEvent[TempInt][i].getID(),1);
 													break;
 													
 													case 2:
-														update_bookstatus(eit_Cursor[TempInt].getInt(eit_Cursor[TempInt].getColumnIndex("db_id")),2);
+														update_bookstatus(mTVEvent[TempInt][i].getID(),2);
 														
-														Log.d("EPG","start="+(eit_Cursor[TempInt].getLong(eit_Cursor[TempInt].getColumnIndex("start")))+"System.currentTimeMillis()"+System.currentTimeMillis());
-														if((long)(eit_Cursor[TempInt].getLong(eit_Cursor[TempInt].getColumnIndex("start")))>System.currentTimeMillis()/1000)
-															SetAlarm(eit_Cursor[TempInt].getLong(eit_Cursor[TempInt].getColumnIndex("start"))-100);
+														//Log.d("EPG","start="+(mTVEvent[TempInt].getLong(mTVEvent[TempInt].getStartTime()))+"System.currentTimeMillis()"+System.currentTimeMillis());
+														if((long)(mTVEvent[TempInt][i].getStartTime())>System.currentTimeMillis()/1000)
+															SetAlarm(mTVEvent[TempInt][i].getStartTime()-100);
 													break;
 											}
 										}
@@ -1256,28 +1267,26 @@ public class DTVEpg extends DTVActivity{
 	        }
 	}
 
-	class EitItemOnFocusChange  implements OnFocusChangeListener
-	{
-		public void onFocusChange(View v, boolean isFocused)
-	    {		
+	class EitItemOnFocusChange  implements OnFocusChangeListener{
+		public void onFocusChange(View v, boolean isFocused){		
 	    	  refresh_dates(EitListView.getPositionForView(v));
-			  if (Integer.valueOf(((Button)v).getHint().toString()) != -1)
-			  {
+              
+	       	  final int i=Integer.valueOf(((Button)v).getHint().toString());
+			  if (i != -1){
 			  
 					try 
 					{
 						int TempInt = EitListView.getPositionForView(v);
-						eit_Cursor[TempInt].moveToPosition(Integer.valueOf(((Button)v).getHint().toString()));
 
-						Date dt_start =  new Date(eit_Cursor[TempInt].getLong(eit_Cursor[TempInt].getColumnIndex("start"))*1000);
-				    		Date dt_end   =  new Date(eit_Cursor[TempInt].getLong(eit_Cursor[TempInt].getColumnIndex("end"))*1000);
+						Date dt_start =  new Date(mTVEvent[TempInt][i].getStartTime()*1000);
+				    		Date dt_end   =  new Date(mTVEvent[TempInt][i].getEndTime()*1000);
 				    		
 				    		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
 				    		String str_start = sdf.format(dt_start); 
 				    		String str_end   = sdf.format(dt_end); 
 						
 				  		refresh_eventnameanddetailinfo(((Button)v).getText().toString()+ "[" + str_start + "--" + str_end +"]",
-			         		get_detailinfo(eit_Cursor[TempInt].getInt(eit_Cursor[TempInt].getColumnIndex("db_id"))));
+			         		get_detailinfo(mTVEvent[TempInt][i].getID()));
 					}
 					catch(Exception e)
 					{

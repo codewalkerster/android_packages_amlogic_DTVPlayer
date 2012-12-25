@@ -45,8 +45,7 @@ android:id="@+id/epg_layout_parent"
 				android:layout_width="wrap_content"
 				android:layout_height="fill_parent"
 				android:background ="@drawable/epg_date_bg"
-				android:orientation="vertical" 
-				android:paddingLeft="16px">
+				android:orientation="vertical" >
 			   </LinearLayout>
 
 				<LinearLayout
