@@ -7,46 +7,118 @@
 	android:background="#00000000"
 	android:foreground="#00000000">
 
-	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/DtvscandvbtInsidelLayout"
-		android:layout_centerInParent="true"  
-		android:layout_width="704px" 
-		android:layout_height="472px"
-		android:background="@drawable/dtvscandvbt_bg">    
 
-			<RelativeLayout android:id="@+id/DtvscandvbtTitleLayout"
-				android:layout_alignParentTop="true"		
-				android:layout_centerInParent="true"  
-				android:layout_width="fill_parent" 
-				android:layout_height="50px">  
-					
-				<TextView 
-					android:id="@+id/DtvscandvbtTitleText"
-					android:layout_width="fill_parent"
-					android:layout_height="fill_parent"
-					android:gravity="center"
-					android:textSize="24sp"
-					>
-				</TextView>
-			</RelativeLayout>   
-		           
-			<RelativeLayout android:id="@+id/DtvscandvbtListLayout"
-				android:layout_below="@+id/DtvscandvbtTitleLayout"	
-		    		android:layout_alignParentBottom="true"	
-				android:layout_centerInParent="true"  
-				android:layout_width="fill_parent" 
-				android:layout_height="422px"
-				android:padding="5px">		 
-					  
-				<ListView 
-					android:id="@+id/DtvscandvbtSettingList"
-					android:layout_width="fill_parent"
-					android:layout_height="fill_parent"
-					>
-				</ListView>
+    <LinearLayout 
+		android:id="@+id/RelativeLayoutBG"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="100px" 
+		android:layout_width="644px" 
+		android:layout_height="458px"
+		android:background="@drawable/settings_bg"
+		android:orientation="vertical">  
+
+		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/DtvscandvbtInsidelLayout"
+			android:layout_alignParentTop="true"	
+			android:layout_width="fill_parent" 
+			android:layout_height="408px">    
+
+				<RelativeLayout android:id="@+id/DtvscandvbtTitleLayout"
+					android:layout_alignParentTop="true"		
+					android:layout_width="fill_parent" 
+					android:layout_height="50px">  
+						
+					<TextView 
+						android:id="@+id/DtvscandvbtTitleText"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+						android:gravity="center"
+						android:textSize="24sp"
+						>
+					</TextView>
+				</RelativeLayout>   
+			           
+				<RelativeLayout android:id="@+id/DtvscandvbtListLayout"
+					android:layout_below="@+id/DtvscandvbtTitleLayout"	
+			    	android:layout_alignParentBottom="true"	
+					android:layout_centerInParent="true"  
+					android:layout_width="fill_parent" 
+					android:layout_height="358px"
+					android:padding="16px">		 
+						  
+					<ListView 
+						android:id="@+id/DtvscandvbtSettingList"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+						>
+					</ListView>
+				</RelativeLayout>
+				
+		</RelativeLayout>
+	 	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="50px"
+			android:layout_marginRight="20px"
+			android:layout_marginLeft="20px"
+			android:orientation="vertical">
+			<RelativeLayout
+				android:id="@+id/inforbar_line" 
+				android:layout_width="fill_parent"
+				android:layout_height="2px"
+				android:background="@drawable/line"
+				>	
 			</RelativeLayout>
+	     
+		     <LinearLayout
+	    		android:layout_width="match_parent"
+	    		android:layout_height="match_parent"
+	    		android:orientation="horizontal"
+	    		android:gravity="center"
+	    		android:layout_marginBottom="8px">
 			
-	</RelativeLayout>
- 	
+	    		<ImageView 
+	    			android:layout_width="wrap_content"
+	    			android:layout_height="wrap_content"
+					android:background="@drawable/move"
+	    		>
+	    		</ImageView>
+	    		<TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center"
+			        android:text="@string/help_info_move"
+			        android:textColor="#FFFFFFFF"
+			        android:textSize="20sp" 
+			        android:layout_marginRight="30px"
+			        />
+	    		<ImageView 
+	    			android:layout_width="wrap_content"
+	    			android:layout_height="wrap_content"
+					android:background="@drawable/enter"
+	    		></ImageView>
+	    		<TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center"
+			        android:text="@string/help_info_select"
+			        android:textColor="#FFFFFFFF"
+			        android:textSize="20sp"
+			        android:layout_marginRight="30px"
+			        />
+	    		<ImageView 
+	    			android:layout_width="wrap_content"
+	    			android:layout_height="wrap_content"
+					android:background="@drawable/return_icon"
+	    		></ImageView>
+	    		<TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center"
+			        android:text="@string/help_info_return"
+			        android:textColor="#FFFFFFFF"
+			        android:textSize="20sp" />
+			</LinearLayout>
+		</LinearLayout>	
+	</LinearLayout>	
 </RelativeLayout>
 
