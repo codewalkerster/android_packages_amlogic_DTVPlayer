@@ -422,8 +422,10 @@ public class DTVPlayer extends DTVActivity{
                // TODO Auto-generated method stub
                if(hasFocus == true){
 				   Text_button_info.setText(R.string.dtvplayer_menu_button_list); 
+				   v.startAnimation(mainMenuButtonFocus);
                }else{
 				   Text_button_info.setText(null); 
+				   v.clearAnimation();
                }
             }
         });
@@ -435,8 +437,10 @@ public class DTVPlayer extends DTVActivity{
                // TODO Auto-generated method stub
                if(hasFocus == true) {    
 				   Text_button_info.setText(R.string.dtvplayer_menu_button_epg); 
+				   v.startAnimation(mainMenuButtonFocus);
                }else{
 				   Text_button_info.setText(null); 
+				   v.clearAnimation();
                }
             }
         });
@@ -448,8 +452,10 @@ public class DTVPlayer extends DTVActivity{
                // TODO Auto-generated method stub
                if(hasFocus == true) {    
 				   Text_button_info.setText(R.string.dtvplayer_menu_button_settings); 
+				   v.startAnimation(mainMenuButtonFocus);
                }else{
-				   Text_button_info.setText(null); 
+				   Text_button_info.setText(null);
+				   v.clearAnimation();
                }
             }
         });
@@ -461,8 +467,10 @@ public class DTVPlayer extends DTVActivity{
                // TODO Auto-generated method stub
                if(hasFocus == true) {    
 				   Text_button_info.setText(R.string.dtvplayer_menu_button_program_manager); 
+				   v.startAnimation(mainMenuButtonFocus);
                }else{
 				   Text_button_info.setText(null); 
+				   v.clearAnimation();
                }
             }
         });
@@ -474,8 +482,10 @@ public class DTVPlayer extends DTVActivity{
                // TODO Auto-generated method stub
                if(hasFocus == true) {    
 				   Text_button_info.setText(R.string.dtvplayer_menu_button_timeshifting); 
+				   v.startAnimation(mainMenuButtonFocus);
                }else{
 				   Text_button_info.setText(null); 
+				   v.clearAnimation();
                }
             }
         });
@@ -487,8 +497,10 @@ public class DTVPlayer extends DTVActivity{
                // TODO Auto-generated method stub
                if(hasFocus == true) {    
 				   Text_button_info.setText(R.string.dtvplayer_menu_button_timeshifting); 
+				   v.startAnimation(mainMenuButtonFocus);
                }else{
 				   Text_button_info.setText(null); 
+				   v.clearAnimation();
                }
             }
         });
@@ -500,8 +512,10 @@ public class DTVPlayer extends DTVActivity{
                // TODO Auto-generated method stub
                if(hasFocus == true) {    
 				   Text_button_info.setText(R.string.dtvplayer_menu_button_pvr_manager); 
+				   v.startAnimation(mainMenuButtonFocus);
                }else{
 				   Text_button_info.setText(null); 
+				   v.clearAnimation();
                }
             }
         });
@@ -513,8 +527,10 @@ public class DTVPlayer extends DTVActivity{
                // TODO Auto-generated method stub
                if(hasFocus == true) {
 				   Text_button_info.setText(R.string.dtvplayer_menu_button_hide);
+				   v.startAnimation(mainMenuButtonFocus);
                }else{
 				   Text_button_info.setText(null);
+				   v.clearAnimation();
                }
             }
         });
@@ -592,6 +608,13 @@ public class DTVPlayer extends DTVActivity{
 					startActivityForResult(Intent_settings,2);
 					break;
 				case R.id.Button_mainmenu_program_manager:
+					HideMainMenu();
+					Intent pickerIntent_pro = new Intent();
+					Bundle bundle_promanage = new Bundle();
+					bundle_promanage.putInt("db_id", DTVPlayerGetCurrentProgramID());
+					pickerIntent_pro.putExtras(bundle_promanage);
+					pickerIntent_pro.setClass(DTVPlayer.this, DTVProgramManager.class);
+ 		            startActivity(pickerIntent_pro);					
 					break;
 				case R.id.Button_mainmenu_timeshift:
 					Intent Intent_timeshift = new Intent();
@@ -638,6 +661,8 @@ public class DTVPlayer extends DTVActivity{
 	private Animation mainMenuHideAction;
 	private Animation showPvrAction;
 	private Animation hidePvrAction;
+	//private Animation mainMenuButtonFocus;
+	private AnimationSet mainMenuButtonFocus ;
 	private void init_Animation(){
 		showAction = new TranslateAnimation(
 			Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
@@ -680,6 +705,21 @@ public class DTVPlayer extends DTVActivity{
 	        //showAction = new ScaleAnimation(
 	        //    1.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f);
 		mainMenuHideAction.setDuration(300);
+	
+		/*
+		mainMenuButtonFocus = new TranslateAnimation(
+	                Animation.RELATIVE_TO_SELF, -1.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+				 Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f);
+		mainMenuButtonFocus.setDuration(300);
+		*/
+		mainMenuButtonFocus = new AnimationSet(true);
+	    ScaleAnimation  scale  = new ScaleAnimation(1.2f, 0.8f, 1.2f, 0.8f,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+	     mainMenuButtonFocus.addAnimation(scale);
+	     scale.setDuration(300);
+	     scale.setRepeatCount(0);
+		 mainMenuButtonFocus.addAnimation(scale);
 	}
 
 
@@ -1378,19 +1418,20 @@ public class DTVPlayer extends DTVActivity{
 		else
 			dtvplyaer_b_txt=false;
 
-		TVEvent[] mTVEvent=mTVProgram.getScheduleEvents(this,getUTCTime(),getUTCTime()*24*60*60*1000);	
-		if(mTVEvent!=null){
-			dtvplayer_cur_event=null;
-			dtvplayer_event_des=null;
-			dtvplayer_event_ext_des=null;
-			dtvplayer_next_event=null;
-			if(mTVEvent.length>=1){
-				dtvplayer_cur_event=mTVEvent[0].getName();
-				dtvplayer_event_des=mTVEvent[0].getEventDescr();
-				dtvplayer_event_ext_des=mTVEvent[0].getEventExtDescr();
-			}
-			if(mTVEvent.length>=2)
-				dtvplayer_next_event=mTVEvent[1].getName();
+		dtvplayer_cur_event=null;
+		dtvplayer_event_des=null;
+		dtvplayer_event_ext_des=null;
+		dtvplayer_next_event=null;
+		TVEvent mTVEventPresent=mTVProgram.getPresentEvent(this,getUTCTime());	
+		if(mTVEventPresent!=null){
+			dtvplayer_cur_event=mTVEventPresent.getName();
+			dtvplayer_event_des=mTVEventPresent.getEventDescr();
+			dtvplayer_event_ext_des=mTVEventPresent.getEventExtDescr();
+		}
+
+		TVEvent mTVEventFollow=mTVProgram.getFollowingEvent(this,getUTCTime());	
+		if(mTVEventFollow!=null){
+			dtvplayer_next_event=mTVEventFollow.getName();
 		}
 	}
 
@@ -1572,6 +1613,5 @@ public class DTVPlayer extends DTVActivity{
 		finish();
 	}
 
-	
 }
 

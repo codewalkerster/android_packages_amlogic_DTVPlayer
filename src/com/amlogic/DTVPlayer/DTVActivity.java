@@ -189,7 +189,32 @@ abstract public class DTVActivity extends TVActivity{
 	public void DTVSubtitleStop(){}
 	public void DTVTeletextStop(){}
 
+	/*DTVProgramManager*/
 
+	public class ProgramGroup{
+		int id;
+		String name;
+	}
+	
+	public void DTVProgramManagerDeletePro(int id){
+		
+	}
+
+	public void DTVProgramManagerEditPro(int id){
+		
+	}
+
+	public void DTVProgramManagerAddLock(int id){}
+
+	public void DTVProgramManagerSkipPro(int id,boolean f){}
+	public void DTVProgramManagerFavSet(int id,boolean f){}
+	public void DTVProgramManagerAddGroup(String name){}
+	public ProgramGroup[] DTVProgramManagerGetGroupList(){
+		ProgramGroup[] mProgramGroup=null;
+		return mProgramGroup;
+	}
+	public void DTVProgramManagerDeleteGroup(int id){}
+	public void DTVProgramManagerGetProByGroup(int id){}
 
 	/***********DTV EPG****************/
 	public int DTVEpgGetID(){
@@ -211,12 +236,6 @@ abstract public class DTVActivity extends TVActivity{
 	}
 
 	public String DTVEpg_get_detailinfo(int srv_id){
-		
-		/*
-		Cursor cursor = resolver.query(DVBClient.TABLE_EVENT ,
-		new String[]{"descr", "ext_descr"}, 
-		"db_id="+db_evt_id,null,null);
-		*/
 		String value = " ";
 		TVEvent mTVEvent=TVEvent.selectByID(this,srv_id);
 		value = mTVEvent.getEventDescr();
@@ -224,11 +243,9 @@ abstract public class DTVActivity extends TVActivity{
 	}
 
 	public void DTVEpg_updateEvent(int db_id){
-		//this.getContentResolver().update(DVBClient.TABLE_EVENT, cv, "db_id= "+eventid, null); 
 	}
 
 	public void DTVEpg_deleteRec(int eventid){
-		//this.getContentResolver().delete(DVBClient.TABLE_RECORD, "db_evt_id=" +  eventid,null);
 	}
 
 

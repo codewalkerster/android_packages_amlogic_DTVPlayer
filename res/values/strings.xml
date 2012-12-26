@@ -24,7 +24,14 @@
 	<string name="stereo">Stereo</string>
 	<string name="left">Left</string>
 	<string name="right">Right</string>	
-	
+
+	<string name="edit">Edit</string>
+	<string name="delete">Delete</string>	
+	<string name="move">Move</string>
+	<string name="add_fav">Add into favorite</string>
+	<string name="del_fav">Move from favorite</string>	
+	<string name="add_skip">Add into skip</string>
+	<string name="del_skip">Move from skip</string>	
 	
     <string name="dtvplayer_loading">Loading...</string>
 	<!--main menu button info--> 

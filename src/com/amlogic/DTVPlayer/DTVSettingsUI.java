@@ -31,6 +31,7 @@ public class DTVSettingsUI extends DTVSettings{
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtvsettings);  //settings_main
+		UIAnimationInit();
 		DTVSettingUIInit();
 	}
 
@@ -123,13 +124,30 @@ public class DTVSettingsUI extends DTVSettings{
 		editBuilder_password = editBuilder;
 		
 	}
-	
+
+		
+	private AnimationSet listItemFocus ;
+	private void UIAnimationInit(){
+		listItemFocus = new AnimationSet(true);
+	    ScaleAnimation  scale  = new ScaleAnimation(1.01f, 0.99f, 1.02f, 0.99f,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+	     listItemFocus.addAnimation(scale);
+	     scale.setDuration(300);
+	     scale.setRepeatCount(0);
+		 listItemFocus.addAnimation(scale);
+	}
+		
 	private AdapterView.OnItemSelectedListener mOnSelectedListener = new AdapterView.OnItemSelectedListener(){
 		public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
 			ListView_settings = (ListView)findViewById(R.id.settings_list);
-			if(ListView_settings.hasFocus() == true){
+			//if(ListView_settings.hasFocus() == true){
 				//reset_timer();
-			}
+				if(v.isSelected())
+				 	v.startAnimation(listItemFocus);
+				else
+					v.clearAnimation();
+			//}
 			cur_select_item = position;
 		}
 		
@@ -138,9 +156,16 @@ public class DTVSettingsUI extends DTVSettings{
 	}; 	
 
 	class listOnKeyListener implements OnKeyListener{
-		public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
-			// TODO Auto-generated method stub
-			//reset_timer();
+		public boolean onKey(View v, int keyCode, KeyEvent event) {					
+			switch(keyCode)
+			{
+				case KeyEvent.KEYCODE_DPAD_DOWN:
+				case KeyEvent.KEYCODE_DPAD_UP:	
+					if (event.getAction() == KeyEvent.ACTION_DOWN) {
+						//v.clearAnimation();
+					}
+					break;
+			} 
 			return false;
 		}
 	}
@@ -638,6 +663,8 @@ public class DTVSettingsUI extends DTVSettings{
 				holder = (ViewHolder) convertView.getTag();
 			}
 
+			
+
 			// Bind the data efficiently with the holder.
 			holder.text.setText(listItems[position]);
 			
@@ -771,7 +798,7 @@ public class DTVSettingsUI extends DTVSettings{
 
 				break;
 		  }
-		  
+
 		  return convertView;
 		}
 	}	

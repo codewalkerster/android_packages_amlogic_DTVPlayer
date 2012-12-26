@@ -5,7 +5,7 @@
 	android:background="@drawable/settings_bg"
 	android:orientation="vertical"
 	android:layout_gravity="center"  
-	android:layout_width="720px" 
+	android:layout_width="820px" 
 	android:layout_height="576px">    
     
 	<LinearLayout android:id="@+id/dvbscandvbtscan_titlelayout"

@@ -15,11 +15,13 @@ import java.util.*;
 import android.view.*;
 import android.view.View.*;
 import android.view.animation.*;
+import android.util.DisplayMetrics;
 import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
 import android.app.*;
 import android.content.*;
 import android.graphics.Color;
+import com.amlogic.widget.Rotate3D;
 
 public class DTVChannelList extends DTVActivity{
 	private static final String TAG="DTVChannelList";
@@ -35,7 +37,7 @@ public class DTVChannelList extends DTVActivity{
 	int db_id=-1;
 	private int service_type=TVProgram.TYPE_TV;
 	private boolean favor=false;
-	
+
 	private void getListData(int type){
 		if(type==0)
 			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,true);
@@ -56,13 +58,16 @@ public class DTVChannelList extends DTVActivity{
 
 	}
 
+	private LinearLayout LinearLayoutListView=null;
 	private void DTVChannelListUIInit(){
 	    Bundle bundle = this.getIntent().getExtras();
 		if(bundle!=null){
 	    	db_id = bundle.getInt("db_id");
 			service_type=getCurrentProgramType();
 		}	
-		Log.d(TAG,"db_id="+db_id+"   service_type="+service_type);
+
+	    //LinearLayoutListView = (LinearLayout)findViewById(R.id.LinearLayoutListView);
+		//initAnimation();
 
 		Text_title=(TextView)findViewById(R.id.Text_title);
 		Text_title.setTextColor(Color.YELLOW);
@@ -302,11 +307,42 @@ public class DTVChannelList extends DTVActivity{
 		return super.onKeyDown(keyCode, event);
 	}	  
 
+	
+	Rotate3D lQuest1Animation=null;		
+	Rotate3D lQuest2Animation =null;	
+ 	Rotate3D rQuest1Animation=null;	
+    Rotate3D rQuest2Animation=null;	
+	public void initAnimation() {
+		DisplayMetrics dm = new DisplayMetrics();
+		dm = getResources().getDisplayMetrics();
+		int mCenterX = dm.widthPixels / 2;
+		int mCenterY = dm.heightPixels / 2;
+		
+		int duration = 300;
+		lQuest1Animation = new Rotate3D(0, -90, mCenterX, mCenterY);	
+		lQuest1Animation.setFillAfter(true);
+		lQuest1Animation.setDuration(duration);
+
+		lQuest2Animation = new Rotate3D(90, 0, mCenterX, mCenterY);		
+		lQuest2Animation.setFillAfter(true);
+		lQuest2Animation.setDuration(duration);
+
+		rQuest1Animation = new Rotate3D(0, 90, mCenterX, mCenterY);		
+		rQuest1Animation.setFillAfter(true);
+		rQuest1Animation.setDuration(duration);
+
+		rQuest2Animation = new Rotate3D(-90, 0, mCenterX, mCenterY);	
+		rQuest2Animation.setFillAfter(true);
+		rQuest2Animation.setDuration(duration);
+	}
+
+
+
 	private void DTVListDealLeftAndRightKey(int mode){
 		switch(mode){
 			case 0:  //left
+				//LinearLayoutListView.startAnimation(lQuest1Animation); 
 				if((service_type == TVProgram.TYPE_RADIO)&&(favor!=true)){
-					//mTVProgramList.clear();
 					getListData(0);
 					Text_title.setText(R.string.tv);
 					service_type = TVProgram.TYPE_TV;
@@ -314,7 +350,6 @@ public class DTVChannelList extends DTVActivity{
 				}
 				else if((service_type == TVProgram.TYPE_TV)&&(favor!=true)){
 					Log.d(TAG,"##########"+class_total);
-					//mTVProgramList.clear();
 					if(class_total>0)
 					{	
 						service_type = -1;
@@ -332,7 +367,6 @@ public class DTVChannelList extends DTVActivity{
 					}	
 				}	
 				else if((favor!=true)&&(service_type != TVProgram.TYPE_TV)&&(service_type != TVProgram.TYPE_RADIO)){
-					//mTVProgramList.clear();
 					if(cur_class_no>0&&class_total>0)
 					{
 						service_type = -1;
@@ -352,7 +386,6 @@ public class DTVChannelList extends DTVActivity{
 				}
 				else if(favor==true)
 				{
-					//mTVProgramList.clear();
 					getListData(1);
 					Text_title.setText(R.string.radio);
 					service_type = TVProgram.TYPE_RADIO;
@@ -360,18 +393,19 @@ public class DTVChannelList extends DTVActivity{
 					favor=false;
 				}	
 				setFocusPosition();
+				//LinearLayoutListView.startAnimation(lQuest2Animation); 
+			
 				break;	
 			case 1:
+				//LinearLayoutListView.startAnimation(rQuest1Animation);  
 				if(service_type == TVProgram.TYPE_TV)
 				{
-					//mTVProgramList.clear();
 					getListData(1);
 					Text_title.setText(R.string.radio);
 					service_type = TVProgram.TYPE_RADIO;
 					myAdapter.notifyDataSetChanged();
 				}
 				else if((service_type == TVProgram.TYPE_RADIO)&&(favor==false)){
-					//mTVProgramList.clear();
 					Text_title.setText(R.string.favorite);
 					getListFavorite();
 					myAdapter.notifyDataSetChanged();
@@ -380,7 +414,6 @@ public class DTVChannelList extends DTVActivity{
 				else if(favor==true)
 				{
 					Log.d(TAG,"##########"+class_total);
-					//mTVProgramList.clear();
 					if(class_total>0)
 					{	
 						service_type = -1;
@@ -401,7 +434,6 @@ public class DTVChannelList extends DTVActivity{
 				}	
 				else
 				{
-					//mTVProgramList.clear();	
 					if(cur_class_no<(class_total-1))
 					{
 						service_type = -1;
@@ -421,6 +453,7 @@ public class DTVChannelList extends DTVActivity{
 					
 				}	
 				setFocusPosition();
+				//LinearLayoutListView.startAnimation(rQuest2Animation);  
 				break;
 		}
 	}
