@@ -1266,7 +1266,7 @@ public class DTVEpg extends DTVActivity{
 
 	        }
 	}
-
+	
 	class EitItemOnFocusChange  implements OnFocusChangeListener{
 		public void onFocusChange(View v, boolean isFocused){		
 	    	  refresh_dates(EitListView.getPositionForView(v));
@@ -1304,7 +1304,7 @@ public class DTVEpg extends DTVActivity{
 		      }
 		      else 
 		      {
-		    	  if(EitListView.getPositionForView(v)%2 == 1)
+				  if(EitListView.getPositionForView(v)%2 == 1)
 		    		  ((Button)v).setBackgroundColor(EIT_TIEM_UNFOCUSCOLOR_ODD);
 					else
 						((Button)v).setBackgroundColor(EIT_TIEM_UNFOCUSCOLOR_EVEN);	

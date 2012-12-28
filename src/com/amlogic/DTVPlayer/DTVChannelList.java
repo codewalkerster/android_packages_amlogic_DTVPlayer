@@ -10,6 +10,7 @@ import com.amlogic.tvactivity.TVActivity;
 import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
+import com.amlogic.tvutil.TVGroup;
 
 import java.util.*;
 import android.view.*;
@@ -29,7 +30,6 @@ public class DTVChannelList extends DTVActivity{
 	TextView Text_title=null;
 	private int class_total=0;
 	private int cur_class_no=-1;
-	private String[] class_name=null;
 	private int cur_select_item=0;
 	private IconAdapter myAdapter=null;
 	private TVProgram[]  mTVProgramList=null;
@@ -46,16 +46,21 @@ public class DTVChannelList extends DTVActivity{
 	}
 
 	private void getListFavorite(){
-		mTVProgramList=null;
-		
+		mTVProgramList=TVProgram.selectByFavorite(this,true);	
 	}
 
+
+	TVGroup[] mTVGroup=null;
 	private int getListProgramClass(){
-		return 0;
+		mTVGroup=DTVProgramManagerGetGroupList();
+		if(mTVGroup!=null)
+			return mTVGroup.length;
+		else
+			return 0;
 	}
-
+	
 	private void getClassData(int class_no){
-
+		mTVProgramList=DTVProgramManagerGetProByGroup(class_no);
 	}
 
 	private LinearLayout LinearLayoutListView=null;
@@ -350,16 +355,14 @@ public class DTVChannelList extends DTVActivity{
 				}
 				else if((service_type == TVProgram.TYPE_TV)&&(favor!=true)){
 					Log.d(TAG,"##########"+class_total);
-					if(class_total>0)
-					{	
+					if(class_total>0){	
 						service_type = -1;
 					   	cur_class_no = class_total-1;
-						Text_title.setText(class_name[cur_class_no]);
-						getClassData(cur_class_no);
+						Text_title.setText(mTVGroup[cur_class_no].getName());
+						getClassData(mTVGroup[cur_class_no].getID());
 						myAdapter.notifyDataSetChanged();
 					}
-					else
-					{					
+					else{					
 						Text_title.setText(R.string.favorite);
 						getListFavorite();
 						myAdapter.notifyDataSetChanged();
@@ -371,8 +374,8 @@ public class DTVChannelList extends DTVActivity{
 					{
 						service_type = -1;
 						cur_class_no --;
-						Text_title.setText(class_name[cur_class_no]);
-						getClassData(cur_class_no);
+						Text_title.setText(mTVGroup[cur_class_no].getName());
+						getClassData(mTVGroup[cur_class_no].getID());
 						myAdapter.notifyDataSetChanged();
 						
 					}
@@ -418,8 +421,8 @@ public class DTVChannelList extends DTVActivity{
 					{	
 						service_type = -1;
 					    cur_class_no = 0;
-						Text_title.setText(class_name[cur_class_no]);
-						getClassData(cur_class_no);
+						Text_title.setText(mTVGroup[cur_class_no].getName());
+						getClassData(mTVGroup[cur_class_no].getID());
 						myAdapter.notifyDataSetChanged();
 					}
 					else
@@ -438,10 +441,9 @@ public class DTVChannelList extends DTVActivity{
 					{
 						service_type = -1;
 						cur_class_no ++;
-						Text_title.setText(class_name[cur_class_no]);
-						getClassData(cur_class_no);
+						Text_title.setText(mTVGroup[cur_class_no].getName());
+						getClassData(mTVGroup[cur_class_no].getID());
 						myAdapter.notifyDataSetChanged();
-
 					}
 					else
 					{

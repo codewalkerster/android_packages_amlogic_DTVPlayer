@@ -11,6 +11,7 @@ import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVEvent;
+import com.amlogic.tvutil.TVGroup;
 
 import java.util.*;
 import java.text.*;
@@ -190,12 +191,6 @@ abstract public class DTVActivity extends TVActivity{
 	public void DTVTeletextStop(){}
 
 	/*DTVProgramManager*/
-
-	public class ProgramGroup{
-		int id;
-		String name;
-	}
-	
 	public void DTVProgramManagerDeletePro(int id){
 		
 	}
@@ -208,13 +203,35 @@ abstract public class DTVActivity extends TVActivity{
 
 	public void DTVProgramManagerSkipPro(int id,boolean f){}
 	public void DTVProgramManagerFavSet(int id,boolean f){}
-	public void DTVProgramManagerAddGroup(String name){}
-	public ProgramGroup[] DTVProgramManagerGetGroupList(){
-		ProgramGroup[] mProgramGroup=null;
+	public void DTVProgramManagerAddGroup(String name){
+		TVGroup.addGroup(this,name);
+	}
+
+	public void DTVProgramManagerDeleteGroup(int id){
+		TVGroup.deleteGroup(this,id);
+	}
+	
+	public void DTVProgramManagerEditGroupName(int id,String name){
+		TVGroup.editGroup(this,id,name);
+	}
+	
+	public TVGroup[] DTVProgramManagerGetGroupList(){
+		TVGroup[] mProgramGroup=null;
+		mProgramGroup = TVGroup.selectByGroup(this,true);
 		return mProgramGroup;
 	}
-	public void DTVProgramManagerDeleteGroup(int id){}
-	public void DTVProgramManagerGetProByGroup(int id){}
+
+	public TVProgram[] DTVProgramManagerGetFav(){
+		TVProgram[] mTVProgram=null;
+		mTVProgram = TVProgram.selectByFavorite(this,true);
+		return mTVProgram;
+	}
+	
+	public TVProgram[] DTVProgramManagerGetProByGroup(int id){
+		TVProgram[] mTVProgram=null;
+		mTVProgram = TVProgram.selectByGroupMap(this,id,true);
+		return mTVProgram;
+	}
 
 	/***********DTV EPG****************/
 	public int DTVEpgGetID(){

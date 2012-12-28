@@ -10,35 +10,52 @@ import com.amlogic.tvactivity.TVActivity;
 import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
+import com.amlogic.tvutil.TVGroup;
 
 import java.util.*;
+import java.text.*;
 import android.view.*;
 import android.view.View.*;
 import android.view.animation.*;
-import android.util.DisplayMetrics;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.*;
-import android.widget.AbsListView.OnScrollListener;
 import android.app.*;
+import android.app.AlertDialog.*;
 import android.content.*;
-import android.graphics.Color;
+import android.graphics.*;
+import android.view.ViewGroup.*;
+import android.text.*;
+import android.text.method.*;
+import android.database.*;
+import android.os.*;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.view.View.OnLongClickListener;
+import android.widget.AbsListView.OnScrollListener;
+import java.lang.reflect.Field;
 
 public class DTVProgramManager extends DTVActivity{
 	private static final String TAG="DTVProgramManager";
 	
-	ListView ListView_channel=null;
+	ListView ListView_programmanager=null;
 	TextView Text_title=null;
-	private int class_total=0;
-	private int cur_class_no=-1;
-	private String[] class_name=null;
 	private int cur_select_item=0;
 	private IconAdapter myAdapter=null;
 	private TVProgram[]  mTVProgramList=null;
 
 	int db_id=-1;
 	private int service_type=TVProgram.TYPE_TV;
-	private boolean favor=false;
+	private int TVProgramCurrentId = -1;
+	private int TabIndex = TVProgramCurrentId;
 
+	private int getVProgramCurrentIndex(){
+		if(TVProgramCurrentId!=-1){
+			for(int i=0;i<mProgramGroup.length;i++){
+				if(TVProgramCurrentId==mProgramGroup[i].getID())
+					return i;
+			}
+		}
+
+		return -1;
+	}	
 	private void getListData(int type){
 		if(type==0)
 			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,true);
@@ -47,49 +64,110 @@ public class DTVProgramManager extends DTVActivity{
 	}
 
 	private void getListFavorite(){
-		mTVProgramList=null;
-		
+		mTVProgramList=DTVProgramManagerGetFav();
 	}
 
-	private int getListProgramClass(){
-		return 0;
+	private void getListGroupById(int id){
+		mTVProgramList=DTVProgramManagerGetProByGroup(id);
 	}
 
-	private void getClassData(int class_no){
-
+	private void deleteCurrentGroup(){
+		if(TVProgramCurrentId!=-1)
+			DTVProgramManagerDeleteGroup(TVProgramCurrentId);
 	}
 
-	private LinearLayout LinearLayoutListView=null;
-	private void DTVChannelListUIInit(){
-	    Bundle bundle = this.getIntent().getExtras();
-		if(bundle!=null){
-	    	db_id = bundle.getInt("db_id");
-			service_type=getCurrentProgramType();
-		}	
+	private void editCurrentGroupName(String name){
+		if(TVProgramCurrentId!=-1)
+			DTVProgramManagerEditGroupName(TVProgramCurrentId,name);
+	}
 
-		Text_title=(TextView)findViewById(R.id.Text_title);
-		Text_title.setTextColor(Color.YELLOW);
-		class_total = getListProgramClass();
-		if(service_type == TVProgram.TYPE_RADIO){
-			getListData(1);
-			Text_title.setText(R.string.radio);
-		}	
-		else{
-			service_type = TVProgram.TYPE_TV;
-			getListData(0);
-			Text_title.setText(R.string.tv);
+	private void dealFav(int pos){
+		if(mTVProgramList[pos].getFavoriteFlag()){
+			mTVProgramList[pos].setFavoriteFlag(false);
+			if(TabIndex==-3){
+				mTVProgramList=removeProgramFromList(mTVProgramList,pos);	
+			}
 		}
-		
-		ListView_channel = (ListView) findViewById(R.id.ListView_channel);
-		myAdapter = new IconAdapter(DTVProgramManager.this,null);
-		ListView_channel.setOnItemSelectedListener(mOnSelectedListener);
-		ListView_channel.setOnScrollListener(new listOnScroll()); 
-		ListView_channel.setOnItemClickListener(mOnItemClickListener);
+		else
+			mTVProgramList[pos].setFavoriteFlag(true);
+	}
 
-		ListView_channel.setOnItemLongClickListener(new OnItemLongClickListener() {
+	private void dealLock(int pos){
+		if(mTVProgramList[pos].getLockFlag())
+			mTVProgramList[pos].setLockFlag(false);
+		else
+			mTVProgramList[pos].setLockFlag(true);
+	}
+
+	private void deleteProgramFromDB(int index){
+		mTVProgramList[index].deleteFromDb();
+		mTVProgramList = removeProgramFromList(mTVProgramList,index);
+	}
+
+	private TVProgram[] removeProgramFromList(TVProgram[] a,int index){
+	    int len=a.length;
+	    if(index<0||index>=len){
+	        return a;
+	    }
+	    TVProgram[] result=new TVProgram[len-1];
+	    System.arraycopy(a,0,result,0,index);
+	    System.arraycopy(a,index+1,result,index,len-index-1);
+	    return result;
+	}
+
+	private void addIntoGroup(int pos,int group_id){
+		mTVProgramList[pos].addProgramToGroup(group_id);
+	}	
+
+	private void deleteProgramFromGroup(int pos,int group_id){
+		mTVProgramList[pos].deleteFromGroup(group_id);	
+	}
+
+
+	private TVGroup[] mProgramGroup=null;
+	private int TVGroupCount = 0;
+	private void DTVProgramManagerGroupButtonData(){
+		TVGroup[] group = DTVProgramManagerGetGroupList();
+		int len = 0;
+		if(group!=null){
+			len = group.length;
+		}
+
+		TVGroupCount = len+3;
+		mProgramGroup = new TVGroup[TVGroupCount];
+		for(int m=0;m<TVGroupCount;m++){
+			mProgramGroup[m]=new TVGroup();
+		}
+		mProgramGroup[0].setID(-1);
+		mProgramGroup[0].setName(getString(R.string.tv));
+		mProgramGroup[1].setID(-1);
+		mProgramGroup[1].setName(getString(R.string.radio));
+		mProgramGroup[2].setID(-1);
+		mProgramGroup[2].setName(getString(R.string.favorite));
+		for(int i=0;i<len;i++){
+			mProgramGroup[i+3] = group[i];
+		}
+
+		for(int j=0;j<mProgramGroup.length;j++){
+			Log.d(TAG,"mProgramGroup="+mProgramGroup[j].getName());
+		}
+
+	}
+
+	
+	private void DTVProgramManagerUIInit(){
+		DTVProgramManagerGroupButtonData();
+		//init list data
+		getListFavorite();
+		
+		ListView_programmanager = (ListView) findViewById(R.id.list_content);
+		myAdapter = new IconAdapter(DTVProgramManager.this,null);
+		ListView_programmanager.setOnItemSelectedListener(mOnSelectedListener);
+		ListView_programmanager.setOnScrollListener(new listOnScroll()); 
+		ListView_programmanager.setOnItemClickListener(mOnItemClickListener);
+		ListView_programmanager.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
+			public boolean onItemLongClick(AdapterView<?> parent, View view,int position, long id) {
 				Log.d(TAG,"long Click");
 				createMenuChoiceDialog(position);
 				mMenuChoiceDialog.show();
@@ -97,70 +175,21 @@ public class DTVProgramManager extends DTVActivity{
 				lp.dimAmount=0.0f;
 				mMenuChoiceDialog.getWindow().setAttributes(lp);
 				mMenuChoiceDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-				
 				return false;
 			}
 		});
 		
-		ListView_channel.setAdapter(myAdapter);
-		setFocusPosition();
+		ListView_programmanager.setAdapter(myAdapter);
+
+		create_group_button();
 	}
 
-
-	private void DTVProgramManagerUIInit(){
-		DTVProgramManagerInitData();
-	}
-
-	private String[] GroupName=null;
-	private void DTVProgramManagerInitData(){
-		ProgramGroup[] mProgramGroup=null;
-		mProgramGroup = DTVProgramManagerGetGroupList();
-		int len = 0;
-		if(mProgramGroup!=null){
-			len = mProgramGroup.length;
-		}
-
-		GroupName = new String[len+3];
-		GroupName[0] = getString(R.string.tv);
-		GroupName[1] = getString(R.string.radio);
-		GroupName[2] = getString(R.string.favorite);
-		for(int i=0;i<len;i++){
-			GroupName[i+3] = mProgramGroup[i].name;
-		}
-
-		for(int j=0;j<GroupName.length;j++){
-			Log.d(TAG,"GroupName="+GroupName[j]);
-		}
-
-		//get tv list
-		
-					
-	}
-
-	
-
-	public void setFocusPosition(){
-		int i = 0;
-		if(mTVProgramList!=null){
-			for(i=0;i<mTVProgramList.length;i++){
-				if(db_id == mTVProgramList[i].getID()){
-					ListView_channel.setFocusableInTouchMode(true);
-	   			  	ListView_channel.requestFocus();
-	   			  	ListView_channel.requestFocusFromTouch();
-	        		ListView_channel.setSelection(i);
-					cur_select_item = i;
-					break;
-				}
-			}	
-		}
-	}
-	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dtvchannellist); 
+		setContentView(R.layout.dtvprogrammanager); 
 		/*get list data*/
-		DTVChannelListUIInit();
+		DTVProgramManagerUIInit();
 	}
 
 	public void onConnected(){
@@ -192,8 +221,8 @@ public class DTVProgramManager extends DTVActivity{
   
   	private AdapterView.OnItemSelectedListener mOnSelectedListener = new AdapterView.OnItemSelectedListener(){
 		public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
-			ListView_channel = (ListView) findViewById(R.id.ListView_channel);
-			if(ListView_channel.hasFocus() == true){
+			ListView_programmanager = (ListView) findViewById(R.id.list_content);
+			if(ListView_programmanager.hasFocus() == true){
 			}
 			cur_select_item = position;
 		}
@@ -203,10 +232,7 @@ public class DTVProgramManager extends DTVActivity{
 
 	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
-
 				int db_id=mTVProgramList[position].getID();
-				DTVPlayerPlayById(db_id);
-				DTVProgramManager.this.finish();
 		}
 	};
 
@@ -325,10 +351,10 @@ public class DTVProgramManager extends DTVActivity{
 				switch (v.getId()) {
 					case R.id.arrow_left:
 						break;
-				}
 			}
-	     }
-	
+		}
+     }
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
@@ -340,12 +366,12 @@ public class DTVProgramManager extends DTVActivity{
 				DTVListDealLeftAndRightKey(1);
 				break;
 			case KeyEvent.KEYCODE_DPAD_DOWN:			
-				if(cur_select_item== ListView_channel.getCount()-1)
-			    	ListView_channel.setSelection(0); 			
+				if(cur_select_item== ListView_programmanager.getCount()-1)
+			    	ListView_programmanager.setSelection(0); 			
 				break;
 			case KeyEvent.KEYCODE_DPAD_UP:
 				if(cur_select_item== 0)
-					ListView_channel.setSelection(ListView_channel.getCount()-1); 
+					ListView_programmanager.setSelection(ListView_programmanager.getCount()-1); 
 				break;
 			case KeyEvent.KEYCODE_ZOOM_IN:
 				return true;
@@ -354,143 +380,92 @@ public class DTVProgramManager extends DTVActivity{
 	}	  
 	
 	private void DTVListDealLeftAndRightKey(int mode){
-		switch(mode){
-			case 0:  //left
-				if((service_type == TVProgram.TYPE_RADIO)&&(favor!=true)){
-					getListData(0);
-					Text_title.setText(R.string.tv);
-					service_type = TVProgram.TYPE_TV;
-					myAdapter.notifyDataSetChanged();
-				}
-				else if((service_type == TVProgram.TYPE_TV)&&(favor!=true)){
-					Log.d(TAG,"##########"+class_total);
-					if(class_total>0)
-					{	
-						service_type = -1;
-					   	cur_class_no = class_total-1;
-						Text_title.setText(class_name[cur_class_no]);
-						getClassData(cur_class_no);
-						myAdapter.notifyDataSetChanged();
-					}
-					else
-					{					
-						Text_title.setText(R.string.favorite);
-						getListFavorite();
-						myAdapter.notifyDataSetChanged();
-						favor=true;
-					}	
-				}	
-				else if((favor!=true)&&(service_type != TVProgram.TYPE_TV)&&(service_type != TVProgram.TYPE_RADIO)){
-					if(cur_class_no>0&&class_total>0)
-					{
-						service_type = -1;
-						cur_class_no --;
-						Text_title.setText(class_name[cur_class_no]);
-						getClassData(cur_class_no);
-						myAdapter.notifyDataSetChanged();
-						
-					}
-					else
-					{
-						Text_title.setText(R.string.favorite);
-						getListFavorite();
-						myAdapter.notifyDataSetChanged();
-						favor=true;
-					}
-				}
-				else if(favor==true)
-				{
-					getListData(1);
-					Text_title.setText(R.string.radio);
-					service_type = TVProgram.TYPE_RADIO;
-					myAdapter.notifyDataSetChanged();
-					favor=false;
-				}	
-				setFocusPosition();
-				break;	
-			case 1:
-				if(service_type == TVProgram.TYPE_TV)
-				{
-					getListData(1);
-					Text_title.setText(R.string.radio);
-					service_type = TVProgram.TYPE_RADIO;
-					myAdapter.notifyDataSetChanged();
-				}
-				else if((service_type == TVProgram.TYPE_RADIO)&&(favor==false)){
-					Text_title.setText(R.string.favorite);
-					getListFavorite();
-					myAdapter.notifyDataSetChanged();
-					favor=true;
-				}
-				else if(favor==true)
-				{
-					Log.d(TAG,"##########"+class_total);
-					if(class_total>0)
-					{	
-						service_type = -1;
-					    cur_class_no = 0;
-						Text_title.setText(class_name[cur_class_no]);
-						getClassData(cur_class_no);
-						myAdapter.notifyDataSetChanged();
-					}
-					else
-					{
-						
-						getListData(0);
-						Text_title.setText(R.string.tv);
-						service_type = TVProgram.TYPE_TV;
-						myAdapter.notifyDataSetChanged();
-					}	
-					favor=false;
-				}	
-				else
-				{
-					if(cur_class_no<(class_total-1))
-					{
-						service_type = -1;
-						cur_class_no ++;
-						Text_title.setText(class_name[cur_class_no]);
-						getClassData(cur_class_no);
-						myAdapter.notifyDataSetChanged();
-
-					}
-					else
-					{
-						getListData(0);
-						Text_title.setText(R.string.tv);
-						service_type = TVProgram.TYPE_TV;
-						myAdapter.notifyDataSetChanged();
-					}
-					
-				}	
-				setFocusPosition();
-				break;
-		}
+		
 	}
 
-	AlertDialog mMenuChoiceDialog=null;
-	AlertDialog mEditDialog=null;
-	void createMenuChoiceDialog(int pos){
+	
+	private boolean [] b=null;
+	public void programGroupOperate(int pos){
+		final int p = pos;
 		
+		final TVGroup[] group = DTVProgramManagerGetGroupList();
+		if(group==null)
+			return;
+		if(group.length<=0)
+			return;
+
+		Log.d(TAG,"group.length="+group.length);	 
+		String[] items = new String[group.length];        	 
+		b = new boolean[group.length];
+
+		for (int j = 0; j < group.length; j++){
+			items[j] = group[j].getName();
+			b[j]= mTVProgramList[pos].checkGroup(group[j].getID());
+			Log.d(TAG,">>>"+j+"item="+items[j]+"----"+b[j]);
+		}
+		
+		AlertDialog builder = new AlertDialog.Builder(DTVProgramManager.this) 
+		.setTitle(R.string.add)
+		.setPositiveButton(R.string.ok, new  DialogInterface.OnClickListener(){
+			public void onClick(DialogInterface arg0, int arg1) {
+				// TODO Auto-generated method stub
+				System.out.println("arg0 " + arg0);
+				System.out.println("arg1 " + arg1);
+				
+				for(int index = 0;index < group.length;index++){
+					if(b[index])
+						addIntoGroup(p,group[index].getID());
+				}
+				
+			}
+		})
+		.setNegativeButton(R.string.cancel, new  DialogInterface.OnClickListener(){
+
+			//@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				//System.out.println("arg0 " + dialog);
+				//System.out.println("arg1 " + which);
+			}
+		 
+		})
+		.setMultiChoiceItems(items, b, new DialogInterface.OnMultiChoiceClickListener() {
+		 
+			//@Override
+			public void onClick(DialogInterface dialog, int which, boolean isChecked) {										
+				// TODO Auto-generated method stub
+				Log.d(TAG,"index="+which+"---boolean="+isChecked);
+				b[which]= isChecked;
+			}
+		}).create();
+		 
+		builder.show();
+		WindowManager.LayoutParams lp=builder.getWindow().getAttributes();
+		lp.dimAmount=0.0f;
+		builder.getWindow().setAttributes(lp);
+		builder.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		//builder.getWindow().setLayout(500, -1);	
+	
+	}
+	
+
+	AlertDialog mMenuChoiceDialogForGroup=null;
+	AlertDialog mEditDialogForGroup=null;
+	void createMenuChoiceDialogForGroup(){
 		String[] itemChoices = {
+			getString(R.string.add),
 			getString(R.string.edit),
-			getString(R.string.delete),
-			getString(R.string.move),
-			getString(R.string.add_fav),
-			getString(R.string.del_fav) ,
-			getString(R.string.add_skip),
-			getString(R.string.del_skip)
+			getString(R.string.delete)
 		};
 		
-		mMenuChoiceDialog = new AlertDialog.Builder(this).setItems(itemChoices, new DialogInterface.OnClickListener() {			
+		mMenuChoiceDialogForGroup = new AlertDialog.Builder(this).setItems(itemChoices, new DialogInterface.OnClickListener() {			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 			switch (which) {
-				case 0:
-					mEditDialog = new AlertDialog.Builder(DTVProgramManager.this)
+				case 0:  //add
+					mEditDialogForGroup = new AlertDialog.Builder(DTVProgramManager.this)
 					.setTitle(R.string.edit)
 					.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							// TODO Auto-generated method stub
@@ -501,80 +476,71 @@ public class DTVProgramManager extends DTVActivity{
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							
-							EditText edtText  = (EditText)(mEditDialog.findViewById(0x10000001));
-							/*
-							mServiceInfoItem.setName(edtText.getText().toString());
-						    ContentValues value = new ContentValues();
-						    value.put("name", mServiceInfoItem.getName());
-						    Log.d(TAG,"The TS Id is "+mServiceInfoItem.getTsId());
-						    Log.d(TAG,"The Service Id is "+mServiceInfoItem.getServiceId());
-							ProgramManager.this.getContentResolver().update(DVBClient.TABLE_SERVICE,value,"db_ts_id=" + mServiceInfoItem.getTsId() + " and service_id=" + mServiceInfoItem.getServiceId(),null);
-							serviceList.set(myAdapter.getSelectItem(),mServiceInfoItem);
-							*/
-							myAdapter.notifyDataSetChanged();
+							EditText edtText  = (EditText)(mEditDialogForGroup.findViewById(0x10000001));
+							DTVProgramManagerAddGroup(edtText.getText().toString());
+							DTVProgramManagerGroupButtonData();
+							refreshGroupButton();
+							//myAdapter.notifyDataSetChanged();
 						}
 					}).create();
 				
 					EditText editText = new EditText(DTVProgramManager.this);
-					//editText.setText(mServiceInfoItem.getName());
-					//editText.setSelection(mServiceInfoItem.getName().length());
 					editText.setGravity(Gravity.LEFT);
 					editText.setId(0x10000001);
-					mEditDialog.setView(editText);
-					mEditDialog.show();
-					WindowManager.LayoutParams lp=mEditDialog.getWindow().getAttributes();
+					mEditDialogForGroup.setView(editText);
+					mEditDialogForGroup.show();
+					WindowManager.LayoutParams lp=mEditDialogForGroup.getWindow().getAttributes();
 					lp.dimAmount=0.0f;
-					mEditDialog.getWindow().setAttributes(lp);
-					mEditDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-					mEditDialog.getWindow().setLayout(500, -1); 
+					mEditDialogForGroup.getWindow().setAttributes(lp);
+					mEditDialogForGroup.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+					mEditDialogForGroup.getWindow().setLayout(500, -1); 
 					break;
-				case 1:
 				
+				case 1: //edit
+					if(TVProgramCurrentId!=-1){
+						mEditDialogForGroup = new AlertDialog.Builder(DTVProgramManager.this)
+						.setTitle(R.string.edit)
+						.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								// TODO Auto-generated method stub
+								/*
+								setMoveMode(true);		
+								changeOpDesc();
+								setMoveItemPos(myAdapter.getSelectItem());
+								myAdapter.notifyDataSetChanged();
+								*/
+							}
+						})
+						.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								EditText edtText  = (EditText)(mEditDialogForGroup.findViewById(0x10000002));
+								editCurrentGroupName(edtText.getText().toString());
+								DTVProgramManagerGroupButtonData();
+							}
+						}).create();
+
+						EditText editText1 = new EditText(DTVProgramManager.this);
+						//editText1.setInputType(InputType.TYPE_CLASS_NUMBER);
+						editText1.setGravity(Gravity.LEFT);
+						editText1.setId(0x10000002);
+						editText1.setText(mProgramGroup[getVProgramCurrentIndex()].getName());
+						mEditDialogForGroup.setView(editText1);
+						mEditDialogForGroup.show();
+						WindowManager.LayoutParams lp1=mEditDialogForGroup.getWindow().getAttributes();
+						lp1.dimAmount=0.0f;
+						mEditDialogForGroup.getWindow().setAttributes(lp1);
+						mEditDialogForGroup.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+						mEditDialogForGroup.getWindow().setLayout(500, -1); 
+					}	
 					break;
 				case 2:
-					mEditDialog = new AlertDialog.Builder(DTVProgramManager.this)
-					.setTitle(R.string.move)
-					.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-						
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
-							/*
-							setMoveMode(true);		
-							changeOpDesc();
-							setMoveItemPos(myAdapter.getSelectItem());
-							myAdapter.notifyDataSetChanged();
-							*/
-						}
-					})
-					.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-						
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							EditText edtText  = (EditText)(mEditDialog.findViewById(0x10000002));
-
-						}
-					}).create();
-
-					EditText editText1 = new EditText(DTVProgramManager.this);
-					//editText1.setInputType(InputType.TYPE_CLASS_NUMBER);
-					editText1.setGravity(Gravity.LEFT);
-					editText1.setId(0x10000002);
-					mEditDialog.setView(editText1);
-					mEditDialog.show();
-					WindowManager.LayoutParams lp1=mEditDialog.getWindow().getAttributes();
-					lp1.dimAmount=0.0f;
-					mEditDialog.getWindow().setAttributes(lp1);
-					mEditDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-					mEditDialog.getWindow().setLayout(500, -1); 
-					break;
-				case 3:
-					break;
-				case 4:
-					break;
-				case 5:
-					break;
+					deleteCurrentGroup();
+					DTVProgramManagerGroupButtonData();
+					refreshGroupButton();
+					break;	
 				default:
 					break;
 				}
@@ -582,5 +548,230 @@ public class DTVProgramManager extends DTVActivity{
 		}).create();
 	}
 
+	AlertDialog mMenuChoiceDialog=null;
+	AlertDialog mEditDialog=null;
+	void createMenuChoiceDialog(int position){
+		final int pos = position;
+		boolean fav = false; 
+		boolean lock = false;
+		boolean skip = false;
+
+		if(mTVProgramList!=null){
+			fav = mTVProgramList[position].getFavoriteFlag();
+			lock = mTVProgramList[position].getLockFlag();
+			//skip = mTVProgramList[pos].get
+		}
+		
+		String[] itemChoices = {
+			getString(R.string.edit),
+			getString(R.string.delete),
+			(fav==false)?getString(R.string.add_fav):getString(R.string.del_fav),
+			//(skip==false)?getString(R.string.add_skip):getString(R.string.del_skip),
+			(lock==false)?getString(R.string.add_lock):getString(R.string.del_lock),
+			getString(R.string.move),
+			getString(R.string.add_into_group)
+		};
+		
+		mMenuChoiceDialog = new AlertDialog.Builder(this).setItems(itemChoices, new DialogInterface.OnClickListener() {			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+					case 0: //edit
+						mEditDialog = new AlertDialog.Builder(DTVProgramManager.this)
+						.setTitle(R.string.edit)
+						.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								// TODO Auto-generated method stub
+								
+							}
+						})
+						.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								EditText edtText  = (EditText)(mEditDialog.findViewById(0x10000001));
+								mTVProgramList[pos].setProgramName(edtText.getText().toString());
+								myAdapter.notifyDataSetChanged();
+							}
+						}).create();
+					
+						EditText editText = new EditText(DTVProgramManager.this);
+						editText.setGravity(Gravity.LEFT);
+						editText.setId(0x10000001);
+						editText.setText(mTVProgramList[pos].getName());
+						mEditDialog.setView(editText);
+						mEditDialog.show();
+						WindowManager.LayoutParams lp=mEditDialog.getWindow().getAttributes();
+						lp.dimAmount=0.0f;
+						mEditDialog.getWindow().setAttributes(lp);
+						mEditDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+						mEditDialog.getWindow().setLayout(500, -1); 
+						break;
+					case 1: //delete
+						deleteProgramFromDB(pos);
+						myAdapter.notifyDataSetChanged();
+						break;
+					case 2: //fav
+						dealFav(pos);
+						myAdapter.notifyDataSetChanged();
+						break;
+					case 3: //lock
+						dealLock(pos);
+						myAdapter.notifyDataSetChanged();
+						break;
+					case 4: //move
+						break;
+					case 5: //add into group
+						programGroupOperate(pos);
+						break;
+					default:
+						break;
+					}
+			}
+		}).create();
+	}
+
+	private void create_group_button() {
+		LinearLayout mLinearLayout = (LinearLayout)findViewById(R.id.LinearLayoutGroupButton) ;
+		for(int i=0; i<TVGroupCount; i++){
+			Log.d(TAG,"create_group_button="+i);
+			LinearLayout.LayoutParams TempLP = 
+				new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);					
+			TempLP.leftMargin = 2;
+			TempLP.bottomMargin = 1;
+			
+			Button TempButton;
+			TempButton = new Button(this);
+			
+			TempButton.setId(mProgramGroup[i].getID());
+			TempButton.setTextColor(Color.WHITE);
+			TempButton.setTextSize(22F);
+			TempButton.setLayoutParams(TempLP);
+			//TempButton.setVisibility(View.GONE);
+			
+			TempButton.setFocusableInTouchMode(true);
+			TempButton.setOnFocusChangeListener(new GroupButtonItemOnFocusChange());
+			TempButton.setOnClickListener(new GroupButtonItemOnClick());
+			TempButton.setOnLongClickListener(new OnLongClickListener() {
+				public boolean onLongClick(View view) {
+					Log.d(TAG,"long Click");
+					createMenuChoiceDialogForGroup();
+					mMenuChoiceDialogForGroup.show();
+					WindowManager.LayoutParams lp=mMenuChoiceDialogForGroup.getWindow().getAttributes();
+					lp.dimAmount=0.0f;
+					mMenuChoiceDialogForGroup.getWindow().setAttributes(lp);
+					mMenuChoiceDialogForGroup.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+					return false;
+				}
+			});
+			
+			TempButton.setSingleLine(true);
+			TempButton.setEllipsize(TextUtils.TruncateAt.valueOf("MARQUEE"));
+
+			TempButton.setWidth(128);
+			TempButton.setHeight(50);
+			TempButton.setHint(" "+mProgramGroup[i].getID());
+			TempButton.setBackgroundColor(GROUP_TIEM_UNFOCUSCOLOR_EVEN);	
+			TempButton.setText(mProgramGroup[i].getName());
+			TempButton.setVisibility(View.VISIBLE);
+			
+			((LinearLayout)mLinearLayout).addView(TempButton); 
+		}
+	}
+
+	private void refreshGroupButton(){
+		LinearLayout mLinearLayout = (LinearLayout)findViewById(R.id.LinearLayoutGroupButton) ;
+		mLinearLayout.removeAllViews();
+		for(int i=0; i<TVGroupCount; i++){
+			Log.d(TAG,"create_group_button="+i);
+			LinearLayout.LayoutParams TempLP = 
+				new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);					
+			TempLP.leftMargin = 2;
+			TempLP.bottomMargin = 1;
+			
+			Button TempButton;
+			TempButton = new Button(this);
+			
+			TempButton.setId(mProgramGroup[i].getID());
+			TempButton.setTextColor(Color.WHITE);
+			TempButton.setTextSize(22F);
+			TempButton.setLayoutParams(TempLP);
+			//TempButton.setVisibility(View.GONE);
+			
+			TempButton.setFocusableInTouchMode(true);
+			TempButton.setOnFocusChangeListener(new GroupButtonItemOnFocusChange());
+			TempButton.setOnClickListener(new GroupButtonItemOnClick());
+			TempButton.setOnLongClickListener(new OnLongClickListener() {
+				public boolean onLongClick(View view) {
+					Log.d(TAG,"long Click");
+					createMenuChoiceDialogForGroup();
+					mMenuChoiceDialogForGroup.show();
+					WindowManager.LayoutParams lp=mMenuChoiceDialogForGroup.getWindow().getAttributes();
+					lp.dimAmount=0.0f;
+					mMenuChoiceDialogForGroup.getWindow().setAttributes(lp);
+					mMenuChoiceDialogForGroup.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+					return false;
+				}
+			});
+			
+			TempButton.setSingleLine(true);
+			TempButton.setEllipsize(TextUtils.TruncateAt.valueOf("MARQUEE"));
+
+			TempButton.setWidth(128);
+			TempButton.setHeight(50);
+			TempButton.setHint(" "+mProgramGroup[i].getID());
+			TempButton.setBackgroundColor(GROUP_TIEM_UNFOCUSCOLOR_EVEN);	
+			TempButton.setText(mProgramGroup[i].getName());
+			TempButton.setVisibility(View.VISIBLE);
+			
+			((LinearLayout)mLinearLayout).addView(TempButton); 
+		}
+	}
+
+
+	class GroupButtonItemOnClick  implements OnClickListener{
+		public void onClick(View v) {
+			//final int i=Integer.valueOf(((Button)v).getHint().toString());
+		}
+	}
+
+	private final static int    GROUP_TIEM_FOCUSCOLOR             = Color.argb(200, 255, 180, 0);
+	private final static int    GROUP_TIEM_UNFOCUSCOLOR_ODD       = Color.argb(200, 75, 75, 75);
+	private final static int    GROUP_TIEM_UNFOCUSCOLOR_EVEN      = Color.argb(200, 42, 42, 42);
+	class GroupButtonItemOnFocusChange  implements OnFocusChangeListener{
+		public void onFocusChange(View v, boolean isFocused){
+			if (isFocused==true){
+				((Button)v).setBackgroundColor(GROUP_TIEM_FOCUSCOLOR);
+				TVProgramCurrentId = ((Button)v).getId();
+				if(TVProgramCurrentId!=-1){
+					getListGroupById(TVProgramCurrentId);
+					TabIndex = TVProgramCurrentId;
+				}
+				else{
+					String name = ((Button)v).getText().toString();
+					if(name.equals(getString(R.string.tv))){
+						getListData(0);
+						TabIndex = -1;
+					}
+					else if(name.equals(getString(R.string.radio))){
+						getListData(1);
+						TabIndex = -2;
+					}
+					else if(name.equals(getString(R.string.favorite))){
+						getListFavorite();
+						TabIndex = -3;
+					}
+				}
+
+				myAdapter.notifyDataSetChanged();
+			}
+			else {				  
+				((Button)v).setBackgroundColor(GROUP_TIEM_UNFOCUSCOLOR_EVEN);	
+			}
+	    }	
+	}
+
+	
 }
 
