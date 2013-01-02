@@ -9,7 +9,7 @@ import com.amlogic.tvutil.TVProgramNumber;
 import com.amlogic.tvactivity.TVActivity;
 import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
-import com.amlogic.tvutil.TVConst;
+import com.amlogic.tvutil.TVConfigValue;
 
 import android.view.*;
 import android.view.View.*;
@@ -61,7 +61,8 @@ public class DTVScanDVBT extends DTVActivity{
 
 	/*dvbt manual band*/
 	public static final int SETTINGS_MANU_SCANBAND_VHF = 0;
-	public static final int SETTINGS_MANU_SCANBAND_UHF = 1;	
+	public static final int SETTINGS_MANU_SCANBAND_UHF = 1;
+	public static final int SETTINGS_MANU_SCANBAND_MAX = 2;
 
 	/*dvbt bandwidth*/
 	public static final int SETTINGS_BANDWIDTH_8_MHZ = 0;
@@ -112,6 +113,8 @@ public class DTVScanDVBT extends DTVActivity{
 
 	private static int ui_dvbsandvbt_scantv_srv_list_index = 0;
 	private static int ui_dvbsandvbt_scanradio_srv_list_index = 0;
+
+	private TVChannelParams[] dvbsandvbt_channelallbandlist = null;
 	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
@@ -167,6 +170,8 @@ public class DTVScanDVBT extends DTVActivity{
 				Log.d(TAG, "Scan End");
 				Log.d(TAG, "stopScan");
 				stopScan(true);
+				scanprogress.setProgress(100);
+				scanprogresspercentage.setText("100%");				
 				Log.d(TAG, "stopScan End");				
 				break;
 			default:
@@ -344,6 +349,24 @@ public class DTVScanDVBT extends DTVActivity{
 		ui_dvbsandvbt_setting_title.setText(R.string.dtvscandvbt_manualscansettingtitle);
 
 		DTVScanDVBT_SettingList();
+
+		String region;
+		try {
+			region = getConfig("tv:scan:dtv:region").getString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.d(TAG, "Cannot read dtv region !!!");
+			return;
+		}
+
+		dvbsandvbt_channelallbandlist = TVChannelParams.channelCurAllbandParams(this, region, TVChannelParams.MODE_OFDM);
+
+		if(dvbsandvbt_channelallbandlist != null)
+		{
+			dvbscandvbt_manu_freq = dvbsandvbt_channelallbandlist[0].frequency/1000;
+			dvbscandvbt_manu_bandwidth = dvbsandvbt_channelallbandlist[0].bandwidth;
+			DTVScanDVBT_UpdateScanBand(dvbscandvbt_manu_freq);
+		}
 	}
 
 	private void DTVScanDVBTUiScan(){
@@ -521,6 +544,14 @@ public class DTVScanDVBT extends DTVActivity{
 						case SETTINGS_MANU_SCANMODE:
 							DTVScanDVBT_SettingListItemArrowScanMode();
 							break;
+
+						case SETTINGS_SCAN_BAND:
+							DTVScanDVBT_SettingListItemArrowScanBand();
+							break;
+
+						case SETTINGS_CHNO:
+							DTVScanDVBT_SettingListItemLeftArrowChNo();
+							break;
 							
 						case DTVScanDVBT.SETTINGS_BANDWIDTH:
 							DTVScanDVBT_SettingListItemLeftArrowBandw();
@@ -565,6 +596,14 @@ public class DTVScanDVBT extends DTVActivity{
 					{
 						case SETTINGS_MANU_SCANMODE:
 							DTVScanDVBT_SettingListItemArrowScanMode();
+							break;
+
+						case SETTINGS_SCAN_BAND:
+							DTVScanDVBT_SettingListItemArrowScanBand();
+							break;
+
+						case SETTINGS_CHNO:
+							DTVScanDVBT_SettingListItemRightArrowChNo();
 							break;
 					
 						case DTVScanDVBT.SETTINGS_BANDWIDTH:
@@ -668,6 +707,60 @@ public class DTVScanDVBT extends DTVActivity{
 		}
 
 		
+		ui_dvbsandvbt_setting_list_adapt.notifyDataSetChanged();	
+	}
+
+	private void DTVScanDVBT_SettingListItemArrowScanBand()
+	{
+		dvbscandvbt_manu_scanband = (dvbscandvbt_manu_scanband + 1)%SETTINGS_MANU_SCANBAND_MAX;
+
+		if(DTVScanDVBT_UpdateChInfoByband(dvbscandvbt_manu_scanband))
+		{
+			ui_dvbsandvbt_setting_list_adapt.notifyDataSetChanged();
+		}
+		else
+		{
+			dvbscandvbt_manu_scanband = (dvbscandvbt_manu_scanband + 1)%SETTINGS_MANU_SCANBAND_MAX;
+		}
+	}
+
+	private void DTVScanDVBT_SettingListItemLeftArrowChNo()
+	{
+		if(dvbsandvbt_channelallbandlist == null)
+			return;
+		
+		if (dvbscandvbt_manu_chno > 0)
+		{
+			dvbscandvbt_manu_chno = dvbscandvbt_manu_chno - 1;
+		}
+		else
+		{
+			dvbscandvbt_manu_chno = dvbsandvbt_channelallbandlist.length - 1;
+		}
+
+		dvbscandvbt_manu_freq = dvbsandvbt_channelallbandlist[dvbscandvbt_manu_chno].frequency/1000;
+		dvbscandvbt_manu_bandwidth = dvbsandvbt_channelallbandlist[dvbscandvbt_manu_chno].bandwidth;		
+
+		ui_dvbsandvbt_setting_list_adapt.notifyDataSetChanged();
+	}		
+
+	private void DTVScanDVBT_SettingListItemRightArrowChNo()
+	{
+		if(dvbsandvbt_channelallbandlist == null)
+			return;
+		
+		if (dvbscandvbt_manu_chno < (dvbsandvbt_channelallbandlist.length - 1))
+		{
+			dvbscandvbt_manu_chno = dvbscandvbt_manu_chno + 1;		
+		}
+		else
+		{
+			dvbscandvbt_manu_chno = 0;
+		}	
+
+		dvbscandvbt_manu_freq = dvbsandvbt_channelallbandlist[dvbscandvbt_manu_chno].frequency/1000;
+		dvbscandvbt_manu_bandwidth = dvbsandvbt_channelallbandlist[dvbscandvbt_manu_chno].bandwidth;	
+
 		ui_dvbsandvbt_setting_list_adapt.notifyDataSetChanged();	
 	}	
 
@@ -831,7 +924,7 @@ public class DTVScanDVBT extends DTVActivity{
 								break;
 							case DTVScanDVBT.SETTINGS_CHNO:
 								holder.info.setVisibility(View.VISIBLE);
-								displayinfochno(holder);
+								displayinfoch(holder);
 
 								if (dvbscandvbt_manu_scanmode == SETTINGS_MANU_SCANMODE_CHAN)
 								{
@@ -1123,7 +1216,7 @@ public class DTVScanDVBT extends DTVActivity{
 			}
 		}	
 
-		private void displayinfochno(ViewHolder vh){
+		private void displayinfoch(ViewHolder vh){
 			/*refresh dvbscandvbt_manu_chno and dvbscandvbt_manu_freq*/
 			
 			vh.info.setText("CH" + dvbscandvbt_manu_chno + "(" + dvbscandvbt_manu_freq + "KHZ)");
@@ -1154,7 +1247,58 @@ public class DTVScanDVBT extends DTVActivity{
 		
 	}
 
-	serviceInfo getServiceInfoByPos(int pos, int serviceType)
+	private void DTVScanDVBT_UpdateScanBand(int chfreq)
+	{
+		if(chfreq < 300000)
+		{
+			dvbscandvbt_manu_scanband = SETTINGS_MANU_SCANBAND_VHF;
+		}
+		else
+		{
+			dvbscandvbt_manu_scanband = SETTINGS_MANU_SCANBAND_UHF;
+		}
+	}
+
+	private boolean DTVScanDVBT_UpdateChInfoByband(int scanband)
+	{
+		boolean ret = false;
+
+		if(dvbsandvbt_channelallbandlist == null)
+			return ret;
+		
+		if(scanband == SETTINGS_MANU_SCANBAND_VHF)
+		{
+			for (int i = 0; i < dvbsandvbt_channelallbandlist.length; i++)
+			{
+				if((dvbsandvbt_channelallbandlist[i].frequency/1000) < 300000)
+				{
+					dvbscandvbt_manu_chno = i; 
+					dvbscandvbt_manu_freq = dvbsandvbt_channelallbandlist[i].frequency/1000;
+					dvbscandvbt_manu_bandwidth = dvbsandvbt_channelallbandlist[i].bandwidth;
+					ret = true;
+					break;
+				}				
+			}	
+		}
+		else if(scanband == SETTINGS_MANU_SCANBAND_UHF)
+		{
+			for (int i = 0; i < dvbsandvbt_channelallbandlist.length; i++)
+			{
+				if((dvbsandvbt_channelallbandlist[i].frequency/1000) >= 300000)
+				{
+					dvbscandvbt_manu_chno = i; 
+					dvbscandvbt_manu_freq = dvbsandvbt_channelallbandlist[i].frequency/1000;
+					dvbscandvbt_manu_bandwidth = dvbsandvbt_channelallbandlist[i].bandwidth;
+					ret = true;
+					break;
+				}				
+			}		
+		}
+
+		return ret;
+	}	
+
+	private serviceInfo getServiceInfoByPos(int pos, int serviceType)
 	{
 		serviceInfo si = null;
 
