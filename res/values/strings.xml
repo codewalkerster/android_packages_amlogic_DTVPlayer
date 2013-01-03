@@ -35,7 +35,8 @@
 	<string name="del_lock">Delete Lock</string>
 	<string name="add_skip">Add into skip</string>
 	<string name="del_skip">Move from skip</string>	
-	<string name="add_into_group">Add into group</string>	
+
+	<string name="add_into_group">Add int group</string>	
 	
     <string name="dtvplayer_loading">Loading...</string>
 	<!--main menu button info--> 
@@ -45,7 +46,7 @@
 	<string name="dtvplayer_menu_button_program_manager">Program Manager</string>
 	<string name="dtvplayer_menu_button_timeshifting">Timeshifting</string>
 	<string name="dtvplayer_menu_button_epg_book_manager">EPG Manager</string>
-	<string name="dtvplayer_menu_button_pvr_manager">Pvr Manager</string>
+	<string name="dtvplayer_menu_button_pvr_manager">REC Manager</string>
     <string name="dtvplayer_menu_button_hide">HIDE</string>
 	<string name="dtvplayer_skip_channel">Are you sure hide this channel</string>
 	<string name="dtvplayer_enter_pvr">Are you sure enter pvr</string>
@@ -138,11 +139,16 @@
 
 	<string name="vchip">VChip</string>
 	<string name="closed_caption">Closed Caption</string>	
-  <!--Timeshifting-->
-  <string name="timeshifting_exit_message">Do you want exit timeshifting</string>
-  <string name="timeshift_when_recording">Now is recording,if you want to timeshifting,you must first stop pvr</string>
-  <string name="timeshift_when_radio">Now is radio, not support timeshifting</string>
-  <string name="timeshift_when_lock">Locked channel,please unlock first</string>
+	<!--Timeshifting-->
+	<string name="timeshifting_exit_message">Do you want exit timeshifting</string>
+	<string name="timeshift_when_recording">Now is recording,if you want to timeshifting,you must first stop pvr</string>
+	<string name="timeshift_when_radio">Now is radio, not support timeshifting</string>
+	<string name="timeshift_when_lock">Locked channel,please unlock first</string>
+
+	<string name="check_usb_device">Can not find the storage device</string>
+	<string name="usb_cant_access_file">Disk or sdcard cant access</string>
+	<string name="usbdisk_is_full">Disk is full or USB device disconnected,please check</string>
+
      	
   <!--DTV EPG--> 	
   	<string name="epg_sunday">Sunday</string>
@@ -156,7 +162,25 @@
     <string name="epg_waiting">Please wait......</string>
     <string name="epg_no_epg_info">No EPG Info</string>
     <string name="epg_operate_des01">OK--BookPlay/BookRecord     		  INFO--EIT Dtails</string>
-   	
+
+	<!--DTV REC Manager-->
+
+	<string name="recmanager_proname">Program name</string>
+    <string name="recmanager_evtname">Event name</string>
+    <string name="recmanager_time">Time</string>
+    <string name="recmanager_filename">File name</string>
+    <string name="recmanager_help_info">Press ZOOM IN key to create new record</string>
+
+    <string name="recording">Recording</string>
+	<string name="completed ">Recorded</string>
+	<string name="scheduled">Scheduled</string>
+	<string name="sure_delete">Are you sure delete</string>
+	<string name="play">Play</string>
+
+  	<string name="time_shift_exit">Are you sure exit timeshifting?</string>
+  	<string name="subtitle_language_set">Subtitle language set</string>
+  	<string name="audio_language_set">Audio language set</string>
+      	
 	<!--DTV Scan dvbt-->
    	<string name="dtvscandvbt_scansettingtitle">Channel Search</string>
 	<string name="dtvscandvbt_manualscansettingtitle">Manual Scan</string>
