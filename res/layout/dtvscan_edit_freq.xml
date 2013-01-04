@@ -16,7 +16,7 @@
 				> 
 			</TextView>
 			             
-			<EditText android:id="@+id/dvbscandvbt_edit_freq"
+			<EditText android:id="@+id/dvbscan_edit_freq"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				>
