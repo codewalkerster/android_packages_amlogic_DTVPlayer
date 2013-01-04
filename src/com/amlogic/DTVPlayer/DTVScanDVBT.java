@@ -9,7 +9,7 @@ import com.amlogic.tvutil.TVProgramNumber;
 import com.amlogic.tvactivity.TVActivity;
 import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
-import com.amlogic.tvutil.TVConst;
+import com.amlogic.tvutil.TVConfigValue;
 
 import android.view.*;
 import android.view.View.*;
@@ -61,7 +61,8 @@ public class DTVScanDVBT extends DTVActivity{
 
 	/*dvbt manual band*/
 	public static final int SETTINGS_MANU_SCANBAND_VHF = 0;
-	public static final int SETTINGS_MANU_SCANBAND_UHF = 1;	
+	public static final int SETTINGS_MANU_SCANBAND_UHF = 1;
+	public static final int SETTINGS_MANU_SCANBAND_MAX = 2;
 
 	/*dvbt bandwidth*/
 	public static final int SETTINGS_BANDWIDTH_8_MHZ = 0;
@@ -112,6 +113,8 @@ public class DTVScanDVBT extends DTVActivity{
 
 	private static int ui_dvbsandvbt_scantv_srv_list_index = 0;
 	private static int ui_dvbsandvbt_scanradio_srv_list_index = 0;
+
+	private TVChannelParams[] dvbsandvbt_channelallbandlist = null;
 	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
@@ -167,6 +170,8 @@ public class DTVScanDVBT extends DTVActivity{
 				Log.d(TAG, "Scan End");
 				Log.d(TAG, "stopScan");
 				stopScan(true);
+				scanprogress.setProgress(100);
+				scanprogresspercentage.setText("100%");				
 				Log.d(TAG, "stopScan End");				
 				break;
 			default:
@@ -237,10 +242,10 @@ public class DTVScanDVBT extends DTVActivity{
 	private void DTVScanDVBTUiSettingInit(){
 		Log.d(TAG, "DTVScanDVBTUiSettingInit");
 		
-		setContentView(R.layout.dtvscandvbt_setting);
+		setContentView(R.layout.dtvscan_setting);
 
-		ui_dvbsandvbt_setting_title = (TextView)findViewById(R.id.DtvscandvbtTitleText);
-		ui_dvbsandvbt_setting_list = (ListView) findViewById(R.id.DtvscandvbtSettingList);            
+		ui_dvbsandvbt_setting_title = (TextView)findViewById(R.id.DtvscanTitleText);
+		ui_dvbsandvbt_setting_list = (ListView) findViewById(R.id.DtvscanSettingList);            
 
 		if (null == ui_dvbsandvbt_setting_list_adapt){
 			ui_dvbsandvbt_setting_list_adapt = new DTVScanDVBT_SettingListAdapter(this);
@@ -267,25 +272,25 @@ public class DTVScanDVBT extends DTVActivity{
 	private void DTVScanDVBTUiScanInit(){
 		Log.d(TAG, "DTVScanDVBTUiScanInit");
 		
-		setContentView(R.layout.dtvscandvbt_scan);
+		setContentView(R.layout.dtvscan_scan);
 
-		ui_dvbsandvbt_scan_title = (TextView)findViewById(R.id.dvbscandvbtscan_title);
-		ui_dvbsandvbt_scan_tvtitle = (TextView)findViewById(R.id.dvbscandvbtscan_tvtitle);
-		ui_dvbsandvbt_scan_radiotitle = (TextView)findViewById(R.id.dvbscandvbtscan_radiotitle);
+		ui_dvbsandvbt_scan_title = (TextView)findViewById(R.id.dvbscanscan_title);
+		ui_dvbsandvbt_scan_tvtitle = (TextView)findViewById(R.id.dvbscanscan_tvtitle);
+		ui_dvbsandvbt_scan_radiotitle = (TextView)findViewById(R.id.dvbscanscan_radiotitle);
 
-		ui_dvbsandvbt_scan_tvtitle.setText(R.string.dtvscandvbt_scan_tv);
-		ui_dvbsandvbt_scan_radiotitle.setText(R.string.dtvscandvbt_scan_audio);		
+		ui_dvbsandvbt_scan_tvtitle.setText(R.string.dtvscan_scan_tv);
+		ui_dvbsandvbt_scan_radiotitle.setText(R.string.dtvscan_scan_audio);		
 
 		scanprogress = (ProgressBar)findViewById(R.id.dvbscanprogressbar);
-		scanprogress.setProgressDrawable(getResources().getDrawable(R.drawable.dtvscandvbt_progress_bg));
+		scanprogress.setProgressDrawable(getResources().getDrawable(R.drawable.dtvscan_progress_bg));
 		scanprogress.setProgress(0);
 
-		scanprogresspercentage = (TextView)findViewById(R.id.dvbscandvbt_progresspercentage);
+		scanprogresspercentage = (TextView)findViewById(R.id.dvbscan_progresspercentage);
 		scanprogresspercentage.setText(0+"%");
 
-		scanfreqinfo = (TextView)findViewById(R.id.dvbscandvbt_scanfreqinfo);
+		scanfreqinfo = (TextView)findViewById(R.id.dvbscan_scanfreqinfo);
 		         		
-		ui_dvbsandvbt_scantv_list = (ListView)findViewById(R.id.dvbscandvbtscan_listtv);
+		ui_dvbsandvbt_scantv_list = (ListView)findViewById(R.id.dvbscanscan_listtv);
 		
 		if (null == ui_dvbsandvbt_scantv_srv_list)
 		{
@@ -299,7 +304,7 @@ public class DTVScanDVBT extends DTVActivity{
 			ui_dvbsandvbt_scantv_list.setAdapter(ui_dvbsandvbt_scantv_list_adapter);
 		}  
 
-		ui_dvbsandvbt_scanradio_list = (ListView)findViewById(R.id.dvbscandvbtscan_listradio);
+		ui_dvbsandvbt_scanradio_list = (ListView)findViewById(R.id.dvbscanscan_listradio);
 		
 		if (null == ui_dvbsandvbt_scanradio_srv_list)
 		{
@@ -330,7 +335,7 @@ public class DTVScanDVBT extends DTVActivity{
 		dtvscandvbt_scan_mode = DTVSCANDVBT_SETTING_SCAN_MODE;
 		ui_dvbsandvbt_setting_list_count = SETTINGS_MAX;
 		
-		ui_dvbsandvbt_setting_title.setText(R.string.dtvscandvbt_scansettingtitle);
+		ui_dvbsandvbt_setting_title.setText(R.string.dtvscan_scansettingtitle);
 
 		DTVScanDVBT_SettingList();
 	}
@@ -341,9 +346,27 @@ public class DTVScanDVBT extends DTVActivity{
 		dtvscandvbt_scan_mode = DTVSCANDVBT_SETTING_MANU_SCAN_MODE;
 		ui_dvbsandvbt_setting_list_count = SETTINGS_MANU_MAX;
 		
-		ui_dvbsandvbt_setting_title.setText(R.string.dtvscandvbt_manualscansettingtitle);
+		ui_dvbsandvbt_setting_title.setText(R.string.dtvscan_manualscansettingtitle);
 
 		DTVScanDVBT_SettingList();
+
+		String region;
+		try {
+			region = getConfig("tv:scan:dtv:region").getString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.d(TAG, "Cannot read dtv region !!!");
+			return;
+		}
+
+		dvbsandvbt_channelallbandlist = TVChannelParams.channelCurAllbandParams(this, region, TVChannelParams.MODE_OFDM);
+
+		if(dvbsandvbt_channelallbandlist != null)
+		{
+			dvbscandvbt_manu_freq = dvbsandvbt_channelallbandlist[0].frequency/1000;
+			dvbscandvbt_manu_bandwidth = dvbsandvbt_channelallbandlist[0].bandwidth;
+			DTVScanDVBT_UpdateScanBand(dvbscandvbt_manu_freq);
+		}
 	}
 
 	private void DTVScanDVBTUiScan(){
@@ -353,13 +376,13 @@ public class DTVScanDVBT extends DTVActivity{
 		
 		if(dtvscandvbt_scan_mode == DTVSCANDVBT_SETTING_SCAN_MODE)
 		{
-			ui_dvbsandvbt_scan_title.setText(R.string.dtvscandvbt_scan_auto);
+			ui_dvbsandvbt_scan_title.setText(R.string.dtvscan_scan_auto);
 
 			DTVScanDVBT_StartAutoScan();
 		}
 		else if(dtvscandvbt_scan_mode == DTVSCANDVBT_SETTING_MANU_SCAN_MODE)
 		{
-			ui_dvbsandvbt_scan_title.setText(R.string.dtvscandvbt_scan_manual);
+			ui_dvbsandvbt_scan_title.setText(R.string.dtvscan_scan_manual);
 
 			DTVScanDVBT_StartManuScan();
 		}
@@ -449,14 +472,14 @@ public class DTVScanDVBT extends DTVActivity{
 
 	private void DTVScanDVBT_SettingListItemClickedManuFreqEdit()
 	{
-		LinearLayout dtvscandvbt_edit_freq_layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dtvscandvbt_edit_freq, null);      
-		final EditText dtvscandvbt_edit_freq_text = (EditText)dtvscandvbt_edit_freq_layout.findViewById(R.id.dvbscandvbt_edit_freq);
+		LinearLayout dtvscandvbt_edit_freq_layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dtvscan_edit_freq, null);      
+		final EditText dtvscandvbt_edit_freq_text = (EditText)dtvscandvbt_edit_freq_layout.findViewById(R.id.dvbscan_edit_freq);
 		  
-		dvbscandvbt_editfreqbuilder.setTitle(R.string.dtvscandvbt_edit_freq);
+		dvbscandvbt_editfreqbuilder.setTitle(R.string.dtvscan_edit_freq);
 		dvbscandvbt_editfreqbuilder.setView(dtvscandvbt_edit_freq_layout);
 
 		dtvscandvbt_edit_freq_text.setText("");
-		dvbscandvbt_editfreqbuilder.setPositiveButton(R.string.dtvscandvbt_confirm, new DialogInterface.OnClickListener() {
+		dvbscandvbt_editfreqbuilder.setPositiveButton(R.string.dtvscan_confirm, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				if (!dtvscandvbt_edit_freq_text.getText().toString().equals(""))
 				{
@@ -466,7 +489,7 @@ public class DTVScanDVBT extends DTVActivity{
 			}
 		});
 		   	
-		dvbscandvbt_editfreqbuilder.setNegativeButton(R.string.dtvscandvbt_cancel, new DialogInterface.OnClickListener() {
+		dvbscandvbt_editfreqbuilder.setNegativeButton(R.string.dtvscan_cancel, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 			// TODO Auto-generated method stub
 			}
@@ -521,6 +544,14 @@ public class DTVScanDVBT extends DTVActivity{
 						case SETTINGS_MANU_SCANMODE:
 							DTVScanDVBT_SettingListItemArrowScanMode();
 							break;
+
+						case SETTINGS_SCAN_BAND:
+							DTVScanDVBT_SettingListItemArrowScanBand();
+							break;
+
+						case SETTINGS_CHNO:
+							DTVScanDVBT_SettingListItemLeftArrowChNo();
+							break;
 							
 						case DTVScanDVBT.SETTINGS_BANDWIDTH:
 							DTVScanDVBT_SettingListItemLeftArrowBandw();
@@ -565,6 +596,14 @@ public class DTVScanDVBT extends DTVActivity{
 					{
 						case SETTINGS_MANU_SCANMODE:
 							DTVScanDVBT_SettingListItemArrowScanMode();
+							break;
+
+						case SETTINGS_SCAN_BAND:
+							DTVScanDVBT_SettingListItemArrowScanBand();
+							break;
+
+						case SETTINGS_CHNO:
+							DTVScanDVBT_SettingListItemRightArrowChNo();
 							break;
 					
 						case DTVScanDVBT.SETTINGS_BANDWIDTH:
@@ -669,6 +708,60 @@ public class DTVScanDVBT extends DTVActivity{
 
 		
 		ui_dvbsandvbt_setting_list_adapt.notifyDataSetChanged();	
+	}
+
+	private void DTVScanDVBT_SettingListItemArrowScanBand()
+	{
+		dvbscandvbt_manu_scanband = (dvbscandvbt_manu_scanband + 1)%SETTINGS_MANU_SCANBAND_MAX;
+
+		if(DTVScanDVBT_UpdateChInfoByband(dvbscandvbt_manu_scanband))
+		{
+			ui_dvbsandvbt_setting_list_adapt.notifyDataSetChanged();
+		}
+		else
+		{
+			dvbscandvbt_manu_scanband = (dvbscandvbt_manu_scanband + 1)%SETTINGS_MANU_SCANBAND_MAX;
+		}
+	}
+
+	private void DTVScanDVBT_SettingListItemLeftArrowChNo()
+	{
+		if(dvbsandvbt_channelallbandlist == null)
+			return;
+		
+		if (dvbscandvbt_manu_chno > 0)
+		{
+			dvbscandvbt_manu_chno = dvbscandvbt_manu_chno - 1;
+		}
+		else
+		{
+			dvbscandvbt_manu_chno = dvbsandvbt_channelallbandlist.length - 1;
+		}
+
+		dvbscandvbt_manu_freq = dvbsandvbt_channelallbandlist[dvbscandvbt_manu_chno].frequency/1000;
+		dvbscandvbt_manu_bandwidth = dvbsandvbt_channelallbandlist[dvbscandvbt_manu_chno].bandwidth;		
+
+		ui_dvbsandvbt_setting_list_adapt.notifyDataSetChanged();
+	}		
+
+	private void DTVScanDVBT_SettingListItemRightArrowChNo()
+	{
+		if(dvbsandvbt_channelallbandlist == null)
+			return;
+		
+		if (dvbscandvbt_manu_chno < (dvbsandvbt_channelallbandlist.length - 1))
+		{
+			dvbscandvbt_manu_chno = dvbscandvbt_manu_chno + 1;		
+		}
+		else
+		{
+			dvbscandvbt_manu_chno = 0;
+		}	
+
+		dvbscandvbt_manu_freq = dvbsandvbt_channelallbandlist[dvbscandvbt_manu_chno].frequency/1000;
+		dvbscandvbt_manu_bandwidth = dvbsandvbt_channelallbandlist[dvbscandvbt_manu_chno].bandwidth;	
+
+		ui_dvbsandvbt_setting_list_adapt.notifyDataSetChanged();	
 	}	
 
 	private class DTVScanDVBT_SettingListAdapter extends BaseAdapter {
@@ -691,8 +784,8 @@ public class DTVScanDVBT extends DTVActivity{
 			this.cont = context;
 			mInflater=LayoutInflater.from(context);
 			/*pic need design*/
-			mIcon_setting = BitmapFactory.decodeResource(context.getResources(), R.drawable.dtvscandvbt_setting);
-			mIcon_scan = BitmapFactory.decodeResource(context.getResources(), R.drawable.dtvscandvbt_scan);
+			mIcon_setting = BitmapFactory.decodeResource(context.getResources(), R.drawable.dtvscan_setting);
+			mIcon_scan = BitmapFactory.decodeResource(context.getResources(), R.drawable.dtvscan_scan);
 		}
 
 		public int getCount() {
@@ -711,7 +804,7 @@ public class DTVScanDVBT extends DTVActivity{
 			ViewHolder holder = null;
 
 			if (convertView == null) {
-				convertView = mInflater.inflate(R.layout.dtvscandvbt_settings_list, null);
+				convertView = mInflater.inflate(R.layout.dtvscan_settings_list, null);
 
 				holder = new ViewHolder();
 		   
@@ -831,7 +924,7 @@ public class DTVScanDVBT extends DTVActivity{
 								break;
 							case DTVScanDVBT.SETTINGS_CHNO:
 								holder.info.setVisibility(View.VISIBLE);
-								displayinfochno(holder);
+								displayinfoch(holder);
 
 								if (dvbscandvbt_manu_scanmode == SETTINGS_MANU_SCANMODE_CHAN)
 								{
@@ -967,16 +1060,16 @@ public class DTVScanDVBT extends DTVActivity{
 			if (display_arrow)
 			{
 				vh.icon1.setVisibility(View.VISIBLE);
-				vh.icon1.setBackgroundResource(R.drawable.dtvscandvbt_setting_arrow_left);
+				vh.icon1.setBackgroundResource(R.drawable.dtvscan_setting_arrow_left);
 				vh.icon2.setVisibility(View.VISIBLE);
-				vh.icon2.setBackgroundResource(R.drawable.dtvscandvbt_setting_arrow_right);
+				vh.icon2.setBackgroundResource(R.drawable.dtvscan_setting_arrow_right);
 			}
 			else
 			{
 				vh.icon1.setVisibility(View.VISIBLE);
-				vh.icon1.setBackgroundResource(R.drawable.dtvscandvbt_setting_blank);
+				vh.icon1.setBackgroundResource(R.drawable.dtvscan_setting_blank);
 				vh.icon2.setVisibility(View.VISIBLE);
-				vh.icon2.setBackgroundResource(R.drawable.dtvscandvbt_setting_blank);
+				vh.icon2.setBackgroundResource(R.drawable.dtvscan_setting_blank);
 			}
 		}
 
@@ -989,16 +1082,16 @@ public class DTVScanDVBT extends DTVActivity{
 						switch(position)
 						{
 							case DTVScanDVBT.SETTINGS_AUTO_SCAN:
-								vh.text.setText(R.string.dtvscandvbt_scan_auto);
+								vh.text.setText(R.string.dtvscan_scan_auto);
 								break;
 							case DTVScanDVBT.SETTINGS_MANU_SCAN:
-								vh.text.setText(R.string.dtvscandvbt_scan_manual);
+								vh.text.setText(R.string.dtvscan_scan_manual);
 								break;
 							case DTVScanDVBT.SETTINGS_AREA:
-								vh.text.setText(R.string.dtvscandvbt_erea);
+								vh.text.setText(R.string.dtvscan_erea);
 								break;
 							case DTVScanDVBT.SETTINGS_LCN:
-								vh.text.setText(R.string.dtvscandvbt_lcn);
+								vh.text.setText(R.string.dtvscan_lcn);
 								break;
 							default:
 								break;
@@ -1011,22 +1104,22 @@ public class DTVScanDVBT extends DTVActivity{
 						switch(position)
 						{
 							case DTVScanDVBT.SETTINGS_MANU_SCANMODE:	
-								vh.text.setText(R.string.dtvscandvbt_scan_mode);
+								vh.text.setText(R.string.dtvscan_scan_mode);
 								break;
 							case DTVScanDVBT.SETTINGS_SCAN_BAND:	
-								vh.text.setText(R.string.dtvscandvbt_scan_band);
+								vh.text.setText(R.string.dtvscan_scan_band);
 								break;
 							case DTVScanDVBT.SETTINGS_CHNO:	
-								vh.text.setText(R.string.dtvscandvbt_channel_no);
+								vh.text.setText(R.string.dtvscan_channel_no);
 								break;
 							case DTVScanDVBT.SETTINGS_FREQUENCY:	
-								vh.text.setText(R.string.dtvscandvbt_base_frequence);
+								vh.text.setText(R.string.dtvscan_base_frequence);
 								break;
 							case DTVScanDVBT.SETTINGS_BANDWIDTH:
 								vh.text.setText(R.string.dtvscandvbt_bandwidth);
 								break;
 							case DTVScanDVBT.SETTINGS_SCAN:
-								vh.text.setText(R.string.dtvscandvbt_begain_search);
+								vh.text.setText(R.string.dtvscan_begain_search);
 								break;
 							default:
 								break;
@@ -1082,10 +1175,10 @@ public class DTVScanDVBT extends DTVActivity{
 		private void displayinfolcn(ViewHolder vh){
 			if(dvbscandvbt_lcn)
 			{
-				vh.info.setText(R.string.dtvscandvbt_lcn_on);
+				vh.info.setText(R.string.dtvscan_lcn_on);
 			}else
 			{
-				vh.info.setText(R.string.dtvscandvbt_lcn_off);
+				vh.info.setText(R.string.dtvscan_lcn_off);
 			}
 		}	
 
@@ -1093,11 +1186,11 @@ public class DTVScanDVBT extends DTVActivity{
 			switch(dvbscandvbt_manu_scanmode)
 			{
 				case DTVScanDVBT.SETTINGS_MANU_SCANMODE_FREQ:	
-					vh.info.setText(R.string.dtvscandvbt_by_frequence);
+					vh.info.setText(R.string.dtvscan_by_frequence);
 					break;			
 				
 				case DTVScanDVBT.SETTINGS_MANU_SCANMODE_CHAN:	
-					vh.info.setText(R.string.dtvscandvbt_by_channel);
+					vh.info.setText(R.string.dtvscan_by_channel);
 					break;
 
 				default:
@@ -1111,11 +1204,11 @@ public class DTVScanDVBT extends DTVActivity{
 			switch(dvbscandvbt_manu_scanband)
 			{
 				case DTVScanDVBT.SETTINGS_MANU_SCANBAND_VHF:	
-					vh.info.setText(R.string.dtvscandvbt_scan_band_vhf);
+					vh.info.setText(R.string.dtvscan_scan_band_vhf);
 					break;			
 				
 				case DTVScanDVBT.SETTINGS_MANU_SCANBAND_UHF:	
-					vh.info.setText(R.string.dtvscandvbt_scan_band_uhf);
+					vh.info.setText(R.string.dtvscan_scan_band_uhf);
 					break;
 
 				default:
@@ -1123,7 +1216,7 @@ public class DTVScanDVBT extends DTVActivity{
 			}
 		}	
 
-		private void displayinfochno(ViewHolder vh){
+		private void displayinfoch(ViewHolder vh){
 			/*refresh dvbscandvbt_manu_chno and dvbscandvbt_manu_freq*/
 			
 			vh.info.setText("CH" + dvbscandvbt_manu_chno + "(" + dvbscandvbt_manu_freq + "KHZ)");
@@ -1154,7 +1247,58 @@ public class DTVScanDVBT extends DTVActivity{
 		
 	}
 
-	serviceInfo getServiceInfoByPos(int pos, int serviceType)
+	private void DTVScanDVBT_UpdateScanBand(int chfreq)
+	{
+		if(chfreq < 300000)
+		{
+			dvbscandvbt_manu_scanband = SETTINGS_MANU_SCANBAND_VHF;
+		}
+		else
+		{
+			dvbscandvbt_manu_scanband = SETTINGS_MANU_SCANBAND_UHF;
+		}
+	}
+
+	private boolean DTVScanDVBT_UpdateChInfoByband(int scanband)
+	{
+		boolean ret = false;
+
+		if(dvbsandvbt_channelallbandlist == null)
+			return ret;
+		
+		if(scanband == SETTINGS_MANU_SCANBAND_VHF)
+		{
+			for (int i = 0; i < dvbsandvbt_channelallbandlist.length; i++)
+			{
+				if((dvbsandvbt_channelallbandlist[i].frequency/1000) < 300000)
+				{
+					dvbscandvbt_manu_chno = i; 
+					dvbscandvbt_manu_freq = dvbsandvbt_channelallbandlist[i].frequency/1000;
+					dvbscandvbt_manu_bandwidth = dvbsandvbt_channelallbandlist[i].bandwidth;
+					ret = true;
+					break;
+				}				
+			}	
+		}
+		else if(scanband == SETTINGS_MANU_SCANBAND_UHF)
+		{
+			for (int i = 0; i < dvbsandvbt_channelallbandlist.length; i++)
+			{
+				if((dvbsandvbt_channelallbandlist[i].frequency/1000) >= 300000)
+				{
+					dvbscandvbt_manu_chno = i; 
+					dvbscandvbt_manu_freq = dvbsandvbt_channelallbandlist[i].frequency/1000;
+					dvbscandvbt_manu_bandwidth = dvbsandvbt_channelallbandlist[i].bandwidth;
+					ret = true;
+					break;
+				}				
+			}		
+		}
+
+		return ret;
+	}	
+
+	private serviceInfo getServiceInfoByPos(int pos, int serviceType)
 	{
 		serviceInfo si = null;
 
@@ -1300,11 +1444,11 @@ public class DTVScanDVBT extends DTVActivity{
 				mv = new ViewHolder();
 				lif = LayoutInflater.from(context);
 
-				convertView = lif.inflate(R.layout.dtvscandvbt_scan_list, null);
+				convertView = lif.inflate(R.layout.dtvscan_scan_list, null);
 
 				//convertView = lif.inflate(R.layout.listlayout, null);
-				mv.srv_id = (TextView)convertView.findViewById(R.id.dtvscandvbt_scanlist_srv_id_text);
-				mv.srv_name = (TextView)convertView.findViewById(R.id.dtvscandvbt_scanlist_srv_name_text);
+				mv.srv_id = (TextView)convertView.findViewById(R.id.dtvscan_scanlist_srv_id_text);
+				mv.srv_name = (TextView)convertView.findViewById(R.id.dtvscan_scanlist_srv_name_text);
 
 				convertView.setTag(mv);
 			}else{

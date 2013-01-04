@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/DtvscandvbtLayout"
+	android:id="@+id/DtvscanLayout"
 	android:layout_width="1280px" 
 	android:layout_height="720px"
 	android:background="#00000000"
@@ -18,18 +18,18 @@
 		android:orientation="vertical">  
 
 		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			android:id="@+id/DtvscandvbtInsidelLayout"
+			android:id="@+id/DtvscanInsidelLayout"
 			android:layout_alignParentTop="true"	
 			android:layout_width="fill_parent" 
 			android:layout_height="408px">    
 
-				<RelativeLayout android:id="@+id/DtvscandvbtTitleLayout"
+				<RelativeLayout android:id="@+id/DtvscanTitleLayout"
 					android:layout_alignParentTop="true"		
 					android:layout_width="fill_parent" 
 					android:layout_height="50px">  
 						
 					<TextView 
-						android:id="@+id/DtvscandvbtTitleText"
+						android:id="@+id/DtvscanTitleText"
 						android:layout_width="fill_parent"
 						android:layout_height="fill_parent"
 						android:gravity="center"
@@ -38,16 +38,16 @@
 					</TextView>
 				</RelativeLayout>   
 			           
-				<RelativeLayout android:id="@+id/DtvscandvbtListLayout"
-					android:layout_below="@+id/DtvscandvbtTitleLayout"	
-			    	android:layout_alignParentBottom="true"	
+				<RelativeLayout android:id="@+id/DtvscanListLayout"
+					android:layout_below="@+id/DtvscanTitleLayout"	
+					android:layout_alignParentBottom="true"	
 					android:layout_centerInParent="true"  
 					android:layout_width="fill_parent" 
 					android:layout_height="358px"
 					android:padding="16px">		 
 						  
 					<ListView 
-						android:id="@+id/DtvscandvbtSettingList"
+						android:id="@+id/DtvscanSettingList"
 						android:layout_width="fill_parent"
 						android:layout_height="fill_parent"
 						>
