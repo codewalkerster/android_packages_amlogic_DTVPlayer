@@ -48,7 +48,13 @@ public class DTVSettings extends DTVActivity{
 				break;
 		}
 	}
-	
+
+	public void setTeltextBound(){
+		setConfig("tv:subtitle:margin_left",60);
+		setConfig("tv:subtitle:margin_right",60);
+		setConfig("tv:subtitle:margin_top",60);
+		setConfig("tv:subtitle:margin_bottom",60);
+	}
 	public boolean getSubtitleStatus(){
 		if(getBooleanConfig("tv:subtitle:enable"))
 			return true;
@@ -61,30 +67,34 @@ public class DTVSettings extends DTVActivity{
 	}
 
 	public int getScreenMode(){
-		return 0;
+		return getIntConfig("tv:dtv:screen_mode");
 	}
 
 	public void setScreenMode(int mode){
-		return;
+		setConfig("tv:dtv:screen_mode",mode);
 	}
 
 	public int getAudioTrack(){
-		return 2;
+		return getIntConfig("tv:dtv:audio_tarck");
 	}
 
+	public void setAudioTrack(int mode){
+		setConfig("tv:dtv:audio_tarck",mode);
+	}
 	public int getTimeShiftingDuration(){
-		return 600;
+		return getIntConfig("tv:dtv:timeshifting_time_long")/1000;	
 	}
 
 	public void  setTimeShiftingDuration(int value){
+		setConfig("tv:dtv:timeshifting_time_long",value*1000);
 	}
 	
 	public int getParentalRating(){
-		return 0;
+		return getIntConfig("tv:dtv:dtbt:parent_rate");	
 	}
 
 	public void setParentalRating(int value){
-		return;
+		setConfig("tv:dtv:dtbt:parent_rate",value);
 	}
 
 	public int getTeletextRegion(){
@@ -104,5 +114,20 @@ public class DTVSettings extends DTVActivity{
 		return ;
 	}
 
+	public String getPassWord(){
+		String password = "0000";
+		password = getStringConfig("tv:dtv:password");
+		return password;
+	}
+
+	public void setPassWord(String password){
+		setConfig("tv:dtv:password",password);
+	}
+
+
+	
+	public void factoryReset(){
+		restoreFactorySetting();
+	}
 }
 

@@ -35,6 +35,28 @@ public class DTVTimeshifting extends DTVActivity{
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
+		startTimeshifting();
+	}
+
+	@Override
+	protected void onStart(){
+		Log.d(TAG, "onStart");
+		super.onStart();
+		
+		bufferLayout.setVisibility(View.INVISIBLE);
+		infoLayout.setVisibility(View.VISIBLE);
+		play.setEnabled(true);
+		play.setBackgroundResource(R.drawable.play_button);
+		play_status = STAT_PLAY;
+		play.requestFocus();
+		showTimeshiftingIcon();
+	}
+
+	@Override
+	protected void onStop(){
+		Log.d(TAG, "onStop");
+		super.onStop();
+		stopTimeshifting();
 	}
 
 	public void onDisconnected(){
@@ -45,7 +67,6 @@ public class DTVTimeshifting extends DTVActivity{
 		Log.d(TAG, "message "+msg.getType());
 		switch (msg.getType()) {
 			case TVMessage.TYPE_SCAN_PROGRESS:
-				
 				break;
 			case TVMessage.TYPE_SCAN_STORE_BEGIN:
 				Log.d(TAG, "Storing ...");
@@ -57,6 +78,36 @@ public class DTVTimeshifting extends DTVActivity{
 			case TVMessage.TYPE_SCAN_END:
 				Log.d(TAG, "Scan End");
 				break;
+			case TVMessage.TYPE_RECORD_END:	
+				switch(msg.getRecordErrorCode()){
+					case  TVMessage.REC_ERR_OPEN_FILE:
+						DTVTimeShiftingStop();
+						toast = Toast.makeText(
+							DTVTimeshifting.this,
+				    		R.string.check_usb_device,
+				    		Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						DTVTimeshifting.this.finish();	
+						break;
+					case  TVMessage.REC_ERR_WRITE_FILE:	
+						DTVTimeShiftingStop();
+						toast = Toast.makeText(
+							DTVTimeshifting.this,
+				    		R.string.usbdisk_is_full,
+				    		Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						DTVTimeshifting.this.finish();					
+					break;
+					case  TVMessage.REC_ERR_ACCESS_FILE:
+						DTVTimeshifting.this.finish();	
+						break;
+					case  TVMessage.REC_ERR_SYSTEM:
+						DTVTimeshifting.this.finish();	
+						break;							
+				}
+				break;
 			default:
 				break;
 	
@@ -67,7 +118,7 @@ public class DTVTimeshifting extends DTVActivity{
 	private static final int STAT_PAUSE = 2;
 	private static final int STAT_FF = 3;
 	private static final int STAT_FB = 4;
-	private int play_status = 0;
+	private int play_status = STAT_PLAY;
 	private int speed = 0;
 	private TextView cur_time;
 	private  TextView total_time;
@@ -88,9 +139,11 @@ public class DTVTimeshifting extends DTVActivity{
 	private boolean teletext_bar_flag=false;
 	
 	void DTVTimeshiftingUIInit(){
-		//findViewById(R.id.RelativeLayout_video).setOnClickListener(new MouseClick());
+		findViewById(R.id.RelativeLayout_video).setOnClickListener(new MouseClick());
 		bufferLayout = (RelativeLayout)findViewById(R.id.bufferLayout);
-		infoLayout = (RelativeLayout)findViewById(R.id.infobarLayout);
+		bufferLayout.setVisibility(View.INVISIBLE);
+		
+		infoLayout = (RelativeLayout)findViewById(R.id.RelativeLayoutInforbar);
 		TimeshiftingIcon = (ImageView) findViewById(R.id.ImageViewTimeshiftIcon);
 		Timeshifting_icon_layout = (RelativeLayout)findViewById(R.id.RelativeLayoutTimeshiftIcon);
 	
@@ -105,49 +158,40 @@ public class DTVTimeshifting extends DTVActivity{
         total_time = (TextView)findViewById(R.id.TextView04);
     	//cur_time.setText(secToTime(curtime, false));
     	//total_time.setText(secToTime(totaltime, true));
-		
-		play.setEnabled(false);
-		myProgressBar.setEnabled(false);
-		fastforword.setEnabled(false);
-		fastreverse.setEnabled(false);
-		
-		fastforword.setBackgroundResource(R.drawable.ff_disable);
-		fastreverse.setBackgroundResource(R.drawable.rewind_disable);
-    	
+
 		more.setOnClickListener(new Button.OnClickListener(){
-		public void onClick(View v) {
-			hideInforbar();
-		}
+			public void onClick(View v) {
+				hideInforbar();
+			}
         });	
-	
-				
+			
         fastforword.setOnClickListener(new Button.OnClickListener(){
-		public void onClick(View v) {
-			if (play_status == STAT_FF){
-				if (speed < 8)
-					speed=speed*2;
+			public void onClick(View v) {
+				if (play_status == STAT_FF){
+					if (speed < 8)
+						speed=speed*2;
+				}
+				else{
+					speed = 2;
+					play_status = STAT_FF;
+				}
+				
+				DTVTimeShiftingForward(speed);
+				
+				play.setBackgroundResource(R.drawable.play_button);
+				switch(speed)
+				{
+					case 2:
+						TimeshiftingIcon.setImageResource(R.drawable.forward_speed_2);
+						break;
+					case 4:
+						TimeshiftingIcon.setImageResource(R.drawable.forward_speed_4);
+						break;
+					case 8:
+						TimeshiftingIcon.setImageResource(R.drawable.forward_speed_8);
+						break;
+				}
 			}
-			else{
-				speed = 2;
-				play_status = STAT_FF;
-			}
-			
-			DTVTimeShiftingForward(speed);
-			
-			play.setBackgroundResource(R.drawable.play_button);
-			switch(speed)
-			{
-				case 2:
-					TimeshiftingIcon.setImageResource(R.drawable.forward_speed_2);
-					break;
-				case 4:
-					TimeshiftingIcon.setImageResource(R.drawable.forward_speed_4);
-					break;
-				case 8:
-					TimeshiftingIcon.setImageResource(R.drawable.forward_speed_8);
-					break;
-			}
-		}
         });
         
         fastreverse.setOnClickListener(new Button.OnClickListener(){
@@ -269,6 +313,20 @@ public class DTVTimeshifting extends DTVActivity{
  
 	}
 
+
+	class MouseClick implements OnClickListener{
+	    public void onClick(View v) {
+			// TODO Auto-generated method stub	
+			switch (v.getId()) {
+				case R.id.RelativeLayout_video:	
+					if(teletext_bar_flag==false){				
+						showInforbar();				
+					}
+					break;	
+			}
+		}
+    }
+
 	private void showTimeshiftDialog(){
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(DTVTimeshifting.this); 
@@ -306,27 +364,25 @@ public class DTVTimeshifting extends DTVActivity{
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
-   		//showInforbar();
+
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_DPAD_LEFT:
 			case KeyEvent.KEYCODE_DPAD_RIGHT:
-				if(teletext_bar_flag == false)
-				{
+				if(teletext_bar_flag == false){
 					showInforbar();
 				}	
 				break;
 			case KeyEvent.KEYCODE_BACK:
-				 if(teletext_bar_flag)
-				{				
+				if(teletext_bar_flag){				
 					DTVSubtitleStop();	
 					DTVTeletextStop();
 					bufferLayout.setVisibility(View.INVISIBLE);
 					showInforbar();				
 				}
-				 else if(inforbar_show_flag){
+				else if(inforbar_show_flag){
 					hideInforbar();
-				 }
-				 else{
+				}
+				else{
 					showTimeshiftDialog();
 				}
 				return true;
@@ -460,7 +516,7 @@ public class DTVTimeshifting extends DTVActivity{
 		
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	private void showTimeshiftingIcon(){
 		final Animation animation = new AlphaAnimation(1, 0); // Change alpha from fully visible to invisible
 		animation.setDuration(1500); // duration - half a second
@@ -478,7 +534,7 @@ public class DTVTimeshifting extends DTVActivity{
 	}
 
 
-	private boolean inforbar_show_flag=true;
+	private boolean inforbar_show_flag=false;
 	private void showInforbar(){
 		if(inforbar_show_flag==false){
 			infoLayout.setVisibility(View.VISIBLE);

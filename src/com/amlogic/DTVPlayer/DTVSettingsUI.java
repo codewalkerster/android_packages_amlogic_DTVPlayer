@@ -188,15 +188,13 @@ public class DTVSettingsUI extends DTVSettings{
 			    	{
 			    		image_cur.setBackgroundResource(R.drawable.select_round_2);
 			    		info_cur.setText(R.string.on);
-			    		//DVBPlayer.getConnect().setSubtitleStatus(true);
-						//DVBPlayer.getStaticSubtitle().startSubtitle();
+						setSubtitleStatus(true);
 			    	}
 			    	else if(DTVSettingsUI.super.getSubtitleStatus())
 			    	{
 			    		image_cur.setBackgroundResource(R.drawable.select_round_1);
 			    		info_cur.setText(R.string.off);
-			    		//DVBPlayer.getConnect().setSubtitleStatus(false);
-						//DVBPlayer.getStaticSubtitle().stop();
+						setSubtitleStatus(false);
 			    	}	
 				}
 			    break;
@@ -812,7 +810,11 @@ public class DTVSettingsUI extends DTVSettings{
 		.setCancelable(false)
 		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener(){
 			public void onClick(DialogInterface dialog, int id) {
-				//factory_reset();
+				factoryReset();
+				Intent pickerIntent = new Intent();
+				pickerIntent.setClass(DTVSettingsUI.this, DTVPlayer.class);
+ 		        startActivity(pickerIntent);
+				DTVSettingsUI.this.finish();
 				dialog.cancel();
 			}        
 		 })        
@@ -863,46 +865,21 @@ public class DTVSettingsUI extends DTVSettings{
 					case KeyEvent.KEYCODE_DPAD_CENTER:
 					case KeyEvent.KEYCODE_ENTER:
 						String password = editText.getText().toString();
-
-						 //cur_password = mLast.getString("PASSWORD",cur_password);
-				
-						if((cur_password==null))
-						{
-							if(password.equals("1234")||password.equals("0000"))
-							{
-								dialog.cancel();
-								showFactorySureDialog();
-							}
-							else
-							{
-								editText.setText(null);
-
-								toast = Toast.makeText(
-								DTVSettingsUI.this, 
-					    		R.string.invalid_password,
-					    		Toast.LENGTH_SHORT);
-								toast.setGravity(Gravity.CENTER, 0, 0);
-								toast.show();
-							}
+						cur_password = getPassWord(); 
+						if(password.equals(cur_password)||password.equals("0000")){
+							dialog.cancel();
+							showFactorySureDialog();		
 						}
-						else
-						{
-							if(password.equals(cur_password)||password.equals("0000"))
-							{
-								dialog.cancel();
-								showFactorySureDialog();							}
-							else
-							{
-								editText.setText(null);
-
-								toast = Toast.makeText(
-								DTVSettingsUI.this, 
-					    		R.string.invalid_password,
-					    		Toast.LENGTH_SHORT);
-								toast.setGravity(Gravity.CENTER, 0, 0);
-								toast.show();
-							}
+						else{
+							editText.setText(null);
+							toast = Toast.makeText(
+							DTVSettingsUI.this, 
+				    		R.string.invalid_password,
+				    		Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
 						}
+						
 						return true;
 					case  KeyEvent.KEYCODE_BACK:
 						dialog.cancel();
@@ -1033,46 +1010,22 @@ public class DTVSettingsUI extends DTVSettings{
 					case KeyEvent.KEYCODE_DPAD_CENTER:
 					//case KeyEvent.KEYCODE_ENTER:
 						String password = editText.getText().toString();
-
-						 //cur_password = mLast.getString("PASSWORD",null);
-				
-						if((cur_password==null))
-						{
-							if(password.equals("1234")||password.equals("0000"))
-							{
-								dialog.cancel();
-								parentalrating_set(info_cur);
-							}
-							else
-							{
-								editText.setText(null);
-
-								toast = Toast.makeText(
-								DTVSettingsUI.this, 
-					    		R.string.invalid_password,
-					    		Toast.LENGTH_SHORT);
-								toast.setGravity(Gravity.CENTER, 0, 0);
-								toast.show();
-							}
+						cur_password = getPassWord(); 	
+						if(password.equals(cur_password)||password.equals("0000")){
+							dialog.cancel();
+							parentalrating_set(info_cur);						
 						}
-						else
-						{
-							if(password.equals(cur_password)||password.equals("0000"))
-							{
-								dialog.cancel();
-								parentalrating_set(info_cur);							}
-							else
-							{
-								editText.setText(null);
+						else{
+							editText.setText(null);
 
-								toast = Toast.makeText(
-								DTVSettingsUI.this, 
-					    		R.string.invalid_password,
-					    		Toast.LENGTH_SHORT);
-								toast.setGravity(Gravity.CENTER, 0, 0);
-								toast.show();
-							}
+							toast = Toast.makeText(
+							DTVSettingsUI.this, 
+				    		R.string.invalid_password,
+				    		Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
 						}
+						
 						return true;
 					case  KeyEvent.KEYCODE_BACK:
 						dialog.cancel();
@@ -1114,11 +1067,8 @@ public class DTVSettingsUI extends DTVSettings{
     String password_new = null;
     String password_new_again =null;
     String cur_password = null;
-	public void showSetPasswordDialog()
-
-	{
-		Log.d(TAG,"############showPasswordDialog");
-
+	public void showSetPasswordDialog(){
+		
 		AlertDialog alert_password_set=null;	
 
 		LinearLayout password_set_layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dtvsettings_password_set, null);
@@ -1142,13 +1092,11 @@ public class DTVSettingsUI extends DTVSettings{
 		  editBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			
 			public void onClick(DialogInterface dialog, int which) {
-				 password_old = editText_password_old.getText().toString();
-				 password_new = editText.getText().toString();
-				 password_new_again = editText1.getText().toString();
-				 //cur_password = mLast.getString("PASSWORD",cur_password);
-
-				if(password_new.equals("")||password_new_again.equals("")||password_old.equals(""))
-				{
+				password_old = editText_password_old.getText().toString();
+				password_new = editText.getText().toString();
+				password_new_again = editText1.getText().toString();
+				cur_password = getPassWord(); 
+				if(password_new.equals("")||password_new_again.equals("")||password_old.equals("")){
 				
 					toast = Toast.makeText(
 								DTVSettingsUI.this, 
@@ -1171,87 +1119,42 @@ public class DTVSettingsUI extends DTVSettings{
 						return;
 				}
 
-				if(cur_password!=null)
-				{
-					
-					{
-						if((password_new.equals(password_new_again))&&(password_old.equals(cur_password)||password_old.equals("0000")))
-						{
+				if(cur_password!=null){
+					if((password_new.equals(password_new_again))&&(password_old.equals(cur_password)||password_old.equals("0000"))){
+						setPassWord(password_new);    
+					}
+					else{
+						toast = Toast.makeText(
+							DTVSettingsUI.this, 
+				    		R.string.invalid_input,
+				    		Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						try
+							{
+							    Field field = dialog.getClass()
+							            .getSuperclass().getDeclaredField("mShowing");
+							    field.setAccessible(true);
+							    field.set(dialog, false);
+							    dialog.dismiss();
+							}
+							catch (Exception e){
+							}
 
-							//mLast.edit().putString ("PASSWORD",password_new)
-							    //.commit();
-						}
-						else
-						{
-					
-							toast = Toast.makeText(
-								DTVSettingsUI.this, 
-					    		R.string.invalid_input,
-					    		Toast.LENGTH_SHORT);
-								toast.setGravity(Gravity.CENTER, 0, 0);
-								toast.show();
-							try
-								{
-								    Field field = dialog.getClass()
-								            .getSuperclass().getDeclaredField("mShowing");
-								    field.setAccessible(true);
-								    field.set(dialog, false);
-								    dialog.dismiss();
-								}
-								catch (Exception e)
-								{
-								}
-
-								return;
-						}
-							
+							return;
 					}
 				}
-				else
-				{
-					if((password_new.equals(password_new_again))&&(password_old.equals("1234")||password_old.equals("0000")))
-					{
 
-						//mLast.edit().putString ("PASSWORD",password_new)
-						    //.commit();
-					}
-					else
-						{	
 
-							toast = Toast.makeText(
-								DTVSettingsUI.this, 
-					    		R.string.invalid_input,
-					    		Toast.LENGTH_SHORT);
-								toast.setGravity(Gravity.CENTER, 0, 0);
-								toast.show();
-							try
-								{
-								    Field field = dialog.getClass()
-								            .getSuperclass().getDeclaredField("mShowing");
-								    field.setAccessible(true);
-								    field.set(dialog, false);
-								    dialog.dismiss();
-								}
-								catch (Exception e)
-								{
-								}
-
-								return;
-						}
-					
+				try{
+					Field field = dialog.getClass()
+					    .getSuperclass().getDeclaredField("mShowing");
+					field.setAccessible(true);
+					field.set(dialog, true);
+					dialog.dismiss();
 				}
-
-				try
-						{
-						    Field field = dialog.getClass()
-						            .getSuperclass().getDeclaredField("mShowing");
-						    field.setAccessible(true);
-						    field.set(dialog, true);
-						    dialog.dismiss();
-						}
-						catch (Exception e)
-						{
-						}
+				catch (Exception e){
+				}
 			}
 		});
 
@@ -1301,7 +1204,6 @@ public class DTVSettingsUI extends DTVSettings{
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 	    //reset_timer();
-		
 		switch(keyCode)
 		{
 			case KeyEvent.KEYCODE_DPAD_DOWN:			

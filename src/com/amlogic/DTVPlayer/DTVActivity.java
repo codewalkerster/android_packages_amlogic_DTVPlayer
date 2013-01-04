@@ -12,6 +12,8 @@ import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVEvent;
 import com.amlogic.tvutil.TVGroup;
+import com.amlogic.tvutil.DTVPlaybackParams;
+import com.amlogic.tvutil.DTVRecordParams;
 
 import java.util.*;
 import java.text.*;
@@ -52,11 +54,11 @@ abstract public class DTVActivity extends TVActivity{
     }
 	
 	/***************DTVPlayer****************/
-	public String secToTime(int i, Boolean isTotalTime){
+	public String secToTime(long i, Boolean isTotalTime){
 		String retStr = null;
-		int hour = 0;
-		int minute = 0;
-		int second = 0;
+		long hour = 0;
+		long minute = 0;
+		long second = 0;
 		if (i <= 0){
 			if (isTotalTime && i<0)
 				return "99:59:59";
@@ -81,26 +83,44 @@ abstract public class DTVActivity extends TVActivity{
 		return retStr;
 	}
     
-    public String unitFormat(int i){
+    public String unitFormat(long i){
 		String retStr = null;
 		if (i >= 0 && i < 10)
-			retStr = "0" + Integer.toString(i);
+			retStr = "0" + Long.toString(i);
 		else
-			retStr = Integer.toString(i);
+			retStr = Long.toString(i);
 		return retStr;
     }
 
-	public int DTVPlayerGetRecordDuration(){
+	public long DTVPlayerGetRecordDuration(){
+		DTVRecordParams recPara = getRecordingParams();
+		if (recPara != null) {
+			//Log.d(TAG, "Record: time "+recPara.getCurrentRecordTime()/1000+" / "+
+				//recPara.getTotalRecordTime()/1000+", size "+recPara.getCurrentRecordSize());
+			return recPara.getCurrentRecordTime()/1000;
+		} else {
+			//Log.d(TAG, "Cannot get record params");
+		}
 		return 0;
 	}
 
 	public boolean DTVPlayerIsRecording(){
+		DTVRecordParams recPara = getRecordingParams();
+		if (recPara != null) 
+			return true;
 		return false;
 	}
 
-	public void DTVPlayerStopRecording(){
-
+	public void DTVPlayerStartRecording(){
+		startRecording();
 	}
+
+
+	public void DTVPlayerStopRecording(){
+		stopRecording();
+	}
+
+	
 
 	public void DTVPlayerPlayCurrentProgram(){
 
@@ -171,21 +191,31 @@ abstract public class DTVActivity extends TVActivity{
 
 	/**********Timeshifting*************/
 	public void DTVTimeShiftingForward(int speed){
-
+		fastForward(speed);
 	}
 
 	public void DTVTimeShiftingBackward(int speed){
-
+		fastBackward(speed);
 	}
 
 	public void DTVTimeShiftingPause(){
+		pause();
 	}
 
-	public void DTVTimeShiftingResume(){}
+	public void DTVTimeShiftingResume(){
+		resume();
+	}
 	
-	public void DTVTimeShiftingPlay(){}
-	public void DTVTimeShiftingSeek(int pos){}
-	public void DTVTimeShiftingStop(){}
+	public void DTVTimeShiftingSeek(int pos){
+		seekTo(pos);
+	}
+
+	public void DTVTimeShiftingPlay(){
+		
+	}
+	public void DTVTimeShiftingStop(){
+		stopTimeshifting();
+	}
 
 	public void DTVSubtitleStop(){}
 	public void DTVTeletextStop(){}

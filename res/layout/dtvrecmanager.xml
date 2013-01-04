@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="horizontal" 
+	android:layout_gravity="center"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+<LinearLayout
+    android:orientation="vertical"  
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent">
+    
+	<TextView  
+		android:id="@+id/editProgramDescription"
+		android:background="@drawable/epg_title_bg"
+		android:layout_gravity="center|left"	
+		android:layout_width="fill_parent"	    
+	    	android:layout_height="75px"
+		android:textColor="@android:color/white"
+		android:gravity="center"
+		android:textSize="24sp"
+		android:paddingTop="35px"
+	    />    
+	<TabHost 
+	    android:id="@+id/TabHost01" 
+	    android:background="@drawable/epg_eit_list_bg"
+	    android:layout_width="fill_parent"  
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1">   
+	   
+	    <LinearLayout 
+	        android:layout_width="fill_parent"  
+	        android:orientation="vertical" 
+	        android:layout_height="fill_parent">   
+	        <TabWidget 
+	        	android:id="@android:id/tabs"  
+	            android:layout_width="fill_parent"  
+	            android:layout_height="wrap_content"/>     
+	        <FrameLayout 
+	            android:id="@android:id/tabcontent"  
+	            android:layout_width="fill_parent"  
+	            android:layout_height="fill_parent">                          
+			   	<LinearLayout  
+			   	  android:id="@+id/LinearLayout1" 
+				  android:orientation="vertical"
+				  android:layout_width="fill_parent"
+				  android:layout_height="fill_parent">  
+				        
+			      <LinearLayout   
+					  android:orientation="horizontal"
+					  android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:background="@drawable/recmanager_serial"
+					 >	  
+
+					  <TextView
+					  	android:id="@+id/programName"
+					  	android:layout_width="50px"
+					  	android:gravity="center"
+					  	android:layout_gravity="center"
+					  	android:layout_height="wrap_content"
+					  	android:singleLine="true"
+					  	android:text="@string/recmanager_proname"
+					  	android:layout_weight="1"
+					  	android:textSize="18sp"/>	
+					  <TextView
+					  	android:id="@+id/evt_name"
+					  	android:layout_width="40px"
+					  	android:gravity="center"
+					  	android:layout_gravity="center"
+					  	android:layout_height="wrap_content"
+					  	android:text="@string/recmanager_evtname"
+					  	android:layout_weight="1"
+					  	android:textSize="18sp"/>	
+
+					  <TextView
+					  	android:id="@+id/time"
+					  	android:layout_width="25px"
+					  	android:gravity="center"
+					  	android:layout_gravity="center"
+					  	android:layout_height="wrap_content"
+					  	android:text="@string/recmanager_time"
+					  	android:layout_weight="2"
+					  	android:textSize="18sp"/>	
+					  	<TextView
+					  	android:id="@+id/filename"
+					  	android:layout_width="25px"
+					  	android:gravity="center"
+					  	android:layout_gravity="center"
+					  	android:layout_height="wrap_content"
+					  	android:text="@string/recmanager_filename"
+					  	android:layout_weight="2"
+					  	android:textSize="18sp"/>	
+					
+			  	  </LinearLayout>
+			   
+			  	  <LinearLayout
+					  android:orientation="vertical"
+					  android:layout_width="fill_parent"
+					  android:background="#FF171717"
+					  android:layout_height="10px"
+					  android:layout_weight="1">
+					  
+					  <ListView
+					     android:id="@+id/listview_recmanager"
+					     android:layout_width="fill_parent"
+					     android:layout_height="wrap_content"					     				     
+					     android:scrollbars="vertical"/>    
+				  </LinearLayout> 
+			   </LinearLayout> 			  
+			 </FrameLayout>   
+    	  </LinearLayout>   
+	  </TabHost>    
+
+	  <TextView
+		android:id="@+id/editProgramOpDes"
+		android:background="@drawable/epg_bottom_bg"
+		android:textColor="@android:color/white"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:layout_width="fill_parent"
+		android:layout_height="75px"
+		android:text="@string/recmanager_help_info"	
+		android:textSize="18sp"
+		android:paddingBottom="35px"/>
+	</LinearLayout>
+	
+</LinearLayout>

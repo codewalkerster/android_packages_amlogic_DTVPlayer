@@ -21,11 +21,11 @@
 
 	<!--MainMenu-->
 	<RelativeLayout android:id="@+id/RelativeLayoutMainMenu"
-				android:layout_height="462px"
+				android:layout_height="458px"
 				android:layout_width="149px"
 				android:background="@drawable/dtvplayer_main_menu_bg" 
 				android:layout_alignParentLeft="true"
-				android:layout_marginTop="90px"
+				android:layout_marginTop="94px"
 				android:layout_marginLeft="8px"
 				android:visibility="invisible">
 
@@ -317,17 +317,21 @@
 		
 	<!--Program Number display-->	
 	<RelativeLayout android:id="@+id/RelativeLayoutProNumer"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="210px"
+		android:layout_height="85px"
+		android:background="@drawable/dtvplayer_pvr_icon_bg"
 		android:layout_alignParentTop="true"
+		android:layout_marginTop="8px"
+		android:layout_marginLeft="35px"
 		android:visibility="invisible">
 		<TextView 
 			android:id="@+id/Text_program_no"
 			android:textColor="@color/red"
-			android:layout_width="210px"
-			android:layout_height="70px"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
 			android:layout_below="@+id/Text_curevent"
 			android:textSize="65px" 
+			android:paddingBottom="13px"
 			android:gravity="center">
 		</TextView>
 	</RelativeLayout>

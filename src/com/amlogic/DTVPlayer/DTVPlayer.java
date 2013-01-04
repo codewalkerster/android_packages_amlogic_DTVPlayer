@@ -11,6 +11,8 @@ import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVEvent;
+import com.amlogic.tvutil.DTVPlaybackParams;
+import com.amlogic.tvutil.DTVRecordParams;
 
 import android.view.*;
 import android.view.View.*;
@@ -22,6 +24,9 @@ import android.os.*;
 import android.text.*;
 import android.text.method.*;
 import android.graphics.Color;
+
+import com.amlogic.widget.PasswordDialog;
+import com.amlogic.widget.PasswordDialog.IHintDialog;
 
 public class DTVPlayer extends DTVActivity{
 	private static final String TAG="DTVPlayer";
@@ -97,8 +102,12 @@ public class DTVPlayer extends DTVActivity{
 				Log.d(TAG, "Scan End");
 				break;
 			case TVMessage.TYPE_PROGRAM_BLOCK:
+				Log.d(TAG,"BLOCK");
+				showPasswordDialog();
 				break;
 			case TVMessage.TYPE_PROGRAM_UNBLOCK:
+				Log.d(TAG,"UNBLOCK");
+				
 				break;
 			case TVMessage.TYPE_SIGNAL_LOST:
 				showDia(1);
@@ -119,6 +128,18 @@ public class DTVPlayer extends DTVActivity{
 				ShowControlBar();
 				updateInforbar();
 				break;
+			case TVMessage.TYPE_STOP_RECORD_REQUEST:
+				Log.d(TAG, "Request stop record, reason:");
+				if (msg.getStopRecordRequestType() == TVMessage.REQ_TYPE_RECORD_CURRENT){
+					Log.d(TAG, "Stop record for recording the current program");
+					showStopPVRDialog();
+
+				}else if (msg.getStopRecordRequestType() == TVMessage.REQ_TYPE_SWITCH_PROGRAM){
+					Log.d(TAG, "Stop record for switching to new program");
+					showStopPVRDialog();
+					playProgram(msg.getStopRecordRequestProgramID());
+				}
+				break;	
 			default:
 				break;
 		}
@@ -176,31 +197,6 @@ public class DTVPlayer extends DTVActivity{
 					if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){
 						DTVTTGotoPreviousPage();
 					}	
-					
-					else if(DTVPlayerIsRecording()){
-							AlertDialog.Builder builder = new AlertDialog.Builder(DTVPlayer.this); 
-								builder.setMessage(R.string.dtvplayer_change_channel)
-								.setCancelable(false)
-								.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener(){
-									public void onClick(DialogInterface dialog, int id) {						
-										DTVPlayerStopRecording();
-										DTVPlayerPlayDown();
-										dialog.cancel();
-									}        
-								 })        
-								.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-										public void onClick(DialogInterface dialog, int id) {
-											dialog.cancel();            
-										}        
-								 }); 
-							AlertDialog alert = builder.create();
-				            alert.show();
-
-							WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-							lp.dimAmount=0.0f;
-							alert.getWindow().setAttributes(lp);
-							alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-						}
 					else{
 						DTVPlayerPlayDown();
 					}
@@ -215,30 +211,6 @@ public class DTVPlayer extends DTVActivity{
 					if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){
 						DTVTTGotoNextPage();
 					}	
-					else if(DTVPlayerIsRecording()){
-						AlertDialog.Builder builder = new AlertDialog.Builder(DTVPlayer.this); 
-							builder.setMessage(R.string.dtvplayer_change_channel)
-							.setCancelable(false)
-							.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener(){
-								public void onClick(DialogInterface dialog, int id) {						
-									DTVPlayerStopRecording();
-									DTVPlayerPlayUp();
-									dialog.cancel();
-								}        
-							 })        
-							.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int id) {
-										dialog.cancel();            
-									}        
-							 }); 
-							AlertDialog alert = builder.create();
-							alert.show();
-
-							WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-							lp.dimAmount=0.0f;
-							alert.getWindow().setAttributes(lp);
-							alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-					}
 					else{
 						DTVPlayerPlayUp();
 					}
@@ -267,6 +239,9 @@ public class DTVPlayer extends DTVActivity{
 				else if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){	
 					DTVTTHide();
 					DTVPlayerInTeletextStatus=false;
+				}	
+				else if(DTVPlayerIsRecording()){
+					showStopPVRDialog();
 				}	
 				else{
 					finishPlayer();
@@ -305,6 +280,8 @@ public class DTVPlayer extends DTVActivity{
 				return true;
 			case KeyEvent.KEYCODE_ZOOM_OUT:
 				Log.d(TAG,"KEYCODE_ZOOM_OUT");
+				DTVPlayerStartRecording();
+				showPvrIcon();
 				return true;
 			case KeyEvent.KEYCODE_TV_REPEAT:
 				Log.d(TAG,"KEYCODE_TV_REPEAT");
@@ -326,6 +303,7 @@ public class DTVPlayer extends DTVActivity{
 				return true;
 			case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
 				Log.d(TAG,"KEYCODE_MEDIA_PREVIOUS");	
+				showPasswordDialog();
 				return true;
 			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: //epg
 				Log.d(TAG,"KEYCODE_MEDIA_FAST_FORWARD");	
@@ -540,6 +518,8 @@ public class DTVPlayer extends DTVActivity{
 		RelativeLayout_radio_bg.setVisibility(View.INVISIBLE);
 		
 		init_Animation();
+		DTVSettings mDTVSettings=new DTVSettings();
+		mDTVSettings.setTeltextBound();
 	}
 
 	private void showNoProgramDia(){
@@ -620,8 +600,15 @@ public class DTVPlayer extends DTVActivity{
 					Intent Intent_timeshift = new Intent();
 					Intent_timeshift.setClass(DTVPlayer.this, DTVTimeshifting.class);
 					startActivity(Intent_timeshift);
+					HideMainMenu();
+					HideControlBar();
 					break;
 				case R.id.Button_mainmenu_prv:	
+					Intent Intent_rec = new Intent();
+					Intent_rec.setClass(DTVPlayer.this, DTVRecManager.class);
+					startActivity(Intent_rec);
+					HideMainMenu();
+					HideControlBar();
 				case R.id.Button_mainmenu_manage:
 				case R.id.Button_mainmenu_skip:				
 					break;			
@@ -744,14 +731,22 @@ public class DTVPlayer extends DTVActivity{
 	}
 	
 	private boolean inforbar_show_flag=false;
+	private boolean pvr_show_flag=false;
 	private void ShowControlBar(){
 		timer_handler.removeCallbacks(timer_runnable);
 		if((inforbar_show_flag==false)&&(RelativeLayout_inforbar!=null&&showAction!=null&&RelativeLayout_recording_icon!=null&&showPvrAction!=null)){	
 			RelativeLayout_inforbar.startAnimation(showAction);   
 			RelativeLayout_inforbar.setVisibility(View.VISIBLE);
-			RelativeLayout_recording_icon.startAnimation(showPvrAction);
-			RelativeLayout_recording_icon.setVisibility(View.VISIBLE);
+			if(DTVPlayerIsRecording()){
+				RelativeLayout_recording_icon.startAnimation(showPvrAction);   
+				RelativeLayout_recording_icon.setVisibility(View.VISIBLE);
+				pvr_show_flag=true;
+			}	
+			else{
+				hidePvrIcon();
+			}
 		}
+		
 		bar_hide_count = 0;
 		inforbar_show_flag = true;
 		timer_handler.postDelayed(timer_runnable, inforbar_distime); 
@@ -765,8 +760,7 @@ public class DTVPlayer extends DTVActivity{
     			RelativeLayout_inforbar.setVisibility(View.INVISIBLE);
 			}
 			if(RelativeLayout_recording_icon!=null&&hidePvrAction!=null){
-				RelativeLayout_recording_icon.startAnimation(hidePvrAction);   
-    			RelativeLayout_recording_icon.setVisibility(View.INVISIBLE);
+				hidePvrIcon();
 			}
 		}
 		inforbar_show_flag = false;
@@ -914,34 +908,35 @@ public class DTVPlayer extends DTVActivity{
 	}
 
 	void showPvrIcon(){
-		final Animation animation = new AlphaAnimation(0, 1); // Change alpha from fully visible to invisible
-		animation.setDuration(1000); // duration - half a second
-		animation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
-		animation.setRepeatCount(Animation.INFINITE); // Repeat animation infinitely
-		animation.setRepeatMode(Animation.REVERSE); // 
+		if(pvr_show_flag==false){
+			final Animation animation = new AlphaAnimation(0, 1); // Change alpha from fully visible to invisible
+			animation.setDuration(1000); // duration - half a second
+			animation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
+			animation.setRepeatCount(Animation.INFINITE); // Repeat animation infinitely
+			animation.setRepeatMode(Animation.REVERSE); // 
 
-		ImageView ImageView_recordingIcon = (ImageView) findViewById(R.id.ImageView_recordingIcon);
-		ImageView_recordingIcon.setVisibility(View.VISIBLE);
-		ImageView_recordingIcon.setAnimation(animation);
+			ImageView ImageView_recordingIcon = (ImageView) findViewById(R.id.ImageView_recordingIcon);
+			ImageView_recordingIcon.setVisibility(View.VISIBLE);
+			ImageView_recordingIcon.setAnimation(animation);
 
-		Text_recording_time = (TextView) findViewById(R.id.Text_recording_time);
-		Text_recording_time.setText("00:00:00");	
-		Text_recording_time.setVisibility(View.VISIBLE);
-		Text_recording_time.setTextColor(Color.RED);
+			Text_recording_time = (TextView) findViewById(R.id.Text_recording_time);
+			Text_recording_time.setText("00:00:00");	
+			Text_recording_time.setVisibility(View.VISIBLE);
+			Text_recording_time.setTextColor(Color.RED);
 
-		RelativeLayout RelativeLayoutPvrIcon = (RelativeLayout)findViewById(R.id.RelativeLayoutPvrIcon);
-		RelativeLayoutPvrIcon.setVisibility(View.VISIBLE);
-		timer_handler.postDelayed(timer_runnable, inforbar_distime);
+			RelativeLayout RelativeLayoutPvrIcon = (RelativeLayout)findViewById(R.id.RelativeLayoutPvrIcon);
+			RelativeLayoutPvrIcon.setVisibility(View.VISIBLE);
+			pvr_show_flag=true;
+			timer_handler.postDelayed(timer_runnable, inforbar_distime);
+		}	
 	}
 
 	void hidePvrIcon(){
-		ImageView ImageView_recordingIcon = (ImageView) findViewById(R.id.ImageView_recordingIcon);
-		Text_recording_time = (TextView) findViewById(R.id.Text_recording_time);
-		RelativeLayout RelativeLayoutPvrIcon = (RelativeLayout)findViewById(R.id.RelativeLayoutPvrIcon);
-	
-		ImageView_recordingIcon.setVisibility(View.INVISIBLE);
-		Text_recording_time.setVisibility(View.INVISIBLE);
-		RelativeLayoutPvrIcon.setVisibility(View.INVISIBLE);
+		if(pvr_show_flag){
+			RelativeLayout RelativeLayoutPvrIcon = (RelativeLayout)findViewById(R.id.RelativeLayoutPvrIcon);
+			RelativeLayoutPvrIcon.setVisibility(View.INVISIBLE);
+			pvr_show_flag=false;
+		}	
 	}
 
 	private boolean showInformation_flag=false;
@@ -973,7 +968,7 @@ public class DTVPlayer extends DTVActivity{
 	}
 	
 	private void DTVPlayerSetRecordingTime(){
-		int cur_recording_time=0;
+		long cur_recording_time=0;
 		cur_recording_time = DTVPlayerGetRecordDuration();	
 		TextView Text_recording_time = (TextView) findViewById(R.id.Text_recording_time);
 		Text_recording_time.setText(secToTime(cur_recording_time,false));
@@ -1027,6 +1022,7 @@ public class DTVPlayer extends DTVActivity{
 					else{
 						DTVPlayerPlayByProNo(pronumber);
 						pronumber = 0;
+						HideProgramNo();
 					}
 				}	
 				number_key_down = false;
@@ -1058,6 +1054,7 @@ public class DTVPlayer extends DTVActivity{
 			if(pronumber>9999){
 				pronumber = number_key_value;
 			}	
+			ShowProgramNo(pronumber);
 			DTVTTGotoPage(pronumber);
 			prono_timer_handler.postDelayed(prono_timer_runnable, 1000);
 			number_key_down = true;
@@ -1138,7 +1135,7 @@ public class DTVPlayer extends DTVActivity{
 		}
 	}
 
-
+	/*
 	private AlertDialog.Builder editBuilder;
     private EditText editText;
 	public void showPasswordDialog(){	
@@ -1218,6 +1215,7 @@ public class DTVPlayer extends DTVActivity{
 			alert_password.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		}	 
 	}
+	*/
 
 	private boolean programIsLocked(){
 		return false;
@@ -1608,6 +1606,96 @@ public class DTVPlayer extends DTVActivity{
 		}			
 	}
 
+	private PasswordDialog mPasswordDialog=null;
+	private void showPasswordDialog(){
+		if(mPasswordDialog==null){
+			mPasswordDialog = new PasswordDialog(DTVPlayer.this);
+			mPasswordDialog.showDialog(R.layout.dtvpassword, new IHintDialog(){
+				public boolean onKeyDown(int keyCode, KeyEvent event){
+					return false;
+				}
+
+				public void showWindowDetail(Window window){
+					final EditText EditPassword = (EditText)window.findViewById(R.id.password);
+					EditPassword.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(4)});
+					EditPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+					//mPasswordDialog.setTitle("Password");
+
+					EditPassword.setOnKeyListener(new OnKeyListener() { 
+					    public boolean onKey(View v, int keyCode, KeyEvent event) { 
+							if (event.getAction() == KeyEvent.ACTION_DOWN){
+						        String password = EditPassword.getText().toString();
+								switch(keyCode){
+									case KeyEvent.KEYCODE_DPAD_UP:	
+										dispatchKeyEvent(event);
+										mPasswordDialog.dismissDialog();
+										mPasswordDialog = null;
+										return true;
+									case KeyEvent.KEYCODE_DPAD_DOWN:				
+										dispatchKeyEvent(event);
+										mPasswordDialog.dismissDialog();
+										mPasswordDialog = null;
+										return true;
+									case KeyEvent.KEYCODE_DPAD_CENTER:
+										//DTVSettings mDTVSettings = new DTVSettings();
+										//cur_password = mDTVSettings.getPassWord();
+
+										cur_password=null;
+										if(password.equals(cur_password)||password.equals("0000"))
+										{
+											//locked_play();
+											mPasswordDialog.dismissDialog();
+											mPasswordDialog = null;
+										}
+										else
+										{
+											EditPassword.setText(null);
+											toast = Toast.makeText(
+											DTVPlayer.this, 
+								    		R.string.invalid_password,
+								    		Toast.LENGTH_SHORT);
+											toast.setGravity(Gravity.CENTER, 0, 0);
+											toast.show();
+										}
+										break;
+								}	
+							}
+						    return false; 
+							
+					    } 
+					});
+					
+				}
+			});
+		}	
+	}
+
+	private void showStopPVRDialog(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(DTVPlayer.this); 
+			builder.setMessage(R.string.dtvplayer_change_channel)
+			.setCancelable(false)
+			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int id) {
+					DTVPlayerStopRecording();
+					hidePvrIcon();
+					dialog.cancel();
+				}        
+			 })        
+			.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();            
+					}        
+			 }); 
+		AlertDialog alert = builder.create();
+        alert.show();
+
+		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+		lp.dimAmount=0.0f;
+		alert.getWindow().setAttributes(lp);
+		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+	}
+	
 	private void finishPlayer(){
 		DTVPlayerStopPlay();
 		finish();
