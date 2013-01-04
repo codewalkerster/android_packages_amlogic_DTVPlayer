@@ -76,8 +76,10 @@ public class DTVSettingsUI extends DTVSettings{
 	public static final int SETTINGS_SELECT_STORAGE=6;
 	public static final int SETTINGS_TIMESHIFT_TIME_SET=7;
 	public static final int SETTINGS_PARENTAL_RATING_SET=8;
-	public static final int SETTINGS_TTX_REGION=9;
 
+	public static final int SETTINGS_TTX_REGION=9;
+	public static final int SETTINGS_VCHIP=10;
+	
 	private String ttx_region_str=null;
 	private static String[] ttx_region_str_arry=null;
 	private int cur_select_item=0;
@@ -96,9 +98,10 @@ public class DTVSettingsUI extends DTVSettings{
 
 	private void DTVSettingUIInit()
 	{
-		//if(atsc_or_dvb)	
-		DATA = getResources().getStringArray(R.array.settings_content);
-		//else
+		if(DTVPlayerGetScanRegion().equals("ATSC"))	
+			DATA = getResources().getStringArray(R.array.settings_content);
+		else
+			DATA = getResources().getStringArray(R.array.settings_content_atsc);
 	
 		ttx_region_str = DTVSettingsUI.super.getTeletextRegionName();
 		if(ttx_region_str!=null)
@@ -519,7 +522,11 @@ public class DTVSettingsUI extends DTVSettings{
 					}
 					break;
 				 case SETTINGS_PARENTAL_RATING_SET:
-					showParentalRatingPasswordDialog(info_cur);
+				 	if(DTVPlayerGetScanRegion().equals("ATSC")){
+					
+					}
+					else
+						showParentalRatingPasswordDialog(info_cur);
 					break;
 				case SETTINGS_TTX_REGION:
 					{
@@ -583,6 +590,9 @@ public class DTVSettingsUI extends DTVSettings{
 							  
 					}
 					break;
+				case SETTINGS_VCHIP:
+					
+					break;	
 			}
 		}
 	};
@@ -768,19 +778,25 @@ public class DTVSettingsUI extends DTVSettings{
 				}
 				break;
 		     case SETTINGS_PARENTAL_RATING_SET:
-			 	holder.info.setVisibility(View.VISIBLE);
-				holder.icon1.setVisibility(View.VISIBLE);
-				holder.icon.setImageBitmap(mIcon10);
-				holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
+			 	if(DTVPlayerGetScanRegion().equals("ATSC")){
+					 holder.info.setVisibility(View.INVISIBLE);
+					 holder.icon1.setVisibility(View.INVISIBLE);
+			    	 holder.icon.setImageBitmap(mIcon4);
+				}
+				else{
+				 	holder.info.setVisibility(View.VISIBLE);
+					holder.icon1.setVisibility(View.VISIBLE);
+					holder.icon.setImageBitmap(mIcon10);
+					holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
 
-				int pr = DTVSettingsUI.super.getParentalRating();
-				if(pr<=0){
-					holder.info.setText(R.string.all);
-				}else{
-					holder.info.setText(pr+"");
+					int pr = DTVSettingsUI.super.getParentalRating();
+					if(pr<=0){
+						holder.info.setText(R.string.all);
+					}else{
+						holder.info.setText(pr+"");
+					}
 				}
 				break;
-			
 			case SETTINGS_TTX_REGION:
 				holder.info.setVisibility(View.VISIBLE);
 				holder.icon1.setVisibility(View.VISIBLE);
@@ -794,6 +810,13 @@ public class DTVSettingsUI extends DTVSettings{
 				if(ttx_region_str_arry!=null)
 					holder.info.setText(ttx_region_str_arry[pos]);
 
+				break;
+			case SETTINGS_VCHIP:
+				if(DTVPlayerGetScanRegion().equals("ATSC")){
+					 holder.info.setVisibility(View.INVISIBLE);
+					 holder.icon1.setVisibility(View.INVISIBLE);
+			    	 holder.icon.setImageBitmap(mIcon4);
+				}
 				break;
 		  }
 

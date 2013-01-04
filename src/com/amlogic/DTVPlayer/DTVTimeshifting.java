@@ -10,8 +10,11 @@ import com.amlogic.tvactivity.TVActivity;
 import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
+import com.amlogic.tvutil.DTVPlaybackParams;
+import com.amlogic.tvutil.DTVRecordParams;
 
 import java.util.*;
+import android.os.*;
 import android.view.*;
 import android.view.View.*;
 import android.view.animation.*;
@@ -36,6 +39,7 @@ public class DTVTimeshifting extends DTVActivity{
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		startTimeshifting();
+		timeshiftingHandler.postDelayed(timeshiftingTimer, 1000);
 	}
 
 	@Override
@@ -56,6 +60,7 @@ public class DTVTimeshifting extends DTVActivity{
 	protected void onStop(){
 		Log.d(TAG, "onStop");
 		super.onStop();
+		timeshiftingHandler.removeCallbacks(timeshiftingTimer);
 		stopTimeshifting();
 	}
 
@@ -123,8 +128,8 @@ public class DTVTimeshifting extends DTVActivity{
 	private TextView cur_time;
 	private  TextView total_time;
 	private SeekBar myProgressBar;
-	private int curtime;
-	private int totaltime = 0;
+	private long curtime;
+	private long totaltime = 0;
 	private RelativeLayout bufferLayout;
 	private RelativeLayout infoLayout;
 	private RelativeLayout Timeshifting_icon_layout;
@@ -153,15 +158,13 @@ public class DTVTimeshifting extends DTVActivity{
         fastreverse = (ImageButton)findViewById(R.id.FastReverse);
 
         myProgressBar = (SeekBar)findViewById(R.id.SeekBar02);
-
-        cur_time = (TextView)findViewById(R.id.TextView03);
+		cur_time = (TextView)findViewById(R.id.TextView03);
         total_time = (TextView)findViewById(R.id.TextView04);
-    	//cur_time.setText(secToTime(curtime, false));
-    	//total_time.setText(secToTime(totaltime, true));
 
 		more.setOnClickListener(new Button.OnClickListener(){
 			public void onClick(View v) {
-				hideInforbar();
+				//hideInforbar();
+				showTimeshiftDialog();
 			}
         });	
 			
@@ -207,7 +210,6 @@ public class DTVTimeshifting extends DTVActivity{
 				play_status = STAT_FB;
 			}
 			
-
 			DTVTimeShiftingBackward(speed);
 
 			play.setBackgroundResource(R.drawable.play_button);
@@ -282,35 +284,28 @@ public class DTVTimeshifting extends DTVActivity{
                 
  
         if (curtime != 0)
-        	myProgressBar.setProgress(curtime*100/totaltime/1000);
+        	myProgressBar.setProgress((int)(curtime*100/totaltime/1000));
 		
-        myProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
-			public void onStopTrackingTouch(SeekBar seekBar) 
-			{
+        	myProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+			public void onStopTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
 				int dest = myProgressBar.getProgress();
-				int pos = totaltime * dest / 100;
-				
+				int pos = (int)totaltime * dest / 100;
 				DTVTimeShiftingSeek(pos);
-
-				myProgressBar_pos = curtime*100/totaltime/1000;
+				myProgressBar_pos = (int)curtime*100/(int)totaltime;
 			}
-			
-			public void onStartTrackingTouch(SeekBar seekBar) 
-			{
+			public void onStartTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
 				SeekSliding = true;
 			}
 			
 			public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
-				// TODO Auto-generated method stub
-				
+				// TODO Auto-generated method stub	
 			}
 		});
 	     
 	    infoLayout.setVisibility(View.INVISIBLE);
-		
- 
+		updateInforbar();
 	}
 
 
@@ -328,7 +323,6 @@ public class DTVTimeshifting extends DTVActivity{
     }
 
 	private void showTimeshiftDialog(){
-
 		AlertDialog.Builder builder = new AlertDialog.Builder(DTVTimeshifting.this); 
 			builder.setMessage(R.string.timeshifting_exit_message)
 			.setCancelable(false)
@@ -351,13 +345,6 @@ public class DTVTimeshifting extends DTVActivity{
 			lp.dimAmount=0.0f;
 			alert.getWindow().setAttributes(lp);
 			alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-	}
-
-	
-
-	private void showSubtitleLanguageDialog(int db_id)	{
-		
-						
 	}
 
 
@@ -387,12 +374,27 @@ public class DTVTimeshifting extends DTVActivity{
 				}
 				return true;
 			case KeyEvent.KEYCODE_ZOOM_IN:	
-			
-				
+				Log.d(TAG,"KEYCODE_ZOOM_IN");
+				/*
+				if(dtvplyaer_b_txt){
+					if(DTVPlayerInTeletextStatus==false){
+						DTVTTShow();
+						DTVPlayerInTeletextStatus=true;
+					}	
+					else{
+						DTVTTHide();
+						DTVPlayerInTeletextStatus=false;
+					}	
+				}	
+				*/
 				return true;	
-			   case KeyEvent.KEYCODE_ZOOM_OUT:
+			case KeyEvent.KEYCODE_ZOOM_OUT:
 				
 				return true;
+			case KeyEvent.KEYCODE_TV_REPEAT:
+				Log.d(TAG,"KEYCODE_TV_REPEAT");
+				DTVPlayer.showSubtitleSettingMenu(DTVTimeshifting.this);
+				return true;	
 			case KeyEvent.KEYCODE_TAB: //info
 				if(teletext_bar_flag){
 				}
@@ -541,7 +543,6 @@ public class DTVTimeshifting extends DTVActivity{
 			play.requestFocus();
 			inforbar_show_flag=true;
 		}
-	
 	}
 
 	private void hideInforbar(){
@@ -550,6 +551,151 @@ public class DTVTimeshifting extends DTVActivity{
 			inforbar_show_flag=false;
 		}
 	}
+
+	private void updateInforbar(){
+		TextView Text_screentype_info = (TextView) findViewById(R.id.Text_screentype_info);
+		TextView Text_parent_control_info_icon = (TextView) findViewById(R.id.Text_parent_control_info_icon);
+		TextView Text_channel_type = (TextView) findViewById(R.id.Text_channel_type);
+		TextView Text_MTS_info = (TextView) findViewById(R.id.Text_MTS_info);
+
+		ImageView ImageView_icon_scrambled=(ImageView)findViewById(R.id.ImageView_icon_scrambled);
+		ImageView ImageView_icon_fav=(ImageView)findViewById(R.id.ImageView_icon_fav);
+		ImageView ImageView_icon_lock=(ImageView)findViewById(R.id.ImageView_icon_lock);
+
+		ImageView ImageView_icon_epg=(ImageView)findViewById(R.id.ImageView_icon_epg);
+		ImageView ImageView_icon_sub=(ImageView)findViewById(R.id.ImageView_icon_sub);
+		ImageView ImageView_icon_txt=(ImageView)findViewById(R.id.ImageView_icon_txt);
+
+		TextView Text_proname = (TextView) findViewById(R.id.Text_proname);
+		Text_proname.setTextColor(Color.YELLOW);
+
+		if(DTVPlayer.dtvplayer_pronumber>=0)	
+			Text_proname.setText(Integer.toString(DTVPlayer.dtvplayer_pronumber)+"  "+DTVPlayer.dtvplayer_name);
+
+		if(DTVPlayer.dtvplayer_b_fav)
+			ImageView_icon_fav.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_fav.setVisibility(View.INVISIBLE);
+
+		if(DTVPlayer.dtvplayer_b_scrambled)
+			ImageView_icon_scrambled.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_scrambled.setVisibility(View.INVISIBLE);
+
+		if(DTVPlayer.dtvplayer_b_lock)
+			ImageView_icon_lock.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_lock.setVisibility(View.INVISIBLE);
+
+		if(DTVPlayer.dtvplayer_b_epg)
+			ImageView_icon_epg.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_epg.setVisibility(View.INVISIBLE);
+
+		if(DTVPlayer.dtvplyaer_b_txt)
+			ImageView_icon_txt.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_txt.setVisibility(View.INVISIBLE);
+
+		if(DTVPlayer.dtvplayer_b_sub)
+			ImageView_icon_sub.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_sub.setVisibility(View.INVISIBLE);
+
+		/*
+		int mode = DTVGetScreenMode();
+		if(mode==0){
+			Text_screentype_info.setText(getString(R.string.auto));
+		}
+		else  if(mode==2){
+			Text_screentype_info.setText(getString(R.string.type_4_3));
+		}
+		else  if(mode==3){
+			Text_screentype_info.setText(getString(R.string.type_16_9));
+		}
+		
+		
+		mode = DTVGetAudioTrack();
+		if(mode==0){ 						
+			Text_MTS_info.setText(getString(R.string.type_16_9));			
+		}
+		else  if(mode==1){
+			Text_MTS_info.setText(getString(R.string.left));			
+		}
+		else  if(mode==2){
+			Text_MTS_info.setText(getString(R.string.right));				
+		}	
+		
+		if(DTVGetSubtitleStatus()){
+			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.on));	
+		}
+		else{
+			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
+		}
+		*/
+	}
+
+
+	private void freshTimeAndSeekbar(long cur_time,long total_time){
+		myProgressBar = (SeekBar)findViewById(R.id.SeekBar02);
+		TextView text_cur_time = (TextView)findViewById(R.id.TextView03);
+        TextView text_total_time = (TextView)findViewById(R.id.TextView04);
+
+		curtime = cur_time;
+		totaltime = total_time;
+		text_cur_time.setText(secToTime(curtime, false));
+		text_total_time.setText(secToTime(totaltime, true));
+
+		if (totaltime == 0){
+			myProgressBar_pos = 0;
+			myProgressBar.setProgress(0);
+		}	
+		else {
+			if (!SeekSliding){
+				myProgressBar.setProgress(((int)curtime*100)/(int)totaltime);
+				myProgressBar_pos =((int)curtime*100)/(int)totaltime;
+			}
+		}
+	}
+
+	private static int playback_status = DTVPlaybackParams.PLAYBACK_ST_PLAYING;
+	void statusChangeUpdate(int status){	
+		if(playback_status!=status){
+			switch(status) {
+					case DTVPlaybackParams.PLAYBACK_ST_PLAYING:
+						play.requestFocus();
+						play.setBackgroundResource(R.drawable.pause_button);
+						TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
+						break;
+					case DTVPlaybackParams.PLAYBACK_ST_PAUSED:
+						play.setBackgroundResource(R.drawable.play_button);
+						TimeshiftingIcon.setImageResource(R.drawable.timeshifting_pause);
+						break;
+					case DTVPlaybackParams.PLAYBACK_ST_EXIT:
+	 					SeekSliding = false;
+						break;
+					case DTVPlaybackParams.PLAYBACK_ST_STOPPED:
+					case DTVPlaybackParams.PLAYBACK_ST_FFFB:
+						break;
+			}	
+			playback_status=status;
+		}	
+	}
+
+	private Handler timeshiftingHandler = new Handler();
+	private Runnable timeshiftingTimer = new Runnable() {
+		public void run() {
+			DTVPlaybackParams recPara = getPlaybackParams();
+			if (recPara != null) {
+				Log.d(TAG, "recPara: status("+recPara.getStatus()+
+					"), time "+recPara.getCurrentTime()/1000+" / "+
+					recPara.getTotalTime()/1000);
+			}
+			statusChangeUpdate(recPara.getStatus());
+			freshTimeAndSeekbar(recPara.getCurrentTime()/1000,recPara.getTotalTime()/1000);
+			timeshiftingHandler.postDelayed(this, 1000);
+		}
+	};
 
 }
 

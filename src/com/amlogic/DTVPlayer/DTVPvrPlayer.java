@@ -10,8 +10,10 @@ import com.amlogic.tvactivity.TVActivity;
 import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
+import com.amlogic.tvutil.DTVPlaybackParams;
 
 import java.util.*;
+import android.os.*;
 import android.view.*;
 import android.view.View.*;
 import android.view.animation.*;
@@ -558,6 +560,19 @@ public class DTVPvrPlayer extends DTVActivity{
 			inforbar_show_flag=false;
 		}
 	}
+
+	private Handler pvrHandler = new Handler();
+	private Runnable pvrTimer = new Runnable() {
+		public void run() {
+			DTVPlaybackParams playbackPara = getPlaybackParams();
+			if (playbackPara != null) {
+				Log.d(TAG, "Playback: status("+playbackPara.getStatus()+
+					"), time "+playbackPara.getCurrentTime()/1000+" / "+
+					playbackPara.getTotalTime()/1000);
+			}
+			pvrHandler.postDelayed(this, 1000);
+		}
+	};
 	
 }
 

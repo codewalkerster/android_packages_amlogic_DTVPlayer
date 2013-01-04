@@ -108,6 +108,21 @@
 		<item>TTX Region</item>
 	</array>
 
+	<array name="settings_content_atsc" translatable="false">
+		<item>Channel Search</item>  
+		<item>Subtitle Switch</item>	    
+		<item>Picture Size</item>	
+		<item>Audio Track</item>
+		<item>Factory data reset</item>	
+		<item>Set password</item>	
+		<item>Select storage device</item>
+		<item>Timeshifting setting</item>
+		<item>Parental Guaid</item>
+		<item>V-Chip</item>
+		<item>TTX Region</item>
+	</array>
+	
+
 	<string name="invalid_input">Invalid Input</string>
 	<string name="invalid_password">Invalid password</string>
 	<string name="no_channel_stored">There are no channels stored, do you want to update the list of channels?</string>

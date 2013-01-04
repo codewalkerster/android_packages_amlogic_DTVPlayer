@@ -377,5 +377,8 @@ abstract public class DTVActivity extends TVActivity{
 		return TVProgram.selectByID(this,db_id);
 	}
 
+	public String DTVPlayerGetScanRegion(){
+		return getStringConfig("tv:scan:dtv:region");	
+	}
 }
 	

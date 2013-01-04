@@ -285,7 +285,7 @@ public class DTVPlayer extends DTVActivity{
 				return true;
 			case KeyEvent.KEYCODE_TV_REPEAT:
 				Log.d(TAG,"KEYCODE_TV_REPEAT");
-				showSubtitleSettingMenu();
+				showSubtitleSettingMenu(DTVPlayer.this);
 				return true;
 			case KeyEvent.KEYCODE_MEDIA_REWIND:
 				Log.d(TAG,"KEYCODE_MEDIA_REWIND");
@@ -885,9 +885,6 @@ public class DTVPlayer extends DTVActivity{
 		else{
 			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
 		}
-
-
-		
 	}
 
 	void ShowProgramNo(int value){
@@ -1350,24 +1347,25 @@ public class DTVPlayer extends DTVActivity{
 	}
 
 	private int pronumber=0;
-	private int dtvplayer_pronumber=0;
-	private String dtvplayer_name=" ";
-	private String dtvplayer_cur_event=null;
-	private String dtvplayer_next_event=null;
-	private String dtvplayer_event_des=null;
-	private String dtvplayer_event_ext_des=null;
-	private boolean dtvplayer_b_lock=false;
-	private boolean dtvplayer_b_fav=false;
-	private boolean dtvplayer_b_scrambled=false;
-	private boolean dtvplayer_b_epg=false;
-	private boolean dtvplyaer_b_txt=false;
-	private boolean dtvplayer_b_sub=false;
-	TVProgram.Subtitle mSubtitle[]=null;
-	TVProgram.Teletext mTeletext[]=null;
-	private int mSubtitleCount=0;
-	private int mTeletextCount=0;
-	private int mSubtitleIndex=0;
-	private String mSubtitleLang[]=null;
+	public static int dtvplayer_pronumber=0;
+	public static String dtvplayer_name=" ";
+	public String dtvplayer_cur_event=null;
+	public String dtvplayer_next_event=null;
+	public String dtvplayer_event_des=null;
+	public String dtvplayer_event_ext_des=null;
+	public static boolean dtvplayer_b_lock=false;
+	public static boolean dtvplayer_b_fav=false;
+	public static boolean dtvplayer_b_scrambled=false;
+	public static boolean dtvplayer_b_epg=false;
+	public static boolean dtvplyaer_b_txt=false;
+	public static boolean dtvplayer_b_sub=false;
+	
+	private static TVProgram.Subtitle mSubtitle[]=null;
+	private static TVProgram.Teletext mTeletext[]=null;
+	private static int mSubtitleCount=0;
+	private static int mTeletextCount=0;
+	private static int mSubtitleIndex=0;
+	private static String mSubtitleLang[]=null;
 
 	TVProgram.Audio mAudio[]=null;
 	private int mAudioCount=0;
@@ -1456,11 +1454,11 @@ public class DTVPlayer extends DTVActivity{
 		return false;
 	}
 
-	private int cur=0;
-	private Button BtnSubtitleLanguage=null;
-	private void showSubtitleLanguageDialog(){
+	private static int cur=0;
+	private static Button BtnSubtitleLanguage=null;
+	private static void showSubtitleLanguageDialog(Context mContext){
 		if(mSubtitleCount>0){
-			AlertDialog.Builder builder = new AlertDialog.Builder(DTVPlayer.this); 
+			AlertDialog.Builder builder = new AlertDialog.Builder(mContext); 
 		 	builder.setTitle(R.string.dtvplayer_subtitle_language_set);
 			builder.setIcon( android.R.drawable.ic_dialog_info);
 			builder.setSingleChoiceItems(mSubtitleLang,mSubtitleIndex, new DialogInterface.OnClickListener() {
@@ -1499,9 +1497,10 @@ public class DTVPlayer extends DTVActivity{
 	}
 
 	
-	void showSubtitleSettingMenu(){	
-		AlertDialog.Builder settingBuilder = new AlertDialog.Builder(this);
-		LayoutInflater layoutInflater = LayoutInflater.from(this);  
+	public static void showSubtitleSettingMenu(Context context){	
+		final Context mContext = context;
+		AlertDialog.Builder settingBuilder = new AlertDialog.Builder(mContext);
+		LayoutInflater layoutInflater = LayoutInflater.from(mContext);  
 		View subtitle_settings;
 
 		if(mSubtitleCount>0)
@@ -1519,11 +1518,11 @@ public class DTVPlayer extends DTVActivity{
 
 			BtnSubtitleLanguage.setOnClickListener(new OnClickListener(){
 		          public void onClick(View v) {
-		        	 showSubtitleLanguageDialog();
+		        	 showSubtitleLanguageDialog(mContext);
 		          }});
 		}		  
 		final CheckBox checkboxSubtitleSwitch = (CheckBox)subtitle_settings.findViewById(R.id.checkSubtitleSwitch);
-		if(DTVGetSubtitleStatus()){
+		if(((DTVActivity)mContext).DTVGetSubtitleStatus()){
 			checkboxSubtitleSwitch.setChecked(true);
 		}
 		else{
@@ -1533,16 +1532,16 @@ public class DTVPlayer extends DTVActivity{
 		settingBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {			
 				 public void onClick(DialogInterface dialog, int which) {
 					if(checkboxSubtitleSwitch.isChecked()){
-						if(DTVGetSubtitleStatus()){
-							switchSubtitle(mSubtitleIndex);
+						if(((DTVActivity)mContext).DTVGetSubtitleStatus()){
+							((TVActivity)mContext).switchSubtitle(mSubtitleIndex);
 						}
 						else{
-							switchSubtitle(mSubtitleIndex);
-							DTVSetSubtitleStatus(true);
+							((TVActivity)mContext).switchSubtitle(mSubtitleIndex);
+							((DTVActivity)mContext).DTVSetSubtitleStatus(true);
 						}
 					}
 					else{
-						DTVSetSubtitleStatus(false);	
+						((DTVActivity)mContext).DTVSetSubtitleStatus(false);	
 					}
 						
 					dialog.dismiss();
