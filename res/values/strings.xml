@@ -75,7 +75,6 @@
 	<string name="dtvplayer_subtitle_language_set">Subtitle language set</string>
 	<string name="dtvplayer_audio_language_set">Audio language set</string>
 
-
 	<!--device browser-->
 	<string name="download_sel_confirm">Save recorded stream on selected storage device?</string>
 	<string name="usb_removed">USB device removed. Please check</string>
@@ -86,7 +85,6 @@
 	<string name="volume_total">Total space:</string>
 	<string name="volume_available">Available space:</string>	
 
-	
     <!--settings help--> 
     <string name="help_info_move">Move</string>
   	<string name="help_info_select">Select</string>
@@ -117,9 +115,9 @@
 		<item>Set password</item>	
 		<item>Select storage device</item>
 		<item>Timeshifting setting</item>
-		<item>Parental Guaid</item>
 		<item>V-Chip</item>
 		<item>TTX Region</item>
+		<item>Closed Caption</item>
 	</array>
 	
 
@@ -234,7 +232,7 @@
 	<string name="dtvscanatsc_antennapower_off">off</string>
 	<string name="dtvscanatsc_signaltype">Signal Type</string>
 	<string name="dtvscanatsc_signaltype_cable">Cable</string>
-     	<string name="dtvscanatsc_signaltype_air">Air</string>
+    <string name="dtvscanatsc_signaltype_air">Air</string>
 	<string name="dtvscanatsc_modulation">Modulation</string>	
 	<string name="dtvscanatsc_modulation_qamauto">Qam Auto</string>
 	<string name="dtvscanatsc_modulation_qam16">Qam 16</string>
@@ -244,4 +242,96 @@
 	<string name="dtvscanatsc_modulation_qam256">Qam 256</string>
 	<string name="dtvscanatsc_modulation_vsb8">Vsb 8</string>
 	<string name="dtvscanatsc_modulation_vsb16">Vsb 16</string>	
+
+	<!--V_Chip parent control-->
+	<string name="parent_control_title">Parent Control</string>
+	<string name="parent_control_change_password">Change Password</string>
+	<string name="parent_control_switch">P.G Switch</string>
+	<string name="parent_control_switch_on">On</string>
+	<string name="parent_control_switch_off">Off</string>
+
+	<string name="parent_control_TV">TV</string>
+	<string name="parent_control_TV_title">TV Parental Guidelines</string>
+
+	<string name="parent_control_MPAA">MPAA</string>
+	<string name="parent_control_Canada_English">Canada English</string>
+	<string name="parent_control_Canada_French">Canada French</string>
+
+	<string name="parent_control_rrt_set">RRT Setting</string>
+	<string name="parent_control_rrt_reset">RRT Reset</string>
+
+	<string name="enter_new_pin">Enter New PIN</string>
+	<string name="confirm_new_pin">Confirm New PIN</string>
+	<string name="enter_vchip_pin">Enter Vchip PIN</string>
+	<string name="vchip_pin">Vchip PIN</string>
+	<string name="vchip_pin_error">PIN is invalid,please enter again.</string>
+
+	<string name="vchip_rrt_dimensions_values">Values</string>
+	<string name="vchip_rrt_dimensions_abbrev">Abbrev</string>
+	<string name="vchip_rrt_dimensions_status">Status</string>
+
+	<!--Closed Caption-->
+	<string name="cc_title">Closed Caption</string>
+	<string name="cc_switch">Caption</string>
+	<string name="cc_switch_on">On</string>
+	<string name="cc_switch_off">Off</string>
+	
+	<string name="cc_mode_basic">Basic Selection</string>
+	<string name="cc_mode_basic_conect1">CC1</string>
+	<string name="cc_mode_basic_conect2">CC2</string>
+	<string name="cc_mode_basic_conect3">CC3</string>
+	<string name="cc_mode_basic_conect4">CC4</string>
+	
+	<string name="cc_mode_advance">Advanced Selection</string>
+	<string name="cc_mode_advance_conect1">Service1</string>
+  	<string name="cc_mode_advance_conect2">Service2</string>
+  	<string name="cc_mode_advance_conect3">Service3</string>
+	<string name="cc_mode_advance_conect4">Service4</string>
+
+	<string name="cc_mode_advance_text1">Text1</string>
+  	<string name="cc_mode_advance_text2">Text2</string>
+  	<string name="cc_mode_advance_text3">Text3</string>
+	<string name="cc_mode_advance_text4">Text4</string>
+
+	<!--Digital Caption Options-->
+	<string name="cc_digital_options">Digital Caption Options</string>
+
+  	<string name="cc_digital_options_size">Size</string>
+  	<string name="cc_digital_options_size_large">Large</string>
+  	<string name="cc_digital_options_size_small">Small</string>
+  	<string name="cc_digital_options_size_standard">Standard</string>
+	
+  	<string name="cc_digital_options_font_sytle">Font Style</string>
+  	<string name="cc_digital_options_font_sytle0">Style 0</string>
+  	<string name="cc_digital_options_font_sytle1">Style 1</string>
+	<string name="cc_digital_options_font_sytle2">Style 2</string>
+	<string name="cc_digital_options_font_sytle3">Style 3</string>
+	<string name="cc_digital_options_font_sytle4">Style 4</string>
+  	<string name="cc_digital_options_font_sytle5">Style 5</string>
+	<string name="cc_digital_options_font_sytle6">Style 6</string>
+	<string name="cc_digital_options_font_sytle7">Style 7</string>
+  	
+	<string name="cc_digital_options_foreground_color">Foreground Color</string>
+	<string name="cc_digital_options_background_color">Background Color</string>
+	
+	<string name="cc_digital_options_color_black">Black</string>
+	<string name="cc_digital_options_color_red">Red</string>
+	<string name="cc_digital_options_color_green">Green</string>
+	<string name="cc_digital_options_color_blue">Blue</string>
+	<string name="cc_digital_options_color_yellow">Yellow</string>
+	<string name="cc_digital_options_color_magenta">Magenta</string>
+	<string name="cc_digital_options_color_cyan">Cyan</string>
+
+  	<string name="cc_digital_options_foreground_opacity">Foreground Opacity</string>
+	<string name="cc_digital_options_background_opacity">Background Opacity</string>
+	
+	<string name="cc_digital_options_opacity_default">Default</string>
+	<string name="cc_digital_options_opacity_transparent">Transparent</string>
+	<string name="cc_digital_options_opacity_translucent">Translucent</string>
+	<string name="cc_digital_options_opacity_solid">Solid</string>
+	<string name="cc_digital_options_opacity_flashing">Flashing</string>	
+	
+	<string name="cc_digital_options_retune_default">Return to Default</string>
+	
+	
 </resources>

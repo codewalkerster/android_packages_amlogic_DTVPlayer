@@ -124,7 +124,9 @@ public class DTVSettings extends DTVActivity{
 		setConfig("tv:dtv:password",password);
 	}
 
-
+	public String DTVPlayerGetScanRegion(){
+		return getStringConfig("tv:scan:dtv:region");	
+	}
 	
 	public void factoryReset(){
 		restoreFactorySetting();

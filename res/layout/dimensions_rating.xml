@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="860px"
+    android:layout_height="675px"
+    android:layout_centerInParent="true"  
+    android:orientation="vertical"
+    android:background="@drawable/p_ctl_tv_bg"
+    >    
+    
+     <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="50px"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#FFFFFFFF"
+ 		android:gravity="center"
+        android:textSize="32px" 
+        android:layout_marginTop="30px"
+        android:layout_marginBottom="15px"/>
+
+	<RelativeLayout
+	    	 android:layout_width="fill_parent"
+    		 android:layout_height="3px"
+    		 android:layout_marginRight="20px"
+			 android:layout_marginLeft="20px"
+    		 android:background="@drawable/line"
+  			>	
+  	</RelativeLayout> 
+	<LinearLayout
+		android:id="@+id/rating_info_title" 
+		android:orientation="horizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		> 
+	    <TextView
+	        android:layout_width="10px"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="3" 
+	        android:layout_centerVertical="true"
+	        android:gravity="left"
+	        android:paddingLeft="20dp"
+	        android:textSize="30px" 
+	        android:singleLine="true"
+	        android:text="@string/vchip_rrt_dimensions_values"
+			/>
+		
+	      <TextView
+	    	android:layout_width="10px"
+	    	android:layout_height="wrap_content" 
+	    	android:layout_weight="10" 
+	    	android:layout_centerVertical="true"
+	    	android:gravity="center"
+	    	android:textSize="30px"
+		  	android:layout_gravity="center_vertical"
+		  	android:singleLine="true"
+		  	android:text="@string/vchip_rrt_dimensions_abbrev"
+	    	/>
+
+	    <TextView
+	        android:layout_width="62px"
+	    	android:layout_height="56px" 
+	        android:layout_weight="1" 
+			android:padding="8px"
+			android:textSize="30px" 
+	        android:singleLine="true"
+	        android:text="@string/vchip_rrt_dimensions_status"
+	        />	
+		    
+		</LinearLayout>
+
+    <RelativeLayout
+	    	 android:layout_width="fill_parent"
+    		 android:layout_height="3px"
+    		 android:layout_marginRight="20px"
+			 android:layout_marginLeft="20px"
+    		 android:background="@drawable/line"
+  			>	
+  	</RelativeLayout> 
+    
+    <RelativeLayout
+	    	  android:layout_width="match_parent"
+    		  android:layout_height="409px"
+    		  android:layout_centerVertical="true"
+    		  android:id="@+id/rating_bg_layout"
+  			>
+
+  		<RelativeLayout
+	    	  android:layout_width="match_parent"
+    		  android:layout_height="392px"
+    		  android:id="@+id/rating_set_layout" 
+    		  android:layout_centerVertical="true"
+    		  android:layout_marginLeft="20px"
+			  android:layout_marginRight="20px"	
+  			>
+  		
+			<ListView
+	        android:id="@+id/list_dimensions_rating"  
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:layout_gravity="center"
+	        android:cacheColorHint="#00000000"
+	        android:divider="#0000"
+	        android:dividerHeight="0px"
+	        android:focusable="true"
+	        android:listSelector="@drawable/rating_selected"
+	         />
+ 
+  		</RelativeLayout>	
+  		
+    </RelativeLayout>
+    
+  	
+  	 <LinearLayout
+	    	  android:layout_width="fill_parent"
+    		  android:layout_height="100px"
+    		  android:layout_below="@+id/rating_bg_layout"
+    		  android:layout_marginRight="20px"
+			  android:layout_marginLeft="20px"
+			 android:orientation="vertical">
+ 
+  	     <RelativeLayout
+  	     	 android:id="@+id/inforbar_line" 
+	    	 android:layout_width="fill_parent"
+    		 android:layout_height="3px"
+    		 android:background="@drawable/line"
+  			>	
+  	     </RelativeLayout>
+  	     
+  	     <LinearLayout
+    		android:layout_width="match_parent"
+    		android:layout_height="match_parent"
+    		android:orientation="horizontal"
+    		android:gravity="center">
+    		
+    		<ImageView 
+    			android:layout_width="wrap_content"
+    			android:layout_height="wrap_content"
+				android:background="@drawable/move"
+    		>
+    		</ImageView>
+    		<TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center"
+		        android:text="@string/help_info_move"
+		        android:textColor="#FFFFFFFF"
+		        android:textSize="30px" 
+		        android:layout_marginRight="30px"
+		        />
+    		<ImageView 
+    			android:layout_width="wrap_content"
+    			android:layout_height="wrap_content"
+				android:background="@drawable/enter"
+    		></ImageView>
+    		<TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center"
+		        android:text="@string/help_info_select"
+		        android:textColor="#FFFFFFFF"
+		        android:textSize="30px"
+		        android:layout_marginRight="30px"
+		        />
+    		<ImageView 
+    			android:layout_width="wrap_content"
+    			android:layout_height="wrap_content"
+				android:background="@drawable/return_icon"
+    		></ImageView>
+    		<TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center"
+		        android:text="@string/help_info_return"
+		        android:textColor="#FFFFFFFF"
+		        android:textSize="30px" />
+
+		    <RelativeLayout
+	    	  android:layout_width="124px"
+    		  android:layout_height="78px"
+    		  android:background="@drawable/vchip_help"
+    		   android:layout_marginLeft="30px"
+  			>	
+  	</RelativeLayout>    
+    	</LinearLayout>
+  	 </LinearLayout>		
+</LinearLayout>
+
+

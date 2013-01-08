@@ -24,6 +24,8 @@ import android.text.*;
 import android.text.method.*;
 import java.lang.reflect.Field;
 
+import com.amlogic.widget.PasswordDialog;
+
 public class DTVSettingsUI extends DTVSettings{
 	private static final String TAG="DTVSettingsUI";
 	
@@ -32,11 +34,17 @@ public class DTVSettingsUI extends DTVSettings{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtvsettings);  //settings_main
 		UIAnimationInit();
-		DTVSettingUIInit();
 	}
 
+	@Override
+	protected void onStop(){
+		Log.d(TAG, "onStop");
+		super.onStop();
+	}
+	
 	public void onConnected(){
 		Log.d(TAG, "connected");
+		DTVSettingUIInit();
 	}
 
 	public void onDisconnected(){
@@ -75,11 +83,11 @@ public class DTVSettingsUI extends DTVSettings{
 	public static final int SETTINGS_SET_PASSWORD = 5;
 	public static final int SETTINGS_SELECT_STORAGE=6;
 	public static final int SETTINGS_TIMESHIFT_TIME_SET=7;
-	public static final int SETTINGS_PARENTAL_RATING_SET=8;
+	public static final int SETTINGS_PARENTAL_RATING_SET=8; //and vchip
 
 	public static final int SETTINGS_TTX_REGION=9;
-	public static final int SETTINGS_VCHIP=10;
-	
+	public static final int SETTINGS_CC=10;
+		
 	private String ttx_region_str=null;
 	private static String[] ttx_region_str_arry=null;
 	private int cur_select_item=0;
@@ -95,13 +103,12 @@ public class DTVSettingsUI extends DTVSettings{
 	private int audio_track_select_item=-1;
 	private int ttx_region_select_item=-1;
 
-
-	private void DTVSettingUIInit()
-	{
+	private void DTVSettingUIInit(){
+		Log.d(TAG,"scan region="+DTVPlayerGetScanRegion());
 		if(DTVPlayerGetScanRegion().equals("ATSC"))	
-			DATA = getResources().getStringArray(R.array.settings_content);
-		else
 			DATA = getResources().getStringArray(R.array.settings_content_atsc);
+		else
+			DATA = getResources().getStringArray(R.array.settings_content);
 	
 		ttx_region_str = DTVSettingsUI.super.getTeletextRegionName();
 		if(ttx_region_str!=null)
@@ -115,7 +122,6 @@ public class DTVSettingsUI extends DTVSettings{
 		ListView_settings.setOnItemClickListener(mOnItemClickListener);
 		ListView_settings.setAdapter(myAdapter);
 		ListView_settings.requestFocus();
-		
 
 		//title		
 		TextView Title=(TextView)findViewById(R.id.title);
@@ -523,7 +529,8 @@ public class DTVSettingsUI extends DTVSettings{
 					break;
 				 case SETTINGS_PARENTAL_RATING_SET:
 				 	if(DTVPlayerGetScanRegion().equals("ATSC")){
-					
+						//DTVVChip
+						DTVSetting_GotoDTVVChip();
 					}
 					else
 						showParentalRatingPasswordDialog(info_cur);
@@ -590,12 +597,43 @@ public class DTVSettingsUI extends DTVSettings{
 							  
 					}
 					break;
-				case SETTINGS_VCHIP:
-					
+				case SETTINGS_CC:
+					{
+						DTVSetting_GotoDTVCC();
+						onStop();
+					}	
 					break;	
 			}
 		}
 	};
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		Log.d(TAG,"onActivityResult");
+		int p=-1;
+		
+		if(data!=null){
+			Bundle bundle =data.getExtras();
+			p = bundle.getInt("position");			
+		}		
+
+		if(resultCode == RESULT_OK){
+			switch(requestCode){
+			  case 11:
+			  	 onShow();
+				 switch(p){	
+				    case 0:
+				 		onShow();   	
+				    	break;
+				    case 1:
+				    	onShow();
+				    	break;
+				  }
+				  break;
+			}
+		}	
+	}
+
 	
 	private class IconAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
@@ -811,7 +849,7 @@ public class DTVSettingsUI extends DTVSettings{
 					holder.info.setText(ttx_region_str_arry[pos]);
 
 				break;
-			case SETTINGS_VCHIP:
+			case SETTINGS_CC:
 				if(DTVPlayerGetScanRegion().equals("ATSC")){
 					 holder.info.setVisibility(View.INVISIBLE);
 					 holder.icon1.setVisibility(View.INVISIBLE);
@@ -866,83 +904,25 @@ public class DTVSettingsUI extends DTVSettings{
 	               alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
 
-	public void showPasswordDialog()
-	{
-		  Log.d(TAG,"############showPasswordDialog");	
-          	  AlertDialog alert_password=null;	
-			 
-		  editText = new EditText(this);
-		  editText.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(4)});
-		  editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
-
-		  editBuilder_password.setTitle(R.string.enter_password);
-		  editBuilder_password.setView(editText); 
- 
-		   alert_password = editBuilder_password.create();
-		  
-		   alert_password.setOnKeyListener( new DialogInterface.OnKeyListener(){
-			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-				// TODO Auto-generated method stub
-				switch(keyCode)
-				{	
-					case KeyEvent.KEYCODE_DPAD_CENTER:
-					case KeyEvent.KEYCODE_ENTER:
-						String password = editText.getText().toString();
-						cur_password = getPassWord(); 
-						if(password.equals(cur_password)||password.equals("0000")){
-							dialog.cancel();
-							showFactorySureDialog();		
-						}
-						else{
-							editText.setText(null);
-							toast = Toast.makeText(
-							DTVSettingsUI.this, 
-				    		R.string.invalid_password,
-				    		Toast.LENGTH_SHORT);
-							toast.setGravity(Gravity.CENTER, 0, 0);
-							toast.show();
-						}
-						
-						return true;
-					case  KeyEvent.KEYCODE_BACK:
-						dialog.cancel();
-						return true;
-				}
-				
-				return false;
+	private void showPasswordDialog(){
+		new PasswordDialog(DTVSettingsUI.this){
+			public void onCheckPasswordIsRight(){
+				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
+				showFactorySureDialog();	
 			}
-		});	
-
-
-		
-		alert_password.setOnShowListener(new DialogInterface.OnShowListener(){
-			public void onShow(DialogInterface dialog) {
-				//timer_handler.removeCallbacks(timer_runnable);		
-				}         
-				}); 	
-
-		alert_password.setOnDismissListener(new DialogInterface.OnDismissListener(){
-			public void onDismiss(DialogInterface dialog) {
-		
-			//timer_handler.postDelayed(timer_runnable, 1000);	
-			}         
-			});	
-
-		   
-		  alert_password.show();
-
-		  alert_password.getWindow().setLayout(500, -1);
-		  	
-		  WindowManager.LayoutParams lp=alert_password.getWindow().getAttributes();
-		  lp.dimAmount=0.0f;
-		  alert_password.getWindow().setAttributes(lp);
-		  alert_password.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-		  
+			public void onCheckPasswordIsFalse(){
+				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
+				toast = Toast.makeText(
+				DTVSettingsUI.this, 
+	    		R.string.invalid_password,
+	    		Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+			}
+		};
 	}
 
-
-	void parentalrating_set(TextView v)
-	{
+	void parentalrating_set(TextView v){
 		final TextView info_cur = v;
 		
 		builder = new AlertDialog.Builder(this);
@@ -1010,8 +990,7 @@ public class DTVSettingsUI extends DTVSettings{
 		dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
 
-	public void showParentalRatingPasswordDialog(TextView v)
-	{
+	public void showParentalRatingPasswordDialog(TextView v){
 		final TextView info_cur = v;
 		  Log.d(TAG,"############showParentalRatingPasswordDialog");	
           AlertDialog alert_password=null;	
@@ -1249,12 +1228,52 @@ public class DTVSettingsUI extends DTVSettings{
 	}	
 
 
-	private void DTVSetting_GotoDTVScanDvbt()
-	{
+	private void DTVSetting_GotoDTVScanDvbt(){
 		Intent intent = new Intent();
 		intent.setClass(this, DTVScanDVBT.class);
-		
 		startActivityForResult(intent, 1);	
+	}
+
+
+	private void DTVStartVChip(){
+		Intent intent = new Intent();
+		intent.setClass(this, DTVVChip.class);
+		startActivityForResult(intent, 11);	
+		onHide();	
+	}
+	private void DTVSetting_GotoDTVVChip(){
+		new PasswordDialog(DTVSettingsUI.this){
+			public void onCheckPasswordIsRight(){
+				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
+				DTVStartVChip();
+			}
+			public void onCheckPasswordIsFalse(){
+				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
+				toast = Toast.makeText(
+				DTVSettingsUI.this, 
+	    		R.string.invalid_password,
+	    		Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+			}
+		};
+	}
+
+	private void DTVSetting_GotoDTVCC(){
+		Intent intent = new Intent();
+		intent.setClass(this, DTVCloseCaption.class);
+		startActivityForResult(intent, 11);	
+		onHide();
+	}
+
+	private  void onHide(){
+		RelativeLayout RelativeLayoutParent = (RelativeLayout)findViewById(R.id.RelativeLayoutParent);
+		RelativeLayoutParent.setVisibility(View.INVISIBLE);
+	} 
+	
+	private void onShow(){
+		RelativeLayout RelativeLayoutParent = (RelativeLayout)findViewById(R.id.RelativeLayoutParent);
+		RelativeLayoutParent.setVisibility(View.VISIBLE);
 	}
 	
 }

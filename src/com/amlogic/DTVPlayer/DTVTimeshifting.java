@@ -375,18 +375,7 @@ public class DTVTimeshifting extends DTVActivity{
 				return true;
 			case KeyEvent.KEYCODE_ZOOM_IN:	
 				Log.d(TAG,"KEYCODE_ZOOM_IN");
-				/*
-				if(dtvplyaer_b_txt){
-					if(DTVPlayerInTeletextStatus==false){
-						DTVTTShow();
-						DTVPlayerInTeletextStatus=true;
-					}	
-					else{
-						DTVTTHide();
-						DTVPlayerInTeletextStatus=false;
-					}	
-				}	
-				*/
+				DTVPlayer.showTeltext(DTVTimeshifting.this);	
 				return true;	
 			case KeyEvent.KEYCODE_ZOOM_OUT:
 				

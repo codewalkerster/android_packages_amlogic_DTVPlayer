@@ -26,7 +26,6 @@ import android.text.method.*;
 import android.graphics.Color;
 
 import com.amlogic.widget.PasswordDialog;
-import com.amlogic.widget.PasswordDialog.IHintDialog;
 
 public class DTVPlayer extends DTVActivity{
 	private static final String TAG="DTVPlayer";
@@ -107,7 +106,7 @@ public class DTVPlayer extends DTVActivity{
 				break;
 			case TVMessage.TYPE_PROGRAM_UNBLOCK:
 				Log.d(TAG,"UNBLOCK");
-				
+				hidePasswordDialog();
 				break;
 			case TVMessage.TYPE_SIGNAL_LOST:
 				showDia(1);
@@ -253,30 +252,15 @@ public class DTVPlayer extends DTVActivity{
 				if(inforbar_show_flag==false){
 					ShowControlBar();
 				}
-				else{
-					Intent pickerIntent = new Intent();
-					Bundle bundle_list = new Bundle();
-					bundle_list.putInt("db_id", DTVPlayerGetCurrentProgramID());
-					pickerIntent.putExtras(bundle_list);
-					pickerIntent.setClass(DTVPlayer.this, DTVChannelList.class);
- 		            startActivity(pickerIntent);	
-				}
+				else if(mainmenu_show_flag==false)
+					ShowMainMenu();
 				return true;
 			case KeyEvent.KEYCODE_ENTER:
 				Log.d(TAG,"KEYCODE_ENTER");
 				break;		 
 			case KeyEvent.KEYCODE_ZOOM_IN:	
 				Log.d(TAG,"KEYCODE_ZOOM_IN");
-				if(dtvplyaer_b_txt){
-					if(DTVPlayerInTeletextStatus==false){
-						DTVTTShow();
-						DTVPlayerInTeletextStatus=true;
-					}	
-					else{
-						DTVTTHide();
-						DTVPlayerInTeletextStatus=false;
-					}	
-				}	
+				showTeltext(DTVPlayer.this);
 				return true;
 			case KeyEvent.KEYCODE_ZOOM_OUT:
 				Log.d(TAG,"KEYCODE_ZOOM_OUT");
@@ -981,7 +965,7 @@ public class DTVPlayer extends DTVActivity{
 	private Runnable prono_timer_runnable = new Runnable() {
 		public void run() {
 			if(number_key_down){	
-				//hidePasswordDialog();
+				hidePasswordDialog();
 				if((DTVPlayerCheckNumerInputIsValid(pronumber)==false)||(pronumber<=0)){
 					toast = Toast.makeText(
 						DTVPlayer.this, 
@@ -1028,8 +1012,7 @@ public class DTVPlayer extends DTVActivity{
 		}   
 	};
     
-	private boolean DTVPlayerInTeletextStatus=false;
-
+	private static boolean DTVPlayerInTeletextStatus=false;
 	private void DTVDealDigtalKey(int value){
 		int number_key_value=0;
 		
@@ -1126,9 +1109,8 @@ public class DTVPlayer extends DTVActivity{
 	private boolean password_dialog_show_flag=false;
 	private String cur_password=null;
 	public void hidePasswordDialog(){
-		if(alert_password!=null){
-			alert_password.cancel();
-			password_dialog_show_flag=false;
+		if(mPasswordDialog!=null){
+			mPasswordDialog.dismissDialog();
 		}
 	}
 
@@ -1228,7 +1210,6 @@ public class DTVPlayer extends DTVActivity{
 	
 	private void PlayLockedProgram(){
 		if(programIsLocked()||programIsBlocked()){
-			hidePasswordDialog();
 
 			if(getProgramServiceType()==0)
 				showRadioBg();
@@ -1454,6 +1435,20 @@ public class DTVPlayer extends DTVActivity{
 		return false;
 	}
 
+	public static void showTeltext(Context c){
+		Context mContext = c;
+		if(dtvplyaer_b_txt){
+			if(DTVPlayerInTeletextStatus==false){
+				((DTVActivity)mContext).DTVTTShow();
+				DTVPlayerInTeletextStatus=true;
+			}	
+			else{
+				((DTVActivity)mContext).DTVTTHide();
+				DTVPlayerInTeletextStatus=false;
+			}	
+		}	
+	}
+
 	private static int cur=0;
 	private static Button BtnSubtitleLanguage=null;
 	private static void showSubtitleLanguageDialog(Context mContext){
@@ -1605,69 +1600,17 @@ public class DTVPlayer extends DTVActivity{
 		}			
 	}
 
-	private PasswordDialog mPasswordDialog=null;
+	PasswordDialog mPasswordDialog=null;
 	private void showPasswordDialog(){
-		if(mPasswordDialog==null){
-			mPasswordDialog = new PasswordDialog(DTVPlayer.this);
-			mPasswordDialog.showDialog(R.layout.dtvpassword, new IHintDialog(){
-				public boolean onKeyDown(int keyCode, KeyEvent event){
-					return false;
-				}
+		mPasswordDialog = new PasswordDialog(DTVPlayer.this){
+			public void onCheckPasswordIsRight(){
+				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
+			}
 
-				public void showWindowDetail(Window window){
-					final EditText EditPassword = (EditText)window.findViewById(R.id.password);
-					EditPassword.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(4)});
-					EditPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-
-					//mPasswordDialog.setTitle("Password");
-
-					EditPassword.setOnKeyListener(new OnKeyListener() { 
-					    public boolean onKey(View v, int keyCode, KeyEvent event) { 
-							if (event.getAction() == KeyEvent.ACTION_DOWN){
-						        String password = EditPassword.getText().toString();
-								switch(keyCode){
-									case KeyEvent.KEYCODE_DPAD_UP:	
-										dispatchKeyEvent(event);
-										mPasswordDialog.dismissDialog();
-										mPasswordDialog = null;
-										return true;
-									case KeyEvent.KEYCODE_DPAD_DOWN:				
-										dispatchKeyEvent(event);
-										mPasswordDialog.dismissDialog();
-										mPasswordDialog = null;
-										return true;
-									case KeyEvent.KEYCODE_DPAD_CENTER:
-										//DTVSettings mDTVSettings = new DTVSettings();
-										//cur_password = mDTVSettings.getPassWord();
-
-										cur_password=null;
-										if(password.equals(cur_password)||password.equals("0000"))
-										{
-											//locked_play();
-											mPasswordDialog.dismissDialog();
-											mPasswordDialog = null;
-										}
-										else
-										{
-											EditPassword.setText(null);
-											toast = Toast.makeText(
-											DTVPlayer.this, 
-								    		R.string.invalid_password,
-								    		Toast.LENGTH_SHORT);
-											toast.setGravity(Gravity.CENTER, 0, 0);
-											toast.show();
-										}
-										break;
-								}	
-							}
-						    return false; 
-							
-					    } 
-					});
-					
-				}
-			});
-		}	
+			public void onCheckPasswordIsFalse(){
+				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
+			}
+		};
 	}
 
 	private void showStopPVRDialog(){

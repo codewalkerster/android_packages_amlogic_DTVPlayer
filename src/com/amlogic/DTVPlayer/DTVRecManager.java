@@ -99,7 +99,8 @@ public class DTVRecManager extends DTVActivity{
     private TabWidget tabWidget;
 
 	int choise = 0;	
-	private String filename;
+	private String proname=null;
+	private String filename=null;
 	private int record_db_id;
 	private Toast toast=null;
 
@@ -465,6 +466,7 @@ public class DTVRecManager extends DTVActivity{
 			TVBooking mTVBooking = getServiceInfoByPostion(position);
 			int item_status = mTVBooking.getStatus();	
 			record_db_id = mTVBooking.getID();
+			proname = mTVBooking.getProgramName();
 			final int  pos = position;
 			choise = 0;
 			builder = new AlertDialog.Builder(DTVRecManager.this);
@@ -510,7 +512,8 @@ public class DTVRecManager extends DTVActivity{
 							switch(choise){
 								case 0:														
 									Bundle bundle_pvr_player = new Bundle();										           
-									bundle_pvr_player.putInt("booking_id", record_db_id); 					
+									bundle_pvr_player.putInt("booking_id", record_db_id); 	
+									bundle_pvr_player.putString("program_name", proname); 
 									Intent Intent_pvrplayer = new Intent();
 									Intent_pvrplayer.setClass(DTVRecManager.this, DTVPvrPlayer.class);
 									Intent_pvrplayer.putExtras(bundle_pvr_player);

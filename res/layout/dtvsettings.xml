@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="1280px"
-    android:layout_height="720px">
+    android:layout_height="720px"
+    android:id="@+id/RelativeLayoutParent">
 	
 	<LinearLayout 
 		android:id="@+id/RelativeLayoutBG"

@@ -362,7 +362,9 @@ abstract public class DTVActivity extends TVActivity{
 	}
 
 	public String DTVPlayerGetPassword(){
-		return null; 
+		String password = "0000";
+		password = getStringConfig("tv:dtv:password");
+		return password;
 	}
 
 	public int DTVPlayerGetCurrentProgramID(){
@@ -377,8 +379,7 @@ abstract public class DTVActivity extends TVActivity{
 		return TVProgram.selectByID(this,db_id);
 	}
 
-	public String DTVPlayerGetScanRegion(){
-		return getStringConfig("tv:scan:dtv:region");	
-	}
+	
+	
 }
 	

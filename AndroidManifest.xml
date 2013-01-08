@@ -34,9 +34,19 @@
 		<activity android:name=".DTVScanDVBT"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVScanDVBS"	android:theme="@style/Transparent"/>
 		<activity android:name=".DTVScanATSC"	android:theme="@style/Transparent"/> 
-		<activity android:name=".DTVCloseCaption"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVVChip"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVDeviceBrowser"	android:theme="@style/Transparent"/>
+		<activity android:name=".DTVCloseCaption"	android:theme="@style/Transparent"/> 
+		<activity android:name=".DTVCaptionOptions"	android:theme="@style/Transparent"/> 
+	
+		<activity android:name=".DTVVchipTv"	android:theme="@style/Transparent"/> 
+		<activity android:name=".DTVVchipMpaa"	android:theme="@style/Transparent"/>
+
+		<activity android:name=".VchipCanadaEnglishActivity" android:theme="@style/transparentDialog" />
+		<activity android:name=".VchipCanadaFrenchActivity" android:theme="@style/transparentDialog" />
+
+	    <activity android:name=".RRTDimensions" android:theme="@style/transparentDialog" />
+		<activity android:name=".RRTDimensionsEnter" android:theme="@style/transparentDialog" />
     </application>
 
 </manifest>

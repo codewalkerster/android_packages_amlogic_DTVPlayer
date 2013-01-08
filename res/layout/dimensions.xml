@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="450px"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shortcut_bg_box_8"
+    android:orientation="vertical" >
+
+
+	 <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="50px"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/parent_control_rrt_set"
+        android:textColor="#FFFFFFFF"
+        android:textSize="32px" 
+        android:layout_marginTop="30px"/>
+
+    <RelativeLayout
+  	     	 android:id="@+id/inforbar_line" 
+	    	 android:layout_width="fill_parent"
+    		 android:layout_height="3px"
+    		 android:layout_marginRight="30px"
+			 android:layout_marginLeft="20px"
+    		 android:background="@drawable/line"
+  			>	
+  	</RelativeLayout>
+        
+	<LinearLayout
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="vertical" >
+	    <ListView
+	        android:id="@+id/sub_list_dimensions"  
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:layout_gravity="center"
+	        android:cacheColorHint="#00000000"
+	        android:divider="#0000"
+	        android:dividerHeight="0px"
+	        android:focusable="true"
+	        android:listSelector="@anim/tvitembg"
+	        android:paddingLeft="14px"
+	        android:paddingRight="14px"
+	        android:paddingTop="10px"
+	        android:paddingBottom="30px"
+	         />
+	 </LinearLayout>        
+	 
+   
+</LinearLayout>
