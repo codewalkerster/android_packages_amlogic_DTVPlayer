@@ -25,6 +25,10 @@ import android.text.method.*;
 import java.lang.reflect.Field;
 
 import com.amlogic.widget.PasswordDialog;
+import com.amlogic.widget.SureDialog;
+import com.amlogic.widget.SingleChoiseDialog;
+import com.amlogic.widget.MutipleChoiseDialog;
+import com.amlogic.widget.PasswordSettingDialog;
 
 public class DTVSettingsUI extends DTVSettings{
 	private static final String TAG="DTVSettingsUI";
@@ -33,7 +37,7 @@ public class DTVSettingsUI extends DTVSettings{
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtvsettings);  //settings_main
-		UIAnimationInit();
+		//UIAnimationInit();
 	}
 
 	@Override
@@ -87,6 +91,7 @@ public class DTVSettingsUI extends DTVSettings{
 
 	public static final int SETTINGS_TTX_REGION=9;
 	public static final int SETTINGS_CC=10;
+	public static final int SETTINGS_ANTENNA_SOURCE=11;
 		
 	private String ttx_region_str=null;
 	private static String[] ttx_region_str_arry=null;
@@ -95,7 +100,6 @@ public class DTVSettingsUI extends DTVSettings{
 	private ListView ListView_settings=null;
 	private IconAdapter myAdapter=null;
 	
-	private AlertDialog.Builder builder;
 	private AlertDialog.Builder editBuilder=null;
 	private AlertDialog.Builder editBuilder_password=null;
 
@@ -150,13 +154,12 @@ public class DTVSettingsUI extends DTVSettings{
 	private AdapterView.OnItemSelectedListener mOnSelectedListener = new AdapterView.OnItemSelectedListener(){
 		public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
 			ListView_settings = (ListView)findViewById(R.id.settings_list);
-			//if(ListView_settings.hasFocus() == true){
-				//reset_timer();
+			/*
 				if(v.isSelected())
 				 	v.startAnimation(listItemFocus);
 				else
 					v.clearAnimation();
-			//}
+			*/
 			cur_select_item = position;
 		}
 		
@@ -185,14 +188,9 @@ public class DTVSettingsUI extends DTVSettings{
 			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
 
 			final TextView info_cur = (TextView)v.findViewById(R.id.info);
-
-			builder = new AlertDialog.Builder(DTVSettingsUI.this);
 			
-			switch(position)
-			{
-			    case SETTINGS_SUBTILE_SWITCH:
-				{
-					
+			switch(position){
+			    case SETTINGS_SUBTILE_SWITCH:{	
 			    	if(DTVSettingsUI.super.getSubtitleStatus()==false)
 			    	{
 			    		image_cur.setBackgroundResource(R.drawable.select_round_2);
@@ -208,223 +206,26 @@ public class DTVSettingsUI extends DTVSettings{
 				}
 			    break;
 				case SETTINGS_SCREEN_TYPE:
-					{
-						int mode = DTVSettingsUI.super.getScreenMode();
-						int pos = 0;
-
-						if(mode==0)
-						{
-							pos = 2;
-						}
-						else  if(mode==2)
-						{
-							pos = 0;
-						}
-						else  if(mode==3)
-						{
-							pos = 1;
-						}
-
-
-					     builder.setTitle(R.string.screen_type);
-						 builder.setIcon( android.R.drawable.ic_dialog_info);
-						 //builder.setCancelable(false);
-						 
-						 builder.setSingleChoiceItems(new String[]  { "4:3","16:9","auto"}, pos, new DialogInterface.OnClickListener() {
-								      public void onClick(DialogInterface dialog, int which) {
-										
-								    	  switch(which)
-						 					{
-						 						case 0:
-						 							info_cur.setText(R.string.type_4_3);						
-													DTVSettingsUI.super.setScreenMode(2);
-						 							break;
-						 						case 1:
-						 							info_cur.setText(R.string.type_16_9);
-													DTVSettingsUI.super.setScreenMode(3);
-						 							break;
-						 						case 2:
-						 							info_cur.setText(R.string.auto);
-													DTVSettingsUI.super.setScreenMode(0);
-						 							break;	
-						 					}
-						 					
-								      }
-								     });
-							builder.setNegativeButton(R.string.cancel, new  DialogInterface.OnClickListener(){
-			
-				 				//@Override
-				 				public void onClick(DialogInterface dialog, int which) {
-				 					// TODO Auto-generated method stub
-				 					
-				 					dialog.dismiss();
-				 				}
-				        		 
-				        	 });
-							builder.setPositiveButton(R.string.ok, new  DialogInterface.OnClickListener(){
-			
-				 				public void onClick(DialogInterface arg0, int arg1) {
-				 					// TODO Auto-generated method stub
-				 					Log.d("#####","#####"+arg1);
-									
-									int  mode = DTVSettingsUI.super.getScreenMode();
-		 							 if(mode==0)
-		 							 {
-										 DTVSettingsUI.super.setScreenMode(0);
-										 
-		 							 }
-		 							 else  if(mode==2)
-		 							 {
-		 								DTVSettingsUI.super.setScreenMode(2);
-		 							 }
-		 							 else  if(mode==3)
-		 							 {
-		 								DTVSettingsUI.super.setScreenMode(3);
-		 							 }
-				 				}
-				        	 });								
-							
-							 AlertDialog dialog = builder.create();
-							 dialog.setOnShowListener(new DialogInterface.OnShowListener(){
-									public void onShow(DialogInterface dialog) {
-										//timer_handler.removeCallbacks(timer_runnable);		
-										//settings_list_hide_count = 0;
-										}         
-										}); 	
-
-			   		         dialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-									public void onDismiss(DialogInterface dialog) {
-										
-									switch(DTVSettingsUI.super.getScreenMode())
-									{
-										case 0:
-											info_cur.setText(R.string.auto);
-											DTVSettingsUI.super.setScreenMode(0);
-											break;
-										case 2:
-											info_cur.setText(R.string.type_4_3);						
-											DTVSettingsUI.super.setScreenMode(2);
-											break;
-										case 3:
-											info_cur.setText(R.string.type_16_9);
-											DTVSettingsUI.super.setScreenMode(3);
-											break;
-									}	
-									//timer_handler.postDelayed(timer_runnable, 1000);	
-									}         
-									});	
-							dialog.show();  
-
-							WindowManager m = getWindowManager();   
-							Display d = m.getDefaultDisplay();  	
-							WindowManager.LayoutParams lp=dialog.getWindow().getAttributes();
-							lp.dimAmount=0.0f;
-							lp.width = (int) (d.getWidth() * 0.50);
-							dialog.getWindow().setAttributes(lp);
-							dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-
-					}		
+					showScreenTypeDialog(info_cur);		
 					break;
 					
 				case SETTINGS_AUDIO_TRACK:
-					{
-						int mode = getAudioTrack();
-						int pos = 0;
-						  if(mode==0)
-						 {
-							 pos = 0;
-						 }
-						 else  if(mode==1)
-						 {
-							pos = 1;
-						 }
-						 else  if(mode==2)
-						 {
-							pos = 2;
-						 }
-					
-
-						builder.setTitle(R.string.audio_track);
-						builder.setIcon( android.R.drawable.ic_dialog_info);
-						builder.setSingleChoiceItems(new String[] { "Left", "Right","Stereo"}, pos, new DialogInterface.OnClickListener() {
-							      public void onClick(DialogInterface dialog, int which) {	
-									//audio_track_select_item	 = which;	
-							      }
-							     });
-						builder.setNegativeButton(R.string.cancel, new  DialogInterface.OnClickListener(){
-		
-			 				//@Override
-			 				public void onClick(DialogInterface dialog, int which) {
-			 					// TODO Auto-generated method stub
-			 					 dialog.dismiss();
-			 				}
-			        		 
-			        	 });
-						builder.setPositiveButton(R.string.ok, new  DialogInterface.OnClickListener(){
-		
-			 				public void onClick(DialogInterface arg0, int arg1) {
-			 					// TODO Auto-generated method stub
-								
-								 switch(audio_track_select_item)
-					 					{
-					 						case 0:
-					 							info_cur.setText(R.string.left);
-												//setAudioTrack("l");
-					 							break;
-					 						case 1:
-					 							info_cur.setText(R.string.right);
-												//setAudioTrack("r");
-					 							break;
-					 						case 2:
-					 							info_cur.setText(R.string.stereo);
-												//setAudioTrack("s");
-					 							break;	
-					 					}	
-			 				}
-			        	 });	
-						
-						 AlertDialog dialog = builder.create();
-						 dialog.setOnShowListener(new DialogInterface.OnShowListener(){
-									public void onShow(DialogInterface dialog) {
-										//timer_handler.removeCallbacks(timer_runnable);		
-										//settings_list_hide_count = 0;
-										}         
-										}); 	
-
-			   		     dialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-									public void onDismiss(DialogInterface dialog) {
-									//timer_handler.postDelayed(timer_runnable, 1000);	
-									}         
-									});	
-						 dialog.show();
-						 WindowManager m = getWindowManager();   
-							Display d = m.getDefaultDisplay();  	
-							WindowManager.LayoutParams lp=dialog.getWindow().getAttributes();
-							lp.dimAmount=0.0f;
-							//lp.height = (int) (d.getHeight() * 0.6);  
-							lp.width = (int) (d.getWidth() * 0.50);
-			               dialog.getWindow().setAttributes(lp);
-			               dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-					}	
+					showAudioTrackDialog(info_cur);	
 					break;
 				
 				case SETTINGS_START_SCAN:
 					{
-					
 						DTVSetting_GotoDTVScanDvbt();
-						
 						DTVSettingsUI.this.finish();
 					}	
-
-						//if(DTV.getStaticSubtitle()!=null)
-							//DVBPlayer.getStaticSubtitle().stop();
-					
+					//if(DTV.getStaticSubtitle()!=null)
+						//DVBPlayer.getStaticSubtitle().stop();
 					break;
 				case SETTINGS_DEFAULT:
 					showPasswordDialog();
 					break;
 				case SETTINGS_SET_PASSWORD:
-					showSetPasswordDialog();
+					showEnterPasswordSettingDialog();
 					break;
 				case SETTINGS_SELECT_STORAGE:
 					Intent Intent_path_select = new Intent();
@@ -433,99 +234,7 @@ public class DTVSettingsUI extends DTVSettings{
 					DTVSettingsUI.this.finish();
 					break;
 				 case SETTINGS_TIMESHIFT_TIME_SET:
-				 	{
-						int pos = 0;
-						int time = getTimeShiftingDuration();
-						switch(time)
-						{
-							case 600:
-								pos=0;
-								break;
-							case 30*60:
-								pos=1;
-								break;
-							case 60*60:
-								pos=2;
-								break;	
-						}
-						 
-					
-						 builder.setTitle(R.string.timeshift_time_set);
-						 builder.setIcon( android.R.drawable.ic_dialog_info);
-						 builder.setSingleChoiceItems(new String[]  { "10 Min","30 Min","60 Min"}, pos, new DialogInterface.OnClickListener() {
-								      public void onClick(DialogInterface dialog, int which) {
-										
-										timeshift_time_select_item = which;
-								    	 
-								      }
-								     });
-						
-							
-							builder.setNegativeButton(R.string.cancel, new  DialogInterface.OnClickListener(){
-			
-				 				//@Override
-				 				public void onClick(DialogInterface dialog, int which) {
-				 					// TODO Auto-generated method stub
-				 					 dialog.dismiss();
-				 				}
-				        		 
-				        	 });
-							builder.setPositiveButton(R.string.ok, new  DialogInterface.OnClickListener(){
-			
-				 				public void onClick(DialogInterface arg0, int arg1) {
-				 					// TODO Auto-generated method stub
-				 					Log.d("#####","#####"+arg1);
-
-									switch(timeshift_time_select_item)
-				 					{
-				 						//pos = which;
-				 						case 0:
-				 							info_cur.setText("10 Min");
-											DTVSettingsUI.super.setTimeShiftingDuration(10*60);
-				 							break;
-				 						case 1:
-				 							info_cur.setText("30 Min");
-											DTVSettingsUI.super.setTimeShiftingDuration(30*60);
-				 							break;
-				 						case 2:
-				 							info_cur.setText("60 Min");
-											DTVSettingsUI.super.setTimeShiftingDuration(60*60);
-				 							break;	
-				 					}
-
-
-
-									
-
-				 				}
-				        	 });	
-							
-							
-							
-							 AlertDialog dialog = builder.create();
-							 dialog.setOnShowListener(new DialogInterface.OnShowListener(){
-									public void onShow(DialogInterface dialog) {
-										//timer_handler.removeCallbacks(timer_runnable);		
-										//settings_list_hide_count = 0;
-										}         
-										}); 	
-
-			   		         dialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-									public void onDismiss(DialogInterface dialog) {
-									//timer_handler.postDelayed(timer_runnable, 1000);	
-									}         
-									});	
-							 dialog.show();  
-							 WindowManager m = getWindowManager();   
-							Display d = m.getDefaultDisplay();  	
-							WindowManager.LayoutParams lp=dialog.getWindow().getAttributes();
-							lp.dimAmount=0.0f;
-							//lp.height = (int) (d.getHeight() * 0.6);  
-							lp.width = (int) (d.getWidth() * 0.50);
-				               dialog.getWindow().setAttributes(lp);
-				               dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-							  
-					}
+				 	showTimeshiftingTimeSettingDialog(info_cur);
 					break;
 				 case SETTINGS_PARENTAL_RATING_SET:
 				 	if(DTVPlayerGetScanRegion().equals("ATSC")){
@@ -536,72 +245,16 @@ public class DTVSettingsUI extends DTVSettings{
 						showParentalRatingPasswordDialog(info_cur);
 					break;
 				case SETTINGS_TTX_REGION:
-					{
-						
-						int pos = DTVSettingsUI.super.getTeletextRegion();
-						
-						 //View view = getLayoutInflater().inflate(R.layout.test, (ViewGroup)findViewById(R.id.queryBuilder));
-						 //builder.setView(view);
-						 builder.setTitle(R.string.ttx_region);
-						 builder.setIcon( android.R.drawable.ic_dialog_info);
-						 builder.setSingleChoiceItems(ttx_region_str_arry, pos, new DialogInterface.OnClickListener() {
-								      public void onClick(DialogInterface dialog, int which) {
-										ttx_region_select_item = which;
-								      }
-								     });
-						
-							
-							builder.setNegativeButton(R.string.cancel, new  DialogInterface.OnClickListener(){
-			
-				 				//@Override
-				 				public void onClick(DialogInterface dialog, int which) {
-				 					// TODO Auto-generated method stub
-				 					 dialog.dismiss();
-				 				}
-				        		 
-				        	 });
-							builder.setPositiveButton(R.string.ok, new  DialogInterface.OnClickListener(){
-			
-				 				public void onClick(DialogInterface arg0, int arg1) {
-				 					// TODO Auto-generated method stub
-				 					Log.d("#####","#####"+arg1);
-				 					info_cur.setText(ttx_region_str_arry[ttx_region_select_item]);
-									DTVSettingsUI.super.setTeletextRegion(ttx_region_select_item);
-			
-				 				}
-				        	 });	
-							
-							
-							
-							 AlertDialog dialog = builder.create();
-							 dialog.setOnShowListener(new DialogInterface.OnShowListener(){
-									public void onShow(DialogInterface dialog) {
-										//timer_handler.removeCallbacks(timer_runnable);		
-										}         
-										}); 	
-
-			   		         dialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-									public void onDismiss(DialogInterface dialog) {
-									//timer_handler.postDelayed(timer_runnable, 1000);	
-									}         
-									});	
-						dialog.show();  
-						WindowManager m = getWindowManager();   
-						Display d = m.getDefaultDisplay();  	
-						WindowManager.LayoutParams lp=dialog.getWindow().getAttributes();
-						lp.dimAmount=0.0f;
-						//lp.height = (int) (d.getHeight() * 0.6);  
-						lp.width = (int) (d.getWidth() * 0.50);
-						dialog.getWindow().setAttributes(lp);
-						dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-							  
-					}
+					showTTXRegionDialog(info_cur);
 					break;
 				case SETTINGS_CC:
 					{
 						DTVSetting_GotoDTVCC();
 						onStop();
 					}	
+					break;	
+				case SETTINGS_ANTENNA_SOURCE:
+					
 					break;	
 			}
 		}
@@ -709,11 +362,10 @@ public class DTVSettingsUI extends DTVSettings{
 				holder = (ViewHolder) convertView.getTag();
 			}
 
-			
-
+		
 			// Bind the data efficiently with the holder.
 			holder.text.setText(listItems[position]);
-			
+			holder.icon.setVisibility(View.INVISIBLE);
 			holder.info.setTextColor(Color.YELLOW);
 			switch(position){
 			case SETTINGS_SUBTILE_SWITCH:
@@ -856,52 +508,135 @@ public class DTVSettingsUI extends DTVSettings{
 			    	 holder.icon.setImageBitmap(mIcon4);
 				}
 				break;
+			case SETTINGS_ANTENNA_SOURCE:
+				if(DTVPlayerGetScanRegion().equals("ATSC")){
+					 holder.info.setVisibility(View.INVISIBLE);
+					 holder.icon1.setVisibility(View.INVISIBLE);
+			    	 holder.icon.setImageBitmap(mIcon4);
+				}
+				break;
 		  }
 
 		  return convertView;
 		}
 	}	
-	
-	public void showFactorySureDialog()
-	{
-		builder = new AlertDialog.Builder(this);
+
+	public void showTTXRegionDialog(TextView v){
+		final TextView info_cur = v;
+		int pos = DTVSettingsUI.super.getTeletextRegion();
+		new SingleChoiseDialog(DTVSettingsUI.this,ttx_region_str_arry,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.ttx_region));
+			}
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				info_cur.setText(ttx_region_str_arry[which]);
+				DTVSettingsUI.super.setTeletextRegion(which);
+			}
+		};
+	}
+
+	public void showAudioTrackDialog(TextView v){
+		final TextView info_cur = v;
+		int mode = getAudioTrack();
+		int pos = 0;
+		if(mode==0){
+			pos = 0;
+		}
+		else  if(mode==1){
+			pos = 1;
+		}
+		else  if(mode==2){
+			pos = 2;
+		}
+
+		new SingleChoiseDialog(DTVSettingsUI.this,new String[]{ "Left", "Right","Stereo"},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.audio_track));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				switch(which){
+				case 0:
+					info_cur.setText(R.string.left);
+				//setAudioTrack("l");
+					break;
+				case 1:
+					info_cur.setText(R.string.right);
+				//setAudioTrack("r");
+					break;
+				case 2:
+					info_cur.setText(R.string.stereo);
+				//setAudioTrack("s");
+					break;	
+				}	
+			}
+		};						
+	}
+
+	public void showScreenTypeDialog(TextView v){
+		final TextView info_cur = v;
+		int mode = DTVSettingsUI.super.getScreenMode();
+		int pos = 0;
+		if(mode==0){
+			pos = 2;
+		}
+		else  if(mode==2){
+			pos = 0;
+		}
+		else  if(mode==3){
+			pos = 1;
+		}
 		
-		AlertDialog.Builder builder = new AlertDialog.Builder(DTVSettingsUI.this); 
-		builder.setMessage(R.string.sure_factory_set)
-		.setCancelable(false)
-		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener(){
-			public void onClick(DialogInterface dialog, int id) {
+		new SingleChoiseDialog(DTVSettingsUI.this,new String[]{ "4:3","16:9","auto"},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.screen_type));
+			}
+			
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				switch(which){
+					case 0:
+						info_cur.setText(R.string.type_4_3);						
+						DTVSettingsUI.super.setScreenMode(2);
+						break;
+					case 1:
+						info_cur.setText(R.string.type_16_9);
+						DTVSettingsUI.super.setScreenMode(3);
+						break;
+					case 2:
+						info_cur.setText(R.string.auto);
+						DTVSettingsUI.super.setScreenMode(0);
+						break;	
+				}
+			}
+		};		
+	}
+	
+	public void showFactorySureDialog(){
+		new SureDialog(DTVSettingsUI.this){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.sure_factory_set));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(){
 				factoryReset();
 				Intent pickerIntent = new Intent();
 				pickerIntent.setClass(DTVSettingsUI.this, DTVPlayer.class);
  		        startActivity(pickerIntent);
 				DTVSettingsUI.this.finish();
-				dialog.cancel();
-			}        
-		 })        
-		.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					dialog.cancel();            
-				}        
-		 }); 
-			AlertDialog alert = builder.create();
-		alert.setOnShowListener(new DialogInterface.OnShowListener(){
-						public void onShow(DialogInterface dialog) {
-							//timer_handler.removeCallbacks(timer_runnable);		
-							}         
-							}); 	
-
-			alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
-						public void onDismiss(DialogInterface dialog) {
-						//timer_handler.postDelayed(timer_runnable, 1000);	
-						}         
-						});	
-		alert.show();	
-
-		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-	               lp.dimAmount=0.0f;
-	               alert.getWindow().setAttributes(lp);
-	               alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+			}
+		};
 	}
 
 	private void showPasswordDialog(){
@@ -919,13 +654,14 @@ public class DTVSettingsUI extends DTVSettings{
 				toast.setGravity(Gravity.CENTER, 0, 0);
 				toast.show();
 			}
+			public boolean onDealUpDownKey(){
+				return false;
+			}
 		};
 	}
 
-	void parentalrating_set(TextView v){
+	private void parentalrating_set(TextView v){
 		final TextView info_cur = v;
-		
-		builder = new AlertDialog.Builder(this);
 		
 		int pr = DTVSettingsUI.super.getParentalRating();
 		int pos = 0;
@@ -934,272 +670,134 @@ public class DTVSettingsUI extends DTVSettings{
 			pos = pr-3;
 		else if(pr>18)
 			pos = 15;
-		builder.setTitle(R.string.parental_rating_set);
-		builder.setIcon( android.R.drawable.ic_dialog_info);
-		builder.setSingleChoiceItems(new String[]  {"all","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"},
-				pos,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						if(which==0){
-							info_cur.setText(R.string.all);
-							DTVSettingsUI.super.setParentalRating(0);
-						}else{
-							info_cur.setText(which+3+"");
-							DTVSettingsUI.super.setParentalRating(which+3);
-						}
-					}
-		});
-		builder.setNegativeButton(R.string.cancel, new  DialogInterface.OnClickListener(){
- 				//@Override
- 				public void onClick(DialogInterface dialog, int which) {
- 					// TODO Auto-generated method stub
- 					dialog.dismiss();
- 				}
-        		 
-        	});
-		builder.setPositiveButton(R.string.ok, new  DialogInterface.OnClickListener(){
- 				public void onClick(DialogInterface arg0, int arg1) {
- 					// TODO Auto-generated method stub
- 					Log.d(TAG,">>>>"+arg1);
-					DTVSettingsUI.super.forceParentalRatingCheck();
- 				}
-        	});
 		
-		AlertDialog dialog = builder.create();
-		dialog.setOnShowListener(new DialogInterface.OnShowListener(){
-				public void onShow(DialogInterface dialog) {
-					//timer_handler.removeCallbacks(timer_runnable);		
-				}         
-		}); 	
+		new SingleChoiseDialog(DTVSettingsUI.this,new String[]{"all","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.parental_rating_set));
+			}
 
-		        dialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-				public void onDismiss(DialogInterface dialog) {
-					//timer_handler.postDelayed(timer_runnable, 1000);	
-				}         
-		});	
-		
-		dialog.show();  
-		WindowManager m = getWindowManager();   
-		Display d = m.getDefaultDisplay();  	
-		WindowManager.LayoutParams lp=dialog.getWindow().getAttributes();
-		lp.dimAmount=0.0f;
-		//lp.height = (int) (d.getHeight() * 0.6);  
-		lp.width = (int) (d.getWidth() * 0.50);
-		
-		dialog.getWindow().setAttributes(lp);
-		dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				if(which==0){
+					info_cur.setText(R.string.all);
+					DTVSettingsUI.super.setParentalRating(0);
+				}else{
+					info_cur.setText(which+3+"");
+					DTVSettingsUI.super.setParentalRating(which+3);
+				}
+				DTVSettingsUI.super.forceParentalRatingCheck();
+			}
+		};		
+	}
+
+	public void showTimeshiftingTimeSettingDialog(TextView v){
+		final TextView info_cur = v;
+		int pos = 0;
+		int time = getTimeShiftingDuration();
+		switch(time){
+			case 600:
+				pos=0;
+				break;
+			case 30*60:
+				pos=1;
+				break;
+			case 60*60:
+				pos=2;
+				break;	
+		}
+
+		new SingleChoiseDialog(DTVSettingsUI.this,new String[]{ "10 Min","30 Min","60 Min"},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.timeshift_time_set));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				switch(which){
+					//pos = which;
+					case 0:
+						info_cur.setText("10 Min");
+						DTVSettingsUI.super.setTimeShiftingDuration(10*60);
+						break;
+					case 1:
+						info_cur.setText("30 Min");
+					DTVSettingsUI.super.setTimeShiftingDuration(30*60);
+						break;
+					case 2:
+						info_cur.setText("60 Min");
+					DTVSettingsUI.super.setTimeShiftingDuration(60*60);
+						break;	
+				}
+			}
+		};				
 	}
 
 	public void showParentalRatingPasswordDialog(TextView v){
 		final TextView info_cur = v;
-		  Log.d(TAG,"############showParentalRatingPasswordDialog");	
-          AlertDialog alert_password=null;	
-			 
-		  editText = new EditText(this);
-		  editText.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(4)});
-		  editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
-
-		  editBuilder_password.setTitle(R.string.enter_password);
-		  editBuilder_password.setView(editText); 
- 
-		   alert_password = editBuilder_password.create();
-		  
-		   alert_password.setOnKeyListener( new DialogInterface.OnKeyListener(){
-			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-				// TODO Auto-generated method stub
-				switch(keyCode)
-				{	
-					case KeyEvent.KEYCODE_DPAD_CENTER:
-					//case KeyEvent.KEYCODE_ENTER:
-						String password = editText.getText().toString();
-						cur_password = getPassWord(); 	
-						if(password.equals(cur_password)||password.equals("0000")){
-							dialog.cancel();
-							parentalrating_set(info_cur);						
-						}
-						else{
-							editText.setText(null);
-
-							toast = Toast.makeText(
+		new PasswordDialog(DTVSettingsUI.this){
+			public void onCheckPasswordIsRight(){
+				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
+				parentalrating_set(info_cur);		
+			}
+			public void onCheckPasswordIsFalse(){
+				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
+				toast = Toast.makeText(
 							DTVSettingsUI.this, 
 				    		R.string.invalid_password,
 				    		Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
 							toast.show();
-						}
-						
-						return true;
-					case  KeyEvent.KEYCODE_BACK:
-						dialog.cancel();
-						return true;
-				}
-				
+			}
+			public boolean onDealUpDownKey(){
 				return false;
 			}
-		});	
+		};
 
-		   alert_password.setOnShowListener(new DialogInterface.OnShowListener(){
-			public void onShow(DialogInterface dialog) {
-				//timer_handler.removeCallbacks(timer_runnable);		
-				//settings_list_hide_count = 0;
-				}         
-				}); 	
-
-		alert_password.setOnDismissListener(new DialogInterface.OnDismissListener(){
-			public void onDismiss(DialogInterface dialog) {
-		
-			//timer_handler.postDelayed(timer_runnable, 1000);	
-			}         
-			});	
-		  alert_password.show();
-
-		  alert_password.getWindow().setLayout(500, -1);
-		  	
-		  WindowManager.LayoutParams lp=alert_password.getWindow().getAttributes();
-		  lp.dimAmount=0.0f;
-		  alert_password.getWindow().setAttributes(lp);
-		  alert_password.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-		  
 	}	
 
-    EditText editText_password_old;
-    EditText editText;
-    EditText editText1;
-    String password_old = null;
-    String password_new = null;
-    String password_new_again =null;
-    String cur_password = null;
-	public void showSetPasswordDialog(){
-		
-		AlertDialog alert_password_set=null;	
+	private void showSetPasswordDialog(){
+		new PasswordSettingDialog(DTVSettingsUI.this){
+			public void onCheckPasswordIsRight(){
+				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
+			}
+			public void onCheckPasswordIsFalse(){
+				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
+				toast = Toast.makeText(
+				DTVSettingsUI.this, 
+	    		R.string.invalid_password,
+	    		Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+			}
+			public boolean onDealUpDownKey(){
+				return false;
+			}
+		};
+	}
 
-		LinearLayout password_set_layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dtvsettings_password_set, null);
-
-		editText_password_old =(EditText)password_set_layout.findViewById(R.id.edittext_password_old);
-		editText = (EditText)password_set_layout.findViewById(R.id.edittext_password1);
-		editText1 = (EditText)password_set_layout.findViewById(R.id.edittext_password2);
-
-		editText.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(4)});
-		editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
-
-		editText1.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(4)});
-		editText1.setTransformationMethod(PasswordTransformationMethod.getInstance());
-
-		editText_password_old.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(4)});
-		editText_password_old.setTransformationMethod(PasswordTransformationMethod.getInstance());
-
-		editBuilder.setTitle(R.string.password_set);
-		editBuilder.setView(password_set_layout); 
-
-		  editBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-			
-			public void onClick(DialogInterface dialog, int which) {
-				password_old = editText_password_old.getText().toString();
-				password_new = editText.getText().toString();
-				password_new_again = editText1.getText().toString();
-				cur_password = getPassWord(); 
-				if(password_new.equals("")||password_new_again.equals("")||password_old.equals("")){
-				
-					toast = Toast.makeText(
+	public void showEnterPasswordSettingDialog(){
+		new PasswordDialog(DTVSettingsUI.this){
+			public void onCheckPasswordIsRight(){
+				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
+				showSetPasswordDialog();
+			}
+			public void onCheckPasswordIsFalse(){
+				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
+				toast = Toast.makeText(
 								DTVSettingsUI.this, 
 					    		R.string.invalid_input,
 					    		Toast.LENGTH_SHORT);
 								toast.setGravity(Gravity.CENTER, 0, 0);
 								toast.show();
-					try
-						{
-						    Field field = dialog.getClass()
-						            .getSuperclass().getDeclaredField("mShowing");
-						    field.setAccessible(true);
-						    field.set(dialog, false);
-						    dialog.dismiss();
-						}
-						catch (Exception e)
-						{
-						}
-
-						return;
-				}
-
-				if(cur_password!=null){
-					if((password_new.equals(password_new_again))&&(password_old.equals(cur_password)||password_old.equals("0000"))){
-						setPassWord(password_new);    
-					}
-					else{
-						toast = Toast.makeText(
-							DTVSettingsUI.this, 
-				    		R.string.invalid_input,
-				    		Toast.LENGTH_SHORT);
-							toast.setGravity(Gravity.CENTER, 0, 0);
-							toast.show();
-						try
-							{
-							    Field field = dialog.getClass()
-							            .getSuperclass().getDeclaredField("mShowing");
-							    field.setAccessible(true);
-							    field.set(dialog, false);
-							    dialog.dismiss();
-							}
-							catch (Exception e){
-							}
-
-							return;
-					}
-				}
-
-
-				try{
-					Field field = dialog.getClass()
-					    .getSuperclass().getDeclaredField("mShowing");
-					field.setAccessible(true);
-					field.set(dialog, true);
-					dialog.dismiss();
-				}
-				catch (Exception e){
-				}
 			}
-		});
-
-		editBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				try
-				{
-				    Field field = dialog.getClass()
-				            .getSuperclass().getDeclaredField("mShowing");
-				    field.setAccessible(true);
-				    field.set(dialog, true);
-				    dialog.dismiss();
-				}
-				catch (Exception e)
-				{
-				}           
-			}        
-		}); 
-		 
-		  alert_password_set = editBuilder.create();
-		  alert_password_set.setOnShowListener(new DialogInterface.OnShowListener(){
-								public void onShow(DialogInterface dialog) {
-									//timer_handler.removeCallbacks(timer_runnable);		
-									}         
-									}); 	
-
-		   alert_password_set.setOnDismissListener(new DialogInterface.OnDismissListener(){
-								public void onDismiss(DialogInterface dialog) {
-								//timer_handler.postDelayed(timer_runnable, 1000);	
-								}         
-								});	
-
-		  
-		  alert_password_set.show();          
-		  WindowManager m = getWindowManager();   
-		  Display d = m.getDefaultDisplay();  	
-		  WindowManager.LayoutParams lp=alert_password_set.getWindow().getAttributes();
-		  lp.dimAmount=0.0f;
-		  lp.height = (int) (d.getHeight() * 0.6);  
-		  lp.width = (int) (d.getWidth() * 0.65);
-		  alert_password_set.getWindow().setAttributes(lp);
-		  alert_password_set.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-
+			public boolean onDealUpDownKey(){
+				return false;
+			}
+		};
 	}
 
 	@Override
@@ -1255,6 +853,10 @@ public class DTVSettingsUI extends DTVSettings{
 	    		Toast.LENGTH_SHORT);
 				toast.setGravity(Gravity.CENTER, 0, 0);
 				toast.show();
+			}
+
+			public boolean onDealUpDownKey(){
+				return false;
 			}
 		};
 	}

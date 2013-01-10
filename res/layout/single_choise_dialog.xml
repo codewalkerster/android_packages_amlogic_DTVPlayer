@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="620px"
     android:layout_height="wrap_content"
@@ -26,52 +27,17 @@
 		android:layout_marginLeft="30px"
 		android:layout_marginRight="30px" >
 	</RelativeLayout> 
-	<LinearLayout 
-     	 android:layout_width="fill_parent" 
-         android:layout_height="wrap_content"
-         android:gravity="left"
-         android:orientation="horizontal">
-       
-		<TextView 
-         	 android:layout_width="250px" 
-         	 android:gravity="left"
-             android:layout_height="wrap_content" 
-             android:text="@string/subtitle_switch" 
-             android:layout_marginLeft = "30px"
-             android.textSize="20sp"
-		/>  
-		<CheckBox
-			android:id="@+id/checkSubtitleSwitch"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginLeft = "20px"
-		/> 
-     </LinearLayout>
-     
-	 <LinearLayout 
-     	 android:layout_width="fill_parent" 
-         android:layout_height="wrap_content" 
-         android:layout_marginTop = "3px"
-         android:gravity="left"
-         android:orientation="horizontal">  
-         <TextView 
-			android:layout_width="250px" 
-			android:gravity="left"
-			android:layout_height="wrap_content" 
-			android:text="@string/dtvplayer_subtitle_language_set" 
-			android:layout_marginLeft = "30px"
-			android.textSize="20sp"
-             />  
-     
-		<Button
-			android:id="@+id/BtnSubtitleLanguage"
-			android:layout_marginLeft = "20px"
-			android:layout_width="100px"
-			android:layout_height="wrap_content"
-			android:layout_marginRight="30px">
-		</Button>    
-	</LinearLayout>
-	
+	<ListView 
+		android:id="@+id/list_item"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:cacheColorHint="#00000000"
+		android:divider="#0000"
+		android:dividerHeight="0px"
+		android:focusable="true"
+		android:layout_marginLeft="30px"
+		android:layout_marginRight="30px" 			
+	></ListView>     
 	<RelativeLayout
 		android:id="@+id/inforbar_line" 
 		android:layout_width="fill_parent"

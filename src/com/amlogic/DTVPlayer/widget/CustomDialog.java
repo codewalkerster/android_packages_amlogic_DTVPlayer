@@ -6,12 +6,12 @@ import android.content.Context;
 import android.view.KeyEvent;
 import android.view.Window;
 	
-public class HintDialog {
+public class CustomDialog {
 	Dialog mDialog = null;
 	private Context mContext = null;
-	private IHintDialog mIDialogInstance = null;
+	private ICustomDialog mIDialogInstance = null;
 	
-	public HintDialog(Context context) {
+	public CustomDialog(Context context) {
 		mContext = context;
 		
 		mDialog = new AlertDialog(mContext){
@@ -29,7 +29,7 @@ public class HintDialog {
 		mDialog.setCanceledOnTouchOutside(false);
 	}
 
-	public void showDialog(int iLayoutResId,IHintDialog interfaceInstance){
+	public void showDialog(int iLayoutResId,ICustomDialog interfaceInstance){
 		if(mDialog == null||iLayoutResId == 0){
 			return;
 		}
@@ -56,7 +56,7 @@ public class HintDialog {
 		return false;
 	}
 
-	public interface IHintDialog{
+	public interface ICustomDialog{
 		public boolean onKeyDown(int keyCode, KeyEvent event);
 		public void showWindowDetail(Window window);
 	}

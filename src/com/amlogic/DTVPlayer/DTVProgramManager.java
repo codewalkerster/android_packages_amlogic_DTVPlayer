@@ -32,6 +32,13 @@ import android.view.View.OnLongClickListener;
 import android.widget.AbsListView.OnScrollListener;
 import java.lang.reflect.Field;
 
+import com.amlogic.widget.PasswordDialog;
+import com.amlogic.widget.SureDialog;
+import com.amlogic.widget.SingleChoiseDialog;
+import com.amlogic.widget.MutipleChoiseDialog;
+import com.amlogic.widget.CustomDialog;
+import com.amlogic.widget.CustomDialog.ICustomDialog;
+
 public class DTVProgramManager extends DTVActivity{
 	private static final String TAG="DTVProgramManager";
 	
@@ -169,18 +176,12 @@ public class DTVProgramManager extends DTVActivity{
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,int position, long id) {
 				Log.d(TAG,"long Click");
-				createMenuChoiceDialog(position);
-				mMenuChoiceDialog.show();
-				WindowManager.LayoutParams lp=mMenuChoiceDialog.getWindow().getAttributes();
-				lp.dimAmount=0.0f;
-				mMenuChoiceDialog.getWindow().setAttributes(lp);
-				mMenuChoiceDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+				createMenuChoiceDialog(DTVProgramManager.this ,position);
 				return false;
 			}
 		});
 		
 		ListView_programmanager.setAdapter(myAdapter);
-
 		create_group_button();
 	}
 
@@ -404,153 +405,132 @@ public class DTVProgramManager extends DTVActivity{
 			Log.d(TAG,">>>"+j+"item="+items[j]+"----"+b[j]);
 		}
 		
-		AlertDialog builder = new AlertDialog.Builder(DTVProgramManager.this) 
-		.setTitle(R.string.add)
-		.setPositiveButton(R.string.ok, new  DialogInterface.OnClickListener(){
-			public void onClick(DialogInterface arg0, int arg1) {
-				// TODO Auto-generated method stub
-				System.out.println("arg0 " + arg0);
-				System.out.println("arg1 " + arg1);
+		new MutipleChoiseDialog(DTVProgramManager.this,items,b,0){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.add));
+			}
+			public void onSetNegativeButton(){
 				
+			}
+			public void onSetPositiveButton(int which,boolean[] b){
+				if(b!=null)
 				for(int index = 0;index < group.length;index++){
+					Log.d(TAG,"position: "+index+"is "+ b[index]);
 					if(b[index])
 						addIntoGroup(p,group[index].getID());
 				}
-				
 			}
-		})
-		.setNegativeButton(R.string.cancel, new  DialogInterface.OnClickListener(){
-
-			//@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				//System.out.println("arg0 " + dialog);
-				//System.out.println("arg1 " + which);
-			}
-		 
-		})
-		.setMultiChoiceItems(items, b, new DialogInterface.OnMultiChoiceClickListener() {
-		 
-			//@Override
-			public void onClick(DialogInterface dialog, int which, boolean isChecked) {										
-				// TODO Auto-generated method stub
-				Log.d(TAG,"index="+which+"---boolean="+isChecked);
-				b[which]= isChecked;
-			}
-		}).create();
-		 
-		builder.show();
-		WindowManager.LayoutParams lp=builder.getWindow().getAttributes();
-		lp.dimAmount=0.0f;
-		builder.getWindow().setAttributes(lp);
-		builder.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-		//builder.getWindow().setLayout(500, -1);	
-	
+		};
 	}
 	
-
-	AlertDialog mMenuChoiceDialogForGroup=null;
-	AlertDialog mEditDialogForGroup=null;
-	void createMenuChoiceDialogForGroup(){
-		String[] itemChoices = {
+	void createMenuChoiceDialogForGroup(Context context){
+		final Context mContext = context;
+		final String[] itemChoices = {
 			getString(R.string.add),
 			getString(R.string.edit),
 			getString(R.string.delete)
 		};
-		
-		mMenuChoiceDialogForGroup = new AlertDialog.Builder(this).setItems(itemChoices, new DialogInterface.OnClickListener() {			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-			switch (which) {
-				case 0:  //add
-					mEditDialogForGroup = new AlertDialog.Builder(DTVProgramManager.this)
-					.setTitle(R.string.edit)
-					.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
-							
-						}
-					})
-					.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-						
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							EditText edtText  = (EditText)(mEditDialogForGroup.findViewById(0x10000001));
-							DTVProgramManagerAddGroup(edtText.getText().toString());
-							DTVProgramManagerGroupButtonData();
-							refreshGroupButton();
-							//myAdapter.notifyDataSetChanged();
-						}
-					}).create();
-				
-					EditText editText = new EditText(DTVProgramManager.this);
-					editText.setGravity(Gravity.LEFT);
-					editText.setId(0x10000001);
-					mEditDialogForGroup.setView(editText);
-					mEditDialogForGroup.show();
-					WindowManager.LayoutParams lp=mEditDialogForGroup.getWindow().getAttributes();
-					lp.dimAmount=0.0f;
-					mEditDialogForGroup.getWindow().setAttributes(lp);
-					mEditDialogForGroup.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-					mEditDialogForGroup.getWindow().setLayout(500, -1); 
-					break;
-				
-				case 1: //edit
-					if(TVProgramCurrentId!=-1){
-						mEditDialogForGroup = new AlertDialog.Builder(DTVProgramManager.this)
-						.setTitle(R.string.edit)
-						.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-							
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								// TODO Auto-generated method stub
-								/*
-								setMoveMode(true);		
-								changeOpDesc();
-								setMoveItemPos(myAdapter.getSelectItem());
-								myAdapter.notifyDataSetChanged();
-								*/
-							}
-						})
-						.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								EditText edtText  = (EditText)(mEditDialogForGroup.findViewById(0x10000002));
-								editCurrentGroupName(edtText.getText().toString());
-								DTVProgramManagerGroupButtonData();
-							}
-						}).create();
 
-						EditText editText1 = new EditText(DTVProgramManager.this);
-						//editText1.setInputType(InputType.TYPE_CLASS_NUMBER);
-						editText1.setGravity(Gravity.LEFT);
-						editText1.setId(0x10000002);
-						editText1.setText(mProgramGroup[getVProgramCurrentIndex()].getName());
-						mEditDialogForGroup.setView(editText1);
-						mEditDialogForGroup.show();
-						WindowManager.LayoutParams lp1=mEditDialogForGroup.getWindow().getAttributes();
-						lp1.dimAmount=0.0f;
-						mEditDialogForGroup.getWindow().setAttributes(lp1);
-						mEditDialogForGroup.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-						mEditDialogForGroup.getWindow().setLayout(500, -1); 
-					}	
-					break;
-				case 2:
-					deleteCurrentGroup();
-					DTVProgramManagerGroupButtonData();
-					refreshGroupButton();
-					break;	
-				default:
-					break;
+		final CustomDialog mCustomDialog = new CustomDialog(mContext);
+		mCustomDialog.showDialog(R.layout.list_menu, new ICustomDialog(){
+				public boolean onKeyDown(int keyCode, KeyEvent event){
+					if(keyCode == KeyEvent.KEYCODE_BACK)
+						mCustomDialog.dismissDialog();
+					return false;
 				}
-			}
-		}).create();
+				public void showWindowDetail(Window window){
+					TextView title = (TextView)window.findViewById(R.id.title);
+					title.setText("Group Operations");
+					
+					ListView list_item = (ListView)window.findViewById(R.id.list_item);
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,android.R.layout.simple_expandable_list_item_1,itemChoices);
+					list_item.setAdapter(adapter);  
+					list_item.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+						public void onItemClick(AdapterView<?> parent, View v, int position, long id){			
+							switch(position){
+								case 0: //add
+									final CustomDialog mAddCustomDialog = new CustomDialog(mContext);
+										mAddCustomDialog.showDialog(R.layout.edit_dialog, new ICustomDialog(){
+											public boolean onKeyDown(int keyCode, KeyEvent event){
+												if(keyCode == KeyEvent.KEYCODE_BACK)
+													mAddCustomDialog.dismissDialog();
+												return false;
+											}
+											public void showWindowDetail(Window window){
+												TextView title = (TextView)window.findViewById(R.id.title);
+												title.setText(R.string.add);
+												final EditText mAddText = (EditText)window.findViewById(R.id.edit);
+												mAddText.setText(null);
+												Button no = (Button)window.findViewById(R.id.no);
+												no.setText(R.string.no);
+												Button yes = (Button)window.findViewById(R.id.yes);
+												yes.setText(R.string.yes);
+												no.setOnClickListener(new OnClickListener(){
+													public void onClick(View v) {
+														mAddCustomDialog.dismissDialog();
+													}
+												});	 
+												yes.setOnClickListener(new OnClickListener(){
+													public void onClick(View v) {	
+														DTVProgramManagerAddGroup(mAddText.getText().toString());
+														DTVProgramManagerGroupButtonData();
+														refreshGroupButton();
+														mAddCustomDialog.dismissDialog();
+													}
+												});	    
+											}
+										});
+									break;
+								case 1: //edit
+									if(TVProgramCurrentId!=-1){
+										final CustomDialog mEditCustomDialog = new CustomDialog(mContext);
+										mEditCustomDialog.showDialog(R.layout.edit_dialog, new ICustomDialog(){
+											public boolean onKeyDown(int keyCode, KeyEvent event){
+												if(keyCode == KeyEvent.KEYCODE_BACK)
+													mEditCustomDialog.dismissDialog();
+												return false;
+											}
+											public void showWindowDetail(Window window){
+												TextView title = (TextView)window.findViewById(R.id.title);
+												title.setText(R.string.edit);
+												final EditText mEditText = (EditText)window.findViewById(R.id.edit);
+												mEditText.setText(mProgramGroup[getVProgramCurrentIndex()].getName());
+												Button no = (Button)window.findViewById(R.id.no);
+												no.setText(R.string.no);
+												Button yes = (Button)window.findViewById(R.id.yes);
+												yes.setText(R.string.yes);
+												no.setOnClickListener(new OnClickListener(){
+													public void onClick(View v) {
+														mEditCustomDialog.dismissDialog();
+													}
+												});	 
+												yes.setOnClickListener(new OnClickListener(){
+													public void onClick(View v) {	
+														editCurrentGroupName(mEditText.getText().toString());
+														DTVProgramManagerGroupButtonData();
+														mEditCustomDialog.dismissDialog();
+													}
+												});	    
+											}
+										});
+									}	
+									break;
+								case 2: //delete
+									deleteCurrentGroup();
+									DTVProgramManagerGroupButtonData();
+									refreshGroupButton();
+									break;
+							}
+						}
+					}	
+					);
+				}
+			}	
+		);		
 	}
 
-	AlertDialog mMenuChoiceDialog=null;
-	AlertDialog mEditDialog=null;
-	void createMenuChoiceDialog(int position){
+	void createMenuChoiceDialog(Context context, int position){
+		final Context mContext = context;
 		final int pos = position;
 		boolean fav = false; 
 		boolean lock = false;
@@ -562,7 +542,7 @@ public class DTVProgramManager extends DTVActivity{
 			//skip = mTVProgramList[pos].get
 		}
 		
-		String[] itemChoices = {
+		final String[] itemChoices = {
 			getString(R.string.edit),
 			getString(R.string.delete),
 			(fav==false)?getString(R.string.add_fav):getString(R.string.del_fav),
@@ -571,65 +551,82 @@ public class DTVProgramManager extends DTVActivity{
 			getString(R.string.move),
 			getString(R.string.add_into_group)
 		};
-		
-		mMenuChoiceDialog = new AlertDialog.Builder(this).setItems(itemChoices, new DialogInterface.OnClickListener() {			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				switch (which) {
-					case 0: //edit
-						mEditDialog = new AlertDialog.Builder(DTVProgramManager.this)
-						.setTitle(R.string.edit)
-						.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								// TODO Auto-generated method stub
-								
-							}
-						})
-						.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-							
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								EditText edtText  = (EditText)(mEditDialog.findViewById(0x10000001));
-								mTVProgramList[pos].setProgramName(edtText.getText().toString());
-								myAdapter.notifyDataSetChanged();
-							}
-						}).create();
+
+		final CustomDialog mCustomDialog = new CustomDialog(mContext);
+		mCustomDialog.showDialog(R.layout.list_menu, new ICustomDialog(){
+				public boolean onKeyDown(int keyCode, KeyEvent event){
+					if(keyCode == KeyEvent.KEYCODE_BACK)
+						mCustomDialog.dismissDialog();
+					return false;
+				}
+				public void showWindowDetail(Window window){
+					TextView title = (TextView)window.findViewById(R.id.title);
+					title.setText("Program Operations");
 					
-						EditText editText = new EditText(DTVProgramManager.this);
-						editText.setGravity(Gravity.LEFT);
-						editText.setId(0x10000001);
-						editText.setText(mTVProgramList[pos].getName());
-						mEditDialog.setView(editText);
-						mEditDialog.show();
-						WindowManager.LayoutParams lp=mEditDialog.getWindow().getAttributes();
-						lp.dimAmount=0.0f;
-						mEditDialog.getWindow().setAttributes(lp);
-						mEditDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-						mEditDialog.getWindow().setLayout(500, -1); 
-						break;
-					case 1: //delete
-						deleteProgramFromDB(pos);
-						myAdapter.notifyDataSetChanged();
-						break;
-					case 2: //fav
-						dealFav(pos);
-						myAdapter.notifyDataSetChanged();
-						break;
-					case 3: //lock
-						dealLock(pos);
-						myAdapter.notifyDataSetChanged();
-						break;
-					case 4: //move
-						break;
-					case 5: //add into group
-						programGroupOperate(pos);
-						break;
-					default:
-						break;
-					}
-			}
-		}).create();
+					ListView list_item = (ListView)window.findViewById(R.id.list_item);
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,android.R.layout.simple_expandable_list_item_1,itemChoices);
+					list_item.setAdapter(adapter);  
+					list_item.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+						public void onItemClick(AdapterView<?> parent, View v, int position, long id){			
+							switch(position){
+								case 0: //edit
+									final CustomDialog mEditCustomDialog = new CustomDialog(mContext);
+									mEditCustomDialog.showDialog(R.layout.edit_dialog, new ICustomDialog(){
+										public boolean onKeyDown(int keyCode, KeyEvent event){
+											if(keyCode == KeyEvent.KEYCODE_BACK)
+												mEditCustomDialog.dismissDialog();
+											return false;
+										}
+										public void showWindowDetail(Window window){
+											TextView title = (TextView)window.findViewById(R.id.title);
+											title.setText(R.string.edit);
+											final EditText mEditText = (EditText)window.findViewById(R.id.edit);
+											mEditText.setText(mTVProgramList[pos].getName());
+											Button no = (Button)window.findViewById(R.id.no);
+											no.setText(R.string.no);
+											Button yes = (Button)window.findViewById(R.id.yes);
+											yes.setText(R.string.yes);
+											no.setOnClickListener(new OnClickListener(){
+												public void onClick(View v) {
+													mEditCustomDialog.dismissDialog();
+												}
+											});	 
+											yes.setOnClickListener(new OnClickListener(){
+												public void onClick(View v) {	
+													mTVProgramList[pos].setProgramName(mEditText.getText().toString());
+													myAdapter.notifyDataSetChanged();
+													mEditCustomDialog.dismissDialog();
+												}
+											});	    
+										}
+									});
+									break;
+								case 1: //delete
+									deleteProgramFromDB(pos);
+									myAdapter.notifyDataSetChanged();
+									break;
+								case 2: //fav
+									dealFav(pos);
+									myAdapter.notifyDataSetChanged();
+									break;
+								case 3: //lock
+									dealLock(pos);
+									myAdapter.notifyDataSetChanged();
+									break;
+								case 4: //move
+									break;
+								case 5: //add into group
+									programGroupOperate(pos);
+									break;
+								default:
+									break;
+							}
+						}
+					}	
+					);
+				}
+			}	
+		);		
 	}
 
 	private void create_group_button() {
@@ -656,12 +653,8 @@ public class DTVProgramManager extends DTVActivity{
 			TempButton.setOnLongClickListener(new OnLongClickListener() {
 				public boolean onLongClick(View view) {
 					Log.d(TAG,"long Click");
-					createMenuChoiceDialogForGroup();
-					mMenuChoiceDialogForGroup.show();
-					WindowManager.LayoutParams lp=mMenuChoiceDialogForGroup.getWindow().getAttributes();
-					lp.dimAmount=0.0f;
-					mMenuChoiceDialogForGroup.getWindow().setAttributes(lp);
-					mMenuChoiceDialogForGroup.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+					createMenuChoiceDialogForGroup(DTVProgramManager.this);
+					
 					return false;
 				}
 			});
@@ -705,12 +698,8 @@ public class DTVProgramManager extends DTVActivity{
 			TempButton.setOnLongClickListener(new OnLongClickListener() {
 				public boolean onLongClick(View view) {
 					Log.d(TAG,"long Click");
-					createMenuChoiceDialogForGroup();
-					mMenuChoiceDialogForGroup.show();
-					WindowManager.LayoutParams lp=mMenuChoiceDialogForGroup.getWindow().getAttributes();
-					lp.dimAmount=0.0f;
-					mMenuChoiceDialogForGroup.getWindow().setAttributes(lp);
-					mMenuChoiceDialogForGroup.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+					createMenuChoiceDialogForGroup(DTVProgramManager.this);
+					
 					return false;
 				}
 			});

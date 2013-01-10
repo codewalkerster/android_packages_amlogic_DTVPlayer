@@ -24,6 +24,7 @@ import android.graphics.*;
 import android.text.*;
 import android.text.method.*;
 import java.lang.reflect.Field;
+import com.amlogic.widget.SingleChoiseDialog;
 
 public class DTVCaptionOptions extends DTVActivity {
 	private final static String TAG="###DigitalCaptionOptions###";
@@ -412,62 +413,27 @@ public class DTVCaptionOptions extends DTVActivity {
 
 	private void showFontSizeDialog(TextView v){
 		final TextView info_cur = v;
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		
+
 		int pr = getFontSizeMode();
 		int pos = pr;
 		String items[] = new String[FontSize_menu_items.length];
 		for(int i=0;i<FontSize_menu_items.length;i++){
 			items[i]=getString(FontSize_menu_items[i]);
 		}
+		
+		new SingleChoiseDialog(DTVCaptionOptions.this,items,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.cc_digital_options_size));
+			}
 
-		builder.setTitle(R.string.cc_digital_options_size);
-		//builder.setIcon( android.R.drawable.ic_dialog_info);
-		builder.setSingleChoiceItems(items,
-				pos,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						//setFontSize(0);
-						//info_cur.setText(getFontSize());
-					}
-		});
-		builder.setNegativeButton(R.string.cancel, new  DialogInterface.OnClickListener(){
- 				//@Override
- 				public void onClick(DialogInterface dialog, int which) {
- 					// TODO Auto-generated method stub
- 					dialog.dismiss();
- 				}
-        		 
-        	});
-		builder.setPositiveButton(R.string.ok, new  DialogInterface.OnClickListener(){
- 				public void onClick(DialogInterface arg0, int arg1) {
- 					// TODO Auto-generated method stub
- 					Log.d(TAG,">>>>"+arg1);
-					setFontSize(0);
- 				}
-        	});
-		
-		AlertDialog dialog = builder.create();
-		dialog.setOnShowListener(new DialogInterface.OnShowListener(){
-			public void onShow(DialogInterface dialog) {
-			}         
-		}); 	
-
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-			public void onDismiss(DialogInterface dialog) {
-			}         
-		});	
-		
-		dialog.show();  
-		WindowManager m = getWindowManager();   
-		Display d = m.getDefaultDisplay();  	
-		WindowManager.LayoutParams lp=dialog.getWindow().getAttributes();
-		lp.dimAmount=0.0f;
-		//lp.height = (int) (d.getHeight() * 0.6);  
-		lp.width = (int) (d.getWidth() * 0.50);
-		
-		dialog.getWindow().setAttributes(lp);
-		dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				setFontSize(which);
+				info_cur.setText(getFontSize());
+			}
+		};
 	}	
 	
 }

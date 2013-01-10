@@ -25,6 +25,7 @@ import android.content.*;
 import android.graphics.*;
 import android.text.*;
 import android.text.method.*;
+import com.amlogic.widget.SureDialog;
 
 public class DTVTimeshifting extends DTVActivity{
 	private static final String TAG="DTVTimeshifting";
@@ -323,28 +324,18 @@ public class DTVTimeshifting extends DTVActivity{
     }
 
 	private void showTimeshiftDialog(){
-		AlertDialog.Builder builder = new AlertDialog.Builder(DTVTimeshifting.this); 
-			builder.setMessage(R.string.timeshifting_exit_message)
-			.setCancelable(false)
-			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener(){
-				public void onClick(DialogInterface dialog, int id) {
-					DTVTimeShiftingStop();
-					finish();	
-					dialog.dismiss();
-				}        
-			 })        
-			.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.dismiss();            
-					}        
-			 }); 
-			AlertDialog alert = builder.create();
-			alert.show();
+		new SureDialog(DTVTimeshifting.this){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.timeshifting_exit_message));
+			}
 
-			WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-			lp.dimAmount=0.0f;
-			alert.getWindow().setAttributes(lp);
-			alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+			public void onSetNegativeButton(){
+			}
+			public void onSetPositiveButton(){
+				DTVTimeShiftingStop();
+				finish();	
+			}
+		};
 	}
 
 
@@ -384,6 +375,10 @@ public class DTVTimeshifting extends DTVActivity{
 				Log.d(TAG,"KEYCODE_TV_REPEAT");
 				DTVPlayer.showSubtitleSettingMenu(DTVTimeshifting.this);
 				return true;	
+			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
+				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_VOICEMODE");
+				DTVPlayer.showAudioLanguageDialog(DTVTimeshifting.this);
+				return true;		
 			case KeyEvent.KEYCODE_TAB: //info
 				if(teletext_bar_flag){
 				}
@@ -391,118 +386,114 @@ public class DTVTimeshifting extends DTVActivity{
 			case KeyEvent.KEYCODE_TV_SUBTITLE:
 				
 				break;
-			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
-				break;		
+		
+			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+				play.requestFocus();
+				
+				if (play_status == STAT_PLAY)
+				{
+					DTVTimeShiftingPause();
+					play_status = STAT_PAUSE;
+					play.setBackgroundResource(R.drawable.pause_button);
+					TimeshiftingIcon.setImageResource(R.drawable.timeshifting_pause);
+				}
+				else if (play_status == STAT_PAUSE)
+				{	
+					DTVTimeShiftingResume();
+					play_status = STAT_PLAY;
+					play.setBackgroundResource(R.drawable.play_button);
+					TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
+				}
+				else if (play_status == STAT_FF)
+				{
+					DTVTimeShiftingForward(0);
+					play_status = STAT_PLAY;
+					speed = 0;
+					play.setBackgroundResource(R.drawable.play_button);
+					TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
 
-		case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-			play.requestFocus();
-			
-			if (play_status == STAT_PLAY)
-			{
-				DTVTimeShiftingPause();
-				play_status = STAT_PAUSE;
-				play.setBackgroundResource(R.drawable.pause_button);
-				TimeshiftingIcon.setImageResource(R.drawable.timeshifting_pause);
-			}
-			else if (play_status == STAT_PAUSE)
-			{	
-				DTVTimeShiftingResume();
-				play_status = STAT_PLAY;
+				}
+				else if (play_status == STAT_FB)
+				{
+					DTVTimeShiftingBackward(0);
+					play_status = STAT_PLAY;
+					speed = 0;
+					play.setBackgroundResource(R.drawable.play_button);
+					TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
+
+				}
+				else
+				{
+					DTVTimeShiftingPlay();
+					play_status = STAT_PLAY;
+					play.setBackgroundResource(R.drawable.play_button);
+					TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
+
+				}
+				return true;
+			case KeyEvent.KEYCODE_MEDIA_REWIND:
+			case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
+				fastreverse.requestFocus();
+				if (play_status == STAT_FB)
+				{
+					if (speed < 8)
+						speed=speed*2;
+				}
+				else
+				{
+					speed = 2;
+					play_status = STAT_FB;
+				}
+				
+
+				DTVTimeShiftingBackward(speed);
+
 				play.setBackgroundResource(R.drawable.play_button);
-				TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
-			}
-			else if (play_status == STAT_FF)
-			{
-				DTVTimeShiftingForward(0);
-				play_status = STAT_PLAY;
-				speed = 0;
+
+				switch(speed)
+				{
+					case 2:
+						TimeshiftingIcon.setImageResource(R.drawable.backward_speed_2);
+						break;
+					case 4:
+						TimeshiftingIcon.setImageResource(R.drawable.backward_speed_4);
+						break;
+					case 8:
+						TimeshiftingIcon.setImageResource(R.drawable.backward_speed_8);
+						break;	
+				}
+
+				return true;
+			case KeyEvent.KEYCODE_MEDIA_NEXT:
+			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: 
+				fastforword.requestFocus();
+				if (play_status == STAT_FF)
+				{
+					if (speed < 8)
+						speed=speed*2;
+				}
+				else
+				{
+					speed = 2;
+					play_status = STAT_FF;
+				}
+				
+				DTVTimeShiftingForward(speed);
+
 				play.setBackgroundResource(R.drawable.play_button);
-				TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
-
-			}
-			else if (play_status == STAT_FB)
-			{
-				DTVTimeShiftingBackward(0);
-				play_status = STAT_PLAY;
-				speed = 0;
-				play.setBackgroundResource(R.drawable.play_button);
-				TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
-
-			}
-			else
-			{
-				DTVTimeShiftingPlay();
-				play_status = STAT_PLAY;
-				play.setBackgroundResource(R.drawable.play_button);
-				TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
-
-			}
-			return true;
-		case KeyEvent.KEYCODE_MEDIA_REWIND:
-		case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
-			fastreverse.requestFocus();
-			if (play_status == STAT_FB)
-			{
-				if (speed < 8)
-					speed=speed*2;
-			}
-			else
-			{
-				speed = 2;
-				play_status = STAT_FB;
-			}
-			
-
-			DTVTimeShiftingBackward(speed);
-
-			play.setBackgroundResource(R.drawable.play_button);
-
-			switch(speed)
-			{
-				case 2:
-					TimeshiftingIcon.setImageResource(R.drawable.backward_speed_2);
-					break;
-				case 4:
-					TimeshiftingIcon.setImageResource(R.drawable.backward_speed_4);
-					break;
-				case 8:
-					TimeshiftingIcon.setImageResource(R.drawable.backward_speed_8);
-					break;	
-			}
-
-			return true;
-		case KeyEvent.KEYCODE_MEDIA_NEXT:
-		case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: 
-			fastforword.requestFocus();
-			if (play_status == STAT_FF)
-			{
-				if (speed < 8)
-					speed=speed*2;
-			}
-			else
-			{
-				speed = 2;
-				play_status = STAT_FF;
-			}
-			
-			DTVTimeShiftingForward(speed);
-
-			play.setBackgroundResource(R.drawable.play_button);
-			switch(speed)
-			{
-				case 2:
-					TimeshiftingIcon.setImageResource(R.drawable.forward_speed_2);
-					break;
-				case 4:
-					TimeshiftingIcon.setImageResource(R.drawable.forward_speed_4);
-					break;
-				case 8:
-					TimeshiftingIcon.setImageResource(R.drawable.forward_speed_8);
-					break;	
-			}
-			return true;
-			
-
+				switch(speed)
+				{
+					case 2:
+						TimeshiftingIcon.setImageResource(R.drawable.forward_speed_2);
+						break;
+					case 4:
+						TimeshiftingIcon.setImageResource(R.drawable.forward_speed_4);
+						break;
+					case 8:
+						TimeshiftingIcon.setImageResource(R.drawable.forward_speed_8);
+						break;	
+				}
+				return true;
 		}
 		
 		return super.onKeyDown(keyCode, event);
