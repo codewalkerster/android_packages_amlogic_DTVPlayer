@@ -2,6 +2,7 @@ package com.amlogic.DTVPlayer;
 
 import android.util.Log;
 import android.os.Bundle;
+import android.content.Context;
 import com.amlogic.tvutil.TVMessage;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVProgram;
@@ -13,7 +14,13 @@ import com.amlogic.tvutil.TVConst;
 
 public class DTVSettings extends DTVActivity{
 	private static final String TAG="DTVSettings";
-	
+	private Context mContext=null;
+
+	/*
+	public DTVSettings(Context context){
+		mContext = context;
+	}
+	*/
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);

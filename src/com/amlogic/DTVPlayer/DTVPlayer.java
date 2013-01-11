@@ -507,7 +507,7 @@ public class DTVPlayer extends DTVActivity{
 		RelativeLayout_radio_bg.setVisibility(View.INVISIBLE);
 		
 		init_Animation();
-		DTVSettings mDTVSettings=new DTVSettings(this);
+		DTVSettings mDTVSettings=new DTVSettings();
 		mDTVSettings.setTeltextBound();
 	}
 
