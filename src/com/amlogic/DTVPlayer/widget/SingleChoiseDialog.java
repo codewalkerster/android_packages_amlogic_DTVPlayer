@@ -77,6 +77,7 @@ abstract public class SingleChoiseDialog {
 		yes = (Button)window.findViewById(R.id.yes);
 		yes.setText(R.string.yes);
 		title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
 		onSetMessage(title);
 
 		/*ListView Item*/

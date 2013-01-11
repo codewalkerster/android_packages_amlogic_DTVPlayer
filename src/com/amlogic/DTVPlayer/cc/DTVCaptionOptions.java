@@ -97,63 +97,38 @@ public class DTVCaptionOptions extends DTVActivity {
 	class listOnItemClick implements OnItemClickListener{
     	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long position) {   
 			Log.d(TAG,"id---->>" + arg2+"----position----->"+position);
+			final TextView info_cur = (TextView)arg1.findViewById(R.id.info);
  			switch((int)position){
-				
  				//FontSize
  			    case 0:  
- 			    	showFontSizeDialog(null);
+ 			    	showFontSizeDialog(info_cur);
  			    	break;
-				/*	
 				//FontStyle	
 				 case 1:
- 			    	bundle = new Bundle();
- 					bundle.putInt("FontStyle",0);
- 					intent.putExtras(bundle);
- 					intent.setClass(DigitalCaptionOptions.this,FontStyle.class);
- 					startActivityForResult(intent, 21);					
+ 			    	showFontStyleDialog(info_cur);		
  			    	break;
 				//ForegroundColor	
 				 case 2:
- 			    	bundle = new Bundle();
- 					bundle.putInt("ForegroundColor",0);
- 					intent.putExtras(bundle);
- 					intent.setClass(DigitalCaptionOptions.this,ColorMode.class);
- 					startActivityForResult(intent, 22);
+ 			    	showForegroundColorDialog(info_cur);		
  			    	break;
 				//ForegroundOpacity	
 				 case 3:
- 	
- 			    	bundle = new Bundle();
- 					bundle.putInt("ForegroundOpacity",0);
- 					intent.putExtras(bundle);
- 					intent.setClass(DigitalCaptionOptions.this,OpacityMode.class);
- 					startActivityForResult(intent, 23);
- 					
+ 			    	showForegroundOpacityDialog(info_cur);		
  			    	break;
 				//BackgroundColor	
 				 case 4:
  			    
- 			    	bundle = new Bundle();
- 					bundle.putInt("BackgroundColor", 0);
- 					intent.putExtras(bundle);
- 					intent.setClass(DigitalCaptionOptions.this,ColorMode.class);
- 					startActivityForResult(intent, 24);
+ 			    	showBackgroundColorDialog(info_cur);		
  			    	break;
 				//BackgroundOpacity	
 				 case 5:
- 			   
- 			    	bundle = new Bundle();
- 					bundle.putInt("BackgroundOpacity", 0);
- 					intent.putExtras(bundle);
- 					intent.setClass(DigitalCaptionOptions.this,OpacityMode.class);
- 					startActivityForResult(intent, 25);
+ 			    	showBackgroundOpacityDialog(info_cur);		
  			    	break;
 				//ReturnToDefault	
 				 case 6:
 				 	
  			    	break;
-				*/	
- 					
+					
  			}
 			/*
 			int version = Integer.valueOf(android.os.Build.VERSION.SDK);
@@ -351,62 +326,95 @@ public class DTVCaptionOptions extends DTVActivity {
 		R.string.cc_digital_options_opacity_flashing
 	};
 
-	private int getFontSizeMode(){
+	public int getFontSizeMode(){
 		int mode =0;
 		mode = getIntConfig("tv:atsc:cc:fontsize");
 		return mode;
 	}
 
-	private String getFontSize(){
+	public String getFontSize(){
 		int mode =0;
 		mode = getIntConfig("tv:atsc:cc:fontsize");
 		return getString(FontSize_menu_items[mode]);
 	}
 
-	private void setFontSize(int mode){
+	public void setFontSize(int mode){
 		setConfig("tv:atsc:cc:fontsize",mode);
 	}
 	
-	private String getFontStyle(){
+	public String getFontStyle(){
 		int mode = 0;
 		mode = getIntConfig("tv:atsc:cc:fontstyle");
 		return getString(FontStyle_menu_items[mode]);
 	}	
 
-	private void setFontStyle(int mode){
+	public int getFontStyleMode(){
+		int mode = 0;
+		mode = getIntConfig("tv:atsc:cc:fontstyle");
+		return mode;
+	}	
+
+	public void setFontStyle(int mode){
 		setConfig("tv:atsc:cc:fontstyle",mode);
 	}
-	private String getForegroundColor(){
+	
+	public String getForegroundColor(){
 		int mode = getIntConfig("tv:atsc:cc:foregroundcolor");
 		return getString(ColorMode_menu_items[mode]);
 	}
 
-	private void setForegroundColor(int mode){
+	public int getForegroundColorMode(){
+		int mode = 0;
+		mode = getIntConfig("tv:atsc:cc:foregroundcolor");
+		return mode;
+	}
+	
+	public void setForegroundColor(int mode){
 		setConfig("tv:atsc:cc:foregroundcolor",mode);
 	}
 	
-	private String getForegroundOpacity(){
+	public String getForegroundOpacity(){
 		int mode = getIntConfig("tv:atsc:cc:foregroundopacity");
 		return getString(OpacityMode_menu_items[mode]);
 	}	
 
-	private void setForegroundOpacity(int mode){
+	public int getForegroundOpacityMode(){
+		int mode = 0;
+		mode = getIntConfig("tv:atsc:cc:foregroundopacity");
+		return mode;
+	}
+		
+	public void setForegroundOpacity(int mode){
 		setConfig("tv:atsc:cc:foregroundopacity",mode);
 	}
-	private String getBackgroundColor	(){
+	
+	public String getBackgroundColor	(){
 		int mode = getIntConfig("tv:atsc:cc:backgroundcolor");
 		return getString(ColorMode_menu_items[mode]);
 	}
-	private void setBackgroundColor(int mode){
+
+	public int getBackgroundColorMode(){
+		int mode=0;
+		mode = getIntConfig("tv:atsc:cc:backgroundcolor");
+		return mode;
+	}
+	
+	public void setBackgroundColor(int mode){
 		setConfig("tv:atsc:cc:backgroundcolor",mode);
 	}
 	
-	private String getBackgroundOpacity	(){
+	public String getBackgroundOpacity	(){
 		int mode = getIntConfig("tv:atsc:cc:backgroundopacity");
 		return getString(OpacityMode_menu_items[mode]);
 	}
 
-	private void setBackgroundOpacity(int mode){
+	public int getBackgroundOpacityMode(){
+		int mode=0;
+		mode = getIntConfig("tv:atsc:cc:backgroundopacity");
+		return mode;
+	}
+	
+	public void setBackgroundOpacity(int mode){
 		setConfig("tv:atsc:cc:backgroundopacity",mode);
 	}
 
@@ -432,6 +440,131 @@ public class DTVCaptionOptions extends DTVActivity {
 			public void onSetPositiveButton(int which){
 				setFontSize(which);
 				info_cur.setText(getFontSize());
+			}
+		};
+	}	
+
+	private void showFontStyleDialog(TextView v){
+		final TextView info_cur = v;
+
+		int pr = getFontStyleMode();
+		int pos = pr;
+		String items[] = new String[FontStyle_menu_items.length];
+		for(int i=0;i<FontStyle_menu_items.length;i++){
+			items[i]=getString(FontStyle_menu_items[i]);
+		}
+		
+		new SingleChoiseDialog(DTVCaptionOptions.this,items,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.cc_digital_options_font_sytle));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				setFontStyle(which);
+				info_cur.setText(getFontStyle());
+			}
+		};
+	}	
+
+	private void showForegroundColorDialog(TextView v){
+		final TextView info_cur = v;
+
+		int pr = getForegroundColorMode();
+		int pos = pr;
+		String items[] = new String[ColorMode_menu_items.length];
+		for(int i=0;i<ColorMode_menu_items.length;i++){
+			items[i]=getString(ColorMode_menu_items[i]);
+		}
+		
+		new SingleChoiseDialog(DTVCaptionOptions.this,items,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.cc_digital_options_foreground_color));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				setForegroundColor(which);
+				info_cur.setText(getForegroundColor());
+			}
+		};
+	}
+
+	private void showForegroundOpacityDialog(TextView v){
+		final TextView info_cur = v;
+
+		int pr = getForegroundOpacityMode();
+		int pos = pr;
+		String items[] = new String[OpacityMode_menu_items.length];
+		for(int i=0;i<OpacityMode_menu_items.length;i++){
+			items[i]=getString(OpacityMode_menu_items[i]);
+		}
+		
+		new SingleChoiseDialog(DTVCaptionOptions.this,items,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.cc_digital_options_foreground_opacity));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				setForegroundOpacity(which);
+				info_cur.setText(getForegroundOpacity());
+			}
+		};
+	}
+
+	private void showBackgroundColorDialog(TextView v){
+		final TextView info_cur = v;
+
+		int pr = getBackgroundColorMode();
+		int pos = pr;
+		String items[] = new String[ColorMode_menu_items.length];
+		for(int i=0;i<ColorMode_menu_items.length;i++){
+			items[i]=getString(ColorMode_menu_items[i]);
+		}
+		
+		new SingleChoiseDialog(DTVCaptionOptions.this,items,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.cc_digital_options_background_color));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				setBackgroundColor(which);
+				info_cur.setText(getBackgroundColor());
+			}
+		};
+	}
+
+	private void showBackgroundOpacityDialog(TextView v){
+		final TextView info_cur = v;
+
+		int pr = getBackgroundOpacityMode();
+		int pos = pr;
+		String items[] = new String[OpacityMode_menu_items.length];
+		for(int i=0;i<OpacityMode_menu_items.length;i++){
+			items[i]=getString(OpacityMode_menu_items[i]);
+		}
+		
+		new SingleChoiseDialog(DTVCaptionOptions.this,items,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.cc_digital_options_background_opacity));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				setBackgroundOpacity(which);
+				info_cur.setText(getBackgroundOpacity());
 			}
 		};
 	}	

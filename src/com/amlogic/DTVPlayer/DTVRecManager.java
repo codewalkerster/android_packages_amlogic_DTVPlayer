@@ -30,6 +30,8 @@ import android.os.*;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.AbsListView.OnScrollListener;
+import com.amlogic.widget.SureDialog;
+import com.amlogic.widget.SingleChoiseDialog;
 
 public class DTVRecManager extends DTVActivity{
 	private static final String TAG="DTVRecManager";
@@ -473,43 +475,33 @@ public class DTVRecManager extends DTVActivity{
 			switch(item_status){
 				case PVR_STATUS_NOTIFIED:
 				case PVR_STATUS_REC_WAIT:
-					builder.setMessage(R.string.sure_delete)
-					.setCancelable(false)
-					.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
+					new SureDialog(DTVRecManager.this){
+						public void onSetMessage(View v){
+							((TextView)v).setText(getString(R.string.sure_delete));
+						}
+
+						public void onSetNegativeButton(){
+							
+						}
+						public void onSetPositiveButton(){
 							deletePvrData(pos);
 							getPvrData(PVR_STATUS_REC_WAIT);      
 							myAdapter.notifyDataSetChanged();
 							refresh_data();
-						    dialog.dismiss();
 						}
-					})
-					.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							 dialog.dismiss();
-						}
-					});			
-				break;
+					};	
+					break;
 				case PVR_STATUS_REC_OVER:
-					builder.setIcon( android.R.drawable.ic_dialog_info);
-					builder.setSingleChoiceItems(new String[]  { "Play", "Delete" }, 0, new DialogInterface.OnClickListener() {
-						      public void onClick(DialogInterface dialog, int which) {
-								choise = which;
-						      }
-						     });
-					builder.setNegativeButton(R.string.cancel, new  DialogInterface.OnClickListener(){
-							//@Override
-							public void onClick(DialogInterface dialog, int which) {
-								// TODO Auto-generated method stub
-								 dialog.dismiss();
-							}
-						 
-					 });
-					builder.setPositiveButton(R.string.ok, new  DialogInterface.OnClickListener(){
-						public void onClick(DialogInterface arg0, int arg1) {
-							// TODO Auto-generated method stub
-							//Log.d("#####","#####"+choise);
-							switch(choise){
+					new SingleChoiseDialog(DTVRecManager.this,new String[]  { "Play", "Delete" }, 0){
+						public void onSetMessage(View v){
+							((TextView)v).setText(getString(R.string.sure_factory_set));
+						}
+
+						public void onSetNegativeButton(){
+							
+						}
+						public void onSetPositiveButton(int which){
+							switch(which){
 								case 0:														
 									Bundle bundle_pvr_player = new Bundle();										           
 									bundle_pvr_player.putInt("booking_id", record_db_id); 	
@@ -526,32 +518,21 @@ public class DTVRecManager extends DTVActivity{
 									myAdapter.notifyDataSetChanged();
 									break;
 							}
-
 						}
-					 });	
-				break;
-				case PVR_STATUS_RECORDING:		
-					builder.setIcon( android.R.drawable.ic_dialog_info);
-					builder.setSingleChoiceItems(new String[]  { "Stop", "Delete" }, 0, new DialogInterface.OnClickListener() {
-						      public void onClick(DialogInterface dialog, int which) {
-						    	 choise = which;
-						      }
-						     });
-					builder.setNegativeButton(R.string.cancel, new  DialogInterface.OnClickListener(){
+					};	
+						
+					break;
+				case PVR_STATUS_RECORDING:	
+					new SingleChoiseDialog(DTVRecManager.this,new String[]  { "Stop", "Delete" }, 0){
+						public void onSetMessage(View v){
+							((TextView)v).setText(getString(R.string.sure_factory_set));
+						}
 
-							//@Override
-							public void onClick(DialogInterface dialog, int which) {
-								// TODO Auto-generated method stub
-								 dialog.dismiss();
-							}
-						 
-					 });
-					builder.setPositiveButton(R.string.ok, new  DialogInterface.OnClickListener(){
-
-						public void onClick(DialogInterface arg0, int arg1) {
-							// TODO Auto-generated method stub
-							Log.d("#####","#####"+arg1);
-							switch(choise){
+						public void onSetNegativeButton(){
+							
+						}
+						public void onSetPositiveButton(int which){
+							switch(which){
 								case 0:
 									DTVPlayerStopRecording();
 									break;
@@ -562,25 +543,9 @@ public class DTVRecManager extends DTVActivity{
 									myAdapter.notifyDataSetChanged();
 									break;
 							}
-							
 						}
-					 });	
-				break; 
+					};				
 			}
-			AlertDialog dialog = builder.create();
-			dialog.setOnShowListener(new DialogInterface.OnShowListener(){
-				public void onShow(DialogInterface dialog) {
-				}
-			}); 	
-			dialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-				public void onDismiss(DialogInterface dialog) {
-				}         
-			});	
-			dialog.show();  
-			WindowManager.LayoutParams lp=dialog.getWindow().getAttributes();
-			lp.dimAmount=0.0f;
-			dialog.getWindow().setAttributes(lp);
-			dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		}
 	};
 	

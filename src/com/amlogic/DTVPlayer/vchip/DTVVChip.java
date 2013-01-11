@@ -24,6 +24,7 @@ import android.graphics.*;
 import android.text.*;
 import android.text.method.*;
 import java.lang.reflect.Field;
+import com.amlogic.widget.SingleChoiseDialog;
 
 public class DTVVChip extends DTVActivity{
 	private static final String TAG="DTVVChip";
@@ -242,7 +243,7 @@ public class DTVVChip extends DTVActivity{
 	}	
 			
 	protected void onListItemClick(ListView l, View v, int position, long id){
-		Log.d("#####","#####################"+position);	
+		Log.d(TAG,"onListItemClick--->"+position);	
 	}
 		
 	public void setSwitch(boolean c){

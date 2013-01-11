@@ -24,6 +24,7 @@ import android.graphics.*;
 import android.text.*;
 import android.text.method.*;
 import java.lang.reflect.Field;
+import com.amlogic.widget.SingleChoiseDialog;
 
 public class DTVCloseCaption extends DTVActivity{
 	private static final String TAG="DTVCloseCaption";
@@ -88,30 +89,21 @@ public class DTVCloseCaption extends DTVActivity{
 	class listOnItemClick implements OnItemClickListener{
     	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long position) {   
     		Log.d(TAG,"id---->>" + arg2+"----position----->"+position);
+			final TextView info_cur = (TextView)arg1.findViewById(R.id.info);
  			switch((int)position){
-				/*
+				
  			    case 0:
- 			    	bundle = new Bundle();
- 					bundle.putInt("ScanMode", getScanMode());
- 					intent.putExtras(bundle);
- 					intent.setClass(ClosedCaptionActivity.this,CCOnOffActivity.class);
- 					startActivityForResult(intent, 11);
+ 			    	if(getCCSwitch())
+						info_cur.setText(R.string.cc_switch_off);
+					else 
+						info_cur.setText(R.string.cc_switch_on);
  			    	break;
  				case 1:
- 					bundle = new Bundle();
- 					bundle.putInt("DigitalNetworkMode", getDigitalNetworkMode());
- 					intent.putExtras(bundle);
- 					intent.setClass(ClosedCaptionActivity.this,CCBasic.class);
- 					startActivityForResult(intent, 12);
+ 					showBasicSelectionDialog(info_cur);
  					break;
  				case 2:
- 					bundle = new Bundle();
- 					bundle.putInt("AnalogNetworkMode", getAnalogNetworkMode());
- 					intent.putExtras(bundle);
- 					intent.setClass(ClosedCaptionActivity.this,CCAdvanced.class);
- 					startActivityForResult(intent, 13);	
+ 					showAdvanceSelectionDialog(info_cur);
  					break;
- 				*/		
 				case 3:
  					intent.setClass(DTVCloseCaption.this,DTVCaptionOptions.class);
  					startActivityForResult(intent, 14);	
@@ -213,21 +205,11 @@ public class DTVCloseCaption extends DTVActivity{
 					holder.text2.setVisibility(View.VISIBLE);
 					break;
 				case 1: 
-					if(getDigitalNetworkMode()==0)
-						holder.text2.setText(R.string.cc_mode_basic_conect1);
-					else if(getDigitalNetworkMode()==1)
-						holder.text2.setText(R.string.cc_mode_basic_conect2);
-					else if(getDigitalNetworkMode()==2)
-						holder.text2.setText(R.string.cc_mode_basic_conect3);
+					holder.text2.setText(getBasicSelection());
 					holder.text2.setVisibility(View.VISIBLE);
 					break;
 				case 2:
-					if(getAnalogNetworkMode()==0)
-						holder.text2.setText(R.string.cc_mode_advance_conect1);
-					else if(getAnalogNetworkMode()==1)
-						holder.text2.setText(R.string.cc_mode_advance_conect2);
-					else if(getAnalogNetworkMode()==2)
-						holder.text2.setText(R.string.cc_mode_advance_conect3);
+					holder.text2.setText(getAdvanceSelection());
 					holder.text2.setVisibility(View.VISIBLE);
 					break;
 				case 3:
@@ -243,7 +225,6 @@ public class DTVCloseCaption extends DTVActivity{
 		Log.d(TAG,"onListItemClick----->>"+position);	
 	}
 		
-		
 	public void setCCSwitch(boolean c){
 
 		return;				
@@ -254,34 +235,90 @@ public class DTVCloseCaption extends DTVActivity{
 
 		return mode;
 	}
-	
-	
-	public void setDigitalNetworkMode(String c){
 
-	
+	public void setBasicSelectionMode(int value){
 		return;				
 	}
 
-	public int getDigitalNetworkMode(){
+	public String[] getBasicSelectionItems(){
+		String[] items=new String[]{"CC1","CC2","CC3"};
+		return items;
+	}
+
+	public int getBasicSelectionMode(){
 		int mode=0;
 		return mode;
 	}
-	
-	
-	public void setAnalogNetworkMode(String c){
-	
+	public String getBasicSelection(){
+		String value=" ";
+		return value;
+	}
+
+	public void setAdvanceSelectionMode(int value){
 		return;				
 	}
 
-	public int getAnalogNetworkMode(){
+	public String[] getAdvanceSelectionItems(){
+		String[] items=new String[]{"Service1","Service2","Service3"};
+
+		return items;
+	}
+	public int getAdvanceSelectionMode(){
 		int mode=0;
 		return mode;
 	}
+
+	public String getAdvanceSelection(){
+		String value=" ";
+		return value;
+	}
+
 	
-	void setText(int position,int res_id)	{ 
-		adapter.notifyDataSetChanged();
+	private void showBasicSelectionDialog(TextView v){
+		final TextView info_cur = v;
+
+		int pr = getBasicSelectionMode();
+		int pos = pr;
+		String items[] = getBasicSelectionItems();
+		
+		new SingleChoiseDialog(DTVCloseCaption.this,items,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.cc_mode_basic));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				setBasicSelectionMode(which);
+				info_cur.setText(getBasicSelection());
+			}
+		};
 	}	
-	
+
+
+	private void showAdvanceSelectionDialog(TextView v){
+		final TextView info_cur = v;
+
+		int pr = getAdvanceSelectionMode();
+		int pos = pr;
+		String items[] = getAdvanceSelectionItems();
+		
+		new SingleChoiseDialog(DTVCloseCaption.this,items,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.cc_mode_basic));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				setBasicSelectionMode(which);
+				info_cur.setText(getBasicSelection());
+			}
+		};
+	}	
+			
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		Log.d(TAG,"onActivityResult");
@@ -293,51 +330,6 @@ public class DTVCloseCaption extends DTVActivity{
 		
 		if(resultCode == RESULT_OK){
 			switch(requestCode){
-			  case 11:
-				 switch(p){	
-				    case 0:
-				    	//setScanMode("air");
-				    	setText(0,R.string.cc_switch_on);
-				    	break;
-				    case 1:
-				    	 //setScanMode("cable");
-				    	 setText(0,R.string.cc_switch_off);
-				    	break;
-				  }
-				  break;
-			  case 12:
-				  switch(p)
-				  {	
-				    case 0:
-				    	//setDigitalNetworkMode("STD");
-				    	setText(1,R.string.cc_mode_basic_conect1);
-				    	break;
-				    case 1:
-				    	//setDigitalNetworkMode("HRC");
-				    	setText(1,R.string.cc_mode_basic_conect2);
-				    	break;
-				    case 2:
-				    	//setDigitalNetworkMode("IRC");
-				    	setText(1,R.string.cc_mode_basic_conect3);
-				    	break;	
-				  }
-				  break;
-				case 13:
-					switch(p){	
-						case 0:
-							//setAnalogNetworkMode("STD");
-							setText(2,R.string.cc_mode_advance_conect1);
-							break;
-						case 1:
-							//setAnalogNetworkMode("HRC");
-							setText(2,R.string.cc_mode_advance_conect2);
-							break;
-						case 2:
-							//setAnalogNetworkMode("IRC");
-							setText(2,R.string.cc_mode_advance_conect3);
-							break;	
-					}
-					break;
 				case 14:
 					onShow();
 					break;

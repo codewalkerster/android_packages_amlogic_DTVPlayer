@@ -271,8 +271,7 @@ public class DTVPlayer extends DTVActivity{
 				return true;
 			case KeyEvent.KEYCODE_ZOOM_OUT:
 				Log.d(TAG,"KEYCODE_ZOOM_OUT");
-				DTVPlayerStartRecording();
-				showPvrIcon();
+				showPvrDurationTimeSetDialog(DTVPlayer.this);
 				return true;
 			case KeyEvent.KEYCODE_TV_REPEAT:
 				Log.d(TAG,"KEYCODE_TV_REPEAT");
@@ -294,11 +293,9 @@ public class DTVPlayer extends DTVActivity{
 				return true;
 			case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
 				Log.d(TAG,"KEYCODE_MEDIA_PREVIOUS");	
-				showSingleChoiseDialogTest();
 				return true;
 			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: //epg
 				Log.d(TAG,"KEYCODE_MEDIA_FAST_FORWARD");
-				showMutipleChoiseDialogTest();
 				return true;
 			case KeyEvent.KEYCODE_MEDIA_NEXT: //pvr manager
 				Log.d(TAG,"KEYCODE_MEDIA_NEXT");	
@@ -510,7 +507,7 @@ public class DTVPlayer extends DTVActivity{
 		RelativeLayout_radio_bg.setVisibility(View.INVISIBLE);
 		
 		init_Animation();
-		DTVSettings mDTVSettings=new DTVSettings();
+		DTVSettings mDTVSettings=new DTVSettings(this);
 		mDTVSettings.setTeltextBound();
 	}
 
@@ -1595,41 +1592,51 @@ public class DTVPlayer extends DTVActivity{
 		};
 	}
 
-	private String[] item={"0","1","2"};
-	private boolean[] b={false,true,true};
-	private void showSingleChoiseDialogTest(){
-		new SingleChoiseDialog(DTVPlayer.this,item,1){
-			public void onSetMessage(View v){
-				((TextView)v).setText(getString(R.string.sure_factory_set));
-			}
+	private void showPvrDurationTimeSetDialog(Context context){
+		final Context mContext = context;
+		final CustomDialog mCustomDialog = new CustomDialog(mContext);
+		mCustomDialog.showDialog(R.layout.dtv_pvr_duration_time_dialog, new ICustomDialog(){
+				public boolean onKeyDown(int keyCode, KeyEvent event){
+					if(keyCode == KeyEvent.KEYCODE_BACK)
+						mCustomDialog.dismissDialog();
+					return false;
+				}
+				public void showWindowDetail(Window window){
+					TextView title = (TextView)window.findViewById(R.id.title);
+					title.setText("Program Operations");
 
-			public void onSetNegativeButton(){
-				
-			}
-			public void onSetPositiveButton(int which){
-			}
-		};
+					TextView head = (TextView)window.findViewById(R.id.head);
+					head.setText("Program Operations");
+
+					TextView tail = (TextView)window.findViewById(R.id.tail);
+					tail.setText("Program Operations");
+
+					final EditText mEditText = (EditText)window.findViewById(R.id.edit);
+					mEditText.setText(null);
+					Button no = (Button)window.findViewById(R.id.no);
+					no.setText(R.string.no);
+					Button yes = (Button)window.findViewById(R.id.yes);
+					yes.setText(R.string.yes);
+					no.setOnClickListener(new OnClickListener(){
+						public void onClick(View v) {
+							mCustomDialog.dismissDialog();
+						}
+					});	 
+					yes.setOnClickListener(new OnClickListener(){
+						public void onClick(View v) {	
+							DTVPlayerStartRecording();
+							showPvrIcon();
+							mCustomDialog.dismissDialog();
+						}
+					});	    
+				}
+			}	
+		);		
 	}
-
-	private void showMutipleChoiseDialogTest(){
-		new MutipleChoiseDialog(DTVPlayer.this,item,b,1){
-			public void onSetMessage(View v){
-				((TextView)v).setText(getString(R.string.sure_factory_set));
-			}
-
-			public void onSetNegativeButton(){
-				
-			}
-		
-			public void onSetPositiveButton(int which,boolean[] b){
-				if(b!=null)
-				for(int i=0;i<b.length;i++){
-					Log.d(TAG,"position: "+i+"is "+ b[i]);
-				}	
-			}
-		};
+	
+	private void showToolsMenu(){
 	}
-
+	
 	private void showStopPVRDialog(){
 		new SureDialog(DTVPlayer.this){
 			public void onSetMessage(View v){
