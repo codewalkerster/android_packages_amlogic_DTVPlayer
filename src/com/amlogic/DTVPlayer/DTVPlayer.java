@@ -37,7 +37,7 @@ public class DTVPlayer extends DTVActivity{
 	private Toast toast=null;
 	private Bundle bundle;	
 	AlertDialog mAlertDialog=null;  //no signal or no data
-
+	DTVSettings mDTVSettings=null;
 	/**channel data**/
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
@@ -46,6 +46,7 @@ public class DTVPlayer extends DTVActivity{
 		SystemProperties.set("vplayer.hideStatusBar.enable", "true");
 		bundle = this.getIntent().getExtras();
 		openVideo();
+		mDTVSettings = new DTVSettings(this);
 		DTVPlayerUIInit();
 	}
 
@@ -112,7 +113,7 @@ public class DTVPlayer extends DTVActivity{
 				break;
 			case TVMessage.TYPE_PROGRAM_UNBLOCK:
 				Log.d(TAG,"UNBLOCK");
-				DTVPlayerSetCheckProgramLock(true);
+				mDTVSettings.setCheckProgramLock(true);
 				hidePasswordDialog();
 				break;
 			case TVMessage.TYPE_SIGNAL_LOST:
@@ -507,7 +508,7 @@ public class DTVPlayer extends DTVActivity{
 		RelativeLayout_radio_bg.setVisibility(View.INVISIBLE);
 		
 		init_Animation();
-		DTVSettings mDTVSettings=new DTVSettings();
+		DTVSettings mDTVSettings=new DTVSettings(this);
 		mDTVSettings.setTeltextBound();
 	}
 
@@ -761,7 +762,7 @@ public class DTVPlayer extends DTVActivity{
 	}
 
 	private void updateInforbar(){
-		dtvplayer_atsc_antenna_source = DTVPlayerGetAtscAntennaSource();
+		dtvplayer_atsc_antenna_source = mDTVSettings.getAtscAntennaSource();
 		Text_screentype_info = (TextView) findViewById(R.id.Text_screentype_info);
 		Text_parent_control_info_icon = (TextView) findViewById(R.id.Text_parent_control_info_icon);
 		Text_channel_type = (TextView) findViewById(R.id.Text_channel_type);
@@ -775,7 +776,7 @@ public class DTVPlayer extends DTVActivity{
 		ImageView_icon_sub=(ImageView)findViewById(R.id.ImageView_icon_sub);
 		ImageView_icon_txt=(ImageView)findViewById(R.id.ImageView_icon_txt);
 
-		if(DTVPlayerGetScanRegion().equals("ATSC"))
+		if(mDTVSettings.getScanRegion().equals("ATSC"))
 			Text_channel_type.setText(dtvplayer_atsc_antenna_source);
 		
 		TextView Text_proname = (TextView) findViewById(R.id.Text_proname);
@@ -1272,7 +1273,7 @@ public class DTVPlayer extends DTVActivity{
 		dtvplayer_b_lock = mTVProgram.getLockFlag();
 		dtvplayer_b_fav = mTVProgram.getFavoriteFlag();
 		dtvplayer_b_scrambled = mTVProgram.getScrambledFlag();
-		dtvplayer_atsc_antenna_source = DTVPlayerGetAtscAntennaSource();
+		dtvplayer_atsc_antenna_source = mDTVSettings.getAtscAntennaSource();
 
 		mAudioCount=mTVProgram.getAudioCount();
 		if(mAudioCount>0){
@@ -1579,7 +1580,7 @@ public class DTVPlayer extends DTVActivity{
 		mPasswordDialog = new PasswordDialog(DTVPlayer.this){
 			public void onCheckPasswordIsRight(){
 				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
-				DTVPlayerSetCheckProgramLock(false);
+				mDTVSettings.setCheckProgramLock(false);
 			}
 
 			public void onCheckPasswordIsFalse(){

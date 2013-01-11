@@ -30,9 +30,9 @@ import com.amlogic.widget.SingleChoiseDialog;
 import com.amlogic.widget.MutipleChoiseDialog;
 import com.amlogic.widget.PasswordSettingDialog;
 
-public class DTVSettingsUI extends DTVSettings{
+public class DTVSettingsUI extends DTVActivity{
 	private static final String TAG="DTVSettingsUI";
-	
+	DTVSettings mDTVSettings = null;
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
@@ -48,6 +48,7 @@ public class DTVSettingsUI extends DTVSettings{
 	
 	public void onConnected(){
 		Log.d(TAG, "connected");
+		mDTVSettings = new DTVSettings(this);
 		DTVSettingUIInit();
 	}
 
@@ -108,13 +109,13 @@ public class DTVSettingsUI extends DTVSettings{
 	private int ttx_region_select_item=-1;
 
 	private void DTVSettingUIInit(){
-		Log.d(TAG,"scan region="+DTVPlayerGetScanRegion());
-		if(DTVPlayerGetScanRegion().equals("ATSC"))	
+		Log.d(TAG,"scan region="+mDTVSettings.getScanRegion());
+		if(mDTVSettings.getScanRegion().equals("ATSC"))	
 			DATA = getResources().getStringArray(R.array.settings_content_atsc);
 		else
 			DATA = getResources().getStringArray(R.array.settings_content);
 	
-		ttx_region_str = DTVSettingsUI.super.getTeletextRegionName();
+		ttx_region_str = mDTVSettings.getTeletextRegionName();
 		if(ttx_region_str!=null)
 			ttx_region_str_arry = ttx_region_str.split(" "); 
 
@@ -191,17 +192,17 @@ public class DTVSettingsUI extends DTVSettings{
 			
 			switch(position){
 			    case SETTINGS_SUBTILE_SWITCH:{	
-			    	if(DTVSettingsUI.super.getSubtitleStatus()==false)
+			    	if(mDTVSettings.getSubtitleStatus()==false)
 			    	{
 			    		image_cur.setBackgroundResource(R.drawable.select_round_2);
 			    		info_cur.setText(R.string.on);
-						setSubtitleStatus(true);
+						mDTVSettings.setSubtitleStatus(true);
 			    	}
-			    	else if(DTVSettingsUI.super.getSubtitleStatus())
+			    	else if(mDTVSettings.getSubtitleStatus())
 			    	{
 			    		image_cur.setBackgroundResource(R.drawable.select_round_1);
 			    		info_cur.setText(R.string.off);
-						setSubtitleStatus(false);
+						mDTVSettings.setSubtitleStatus(false);
 			    	}	
 				}
 			    break;
@@ -237,7 +238,7 @@ public class DTVSettingsUI extends DTVSettings{
 				 	showTimeshiftingTimeSettingDialog(info_cur);
 					break;
 				 case SETTINGS_PARENTAL_RATING_SET:
-				 	if(DTVPlayerGetScanRegion().equals("ATSC")){
+				 	if(mDTVSettings.getScanRegion().equals("ATSC")){
 						//DTVVChip
 						DTVSetting_GotoDTVVChip();
 					}
@@ -373,7 +374,7 @@ public class DTVSettingsUI extends DTVSettings{
 			    	 holder.icon.setImageBitmap(mIcon1);
 					 holder.info.setVisibility(View.VISIBLE);
 					 holder.icon1.setVisibility(View.VISIBLE);
-			    	 if (getSubtitleStatus())
+			    	 if (mDTVSettings.getSubtitleStatus())
 					   {			   
 			    		 holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
 			    		 
@@ -393,7 +394,7 @@ public class DTVSettingsUI extends DTVSettings{
 		    	 holder.icon.setImageBitmap(mIcon2);
 		    	 holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
 
-				 int mode= DTVSettingsUI.super.getScreenMode();		 
+				 int mode= mDTVSettings.getScreenMode();		 
 				 if(mode==0)
 				 {
 				 	 holder.info.setText(R.string.auto);
@@ -416,7 +417,7 @@ public class DTVSettingsUI extends DTVSettings{
 		    	 holder.icon.setImageBitmap(mIcon3);
 		    	 holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
 				
-				 int tmp= DTVSettingsUI.super.getAudioTrack();
+				 int tmp= mDTVSettings.getAudioTrack();
 			
 				 if(tmp == 2)
 				 	holder.info.setText(R.string.stereo);
@@ -453,7 +454,7 @@ public class DTVSettingsUI extends DTVSettings{
 				holder.icon.setImageBitmap(mIcon9);
 				holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
 
-				int time = DTVSettingsUI.super.getTimeShiftingDuration();
+				int time = mDTVSettings.getTimeShiftingDuration();
 				switch(time)
 				{
 					case 600:
@@ -468,7 +469,7 @@ public class DTVSettingsUI extends DTVSettings{
 				}
 				break;
 		     case SETTINGS_PARENTAL_RATING_SET:
-			 	if(DTVPlayerGetScanRegion().equals("ATSC")){
+			 	if(mDTVSettings.getScanRegion().equals("ATSC")){
 					 holder.info.setVisibility(View.INVISIBLE);
 					 holder.icon1.setVisibility(View.INVISIBLE);
 			    	 holder.icon.setImageBitmap(mIcon4);
@@ -479,7 +480,7 @@ public class DTVSettingsUI extends DTVSettings{
 					holder.icon.setImageBitmap(mIcon10);
 					holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
 
-					int pr = DTVSettingsUI.super.getParentalRating();
+					int pr = mDTVSettings.getParentalRating();
 					if(pr<=0){
 						holder.info.setText(R.string.all);
 					}else{
@@ -493,7 +494,7 @@ public class DTVSettingsUI extends DTVSettings{
 				holder.icon.setImageBitmap(mIcon12);
 				holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
 				
-				int pos =  DTVSettingsUI.super.getTeletextRegion();
+				int pos =  mDTVSettings.getTeletextRegion();
 
 				holder.info.setSingleLine(true);
 				holder.info.setEllipsize(TextUtils.TruncateAt.valueOf("MARQUEE"));
@@ -502,14 +503,14 @@ public class DTVSettingsUI extends DTVSettings{
 
 				break;
 			case SETTINGS_CC:
-				if(DTVPlayerGetScanRegion().equals("ATSC")){
+				if(mDTVSettings.getScanRegion().equals("ATSC")){
 					 holder.info.setVisibility(View.INVISIBLE);
 					 holder.icon1.setVisibility(View.INVISIBLE);
 			    	 holder.icon.setImageBitmap(mIcon4);
 				}
 				break;
 			case SETTINGS_ANTENNA_SOURCE:
-				if(DTVPlayerGetScanRegion().equals("ATSC")){
+				if(mDTVSettings.getScanRegion().equals("ATSC")){
 					 holder.info.setVisibility(View.INVISIBLE);
 					 holder.icon1.setVisibility(View.INVISIBLE);
 			    	 holder.icon.setImageBitmap(mIcon4);
@@ -523,7 +524,7 @@ public class DTVSettingsUI extends DTVSettings{
 
 	public void showTTXRegionDialog(TextView v){
 		final TextView info_cur = v;
-		int pos = DTVSettingsUI.super.getTeletextRegion();
+		int pos = mDTVSettings.getTeletextRegion();
 		new SingleChoiseDialog(DTVSettingsUI.this,ttx_region_str_arry,pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getString(R.string.ttx_region));
@@ -533,14 +534,14 @@ public class DTVSettingsUI extends DTVSettings{
 			}
 			public void onSetPositiveButton(int which){
 				info_cur.setText(ttx_region_str_arry[which]);
-				DTVSettingsUI.super.setTeletextRegion(which);
+				mDTVSettings.setTeletextRegion(which);
 			}
 		};
 	}
 
 	public void showAudioTrackDialog(TextView v){
 		final TextView info_cur = v;
-		int mode = getAudioTrack();
+		int mode = mDTVSettings.getAudioTrack();
 		int pos = 0;
 		if(mode==0){
 			pos = 0;
@@ -581,7 +582,7 @@ public class DTVSettingsUI extends DTVSettings{
 
 	public void showScreenTypeDialog(TextView v){
 		final TextView info_cur = v;
-		int mode = DTVSettingsUI.super.getScreenMode();
+		int mode = mDTVSettings.getScreenMode();
 		int pos = 0;
 		if(mode==0){
 			pos = 2;
@@ -605,15 +606,15 @@ public class DTVSettingsUI extends DTVSettings{
 				switch(which){
 					case 0:
 						info_cur.setText(R.string.type_4_3);						
-						DTVSettingsUI.super.setScreenMode(2);
+						mDTVSettings.setScreenMode(2);
 						break;
 					case 1:
 						info_cur.setText(R.string.type_16_9);
-						DTVSettingsUI.super.setScreenMode(3);
+						mDTVSettings.setScreenMode(3);
 						break;
 					case 2:
 						info_cur.setText(R.string.auto);
-						DTVSettingsUI.super.setScreenMode(0);
+						mDTVSettings.setScreenMode(0);
 						break;	
 				}
 			}
@@ -630,7 +631,7 @@ public class DTVSettingsUI extends DTVSettings{
 				
 			}
 			public void onSetPositiveButton(){
-				factoryReset();
+				mDTVSettings.factoryReset();
 				Intent pickerIntent = new Intent();
 				pickerIntent.setClass(DTVSettingsUI.this, DTVPlayer.class);
  		        startActivity(pickerIntent);
@@ -663,7 +664,7 @@ public class DTVSettingsUI extends DTVSettings{
 	private void parentalrating_set(TextView v){
 		final TextView info_cur = v;
 		
-		int pr = DTVSettingsUI.super.getParentalRating();
+		int pr = mDTVSettings.getParentalRating();
 		int pos = 0;
 
 		if(pr>=4 && pr<=18)
@@ -682,12 +683,12 @@ public class DTVSettingsUI extends DTVSettings{
 			public void onSetPositiveButton(int which){
 				if(which==0){
 					info_cur.setText(R.string.all);
-					DTVSettingsUI.super.setParentalRating(0);
+					mDTVSettings.setParentalRating(0);
 				}else{
 					info_cur.setText(which+3+"");
-					DTVSettingsUI.super.setParentalRating(which+3);
+					mDTVSettings.setParentalRating(which+3);
 				}
-				DTVSettingsUI.super.forceParentalRatingCheck();
+				mDTVSettings.forceParentalRatingCheck();
 			}
 		};		
 	}
@@ -695,7 +696,7 @@ public class DTVSettingsUI extends DTVSettings{
 	public void showTimeshiftingTimeSettingDialog(TextView v){
 		final TextView info_cur = v;
 		int pos = 0;
-		int time = getTimeShiftingDuration();
+		int time = mDTVSettings.getTimeShiftingDuration();
 		switch(time){
 			case 600:
 				pos=0;
@@ -721,15 +722,15 @@ public class DTVSettingsUI extends DTVSettings{
 					//pos = which;
 					case 0:
 						info_cur.setText("10 Min");
-						DTVSettingsUI.super.setTimeShiftingDuration(10*60);
+						mDTVSettings.setTimeShiftingDuration(10*60);
 						break;
 					case 1:
 						info_cur.setText("30 Min");
-					DTVSettingsUI.super.setTimeShiftingDuration(30*60);
+						mDTVSettings.setTimeShiftingDuration(30*60);
 						break;
 					case 2:
 						info_cur.setText("60 Min");
-					DTVSettingsUI.super.setTimeShiftingDuration(60*60);
+						mDTVSettings.setTimeShiftingDuration(60*60);
 						break;	
 				}
 			}

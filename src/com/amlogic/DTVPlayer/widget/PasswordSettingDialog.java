@@ -19,7 +19,7 @@ import android.text.*;
 import android.text.method.*;
 import android.graphics.Color;
 import com.amlogic.DTVPlayer.R;
-import com.amlogic.DTVPlayer.DTVActivity;
+import com.amlogic.DTVPlayer.DTVSettings;
 	
 abstract public class PasswordSettingDialog {
 	private static final String TAG="PasswordSettingDialog";
@@ -291,7 +291,8 @@ abstract public class PasswordSettingDialog {
 				pin_char_00==null||pin_char_11==null||pin_char_22==null||pin_char_33==null)
 				return false;
 			else{
-				((DTVActivity)mContext).DTVPlayerSetPassword(confirm_pin);
+				DTVSettings mDTVSettings = new DTVSettings(mContext);
+				mDTVSettings.setPassWord(confirm_pin);
 				return true;
 			}	
 		}	    
