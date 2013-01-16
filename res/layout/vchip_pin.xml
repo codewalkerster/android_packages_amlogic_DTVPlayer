@@ -3,29 +3,37 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="620px"
-    android:layout_height="235px"
+    android:layout_height="wrap_content"
     android:layout_marginLeft="45px" 
     android:layout_centerInParent="true"  
     android:orientation="vertical"
     android:background="@drawable/vchip_pin"
     > 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="34px"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/enter_password"
-        android:textColor="#FFFFFFFF"
- 		android:gravity="center"
-        android:textSize="24px" 
-        android:layout_marginTop="20px"/>	
-       
+     <LinearLayout
+    		android:layout_width="match_parent"
+    		android:layout_height="100px"
+    		android:orientation="vertical"
+    		android:padding="14px"
+    		android:gravity="center"
+    		android:background="@drawable/vchip_pin_head_bg">
+		    <TextView
+		        android:id="@+id/title"
+		        android:layout_width="match_parent"
+		        android:layout_height="34px"
+		        android:layout_gravity="center_horizontal"
+		        android:text="@string/enter_password"
+		        android:textColor="#FFFFFFFF"
+		 				android:gravity="center"
+		        android:textSize="24px" 
+		        android:layout_marginTop="20px"/>	
+      </LinearLayout> 
         <LinearLayout
     		android:layout_width="match_parent"
     		android:layout_height="100px"
     		android:orientation="horizontal"
     		android:padding="14px"
-    		android:gravity="center">
+    		android:gravity="center"
+    		android:background="@drawable/vchip_pin_body_bg">
     		
     			
     		<!-- 
@@ -109,13 +117,13 @@
 	    	  android:layout_width="fill_parent"
     		  android:layout_height="66px"
     		  android:layout_below="@+id/rating_bg_layout"
-    		  android:layout_marginRight="15px"
-			  android:layout_marginLeft="15px"
-			 android:orientation="vertical">
- 
+			  android:orientation="vertical"
+			 android:background="@drawable/vchip_pin_tail_bg">
   	     <RelativeLayout
   	     	 android:id="@+id/inforbar_line" 
 	    	 android:layout_width="fill_parent"
+	    	 android:layout_marginRight="15px"
+			  	android:layout_marginLeft="15px"
     		 android:layout_height="3px"
     		 android:background="@drawable/line"
   			>	

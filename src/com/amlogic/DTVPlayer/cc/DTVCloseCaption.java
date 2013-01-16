@@ -93,10 +93,15 @@ public class DTVCloseCaption extends DTVActivity{
  			switch((int)position){
 				
  			    case 0:
- 			    	if(getCCSwitch())
+ 			    	if(getCCSwitch()){
 						info_cur.setText(R.string.cc_switch_off);
-					else 
+						setCCSwitch(false);
+ 			    	}	
+					else{ 
 						info_cur.setText(R.string.cc_switch_on);
+						setCCSwitch(true);
+					}
+					adapter.notifyDataSetChanged();
  			    	break;
  				case 1:
  					showBasicSelectionDialog(info_cur);
@@ -184,7 +189,7 @@ public class DTVCloseCaption extends DTVActivity{
 			holder.text.setText(ListItemTitle[position]);
 
 			if((getCCSwitch()==false)){  
-				if (position==1||position==2||position==3){
+				if (position==1||position==2){
 					holder.text.setTextColor(Color.GRAY);
 					holder.text2.setTextColor(Color.GRAY);
 				}
@@ -226,13 +231,12 @@ public class DTVCloseCaption extends DTVActivity{
 	}
 		
 	public void setCCSwitch(boolean c){
-
-		return;				
+		setConfig("tv:atsc:cc:enable",c);		
 	}
 
 	public boolean getCCSwitch(){
 		boolean mode=true;
-
+		mode=getBooleanConfig("tv:atsc:cc:enable");
 		return mode;
 	}
 

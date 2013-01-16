@@ -101,6 +101,10 @@ public class DTVSettings{
 		return mContext.getStringConfig("tv:atsc:antenna:source");
 	}	
 
+	public void setAtscAntennaSource(String value){
+		mContext.setConfig("tv:atsc:antenna:source",value);
+	}	
+
 	public void setCheckProgramLock(boolean b){
 		mContext.setConfig("tv:check_program_lock",b);
 	}

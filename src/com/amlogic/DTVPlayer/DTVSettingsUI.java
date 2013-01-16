@@ -255,7 +255,7 @@ public class DTVSettingsUI extends DTVActivity{
 					}	
 					break;	
 				case SETTINGS_ANTENNA_SOURCE:
-					
+					showAntennaSourceSettingDialog(info_cur);
 					break;	
 			}
 		}
@@ -511,9 +511,17 @@ public class DTVSettingsUI extends DTVActivity{
 				break;
 			case SETTINGS_ANTENNA_SOURCE:
 				if(mDTVSettings.getScanRegion().equals("ATSC")){
-					 holder.info.setVisibility(View.INVISIBLE);
-					 holder.icon1.setVisibility(View.INVISIBLE);
-			    	 holder.icon.setImageBitmap(mIcon4);
+					holder.info.setVisibility(View.VISIBLE);
+					holder.icon1.setVisibility(View.INVISIBLE);
+					holder.icon.setImageBitmap(mIcon4);
+
+					String source = mDTVSettings.getAtscAntennaSource();
+					if(source.equals("air")){
+						holder.info.setText("Air");
+					}
+					else{
+						holder.info.setText("Cable");
+					}
 				}
 				break;
 		  }
@@ -565,15 +573,15 @@ public class DTVSettingsUI extends DTVActivity{
 				switch(which){
 				case 0:
 					info_cur.setText(R.string.left);
-				//setAudioTrack("l");
+					//setAudioTrack("l");
 					break;
 				case 1:
 					info_cur.setText(R.string.right);
-				//setAudioTrack("r");
+					//setAudioTrack("r");
 					break;
 				case 2:
 					info_cur.setText(R.string.stereo);
-				//setAudioTrack("s");
+					//setAudioTrack("s");
 					break;	
 				}	
 			}
@@ -801,6 +809,40 @@ public class DTVSettingsUI extends DTVActivity{
 		};
 	}
 
+	public void showAntennaSourceSettingDialog(TextView v){
+		final TextView info_cur = v;
+		int pos = 0;
+		String antenna_source = mDTVSettings.getAtscAntennaSource();
+		if(antenna_source.equals("air")){
+			pos = 0;
+		}
+		else{
+			pos = 1;
+		} 
+			
+		new SingleChoiseDialog(DTVSettingsUI.this,new String[]{ "Air","Cable"},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.timeshift_time_set));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				switch(which){
+					case 0:
+						info_cur.setText("Air");
+						mDTVSettings.setAtscAntennaSource("air");
+						break;
+					case 1:
+						info_cur.setText("Cable");
+						mDTVSettings.setAtscAntennaSource("cable");
+						break;
+				}
+			}
+		};				
+	}
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
@@ -832,7 +874,6 @@ public class DTVSettingsUI extends DTVActivity{
 		intent.setClass(this, DTVScanDVBT.class);
 		startActivityForResult(intent, 1);	
 	}
-
 
 	private void DTVStartVChip(){
 		Intent intent = new Intent();

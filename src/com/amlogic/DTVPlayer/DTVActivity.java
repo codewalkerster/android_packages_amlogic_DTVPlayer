@@ -120,8 +120,6 @@ abstract public class DTVActivity extends TVActivity{
 		stopRecording();
 	}
 
-	
-
 	public void DTVPlayerPlayCurrentProgram(){
 
 	}

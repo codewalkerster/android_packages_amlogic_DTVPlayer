@@ -170,9 +170,15 @@ public class DTVPlayer extends DTVActivity{
 		}
 	
 		if(bundle!=null){	
-			bundle = this.getIntent().getExtras();
-			int db_id = DTVPlayerGetCurrentProgramID();
-			DTVPlayerPlayById(db_id);		
+			if(bundle.getString("activity_tag").equals("DTVChannelList")){
+				int db_id = bundle.getInt("db_id");
+				DTVPlayerPlayById(db_id);
+			}
+			else{
+				int db_id = DTVPlayerGetCurrentProgramID();
+				DTVPlayerPlayById(db_id);
+			}
+
 			ShowControlBar();
 			updateInforbar();
 			ShowProgramNo(pronumber);
@@ -299,7 +305,8 @@ public class DTVPlayer extends DTVActivity{
 				Log.d(TAG,"KEYCODE_MEDIA_FAST_FORWARD");
 				return true;
 			case KeyEvent.KEYCODE_MEDIA_NEXT: //pvr manager
-				Log.d(TAG,"KEYCODE_MEDIA_NEXT");	
+				Log.d(TAG,"KEYCODE_MEDIA_NEXT");
+				DTVDealDigtalKey(keyCode);
 				return true;
 			case KeyEvent.KEYCODE_TV_SUBTITLE:
 				Log.d(TAG,"KEYCODE_TV_SUBTITLE");
@@ -508,7 +515,6 @@ public class DTVPlayer extends DTVActivity{
 		RelativeLayout_radio_bg.setVisibility(View.INVISIBLE);
 		
 		init_Animation();
-		DTVSettings mDTVSettings=new DTVSettings(this);
 		mDTVSettings.setTeltextBound();
 	}
 
@@ -590,7 +596,12 @@ public class DTVPlayer extends DTVActivity{
 					HideMainMenu();
 					HideControlBar();
 				case R.id.Button_mainmenu_manage:
-				case R.id.Button_mainmenu_skip:				
+				case R.id.Button_mainmenu_skip:		
+					Intent Intent_book = new Intent();
+					Intent_book.setClass(DTVPlayer.this, DTVBookingManager.class);
+					startActivity(Intent_book);
+					HideMainMenu();
+					HideControlBar();
 					break;			
 			}
 		}
@@ -807,9 +818,14 @@ public class DTVPlayer extends DTVActivity{
 		else
 			Text_nextevent.setText(dtvplayer_next_event);
 
-		if(dtvplayer_pronumber>=0)	
-		Text_proname.setText(Integer.toString(dtvplayer_pronumber)+"  "+dtvplayer_name);
-
+		if(mDTVSettings.getScanRegion().equals("ATSC")==false){
+			Text_proname.setText(Integer.toString(dtvplayer_pronumber)+"  "+dtvplayer_name);
+		}
+		else{
+			if(dtvplayer_pronumber>=0)	
+			Text_proname.setText(Integer.toString(dtvplayer_pronumber_major)+"-"+Integer.toString(dtvplayer_pronumber_minor)+"  "+dtvplayer_name);
+		}
+		
 		if(dtvplayer_b_fav)
 			ImageView_icon_fav.setVisibility(View.VISIBLE);
 		else
@@ -869,16 +885,27 @@ public class DTVPlayer extends DTVActivity{
 		else{
 			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
 		}
+
+		if(getProgramServiceType()==TVProgram.TYPE_RADIO)
+			showRadioBg();
+		else
+			hideRadioBg();	
 	}
 
+	void showProgramNo(String value){
+		if(value!=null){
+			RelativeLayout RelativeLayoutProNumer = (RelativeLayout)findViewById(R.id.RelativeLayoutProNumer);
+			TextView Text_program_no = (TextView)findViewById(R.id.Text_program_no);
+			Text_program_no.setText(value);	
+			RelativeLayoutProNumer.setVisibility(View.VISIBLE);
+		}	
+	}
+	
 	void ShowProgramNo(int value){
 		if(value!=0){
 			RelativeLayout RelativeLayoutProNumer = (RelativeLayout)findViewById(R.id.RelativeLayoutProNumer);
 			TextView Text_program_no = (TextView)findViewById(R.id.Text_program_no);
-			//if(dtv_standard_atsc)
-				//program_no.setText(getMajorAndMinorNumber(channel_number));	
-			//else
-				Text_program_no.setText(String.valueOf(value));
+			Text_program_no.setText(String.valueOf(value));
 			RelativeLayoutProNumer.setVisibility(View.VISIBLE);
 		}	
 	}
@@ -973,7 +1000,8 @@ public class DTVPlayer extends DTVActivity{
 			    		Toast.LENGTH_SHORT);
 						toast.setGravity(Gravity.CENTER, 0, 0);
 						toast.show();
-						pronumber = 0;				
+						pronumber = 0;	
+						pronumber_string ="";
 						HideProgramNo();
 				}
 				else{	
@@ -995,7 +1023,8 @@ public class DTVPlayer extends DTVActivity{
 					}
 					else{
 						DTVPlayerPlayByProNo(pronumber);
-						pronumber = 0;
+						pronumber = 0;	
+						pronumber_string ="";
 						HideProgramNo();
 					}
 				}	
@@ -1004,40 +1033,94 @@ public class DTVPlayer extends DTVActivity{
 			prono_timer_handler.removeCallbacks(prono_timer_runnable);		
 		}   
 	};
-    
+
 	private static boolean DTVPlayerInTeletextStatus=false;
 	private void DTVDealDigtalKey(int value){
 		int number_key_value=0;
-		
-		if(DTVPlayerInTeletextStatus==false){
-			prono_timer_handler.removeCallbacks(prono_timer_runnable);
-			number_key_value = value - KeyEvent.KEYCODE_0;
-			pronumber = pronumber*10+number_key_value;
-			if(pronumber>9999){
-				pronumber = number_key_value;
-			}	
-			ShowProgramNo(pronumber);
-			prono_timer_handler.postDelayed(prono_timer_runnable, 1000);
-			number_key_down = true;
+
+		if(mDTVSettings.getScanRegion().equals("ATSC")){
+			if(DTVPlayerInTeletextStatus==false){
+				prono_timer_handler.removeCallbacks(prono_timer_runnable);
+				
+				if(value==KeyEvent.KEYCODE_MEDIA_NEXT){
+					boolean hasflag=false;
+					if(pronumber_string!=null){
+						for(int i=0;i<pronumber_string.length();i++){
+							if(pronumber_string.regionMatches(i,"-",0,1)){
+								Log.d(TAG,"has--------"+pronumber_string);
+								hasflag=true;
+								break;
+							}	
+						}	
+
+						if(hasflag==false){
+							if(pronumber==0){
+								pronumber_string=Integer.toString(dtvplayer_pronumber_major)+"-";
+							}
+							else{
+								pronumber_string=Integer.toString(pronumber)+"-";
+							}
+						}	
+					}
+					else
+						pronumber_string=Integer.toString(dtvplayer_pronumber_major)+"-";
+				}
+				else{
+					number_key_value = value - KeyEvent.KEYCODE_0;
+					pronumber = pronumber*10+number_key_value;
+					Log.d(TAG,"pronumber_string1="+pronumber_string);
+					pronumber_string =pronumber_string + Integer.toString(number_key_value);
+					Log.d(TAG,"pronumber_string2="+pronumber_string);
+				}
+				if(pronumber>9999){
+					pronumber = number_key_value;
+				}	
+				Log.d(TAG,"pronumber_string="+pronumber_string);
+				showProgramNo(pronumber_string);
+				prono_timer_handler.postDelayed(prono_timer_runnable, 2000);
+				number_key_down = true;
+			}
+			else{
+				prono_timer_handler.removeCallbacks(prono_timer_runnable);
+				number_key_value = value - KeyEvent.KEYCODE_0;
+				pronumber = pronumber*10+number_key_value;
+				if(pronumber>9999){
+					pronumber = number_key_value;
+				}	
+				ShowProgramNo(pronumber);
+				DTVTTGotoPage(pronumber);
+				prono_timer_handler.postDelayed(prono_timer_runnable, 2000);
+				number_key_down = true;
+			}
 		}
 		else{
-			prono_timer_handler.removeCallbacks(prono_timer_runnable);
-			number_key_value = value - KeyEvent.KEYCODE_0;
-			pronumber = pronumber*10+number_key_value;
-			if(pronumber>9999){
-				pronumber = number_key_value;
-			}	
-			ShowProgramNo(pronumber);
-			DTVTTGotoPage(pronumber);
-			prono_timer_handler.postDelayed(prono_timer_runnable, 1000);
-			number_key_down = true;
+		
+			if(DTVPlayerInTeletextStatus==false){
+				prono_timer_handler.removeCallbacks(prono_timer_runnable);
+				number_key_value = value - KeyEvent.KEYCODE_0;
+				pronumber = pronumber*10+number_key_value;
+				if(pronumber>9999){
+					pronumber = number_key_value;
+				}	
+				ShowProgramNo(pronumber);
+				prono_timer_handler.postDelayed(prono_timer_runnable, 2000);
+				number_key_down = true;
+			}
+			else{
+				prono_timer_handler.removeCallbacks(prono_timer_runnable);
+				number_key_value = value - KeyEvent.KEYCODE_0;
+				pronumber = pronumber*10+number_key_value;
+				if(pronumber>9999){
+					pronumber = number_key_value;
+				}	
+				ShowProgramNo(pronumber);
+				DTVTTGotoPage(pronumber);
+				prono_timer_handler.postDelayed(prono_timer_runnable, 2000);
+				number_key_down = true;
+			}
 		}
 	}
 
-	private void DealLeftAndRightKey(){
-		
-	}
-	
 	private void shortcut_key_deal(String key){
 		if(key.equals("pictrue_mode")){
 			
@@ -1107,36 +1190,11 @@ public class DTVPlayer extends DTVActivity{
 		}
 	}
 
-	private boolean programIsLocked(){
-		return false;
-	}
-
-	private boolean programIsBlocked(){
-		return false;
-	}
-
 	private int getProgramServiceType(){
-		return 0;
+		//if(dtvplayer_service_type==TVProgram.TYPE_TV)
+		return dtvplayer_service_type;
 	}
 	
-	private void PlayLockedProgram(){
-		if(programIsLocked()||programIsBlocked()){
-
-			if(getProgramServiceType()==0)
-				showRadioBg();
-			else
-				hideRadioBg();
-			
-			try {
-				int db_id = DTVPlayerGetCurrentProgramID();
-				DTVPlayerPlayById(db_id);
-				
-			}catch (NumberFormatException e){
-				e.printStackTrace();
-			}
-		}
-	}
-
 	@Override
     protected Dialog onCreateDialog(int id) {
         switch (id) {
@@ -1238,8 +1296,13 @@ public class DTVPlayer extends DTVActivity{
 		return false;
 	}
 
+	private String pronumber_string="";
 	private int pronumber=0;
+	public int dtvplayer_service_type = 0;
 	public static int dtvplayer_pronumber=0;
+	public static int dtvplayer_pronumber_major=0;
+	public static int dtvplayer_pronumber_minor=0;
+	public static TVProgramNumber dtvplayer_program_number;
 	public static String dtvplayer_name=" ";
 	public String dtvplayer_cur_event=null;
 	public String dtvplayer_next_event=null;
@@ -1268,7 +1331,22 @@ public class DTVPlayer extends DTVActivity{
 	private TVProgram mTVProgram=null;
 	private void DTVPlayerGetCurrentProgramData(){
 		mTVProgram=DTVPlayerGetDataByCurrentID();
-		dtvplayer_pronumber= mTVProgram.getNumber().getNumber();
+
+		dtvplayer_program_number= mTVProgram.getNumber();
+		if(mDTVSettings.getScanRegion().equals("ATSC")==false){
+			
+			dtvplayer_pronumber= mTVProgram.getNumber().getNumber();
+			dtvplayer_pronumber_major = dtvplayer_program_number.getMajor();
+			dtvplayer_pronumber_minor = dtvplayer_program_number.getMinor(); 
+			Log.d(TAG,"pronumber="+dtvplayer_pronumber);
+		}	
+		else {
+			dtvplayer_pronumber_major = dtvplayer_program_number.getMajor();
+			dtvplayer_pronumber_minor = dtvplayer_program_number.getMinor();
+			Log.d(TAG,"ATSC pronumber="+dtvplayer_pronumber_major+"-"+dtvplayer_pronumber_minor);
+		}
+
+		dtvplayer_service_type = mTVProgram.getType();
 		dtvplayer_name = mTVProgram.getName();
 		dtvplayer_b_lock = mTVProgram.getLockFlag();
 		dtvplayer_b_fav = mTVProgram.getFavoriteFlag();
@@ -1385,70 +1463,6 @@ public class DTVPlayer extends DTVActivity{
 
 	public static void showSubtitleSettingMenu(Context context){	
 		final Context mContext = context;
-
-		/*
-		AlertDialog.Builder settingBuilder = new AlertDialog.Builder(mContext);
-		LayoutInflater layoutInflater = LayoutInflater.from(mContext);  
-		View subtitle_settings;
-
-		if(mSubtitleCount>0)
-		 	subtitle_settings = layoutInflater.inflate(R.layout.dtv_subtitle_settings, null); 
-		else
-			subtitle_settings = layoutInflater.inflate(R.layout.dtv_subtitle_settings_no_lan, null); 
-		settingBuilder.setTitle(R.string.dtvplayer_subtitle_language_set);
-		settingBuilder.setView(subtitle_settings);
-
-		if(mSubtitleCount>0){
-			BtnSubtitleLanguage =(Button)subtitle_settings.findViewById(R.id.BtnSubtitleLanguage);
-			Log.d(TAG,"index0="+mSubtitleIndex);
-			String ss = mSubtitleLang[mSubtitleIndex];
-			BtnSubtitleLanguage.setText(ss);
-
-			BtnSubtitleLanguage.setOnClickListener(new OnClickListener(){
-		          public void onClick(View v) {
-		        	 showSubtitleLanguageDialog(mContext);
-		          }});
-		}		  
-		final CheckBox checkboxSubtitleSwitch = (CheckBox)subtitle_settings.findViewById(R.id.checkSubtitleSwitch);
-		if(((DTVActivity)mContext).DTVGetSubtitleStatus()){
-			checkboxSubtitleSwitch.setChecked(true);
-		}
-		else{
-			checkboxSubtitleSwitch.setChecked(false);
-		}
-		
-		settingBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {			
-				 public void onClick(DialogInterface dialog, int which) {
-					if(checkboxSubtitleSwitch.isChecked()){
-						if(((DTVActivity)mContext).DTVGetSubtitleStatus()){
-							((TVActivity)mContext).switchSubtitle(mSubtitleIndex);
-						}
-						else{
-							((TVActivity)mContext).switchSubtitle(mSubtitleIndex);
-							((DTVActivity)mContext).DTVSetSubtitleStatus(true);
-						}
-					}
-					else{
-						((DTVActivity)mContext).DTVSetSubtitleStatus(false);	
-					}
-						
-					dialog.dismiss();
-			}
-		});
-			 
-		settingBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener(		) {
-			
-			public void onClick(DialogInterface dialog, int which) {				
-			}
-		});
-
-		AlertDialog alert = settingBuilder.create();
-		alert.show();	
-		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-		lp.dimAmount=0.00f;
-		alert.getWindow().setAttributes(lp);
-		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-		*/
 
 		final CustomDialog mCustomDialog = new CustomDialog(mContext);
 		if(mSubtitleCount>0){
@@ -1579,12 +1593,10 @@ public class DTVPlayer extends DTVActivity{
 	private void showPasswordDialog(){
 		mPasswordDialog = new PasswordDialog(DTVPlayer.this){
 			public void onCheckPasswordIsRight(){
-				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
 				mDTVSettings.setCheckProgramLock(false);
 			}
 
 			public void onCheckPasswordIsFalse(){
-				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
 			}
 
 			public boolean onDealUpDownKey(){
@@ -1604,15 +1616,16 @@ public class DTVPlayer extends DTVActivity{
 				}
 				public void showWindowDetail(Window window){
 					TextView title = (TextView)window.findViewById(R.id.title);
-					title.setText("Program Operations");
+					title.setText(R.string.dtvplayer_pvr_duration_time);
 
 					TextView head = (TextView)window.findViewById(R.id.head);
-					head.setText("Program Operations");
+					head.setText(R.string.dtvplayer_pvr_duration_time_head);
 
 					TextView tail = (TextView)window.findViewById(R.id.tail);
-					tail.setText("Program Operations");
+					tail.setText(R.string.dtvplayer_pvr_min);
 
 					final EditText mEditText = (EditText)window.findViewById(R.id.edit);
+					mEditText.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(5)});
 					mEditText.setText(null);
 					Button no = (Button)window.findViewById(R.id.no);
 					no.setText(R.string.no);

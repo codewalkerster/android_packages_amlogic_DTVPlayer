@@ -63,11 +63,9 @@ public class DTVVChip extends DTVActivity{
 				break;
 			default:
 				break;
-	
 		}
 	}
-	
-	
+		
 	ListView myView;
 	Intent intent = new Intent();
 	Bundle bundle=null;
@@ -104,16 +102,18 @@ public class DTVVChip extends DTVActivity{
 
 	}
 
-
 	class listOnItemClick implements OnItemClickListener{
     	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long position) {   
         	Log.d(TAG,"id---->>" + arg2+"----position----->"+position);
+			final TextView info_cur = (TextView)arg1.findViewById(R.id.info);
  			switch((int)position){
 				case 0:
 					if(getSwitch()){
+						info_cur.setText(R.string.cc_switch_off);
 						setSwitch(false);
 					}	
 					else{
+						info_cur.setText(R.string.cc_switch_on);
 						setSwitch(true);
 					}
 					updata_list();
@@ -192,7 +192,6 @@ public class DTVVChip extends DTVActivity{
 		    return super.isEnabled(position);
 		}
 
-
 		public View getView(int position, View convertView, ViewGroup parent) {
 			Log.d(TAG,"position--->>"+position);	
 			ViewHolder holder;
@@ -205,26 +204,26 @@ public class DTVVChip extends DTVActivity{
 			   //holder.icon1 = (ImageView)convertView.findViewById(R.id.icon1);
 			   convertView.setTag(holder);
 			}else {
-			  // Get the ViewHolder back to get fast access to the TextView
-			  // and the ImageView.
-			  holder = (ViewHolder) convertView.getTag();
-			  }
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
 			
-			  // Bind the data efficiently with the holder.
-			  holder.text.setText(ListItemTitle[position]);
-			  holder.text2.setText(null);
+			// Bind the data efficiently with the holder.
+			holder.text.setText(ListItemTitle[position]);
+			holder.text2.setText(null);
 			  
-			  if(getSwitch()==false){  
-				  if (position>=1)
-					 holder.text.setTextColor(Color.GRAY);
-			  }	
-			  else{
-				   //holder.icon.setImageBitmap(mIcon1);		
-				   //convertView.setBackgroundColor(Color.TRANSPARENT); 
-					holder.text.setTextColor(Color.WHITE);
-			  }	
-			  holder.text2.setTextColor(Color.YELLOW);
-			  switch(position){
+			if(getSwitch()==false){  
+			  if (position>=1)
+				 holder.text.setTextColor(Color.GRAY);
+			}	
+			else{
+				//holder.icon.setImageBitmap(mIcon1);		
+				//convertView.setBackgroundColor(Color.TRANSPARENT); 
+				holder.text.setTextColor(Color.WHITE);
+			}	
+			holder.text2.setTextColor(Color.YELLOW);
+			switch(position){
 			  	case 0: 
 			  		if(getSwitch()){
 						holder.text2.setVisibility(View.VISIBLE);
@@ -236,9 +235,9 @@ public class DTVVChip extends DTVActivity{
 						holder.text2.setText(R.string.parent_control_switch_off);
 					}	
 				break;
-			  }
+			}
 			  
-			  return convertView;
+			return convertView;
 		}
 	}	
 			
@@ -266,30 +265,25 @@ public class DTVVChip extends DTVActivity{
 		Log.d(TAG,"onActivityResult");
 		int p=-1;
 		
-		if(data!=null)
-		{
+		if(data!=null){
 			Bundle bundle =data.getExtras();
 			p = bundle.getInt("position");			
 		}		
 		
-		if(resultCode == RESULT_OK)
-		{
-			switch(requestCode)
-			{
-			  case 11:
-				 switch(p)
-				  {	
-				    case 0:
-				    	setSwitch(true);
-				    	updata_list();
-				    	break;
-				    case 1:
-				    	setSwitch(false);
-				    	updata_list();
-				    	break;
-				  }
-				  break;
-				  
+		if(resultCode == RESULT_OK){
+			switch(requestCode){
+				case 11:
+					switch(p){	
+						case 0:
+							setSwitch(true);
+							updata_list();
+							break;
+						case 1:
+							setSwitch(false);
+							updata_list();
+							break;
+					}
+					break;
 			}
 		}	
 	}
@@ -297,15 +291,15 @@ public class DTVVChip extends DTVActivity{
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		switch (keyCode) {
-		case KeyEvent.KEYCODE_DPAD_LEFT:
-			Log.d(TAG,"KEYCODE_DPAD_LEFT");
-			break;		
-		case KeyEvent.KEYCODE_DPAD_RIGHT:	
-			Log.d(TAG,"KEYCODE_DPAD_RIGHT");
-			break;
-		case KeyEvent.KEYCODE_BACK:	
-			setResult(RESULT_OK,null);
-			break;
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+				Log.d(TAG,"KEYCODE_DPAD_LEFT");
+				break;		
+			case KeyEvent.KEYCODE_DPAD_RIGHT:	
+				Log.d(TAG,"KEYCODE_DPAD_RIGHT");
+				break;
+			case KeyEvent.KEYCODE_BACK:	
+				setResult(RESULT_OK,null);
+				break;
 		}
 		return super.onKeyDown(keyCode, event);
 	}	  

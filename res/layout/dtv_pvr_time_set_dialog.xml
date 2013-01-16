@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="45px" 
+    android:layout_centerInParent="true"  
+    android:orientation="vertical"
+    android:background="@drawable/dialog_bg"
+    > 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="34px"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/enter_password"
+        android:textColor="#FFFFFFFF"
+ 		android:gravity="center"
+        android:textSize="24px" 
+        android:layout_marginTop="20px"
+        android:layout_marginBottom="10px" />	
+	<RelativeLayout
+		android:id="@+id/inforbar_line" 
+		android:layout_width="fill_parent"
+		android:layout_height="3px"
+		android:background="@drawable/line"
+		android:layout_marginLeft="30px"
+		android:layout_marginRight="30px" >
+	</RelativeLayout> 
+	
+	<LinearLayout 
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="20px" 
+		android:layout_marginTop="15px" 
+		android:layout_centerInParent="true"  
+		android:orientation="horizontal"
+		android:layout_marginRight="30px"> 	
+		<RelativeLayout android:id="@+id/RelativeLayoutTimeshift"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:gravity="center">
+	    <TextView
+	      android:id="@+id/time_select"
+	      android:layout_width="300px"
+	      android:layout_height="34px"
+	      android:textSize="30px"
+	      android:text="@string/dtvplayer_pvr_duration_time"
+	    ></TextView>
+					
+	    <DatePicker
+	      android:id="@+id/dPicker"
+	      android:layout_width="wrap_content"
+	      android:layout_height="wrap_content"
+	      android:layout_below="@+id/time_select"
+	    ></DatePicker>
+
+	    <TimePicker
+	      android:id="@+id/tPicker"
+	      android:layout_width="wrap_content"
+	      android:layout_height="wrap_content"
+	      android:layout_toRightOf="@+id/dPicker"
+	      android:layout_below="@+id/time_select"
+	    ></TimePicker>
+	 
+	    <TextView
+	      android:id="@+id/showTime"
+	      android:layout_width="200px"
+	      android:layout_height="34px"
+	      android:textSize="26px"
+	      android:layout_below="@+id/dPicker"
+	    ></TextView>
+
+	 
+	    
+	        <TextView
+					android:id="@+id/pvr_start"
+					android:layout_width="200px"
+					android:layout_height="wrap_content"
+					android:textSize="26px"
+					android:text="@string/dtvplayer_pvr_time_start"
+					android:layout_below="@+id/showTime"
+				  ></TextView>
+				  
+	        <EditText android:id="@+id/edittext_time_duration"  
+	           android:layout_width="150px"
+	           android:layout_height="55px"
+	           android:textSize="12sp"	
+	           
+	           android:gravity="center_vertical"
+	           android:numeric = "integer"
+	           android:layout_below="@+id/showTime"
+	            android:layout_toRightOf="@+id/pvr_start"
+	           />
+
+	        <TextView
+					android:id="@+id/pvr_min"
+					android:layout_width="wrap_content"
+					android:layout_height="34px"
+					android:textSize="26px"	
+					android:text="@string/dtvplayer_pvr_min"
+					android:layout_below="@+id/showTime"
+					android:layout_toRightOf="@+id/edittext_time_duration"
+			></TextView>
+		
+    </RelativeLayout>
+	</LinearLayout>
+	
+	<RelativeLayout
+		android:id="@+id/inforbar_line" 
+		android:layout_width="fill_parent"
+		android:layout_height="3px"
+		android:background="@drawable/line"
+		android:layout_marginLeft="30px"
+		android:layout_marginRight="30px" >
+	</RelativeLayout> 
+   	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:padding="14px"
+		android:layout_marginBottom="20px" 
+		android:gravity="center">
+		
+		<Button android:id="@+id/no"
+		   android:layout_width="wrap_content"
+           android:layout_height="45px"
+       	   android:background="@drawable/button_pin_null"
+       	   android:layout_weight="1"
+           />
+           
+		<Button android:id="@+id/yes"
+		   android:layout_width="wrap_content"
+           android:layout_height="45px"
+       	   android:background="@drawable/button_pin_null"
+       	   android:layout_weight="1"
+           />
+	</LinearLayout>
+</LinearLayout>
+
+
+
