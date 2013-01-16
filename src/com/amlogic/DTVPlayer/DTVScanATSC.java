@@ -229,12 +229,29 @@ public class DTVScanATSC extends DTVActivity{
 				}
 				break;
 			case KeyEvent.KEYCODE_BACK:	
+				if(dtvscanatsc_scan_mode == DTVSCANATSC_SETTING_SCAN_MODE)
+				{
+					DTVScanATSC_GotoDTVPlayer();
+					ret = true;				
+				}
+				else if(dtvscanatsc_scan_mode == DTVSCANATSC_SETTING_MANU_SCAN_MODE)
+				{
+					DTVScanATSCUiSettingInit();
+					ret = true;				
+				}				
+				else if(dtvscanatsc_scan_mode == DTVSCANATSC_SCAN_MODE)
+				{				
+					DTVScanATSCUiSettingInit();
+					ret = true;
+				}
+				break;	
+			case KeyEvent.KEYCODE_DPAD_CENTER:	
 				if(dtvscanatsc_scan_mode == DTVSCANATSC_SCAN_MODE)
 				{				
 					DTVScanATSC_GotoDTVPlayer();
 					ret = true;
 				}
-				break;				
+				break;		
 			default:
 				break;
 		}

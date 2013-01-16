@@ -222,12 +222,30 @@ public class DTVScanDVBT extends DTVActivity{
 				}
 				break;
 			case KeyEvent.KEYCODE_BACK:	
+				if(dtvscandvbt_scan_mode == DTVSCANDVBT_SETTING_SCAN_MODE)
+				{
+					DTVScanDVBT_GotoDTVPlayer();
+					ret = true;				
+				}
+				else if(dtvscandvbt_scan_mode == DTVSCANDVBT_SETTING_MANU_SCAN_MODE)
+				{
+					DTVScanDVBTUiSettingInit();
+					ret = true;				
+				}				
+				else if(dtvscandvbt_scan_mode == DTVSCANDVBT_SCAN_MODE)
+				{				
+					DTVScanDVBTUiSettingInit();
+					ret = true;
+				}
+				break;	
+			case KeyEvent.KEYCODE_DPAD_CENTER:	
 				if(dtvscandvbt_scan_mode == DTVSCANDVBT_SCAN_MODE)
 				{				
 					DTVScanDVBT_GotoDTVPlayer();
 					ret = true;
 				}
-				break;				
+				break;
+				
 			default:
 				break;
 		}
