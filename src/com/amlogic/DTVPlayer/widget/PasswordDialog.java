@@ -19,8 +19,8 @@ import android.text.*;
 import android.text.method.*;
 import android.graphics.Color;
 import com.amlogic.DTVPlayer.R;
-import com.amlogic.DTVPlayer.DTVActivity;
-	
+import com.amlogic.DTVPlayer.DTVSettings;
+
 abstract public class PasswordDialog {
 	private static final String TAG="PasswordDialog";
 	Dialog mDialog = null;
@@ -189,13 +189,14 @@ abstract public class PasswordDialog {
     }
 
 	
-    private boolean check_pin()
-    {
+    private boolean check_pin(){
     	String cur_pin = null;
     	cur_pin=pin_char_0+pin_char_1+pin_char_2+pin_char_3;
 		
     	String database_pin = "0000";
-		database_pin=((DTVActivity)mContext).DTVPlayerGetPassword();
+		
+		DTVSettings mDTVSettings = new DTVSettings(mContext);
+		database_pin=mDTVSettings.getPassWord();
 
 		Log.d(TAG,"cur_pin = "+cur_pin+"----"+"database_ping = "+database_pin);
     	if(database_pin==null){

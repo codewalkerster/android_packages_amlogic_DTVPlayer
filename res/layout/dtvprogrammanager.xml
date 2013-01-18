@@ -46,7 +46,7 @@
 			</HorizontalScrollView> 	
 		</LinearLayout>
 	</LinearLayout>
-	
+	 <!-- 
 	<LinearLayout   
 	    android:orientation="horizontal"
 	    android:layout_width="fill_parent"
@@ -64,6 +64,7 @@
 	  	android:focusableInTouchMode="false"	  	
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"/>
+      	
      </LinearLayout>
         <TextView
 		  	android:id="@+id/programSerail"
@@ -119,7 +120,7 @@
 		  	android:layout_height="wrap_content"
 		  	android:layout_weight="1"/>	
  	  </LinearLayout>
-
+	-->	
 	<LinearLayout
 		android:orientation="vertical"
 		android:layout_width="fill_parent"		  

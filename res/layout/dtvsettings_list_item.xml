@@ -11,6 +11,7 @@
   android:layout_height="30px"
   android:layout_gravity="center"
   android:layout_marginLeft="20px"
+  android:visibility="invisible"
    />
 
   <TextView android:id="@+id/text"

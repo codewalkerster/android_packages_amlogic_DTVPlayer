@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="620px"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="45px" 
+    android:layout_centerInParent="true"  
+    android:orientation="vertical"
+    android:background="@drawable/dialog_bg"
+    > 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="34px"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/enter_password"
+        android:textColor="#FFFFFFFF"
+ 				android:gravity="center"
+        android:textSize="24px" 
+        android:layout_marginTop="20px"
+        android:layout_marginBottom="10px" />	
+	<RelativeLayout
+		android:id="@+id/inforbar_line" 
+		android:layout_width="fill_parent"
+		android:layout_height="3px"
+		android:background="@drawable/line"
+		android:layout_marginLeft="30px"
+		android:layout_marginRight="30px" >
+	</RelativeLayout> 
+	
+	<LinearLayout 
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="20px" 
+		android:layout_marginTop="15px" 
+		android:layout_centerInParent="true"  
+		android:orientation="horizontal"
+		android:layout_marginRight="30px"> 	
+		<TextView
+			android:id="@+id/head"
+			android:layout_width="200px"
+			android:layout_height="34px"
+			android:layout_gravity="center_horizontal"
+			android:textColor="#FFFFFFFF"
+			android:gravity="center"
+			android:textSize="24px" 
+			android:layout_marginTop="20px"
+			android:layout_marginBottom="10px" />		
+		<EditText
+        	android:id="@+id/edit"
+        	android:layout_width="100px"
+       	 	android:layout_height="50px"
+        	android:layout_gravity="center_horizontal"
+        	android:text="@string/enter_password"
+        	android:textColor="#FFFFFFFF"
+ 			android:gravity="left"
+        	android:textSize="30px" 
+        	android:layout_marginLeft="24px"
+			android:layout_marginRight="30px"
+        	android:layout_marginTop="20px"
+        	android:layout_marginBottom="10px" /> 
+
+	
+			<TextView
+				android:id="@+id/tail"
+				android:layout_width="140px"
+				android:layout_height="34px"
+				android:layout_gravity="center_horizontal"
+				android:textColor="#FFFFFFFF"
+				android:gravity="center"
+				android:textSize="24px" 
+				android:layout_marginTop="20px"
+				android:layout_marginBottom="10px" />	
+	</LinearLayout>
+	
+	<RelativeLayout
+		android:id="@+id/inforbar_line" 
+		android:layout_width="fill_parent"
+		android:layout_height="3px"
+		android:background="@drawable/line"
+		android:layout_marginLeft="30px"
+		android:layout_marginRight="30px" >
+	</RelativeLayout> 
+   	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:padding="14px"
+		android:layout_marginBottom="20px" 
+		android:gravity="center">
+		
+		<Button android:id="@+id/no"
+		   android:layout_width="wrap_content"
+           android:layout_height="45px"
+       	   android:background="@drawable/button_pin_null"
+       	   android:layout_weight="1"
+           />
+           
+		<Button android:id="@+id/yes"
+		   android:layout_width="wrap_content"
+           android:layout_height="45px"
+       	   android:background="@drawable/button_pin_null"
+       	   android:layout_weight="1"
+           />
+	</LinearLayout>
+</LinearLayout>
+

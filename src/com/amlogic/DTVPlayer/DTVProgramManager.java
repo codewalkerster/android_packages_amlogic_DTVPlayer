@@ -565,6 +565,7 @@ public class DTVProgramManager extends DTVActivity{
 					
 					ListView list_item = (ListView)window.findViewById(R.id.list_item);
 					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,android.R.layout.simple_expandable_list_item_1,itemChoices);
+					//ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.dtvsettings_list_item,itemChoices);
 					list_item.setAdapter(adapter);  
 					list_item.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 						public void onItemClick(AdapterView<?> parent, View v, int position, long id){			
@@ -608,10 +609,12 @@ public class DTVProgramManager extends DTVActivity{
 								case 2: //fav
 									dealFav(pos);
 									myAdapter.notifyDataSetChanged();
+									mCustomDialog.dismissDialog();
 									break;
 								case 3: //lock
 									dealLock(pos);
 									myAdapter.notifyDataSetChanged();
+									mCustomDialog.dismissDialog();
 									break;
 								case 4: //move
 									break;

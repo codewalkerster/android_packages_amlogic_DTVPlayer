@@ -33,8 +33,8 @@ import android.widget.AbsListView.OnScrollListener;
 import com.amlogic.widget.SureDialog;
 import com.amlogic.widget.SingleChoiseDialog;
 
-public class DTVRecManager extends DTVActivity{
-	private static final String TAG="DTVRecManager";
+public class DTVBookingManager extends DTVActivity{
+	private static final String TAG="DTVBookingManager";
 
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
@@ -44,7 +44,7 @@ public class DTVRecManager extends DTVActivity{
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
-		DTVRecManagerUIInit();
+		DTVBookingManagerUIInit();
 	}
 
 	public void onDisconnected(){
@@ -79,23 +79,13 @@ public class DTVRecManager extends DTVActivity{
 
 	TVBooking[] mTVBookingList=null;
 	private ListView list;
-	private ArrayList<Object> serviceList;
 	private TabHost tabHost;    
     private MyAdapter myAdapter;
-	
-	
-    
 	private int cur_select_item = 0;
     
-  
-    private int[] cur_status=null;
+	private int[] cur_status=null;
 	final static int PVR_STATUS_ALL = -1;
-    
-    final static int PVR_STATUS_REC_WAIT = 0; //does not notify, just wait
-    final static int PVR_STATUS_NOTIFIED = 1; //has notified, will start record shortly
-	final static int PVR_STATUS_RECORDING = 2;
-    final static int PVR_STATUS_REC_OVER = 3;
-	
+    	
     AlertDialog.Builder builder;
 
     private TabWidget tabWidget;
@@ -109,7 +99,7 @@ public class DTVRecManager extends DTVActivity{
 	private Handler  currenttimer_handler;
 	private Runnable currenttimer_runnable;
 	
-	private void DTVRecManagerUIInit(){
+	private void DTVBookingManagerUIInit(){
 		
 		TextView tv2 = (TextView)findViewById(R.id.editProgramDescription);
         tv2.setTextColor(Color.WHITE);
@@ -120,46 +110,14 @@ public class DTVRecManager extends DTVActivity{
 		list.setOnItemClickListener(mOnItemClickListener);
 	    list.setOnScrollListener(new listOnScroll()); 
 
-		getPvrData(PVR_STATUS_ALL);
+		getPlayBookingsData(0);
 		if (null == myAdapter){
-			myAdapter = new MyAdapter(DTVRecManager.this,null);
+			myAdapter = new MyAdapter(DTVBookingManager.this,null);
 			myAdapter.notifyDataSetChanged();
 		}
 
 		list.setAdapter(myAdapter);
 	   
-		try{
-			tabHostInit();		
-			tabWidget = (TabWidget)findViewById(android.R.id.tabs);
-			int count = tabWidget.getChildCount();
-
-			for (int i = 0; i < count; i++) {
-				View view = tabWidget.getChildTabViewAt(i);   
-				//view.getLayoutParams().height = 80;
-				final TextView tv = (TextView) view.findViewById(android.R.id.title);
-				if(android.os.Build.VERSION.RELEASE.equals("2.2.1")){
-					tv.setTextSize(28);
-					//tabWidget.getChildAt(i).getLayoutParams().height = 70;  
-					//tabWidget.getChildAt(i).getLayoutParams().width = 65;
-				}
-				else{
-					Locale l = Locale.getDefault();  
-					String lan = String.format("%s-%s", l.getLanguage(), l.getCountry());  
-					if(lan.equals("zh-CN")||lan.equals("zh-TW")){
-						tv.setTextSize(15);
-					}	
-					else
-						tv.setTextSize(22);
-				}
-				tv.setTextColor(this.getResources().getColorStateList(android.R.color.white));
-			}
-		}
-		catch(Exception ex){   
-            ex.printStackTrace();               
-        }
-		tabHost.setCurrentTab(2);
-		tabHost.setCurrentTab(0);
-		
 	}
 
 	private void setup_timeupdatethread(){
@@ -195,119 +153,26 @@ public class DTVRecManager extends DTVActivity{
 		}
 	};
 
-	private int getPvrData(int status){
+	private int getPlayBookingsData(int status){
 	    int n=0;
-
-		if(status == PVR_STATUS_ALL){		
-			mTVBookingList = TVBooking.selectAllPlayBookings(this);
-		}
-		else if(status == PVR_STATUS_REC_OVER){
-			mTVBookingList = TVBooking.selectRecordBookingsByStatus(this,status);
-		}	
-		else{ 
-			mTVBookingList = TVBooking.selectRecordBookingsByStatus(this,status);
-		}	
+		
+		mTVBookingList = TVBooking.selectPlayBookingsByStatus(this,status);
+		
 		if(mTVBookingList!=null)
 			n = mTVBookingList.length;
 		else
 			n=0;
 		
 		return n;
-	 }  
+	}  
 
-
-	private void deletePvrData(int pos){
+	private void deletePlayBookingsData(int pos){
 		TVBooking mTVBooking = getServiceInfoByPostion(pos);
 		mTVBooking.delete();	
 	}
 
-	private void tabHostInit(){    
-
-        if (null == tabHost){       	
-        	tabHost = (TabHost) this.findViewById(R.id.TabHost01); 
-            tabHost.setup();
-        }
-        
-        if(android.os.Build.VERSION.RELEASE.equals("2.2.1")){
-	    	tabHost.addTab(tabHost.newTabSpec("all")   
-	                .setContent(R.id.LinearLayout1)   
-	                .setIndicator(this.getResources().getString(R.string.all))); 
-	                     
-	        tabHost.addTab(tabHost.newTabSpec("recording")   
-	                .setContent(R.id.LinearLayout1)
-	                .setIndicator(this.getResources().getString(R.string.recording)));  
-	                
-	        tabHost.addTab(tabHost.newTabSpec("Complete")   
-	                .setContent(R.id.LinearLayout1)
-	               .setIndicator(this.getResources().getString(R.string.completed)));
-	        
-	        tabHost.addTab(tabHost.newTabSpec("waiting")   
-	                .setContent(R.id.LinearLayout1)
-	                .setIndicator(this.getResources().getString(R.string.scheduled)));
-        		
-        }
-		else{
-			tabHost.addTab(tabHost.newTabSpec("all")   
-	                .setContent(R.id.LinearLayout1)   
-	                .setIndicator(this.getResources().getString(R.string.all), this.getResources().getDrawable(R.drawable.recmanager_all))); 
-	                     
-	        tabHost.addTab(tabHost.newTabSpec("recording")   
-	                .setContent(R.id.LinearLayout1)
-	                .setIndicator(this.getResources().getString(R.string.recording), this.getResources().getDrawable(R.drawable.recmanager_recording_icon)));  
-	                
-	        tabHost.addTab(tabHost.newTabSpec("Complete")   
-	                .setContent(R.id.LinearLayout1)
-	                //.setIndicator(R.string.completed));  
-	               .setIndicator(this.getResources().getString(R.string.completed), this.getResources().getDrawable(R.drawable.recmanager_complete)));
-	        
-	        tabHost.addTab(tabHost.newTabSpec("waiting")   
-	                .setContent(R.id.LinearLayout1)
-	                .setIndicator(this.getResources().getString(R.string.scheduled), this.getResources().getDrawable(R.drawable.recmanager_wait)));
-        		
-		}
-           
-        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener(){
-
-			public void onTabChanged(String tabId) {
-				// TODO Auto-generated method stub
-				System.out.println("tabId is " + tabId);
-				if (tabId.equalsIgnoreCase("all"))
-				{
-					getPvrData(PVR_STATUS_ALL);
-		        	myAdapter.notifyDataSetChanged();
-				}
-				else if (tabId.equalsIgnoreCase("recording"))
-				{
-					getPvrData(PVR_STATUS_RECORDING);
-					
-					myAdapter.notifyDataSetChanged();
-				}
-				else if (tabId.equalsIgnoreCase("Complete"))
-				{
-					getPvrData(PVR_STATUS_REC_OVER);
-					myAdapter.notifyDataSetChanged();
-				}
-				else if (tabId.equalsIgnoreCase("waiting"))
-				{
-					getPvrData(PVR_STATUS_REC_WAIT);
-					myAdapter.notifyDataSetChanged();				
-				}
-			}
-        	
-        });
-             
-    }
-
 	private void refresh_data(){
-		if(tabHost.getCurrentTabTag().equals("all"))
-			getPvrData(PVR_STATUS_ALL);
-		else if(tabHost.getCurrentTabTag().equals("recording")) 
-			getPvrData(PVR_STATUS_RECORDING);
-		else if(tabHost.getCurrentTabTag().equals("Complete")) 
-			getPvrData(PVR_STATUS_REC_OVER);
-		else if(tabHost.getCurrentTabTag().equals("waiting")) 
-			getPvrData(PVR_STATUS_REC_WAIT);
-		//list.setAdapter(myAdapter);         
+	
        	myAdapter.notifyDataSetChanged();	
 	}
 
@@ -345,7 +210,7 @@ public class DTVRecManager extends DTVActivity{
 				break;
 			case KeyEvent.KEYCODE_ZOOM_IN:
 				Intent pickerIntent = new Intent();
-                pickerIntent.setClass(DTVRecManager.this, DTVChannelList.class);
+                pickerIntent.setClass(DTVBookingManager.this, DTVChannelList.class);
                 startActivity(pickerIntent);
 				return true;	
 		}
@@ -421,8 +286,8 @@ public class DTVRecManager extends DTVActivity{
 
 					mv.tvTime.setText(""+str_start+" ~ "+str_end);  
 					mv.filename.setText(mTVBooking.getRecordStoragePath() + "/" + mTVBooking.getRecordFilePath());
-			   }
-			 }
+				}
+			}
 		 }
 		 
 		public View getView(int position, View convertView, ViewGroup parent) {
@@ -471,84 +336,24 @@ public class DTVRecManager extends DTVActivity{
 			proname = mTVBooking.getProgramName();
 			final int  pos = position;
 			choise = 0;
-			builder = new AlertDialog.Builder(DTVRecManager.this);
-			switch(item_status){
-				case PVR_STATUS_NOTIFIED:
-				case PVR_STATUS_REC_WAIT:
-					new SureDialog(DTVRecManager.this){
-						public void onSetMessage(View v){
-							((TextView)v).setText(getString(R.string.sure_delete));
-						}
+			builder = new AlertDialog.Builder(DTVBookingManager.this);
+			
+			new SureDialog(DTVBookingManager.this){
+				public void onSetMessage(View v){
+					((TextView)v).setText(getString(R.string.sure_delete));
+				}
 
-						public void onSetNegativeButton(){
-							
-						}
-						public void onSetPositiveButton(){
-							deletePvrData(pos);
-							getPvrData(PVR_STATUS_REC_WAIT);      
-							myAdapter.notifyDataSetChanged();
-							refresh_data();
-						}
-					};	
-					break;
-				case PVR_STATUS_REC_OVER:
-					new SingleChoiseDialog(DTVRecManager.this,new String[]  { "Play", "Delete" }, 0){
-						public void onSetMessage(View v){
-							((TextView)v).setText(getString(R.string.sure_factory_set));
-						}
-
-						public void onSetNegativeButton(){
-							
-						}
-						public void onSetPositiveButton(int which){
-							switch(which){
-								case 0:														
-									Bundle bundle_pvr_player = new Bundle();										           
-									bundle_pvr_player.putInt("booking_id", record_db_id); 	
-									bundle_pvr_player.putString("program_name", proname); 
-									Intent Intent_pvrplayer = new Intent();
-									Intent_pvrplayer.setClass(DTVRecManager.this, DTVPvrPlayer.class);
-									Intent_pvrplayer.putExtras(bundle_pvr_player);
-				                    startActivity(Intent_pvrplayer);
-									DTVRecManager.this.finish();
-									break;
-								case 1:
-									deletePvrData(pos);
-									refresh_data();
-									myAdapter.notifyDataSetChanged();
-									break;
-							}
-						}
-					};	
-						
-					break;
-				case PVR_STATUS_RECORDING:	
-					new SingleChoiseDialog(DTVRecManager.this,new String[]  { "Stop", "Delete" }, 0){
-						public void onSetMessage(View v){
-							((TextView)v).setText(getString(R.string.sure_factory_set));
-						}
-
-						public void onSetNegativeButton(){
-							
-						}
-						public void onSetPositiveButton(int which){
-							switch(which){
-								case 0:
-									DTVPlayerStopRecording();
-									break;
-								case 1:
-									DTVPlayerStopRecording();
-									deletePvrData(pos);
-									refresh_data();
-									myAdapter.notifyDataSetChanged();
-									break;
-							}
-						}
-					};				
-			}
+				public void onSetNegativeButton(){
+					
+				}
+				public void onSetPositiveButton(){
+					deletePlayBookingsData(pos);
+					myAdapter.notifyDataSetChanged();
+					refresh_data();
+				}
+			};	
 		}
 	};
-	
 
 	@Override
 	protected void onStart(){

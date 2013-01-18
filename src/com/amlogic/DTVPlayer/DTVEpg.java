@@ -1256,7 +1256,7 @@ public class DTVEpg extends DTVActivity{
 					}
 					catch(Exception e)
 					{
-					    Log.d("EitItemOnClick Exception#################################################", e.getMessage());
+					    Log.d(TAG,"EitItemOnClick Exception>>>>---"+e.getMessage());
 					}
 			    }
 				else

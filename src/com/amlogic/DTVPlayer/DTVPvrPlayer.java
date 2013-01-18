@@ -25,6 +25,9 @@ import android.content.*;
 import android.graphics.*;
 import android.text.*;
 import android.text.method.*;
+import com.amlogic.widget.SureDialog;
+import com.amlogic.widget.SingleChoiseDialog;
+
 public class DTVPvrPlayer extends DTVActivity{
 	private static final String TAG="DTVPvrPlayer";
 	private int record_id =0;
@@ -337,31 +340,19 @@ public class DTVPvrPlayer extends DTVActivity{
     }
 
 	private void showTimeshiftDialog(){
+		new SureDialog(DTVPvrPlayer.this){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.timeshifting_exit_message));
+			}
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(DTVPvrPlayer.this); 
-			builder.setMessage(R.string.timeshifting_exit_message)
-			.setCancelable(false)
-			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener(){
-				public void onClick(DialogInterface dialog, int id) {
-					DTVTimeShiftingStop();
-					finish();	
-					dialog.dismiss();
-				}        
-			 })        
-			.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.dismiss();            
-					}        
-			 }); 
-			AlertDialog alert = builder.create();
-			alert.show();
-
-			WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-			lp.dimAmount=0.0f;
-			alert.getWindow().setAttributes(lp);
-			alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+			public void onSetNegativeButton(){
+			}
+			public void onSetPositiveButton(){
+				DTVTimeShiftingStop();
+				finish();	
+			}
+		};
 	}
-
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

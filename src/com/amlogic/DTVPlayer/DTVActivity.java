@@ -120,8 +120,6 @@ abstract public class DTVActivity extends TVActivity{
 		stopRecording();
 	}
 
-	
-
 	public void DTVPlayerPlayCurrentProgram(){
 
 	}
@@ -352,26 +350,6 @@ abstract public class DTVActivity extends TVActivity{
 
 	}
 
-	public String DTVGetTeletextRegionName(){
-		String value = "en";
-		return value;
-	}
-
-	public void DTVForceParentalRatingCheck(){
-		return ;
-	}
-
-	public String DTVPlayerGetPassword(){
-		String password = "0000";
-		password = getStringConfig("tv:dtv:password");
-		return password;
-	}
-
-	public void DTVPlayerSetPassword(String value){
-		if(value!=null)
-			setConfig("tv:dtv:password",value);
-	}
-
 	public int DTVPlayerGetCurrentProgramID(){
 		return getCurrentProgramID();
 	}
@@ -382,18 +360,6 @@ abstract public class DTVActivity extends TVActivity{
 		Log.d(TAG,"current id="+db_id);
 	
 		return TVProgram.selectByID(this,db_id);
-	}
-
-	public String DTVPlayerGetAtscAntennaSource(){
-		return getStringConfig("tv:atsc:antenna:source");
-	}	
-
-	public void DTVPlayerSetCheckProgramLock(boolean b){
-		setConfig("tv:check_program_lock",b);
-	}
-
-	public String DTVPlayerGetScanRegion(){
-		return getStringConfig("tv:scan:dtv:region");	
 	}
 	
 }

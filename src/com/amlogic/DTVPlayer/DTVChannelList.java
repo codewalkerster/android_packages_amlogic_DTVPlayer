@@ -12,7 +12,10 @@ import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVGroup;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
+import android.text.*;
+import android.text.method.*;
 import android.view.*;
 import android.view.View.*;
 import android.view.animation.*;
@@ -23,6 +26,8 @@ import android.app.*;
 import android.content.*;
 import android.graphics.Color;
 import com.amlogic.widget.Rotate3D;
+import com.amlogic.widget.CustomDialog;
+import com.amlogic.widget.CustomDialog.ICustomDialog;
 
 public class DTVChannelList extends DTVActivity{
 	private static final String TAG="DTVChannelList";
@@ -33,6 +38,7 @@ public class DTVChannelList extends DTVActivity{
 	private int cur_select_item=0;
 	private IconAdapter myAdapter=null;
 	private TVProgram[]  mTVProgramList=null;
+	private DTVSettings mDTVSettings=null;
 
 	int db_id=-1;
 	private int service_type=TVProgram.TYPE_TV;
@@ -116,12 +122,13 @@ public class DTVChannelList extends DTVActivity{
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtvchannellist); 
-		/*get list data*/
-		DTVChannelListUIInit();
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
+		/*get list data*/
+		mDTVSettings = new DTVSettings(this);
+		DTVChannelListUIInit();
 	}
 
 	public void onDisconnected(){
@@ -160,10 +167,17 @@ public class DTVChannelList extends DTVActivity{
 
 	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
-
-				int db_id=mTVProgramList[position].getID();
-				DTVPlayerPlayById(db_id);
-				DTVChannelList.this.finish();
+			int db_id=mTVProgramList[position].getID();
+			//DTVPlayerPlayById(db_id);
+			
+			Bundle bundle = new Bundle();
+			bundle.putInt("db_id",db_id);
+			bundle.putString("activity_tag","DTVChannelList");
+			Intent in = new Intent();
+			in.setClass(DTVChannelList.this, DTVPlayer.class);
+			in.putExtras(bundle);
+			startActivity(in);
+		    DTVChannelList.this.finish();
 		}
 	};
 
@@ -230,7 +244,14 @@ public class DTVChannelList extends DTVActivity{
 			}
 		
 			// Bind the data efficiently with the holder.
-			holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber()));
+
+			if(mDTVSettings.getScanRegion().equals("ATSC")==false){
+				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber()));
+			}
+			else{
+				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber())+"-"+Integer.toString(mTVProgramList[position].getNumber().getMinor()));
+			}
+			
 			holder.text.setText(mTVProgramList[position].getName());
 
 			if(db_id == mTVProgramList[position].getID()){  
@@ -306,7 +327,7 @@ public class DTVChannelList extends DTVActivity{
 					ListView_channel.setSelection(ListView_channel.getCount()-1); 
 				break;
 			case KeyEvent.KEYCODE_ZOOM_IN:
-				//showPvrDialog();
+				showPvrTimeSetDialog(DTVChannelList.this);
 				return true;
 		}
 		return super.onKeyDown(keyCode, event);
@@ -459,5 +480,102 @@ public class DTVChannelList extends DTVActivity{
 				break;
 		}
 	}
+
+
+	private int mYear;
+	private int mMonth;
+	private int mDay;
+	private int mHour;
+	private int mMinute; 
+	private void pvr_time_init(){				
+		Date date = new Date(getUTCTime());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd HH mm ss"); 
+		String today = sdf.format(date); 
+		Log.d(TAG,"####Today"+today);
+		
+		String[] para = today.split(" ", 6);
+		if (para.length >= 6){
+			mYear = Integer.valueOf(para[0]).intValue();
+			mMonth= Integer.valueOf(para[1]).intValue()-1;
+			mDay = Integer.valueOf(para[2]).intValue();
+			mHour = Integer.valueOf(para[3]).intValue();
+			mMinute = Integer.valueOf(para[4]).intValue();
+		}
+	}
+
+	long time_test(int y,int m, int d,int h,int min,int s){		
+		Calendar Calendar_sys=Calendar.getInstance();
+		Calendar_sys.set( y, m,  d, h, min, s);
+	    return Calendar_sys.getTime().getTime();
+	}
+
+	private void showPvrTimeSetDialog(Context context){
+		final Context mContext = context;
+		final CustomDialog mCustomDialog = new CustomDialog(mContext);
+		mCustomDialog.showDialog(R.layout.dtv_pvr_time_set_dialog, new ICustomDialog(){
+				public boolean onKeyDown(int keyCode, KeyEvent event){
+					if(keyCode == KeyEvent.KEYCODE_BACK)
+						mCustomDialog.dismissDialog();
+					return false;
+				}
+				public void showWindowDetail(Window window){
+					TextView title = (TextView)window.findViewById(R.id.title);
+					title.setText(R.string.dtvplayer_pvr_duration_time);
+
+					TimePicker tp;
+  					DatePicker dp;	
+					EditText editText;
+					
+					editText = (EditText)window.findViewById(R.id.edittext_time_duration);
+					editText.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(5)});
+
+					dp=(DatePicker)window.findViewById(R.id.dPicker);
+					pvr_time_init();
+					dp.init(mYear, mMonth, mDay, new DatePicker.OnDateChangedListener()    {
+			 	  
+					public void onDateChanged(DatePicker view, int year, int monthOfYear,
+						int dayOfMonth) {
+							mYear=year;
+							mMonth= monthOfYear;
+							mDay=dayOfMonth;
+						
+						}
+					});
+		    
+					tp=(TimePicker)window.findViewById(R.id.tPicker);
+					tp.setIs24HourView(true);
+					tp.setCurrentHour(mHour); 
+					tp.setCurrentMinute(mMinute); 
+					tp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+						public void onTimeChanged(TimePicker view,int hourOfDay,int minute)      {
+							mHour=hourOfDay;
+							mMinute=minute;
+						}    
+					});	
+
+
+					final int time_init = (int)(time_test(mYear,mMonth,mDay,mHour,mMinute,0)/1000);
+					
+					Button no = (Button)window.findViewById(R.id.no);
+					no.setText(R.string.no);
+					Button yes = (Button)window.findViewById(R.id.yes);
+					yes.setText(R.string.yes);
+					no.setOnClickListener(new OnClickListener(){
+						public void onClick(View v) {
+							mCustomDialog.dismissDialog();
+						}
+					});	 
+					yes.setOnClickListener(new OnClickListener(){
+						public void onClick(View v) {	
+							//DTVPlayerStartRecording();
+							//showPvrIcon();
+							mCustomDialog.dismissDialog();
+						}
+					});	    
+				}
+			}	
+		);		
+	}
+
 }
 

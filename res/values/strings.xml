@@ -75,6 +75,12 @@
 	<string name="dtvplayer_subtitle_language_set">Subtitle language set</string>
 	<string name="dtvplayer_audio_language_set">Audio language set</string>
 
+	<string name="dtvplayer_pvr_duration_time">REC Time setting</string>
+	<string name="dtvplayer_pvr_duration_time_head">Duration Time</string>
+	<string name="dtvplayer_pvr_min">Minute</string>
+
+	<string name="dtvplayer_pvr_time_start">Start</string>
+
 	<!--device browser-->
 	<string name="download_sel_confirm">Save recorded stream on selected storage device?</string>
 	<string name="usb_removed">USB device removed. Please check</string>
