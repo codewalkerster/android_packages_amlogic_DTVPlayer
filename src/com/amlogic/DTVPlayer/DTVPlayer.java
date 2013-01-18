@@ -527,7 +527,25 @@ public class DTVPlayer extends DTVActivity{
 				Intent Intent_scan = new Intent();
 				Bundle bundle = new Bundle();
 				Intent_scan.putExtras(bundle); 
-				Intent_scan.setClass(DTVPlayer.this, DTVScanDVBT.class);
+
+				String region;
+				try {
+					region = getConfig("tv:scan:dtv:region").getString();
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.d(TAG, "Cannot read dtv region !!!");
+					return;
+				}
+
+				if(region.contains("DVB-T"))
+				{
+					Intent_scan.setClass(DTVPlayer.this, DTVScanDVBT.class);
+				}
+				else if(region.contains("ATSC"))
+				{
+					Intent_scan.setClass(DTVPlayer.this, DTVScanATSC.class);
+				}
+				
 				startActivity(Intent_scan);
 			}
 		};

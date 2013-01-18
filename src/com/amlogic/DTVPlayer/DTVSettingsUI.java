@@ -827,9 +827,28 @@ public class DTVSettingsUI extends DTVSettings{
 
 
 	private void DTVSetting_GotoDTVScanDvbt(){
-		Intent intent = new Intent();
-		intent.setClass(this, DTVScanDVBT.class);
-		startActivityForResult(intent, 1);	
+		Intent Intent_scan = new Intent();
+
+		String region;
+		try {
+			region = getConfig("tv:scan:dtv:region").getString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.d(TAG, "Cannot read dtv region !!!");
+			return;
+		}
+		
+		if(region.contains("DVB-T"))
+		{
+			Intent_scan.setClass(DTVSettingsUI.this, DTVScanDVBT.class);
+		}
+		else if(region.contains("ATSC"))
+		{
+			Intent_scan.setClass(DTVSettingsUI.this, DTVScanATSC.class);
+		}
+		
+		startActivityForResult(Intent_scan, 1);	
+		
 	}
 
 
