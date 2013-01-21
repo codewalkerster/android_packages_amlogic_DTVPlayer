@@ -12,6 +12,7 @@ import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVEvent;
 import com.amlogic.tvutil.TVGroup;
+import com.amlogic.tvutil.TVBooking;
 import com.amlogic.tvutil.DTVPlaybackParams;
 import com.amlogic.tvutil.DTVRecordParams;
 
@@ -115,6 +116,11 @@ abstract public class DTVActivity extends TVActivity{
 		startRecording();
 	}
 
+	public void DTVPlayerStartRecordingWithTime(long start,long duration){
+		TVProgram mTVProgram = DTVPlayerGetDataByCurrentID();
+		if(mTVProgram!=null)
+			TVBooking.bookProgram(this,mTVProgram,TVBooking.FL_RECORD,start,duration);
+	}
 
 	public void DTVPlayerStopRecording(){
 		stopRecording();
@@ -217,6 +223,11 @@ abstract public class DTVActivity extends TVActivity{
 
 	public void DTVSubtitleStop(){}
 	public void DTVTeletextStop(){}
+
+	/*REC pvr Player*/
+	public void DTVPvrPlayerStop(){
+		stopPlayback();
+	}
 
 	/*DTVProgramManager*/
 	public void DTVProgramManagerDeletePro(int id){

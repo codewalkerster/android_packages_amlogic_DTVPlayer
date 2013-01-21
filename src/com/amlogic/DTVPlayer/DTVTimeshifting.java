@@ -29,11 +29,12 @@ import com.amlogic.widget.SureDialog;
 
 public class DTVTimeshifting extends DTVActivity{
 	private static final String TAG="DTVTimeshifting";
-	
+	private DTVSettings mDTVSettings = null;
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtvtimeshiftplayer); 
+		mDTVSettings= new DTVSettings(this);
 		DTVTimeshiftingUIInit();
 	}
 
@@ -62,7 +63,7 @@ public class DTVTimeshifting extends DTVActivity{
 		Log.d(TAG, "onStop");
 		super.onStop();
 		timeshiftingHandler.removeCallbacks(timeshiftingTimer);
-		stopTimeshifting();
+		
 	}
 
 	public void onDisconnected(){
@@ -333,6 +334,9 @@ public class DTVTimeshifting extends DTVActivity{
 			}
 			public void onSetPositiveButton(){
 				DTVTimeShiftingStop();
+				Intent intent = new Intent();
+				intent.setClass(DTVTimeshifting.this, DTVPlayer.class);
+				startActivity(intent);
 				finish();	
 			}
 		};
@@ -546,11 +550,22 @@ public class DTVTimeshifting extends DTVActivity{
 		ImageView ImageView_icon_sub=(ImageView)findViewById(R.id.ImageView_icon_sub);
 		ImageView ImageView_icon_txt=(ImageView)findViewById(R.id.ImageView_icon_txt);
 
+		Text_channel_type.setText(DTVPlayer.dtvplayer_atsc_antenna_source);
+		
 		TextView Text_proname = (TextView) findViewById(R.id.Text_proname);
 		Text_proname.setTextColor(Color.YELLOW);
 
-		if(DTVPlayer.dtvplayer_pronumber>=0)	
+
+
+		if(mDTVSettings.getScanRegion().equals("ATSC")==false){
 			Text_proname.setText(Integer.toString(DTVPlayer.dtvplayer_pronumber)+"  "+DTVPlayer.dtvplayer_name);
+		}
+		else{
+			if(DTVPlayer.dtvplayer_pronumber>=0)	
+			Text_proname.setText(Integer.toString(DTVPlayer.dtvplayer_pronumber)+"-"+Integer.toString(DTVPlayer.dtvplayer_pronumber_minor)+"  "+DTVPlayer.dtvplayer_name);
+		}
+		//if(DTVPlayer.dtvplayer_pronumber>=0)	
+			//Text_proname.setText(Integer.toString(DTVPlayer.dtvplayer_pronumber)+"  "+DTVPlayer.dtvplayer_name);
 
 		if(DTVPlayer.dtvplayer_b_fav)
 			ImageView_icon_fav.setVisibility(View.VISIBLE);
@@ -670,9 +685,10 @@ public class DTVTimeshifting extends DTVActivity{
 				Log.d(TAG, "recPara: status("+recPara.getStatus()+
 					"), time "+recPara.getCurrentTime()/1000+" / "+
 					recPara.getTotalTime()/1000);
+				statusChangeUpdate(recPara.getStatus());
+				freshTimeAndSeekbar(recPara.getCurrentTime()/1000,recPara.getTotalTime()/1000);
 			}
-			statusChangeUpdate(recPara.getStatus());
-			freshTimeAndSeekbar(recPara.getCurrentTime()/1000,recPara.getTotalTime()/1000);
+		
 			timeshiftingHandler.postDelayed(this, 1000);
 		}
 	};

@@ -46,7 +46,7 @@ public class DTVPlayer extends DTVActivity{
 		SystemProperties.set("vplayer.hideStatusBar.enable", "true");
 		bundle = this.getIntent().getExtras();
 		openVideo();
-		mDTVSettings = new DTVSettings(this);
+		
 		DTVPlayerUIInit();
 	}
 
@@ -58,6 +58,8 @@ public class DTVPlayer extends DTVActivity{
 			showNoProgramDia();
 		}
 		
+		mDTVSettings = new DTVSettings(this);
+		mDTVSettings.setTeltextBound();
 		
 		if(bundle!=null){	
 			int db_id = DTVPlayerGetCurrentProgramID();
@@ -146,11 +148,97 @@ public class DTVPlayer extends DTVActivity{
 					showStopPVRDialog();
 					playProgram(msg.getStopRecordRequestProgramID());
 				}
+				break;
+			case TVMessage.TYPE_RECORD_END:	
+				switch(msg.getRecordErrorCode()){
+					case  TVMessage.REC_ERR_OPEN_FILE:
+						
+						toast = Toast.makeText(
+							DTVPlayer.this,
+				    		R.string.check_usb_device,
+				    		Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						
+						break;
+					case  TVMessage.REC_ERR_WRITE_FILE:	
+						DTVTimeShiftingStop();
+						toast = Toast.makeText(
+							DTVPlayer.this,
+				    		R.string.usbdisk_is_full,
+				    		Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+										
+					break;
+					case  TVMessage.REC_ERR_ACCESS_FILE:
+						break;
+					case  TVMessage.REC_ERR_SYSTEM:
+						
+						break;							
+				}
+
+				hidePvrIcon();
 				break;	
 			default:
 				break;
 		}
 	}
+
+	@Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		Log.d(TAG,">>>>>onRestart<<<<<<");
+		super.onRestart();
+
+		/*
+		if(mDvb==null)
+			return;
+		if(mDvb.isPlaying()==false)
+			dvb_play();
+			if(mDvb.getSubtitleStatus()){
+				getSubtitle().setDemux(0); //Use demux0, as dvb play using demux0
+				startSubtitle(db_id);	
+			}else{
+				getSubtitle().setDemux(0); //Use demux0, as dvb play using demux0
+			}
+		getchannelData(service_type,channel_number);	
+
+		if(!mDvb.isRecording())
+			hidePvrIcon();
+		*/
+	}
+
+	@Override
+	protected void onResume(){
+		Log.d(TAG, ">>>>>>>>onResume<<<<<<<<");
+		super.onResume();
+
+		/*
+		if(getSubtitle()!=null){
+			Log.d(TAG,"resume subtitle");
+			getSubtitle().setDemux(0); //Use demux0, as dvb play using demux0
+			getSubtitle().resume(mDvb.getSubtitleStatus());	
+		}
+		SystemProperties.set("vplayer.hideStatusBar.enable", "true");
+		signal_dis_play = true;
+		*/
+	}
+	
+	
+	@Override
+	protected void onStart(){
+		Log.d(TAG, "onStart");
+		super.onStart();
+	}
+
+	@Override
+	protected void onStop(){
+		Log.d(TAG, "onStop");
+		super.onStop();
+	
+	}
+
 
 	public void onDestroy() {
         Log.d(TAG, "onDestroy");
@@ -179,10 +267,16 @@ public class DTVPlayer extends DTVActivity{
 				DTVPlayerPlayById(db_id);
 			}
 
-			ShowControlBar();
-			updateInforbar();
-			ShowProgramNo(pronumber);
+		
 		}
+		else{
+			Log.d(TAG,">>>playValid<<<");
+			playValid();
+		}
+
+		ShowControlBar();
+		updateInforbar();
+		ShowProgramNo(pronumber);
 	}
 
 	@Override
@@ -515,7 +609,7 @@ public class DTVPlayer extends DTVActivity{
 		RelativeLayout_radio_bg.setVisibility(View.INVISIBLE);
 		
 		init_Animation();
-		mDTVSettings.setTeltextBound();
+		
 	}
 
 	private void showNoProgramDia(){
@@ -595,13 +689,16 @@ public class DTVPlayer extends DTVActivity{
 					startActivity(Intent_rec);
 					HideMainMenu();
 					HideControlBar();
+					break;
 				case R.id.Button_mainmenu_manage:
-				case R.id.Button_mainmenu_skip:		
 					Intent Intent_book = new Intent();
 					Intent_book.setClass(DTVPlayer.this, DTVBookingManager.class);
 					startActivity(Intent_book);
 					HideMainMenu();
 					HideControlBar();
+					break;
+				case R.id.Button_mainmenu_skip:		
+					
 					break;			
 			}
 		}
@@ -789,6 +886,8 @@ public class DTVPlayer extends DTVActivity{
 
 		if(mDTVSettings.getScanRegion().equals("ATSC"))
 			Text_channel_type.setText(dtvplayer_atsc_antenna_source);
+		else
+			Text_channel_type.setText(null);
 		
 		TextView Text_proname = (TextView) findViewById(R.id.Text_proname);
 		Text_proname.setTextColor(Color.YELLOW);
@@ -1468,6 +1567,8 @@ public class DTVPlayer extends DTVActivity{
 		if(mSubtitleCount>0){
 			mCustomDialog.showDialog(R.layout.dtv_subtitle_settings, new ICustomDialog(){
 					public boolean onKeyDown(int keyCode, KeyEvent event){
+						if(keyCode == KeyEvent.KEYCODE_BACK)
+							mCustomDialog.dismissDialog();
 						return false;
 					}
 					public void showWindowDetail(Window window){
@@ -1499,7 +1600,7 @@ public class DTVPlayer extends DTVActivity{
 						yes.setText(R.string.yes);
 						no.setOnClickListener(new OnClickListener(){
 							public void onClick(View v) {
-								
+								mCustomDialog.dismissDialog();
 							}
 						});	 
 						yes.setOnClickListener(new OnClickListener(){
@@ -1638,7 +1739,9 @@ public class DTVPlayer extends DTVActivity{
 					});	 
 					yes.setOnClickListener(new OnClickListener(){
 						public void onClick(View v) {	
-							DTVPlayerStartRecording();
+							//DTVPlayerStartRecording();
+							int dration=Integer.parseInt(mEditText.getText().toString());  
+							DTVPlayerStartRecordingWithTime(getUTCTime(),dration*60*1000);
 							showPvrIcon();
 							mCustomDialog.dismissDialog();
 						}

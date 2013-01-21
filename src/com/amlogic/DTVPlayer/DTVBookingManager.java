@@ -198,7 +198,7 @@ public class DTVBookingManager extends DTVActivity{
    @Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
-	   switch (keyCode) {
+		switch (keyCode) {
 			
 			case KeyEvent.KEYCODE_DPAD_DOWN:			
 				if(cur_select_item== list.getCount()-1)

@@ -6,103 +6,121 @@
     android:layout_marginLeft="45px" 
     android:layout_centerInParent="true"  
     android:orientation="vertical"
-    android:background="@drawable/dialog_bg"
     > 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="34px"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/enter_password"
-        android:textColor="#FFFFFFFF"
- 				android:gravity="center"
-        android:textSize="24px" 
-        android:layout_marginTop="20px"
-        android:layout_marginBottom="10px" />	
-	<RelativeLayout
-		android:id="@+id/inforbar_line" 
+  
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="80px"
+		android:orientation="vertical"
+		android:padding="14px"
+		android:gravity="center"
+		android:background="@drawable/vchip_pin_head_bg">
+		<TextView
+			android:id="@+id/title"
+			android:layout_width="match_parent"
+			android:layout_height="34px"
+			android:layout_gravity="center_horizontal"
+			android:text="@string/enter_password"
+			android:textColor="#FFFFFFFF"
+			android:gravity="center"
+			android:textSize="24px" 
+			android:layout_marginTop="20px"
+			android:layout_marginBottom="10px" />	
+	</LinearLayout> 
+
+	<LinearLayout
+    		android:layout_width="match_parent"
+    		android:layout_height="wrap_content"
+    		android:orientation="horizontal"
+    		android:padding="14px"
+    		android:gravity="center"
+    		android:background="@drawable/vchip_pin_body_bg">
+		<ListView 
+			android:id="@+id/list_item"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:cacheColorHint="#00000000"
+			android:divider="#0000"
+			android:dividerHeight="0px"
+			android:focusable="true"
+			android:layout_marginLeft="30px"
+			android:layout_marginRight="30px" 			
+		></ListView>     
+	</LinearLayout> 
+
+	<LinearLayout
 		android:layout_width="fill_parent"
-		android:layout_height="3px"
-		android:background="@drawable/line"
-		android:layout_marginLeft="30px"
-		android:layout_marginRight="30px" >
-	</RelativeLayout> 
-	<ListView 
-		android:id="@+id/list_item"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:cacheColorHint="#00000000"
-		android:divider="#0000"
-		android:dividerHeight="0px"
-		android:focusable="true"
-		android:layout_marginLeft="30px"
-		android:layout_marginRight="30px" 			
-	></ListView>     
-	<RelativeLayout
-		android:id="@+id/inforbar_line" 
-		android:layout_width="fill_parent"
-		android:layout_height="3px"
-		android:background="@drawable/line"
-		android:layout_marginLeft="30px"
-		android:layout_marginRight="30px" >
-	</RelativeLayout> 
-  	<LinearLayout
-    		android:layout_width="fill_parent"
-			android:layout_height="50px"
-			android:layout_marginRight="20px"
-			android:layout_marginLeft="20px"
-			android:layout_marginBottom="15px"
-    		android:orientation="vertical">
-			
-  	     	<LinearLayout
-	    		android:layout_width="match_parent"
-	    		android:layout_height="match_parent"
-	    		android:orientation="horizontal"
-	    		android:gravity="center"
-	    		android:layout_marginBottom="8px">
-    		
-	    		<ImageView 
-	    			android:layout_width="wrap_content"
-	    			android:layout_height="wrap_content"
-					android:background="@drawable/move"
-	    		>
-	    		</ImageView>
-	    		<TextView
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_gravity="center"
-			        android:text="@string/help_info_move"
-			        android:textColor="#FFFFFFFF"
-			        android:textSize="20sp" 
-			        android:layout_marginRight="30px"
-			        />
-	    		<ImageView 
-	    			android:layout_width="wrap_content"
-	    			android:layout_height="wrap_content"
-					android:background="@drawable/enter"
-	    		></ImageView>
-	    		<TextView
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_gravity="center"
-			        android:text="@string/help_info_select"
-			        android:textColor="#FFFFFFFF"
-			        android:textSize="20sp"
-			        android:layout_marginRight="30px"
-			        />
-	    		<ImageView 
-	    			android:layout_width="wrap_content"
-	    			android:layout_height="wrap_content"
-					android:background="@drawable/return_icon"
-	    		></ImageView>
-	    		<TextView
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_gravity="center"
-			        android:text="@string/help_info_return"
-			        android:textColor="#FFFFFFFF"
-			        android:textSize="20sp" />
-    		</LinearLayout>
+		android:layout_height="80px"
+		android:layout_below="@+id/rating_bg_layout"
+		android:orientation="vertical"
+		android:background="@drawable/vchip_pin_tail_bg">
+
+		<RelativeLayout
+			android:id="@+id/inforbar_line" 
+			android:layout_width="fill_parent"
+			android:layout_height="3px"
+			android:background="@drawable/line"
+			android:layout_marginLeft="30px"
+			android:layout_marginRight="30px" >
+		</RelativeLayout> 
+	  	<LinearLayout
+	    		android:layout_width="fill_parent"
+				android:layout_height="50px"
+				android:layout_marginRight="20px"
+				android:layout_marginLeft="20px"
+				android:layout_marginBottom="15px"
+	    		android:orientation="vertical">
+				
+	  	     	<LinearLayout
+		    		android:layout_width="match_parent"
+		    		android:layout_height="match_parent"
+		    		android:orientation="horizontal"
+		    		android:gravity="center"
+		    		android:layout_marginBottom="8px">
+	    		
+		    		<ImageView 
+		    			android:layout_width="wrap_content"
+		    			android:layout_height="wrap_content"
+						android:background="@drawable/move"
+		    		>
+		    		</ImageView>
+		    		<TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:text="@string/help_info_move"
+				        android:textColor="#FFFFFFFF"
+				        android:textSize="20sp" 
+				        android:layout_marginRight="30px"
+				        />
+		    		<ImageView 
+		    			android:layout_width="wrap_content"
+		    			android:layout_height="wrap_content"
+						android:background="@drawable/enter"
+		    		></ImageView>
+		    		<TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:text="@string/help_info_select"
+				        android:textColor="#FFFFFFFF"
+				        android:textSize="20sp"
+				        android:layout_marginRight="30px"
+				        />
+		    		<ImageView 
+		    			android:layout_width="wrap_content"
+		    			android:layout_height="wrap_content"
+						android:background="@drawable/return_icon"
+		    		></ImageView>
+		    		<TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:text="@string/help_info_return"
+				        android:textColor="#FFFFFFFF"
+				        android:textSize="20sp" />
+			</LinearLayout>
 		</LinearLayout>	
+	</LinearLayout>		
 </LinearLayout>
 

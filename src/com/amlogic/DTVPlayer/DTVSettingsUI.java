@@ -371,49 +371,39 @@ public class DTVSettingsUI extends DTVActivity{
 			switch(position){
 			case SETTINGS_SUBTILE_SWITCH:
 				{
-			    	 holder.icon.setImageBitmap(mIcon1);
-					 holder.info.setVisibility(View.VISIBLE);
-					 holder.icon1.setVisibility(View.VISIBLE);
-			    	 if (mDTVSettings.getSubtitleStatus())
-					   {			   
-			    		 holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
-			    		 
-			    		 holder.info.setText(R.string.on);
-					   }
-					   else
-					   {
-						   holder.icon1.setBackgroundResource(R.drawable.select_round_1); 
-						   holder.info.setText(R.string.off);
-					   }	  
+					holder.icon.setImageBitmap(mIcon1);
+					holder.info.setVisibility(View.VISIBLE);
+					holder.icon1.setVisibility(View.INVISIBLE);
+					if (mDTVSettings.getSubtitleStatus()){			   
+						//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+						holder.info.setText(R.string.on);
+					}
+					else{
+						//holder.icon1.setBackgroundResource(R.drawable.select_round_1); 
+						holder.info.setText(R.string.off);
+					}	  
 				}
 		    	break;
 		     case SETTINGS_SCREEN_TYPE:
 			 	 holder.info.setVisibility(View.VISIBLE);
-				 holder.icon1.setVisibility(View.VISIBLE);
-				 
+				 holder.icon1.setVisibility(View.INVISIBLE);
 		    	 holder.icon.setImageBitmap(mIcon2);
-		    	 holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
+		    	 //holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
 
 				 int mode= mDTVSettings.getScreenMode();		 
-				 if(mode==0)
-				 {
+				 if(mode==0){
 				 	 holder.info.setText(R.string.auto);
 				 }
-				 else  if(mode==2)
-				 {
+				 else  if(mode==2){
 					holder.info.setText(R.string.type_4_3);
 				 }
-				 else  if(mode==3)
-				 {
+				 else  if(mode==3){
 					holder.info.setText(R.string.type_16_9);
 				 }	
-				 
 		    	 break;
-			
 		     case SETTINGS_AUDIO_TRACK:
 			 	 holder.info.setVisibility(View.VISIBLE);
-				 holder.icon1.setVisibility(View.VISIBLE);
-				 
+				 holder.icon1.setVisibility(View.INVISIBLE);
 		    	 holder.icon.setImageBitmap(mIcon3);
 		    	 holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
 				
@@ -450,13 +440,12 @@ public class DTVSettingsUI extends DTVActivity{
 		    	 break;	 
 		     case SETTINGS_TIMESHIFT_TIME_SET:
 			 	holder.info.setVisibility(View.VISIBLE);
-				holder.icon1.setVisibility(View.VISIBLE);
+				holder.icon1.setVisibility(View.INVISIBLE);
 				holder.icon.setImageBitmap(mIcon9);
 				holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
 
 				int time = mDTVSettings.getTimeShiftingDuration();
-				switch(time)
-				{
+				switch(time){
 					case 600:
 						holder.info.setText("10 Min");
 						break;
@@ -476,9 +465,8 @@ public class DTVSettingsUI extends DTVActivity{
 				}
 				else{
 				 	holder.info.setVisibility(View.VISIBLE);
-					holder.icon1.setVisibility(View.VISIBLE);
+					holder.icon1.setVisibility(View.INVISIBLE);
 					holder.icon.setImageBitmap(mIcon10);
-					holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
 
 					int pr = mDTVSettings.getParentalRating();
 					if(pr<=0){
@@ -490,9 +478,8 @@ public class DTVSettingsUI extends DTVActivity{
 				break;
 			case SETTINGS_TTX_REGION:
 				holder.info.setVisibility(View.VISIBLE);
-				holder.icon1.setVisibility(View.VISIBLE);
+				holder.icon1.setVisibility(View.INVISIBLE);
 				holder.icon.setImageBitmap(mIcon12);
-				holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
 				
 				int pos =  mDTVSettings.getTeletextRegion();
 
