@@ -541,12 +541,16 @@ public class DTVPlayer extends DTVActivity{
 					return;
 				}
 
+				Log.d(TAG, "region = " + region);
+
 				if(region.contains("DVB-T"))
 				{
+					Log.d(TAG, "goto DTVScanDVBT");
 					Intent_scan.setClass(DTVPlayer.this, DTVScanDVBT.class);
 				}
 				else if(region.contains("ATSC"))
 				{
+					Log.d(TAG, "goto DTVScanATSC");
 					Intent_scan.setClass(DTVPlayer.this, DTVScanATSC.class);
 				}
 				

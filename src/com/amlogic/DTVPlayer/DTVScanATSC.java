@@ -1603,10 +1603,10 @@ public class DTVScanATSC extends DTVActivity{
 
 	private void DTVScanATSC_StartManuScan()
 	{
-		Log.d(TAG, "DTVScanATSC_StartManuScan");
+		Log.d(TAG, "DTVScanATSC_StartManuScan" + dvbscanatsc_manu_freq);
 	
 		TVScanParams sp;	
-
+	
 		switch(dvbscanatsc_manu_modulation)
 		{
 				case DTVScanATSC.SETTINGS_MODULATION_QAM_AUTO:
