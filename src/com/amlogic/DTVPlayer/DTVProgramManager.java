@@ -440,6 +440,7 @@ public class DTVProgramManager extends DTVActivity{
 				}
 				public void showWindowDetail(Window window){
 					TextView title = (TextView)window.findViewById(R.id.title);
+					title.setTextColor(Color.YELLOW);
 					title.setText("Group Operations");
 					
 					ListView list_item = (ListView)window.findViewById(R.id.list_item);
@@ -561,6 +562,7 @@ public class DTVProgramManager extends DTVActivity{
 				}
 				public void showWindowDetail(Window window){
 					TextView title = (TextView)window.findViewById(R.id.title);
+					title.setTextColor(Color.YELLOW);
 					title.setText("Program Operations");
 					
 					ListView list_item = (ListView)window.findViewById(R.id.list_item);

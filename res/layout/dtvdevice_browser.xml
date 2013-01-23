@@ -6,7 +6,7 @@
 	android:orientation="vertical">	
 
 	<LinearLayout	android:id="@+id/layout_top"	
-	android:layout_width="wrap_content"	
+	android:layout_width="fill_parent"	
 	android:layout_height="wrap_content"	
 	android:layout_weight="1"
 	android:background ="@drawable/epg_title_bg"	

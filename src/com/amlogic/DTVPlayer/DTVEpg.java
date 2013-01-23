@@ -30,6 +30,8 @@ import android.database.*;
 import android.os.*;
 import java.lang.reflect.Field;
 
+import com.amlogic.widget.SingleChoiseDialog;
+
 public class DTVEpg extends DTVActivity{
 	private static final String TAG="DTVEpg";
 
@@ -329,7 +331,6 @@ public class DTVEpg extends DTVActivity{
 		return value;
 
 	}
-
 
 	private void moveto_currentevent(){
         View TempButton = DTVEpg.this.getCurrentFocus();
@@ -1162,109 +1163,133 @@ public class DTVEpg extends DTVActivity{
         }  
     }  
 
-	class EitItemOnClick  implements OnClickListener
-    {
-	        public void onClick(View v) 
-	       {
-	       		final int i=Integer.valueOf(((Button)v).getHint().toString());
-	        	if (i != -1)
-	        	{	
-	        		try 
-					{
-			        	int TempInt = EitListView.getPositionForView(v);
+	class EitItemOnClick  implements OnClickListener{
+		public void onClick(View v){
+       		final int i=Integer.valueOf(((Button)v).getHint().toString());
+        	if (i != -1){	
+        		try{
+		        	int TempInt = EitListView.getPositionForView(v);
 
-			    		Date dt_start =  new Date(mTVEvent[TempInt][i].getStartTime()*1000);
-			    		Date dt_end   =  new Date((mTVEvent[TempInt][i].getEndTime())*1000);
-			    		
-			    		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
-			    		String str_start = sdf.format(dt_start); 
-			    		String str_end   = sdf.format(dt_end); 
-			        	
-					    refresh_eventnameanddetailinfo(((Button)v).getText().toString() + "[" + str_start + "--" + str_end +"]", 
-					    		get_detailinfo(mTVEvent[TempInt][i].getID()));
-						
-
-	        		}
-					catch(Exception e){
-					    Log.d(">>>EitItemOnClick Exception<<<", e.getMessage());
-					}
-
-					try{
-						TempItemView = v;
-						final CharSequence[] book_items = {"No Book", "BookPlay", "BookRecord"};
-						Dialog dialog = null;  
-					    Builder builder = new AlertDialog.Builder(DTVEpg.this);  
-					    builder.setTitle("   ");  
-					    final ChoiceOnClickListener choiceListener = new ChoiceOnClickListener();  
-					    builder.setSingleChoiceItems(book_items, 0, choiceListener);  
-					      
-					    DialogInterface.OnClickListener btnListener =   
-					        new DialogInterface.OnClickListener() 
-					    	{  
-					            public void onClick(DialogInterface dialogInterface, int which) 
-					            {  
-					            	if (TempItemView  == null)
-										Log.d("Error #################################################", "TempItemView is null");
-									else
-					            	{
-						            	int TempInt = EitListView.getPositionForView(TempItemView);
-						                int choiceWhich   = choiceListener.getWhich();  
-										refresh_bookstatus(TempItemView, choiceWhich);
-										try
-										{
-											switch(choiceWhich)
-											{
-
-													case 0:
-														update_bookstatus(mTVEvent[TempInt][i].getID(),0);
-													break;
-													
-													case 1:
-														update_bookstatus(mTVEvent[TempInt][i].getID(),1);
-													break;
-													
-													case 2:
-														update_bookstatus(mTVEvent[TempInt][i].getID(),2);
-														
-														//Log.d("EPG","start="+(mTVEvent[TempInt].getLong(mTVEvent[TempInt].getStartTime()))+"System.currentTimeMillis()"+System.currentTimeMillis());
-														if((long)(mTVEvent[TempInt][i].getStartTime())>System.currentTimeMillis()/1000)
-															SetAlarm(mTVEvent[TempInt][i].getStartTime()-100);
-													break;
-											}
-										}
-										catch(Exception e)
-										{
-										    Log.d("update_bookstatus Exception#################################################", e.getMessage());
+		    		Date dt_start =  new Date(mTVEvent[TempInt][i].getStartTime()*1000);
+		    		Date dt_end   =  new Date((mTVEvent[TempInt][i].getEndTime())*1000);
+		    		
+		    		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
+		    		String str_start = sdf.format(dt_start); 
+		    		String str_end   = sdf.format(dt_end); 
+		        	
+				    refresh_eventnameanddetailinfo(((Button)v).getText().toString() + "[" + str_start + "--" + str_end +"]", 
+				    		get_detailinfo(mTVEvent[TempInt][i].getID()));
+        		}
+				catch(Exception e){
+				    Log.d(">>>EitItemOnClick Exception<<<", e.getMessage());
+				}
+				/*
+				try{
+					TempItemView = v;
+					final CharSequence[] book_items = {"Cancel Book", "BookPlay", "BookRecord"};
+					Dialog dialog = null;  
+				    Builder builder = new AlertDialog.Builder(DTVEpg.this);  
+				    builder.setTitle("   ");  
+				    final ChoiceOnClickListener choiceListener = new ChoiceOnClickListener();  
+				    builder.setSingleChoiceItems(book_items, 0, choiceListener);  
+				      
+				    DialogInterface.OnClickListener btnListener =   
+				        new DialogInterface.OnClickListener() 
+				    	{  
+				            public void onClick(DialogInterface dialogInterface, int which) 
+				            {  
+				            	if (TempItemView  == null)
+									Log.d("Error #################################################", "TempItemView is null");
+								else{
+					            	int TempInt = EitListView.getPositionForView(TempItemView);
+					                int choiceWhich   = choiceListener.getWhich();  
+									refresh_bookstatus(TempItemView, choiceWhich);
+									try{
+										switch(choiceWhich){
+											case 0:
+												update_bookstatus(mTVEvent[TempInt][i].getID(),0);
+											break;
+											
+											case 1:
+												update_bookstatus(mTVEvent[TempInt][i].getID(),1);
+											break;
+											
+											case 2:
+												update_bookstatus(mTVEvent[TempInt][i].getID(),2);
+												
+												//Log.d("EPG","start="+(mTVEvent[TempInt].getLong(mTVEvent[TempInt].getStartTime()))+"System.currentTimeMillis()"+System.currentTimeMillis());
+												if((long)(mTVEvent[TempInt][i].getStartTime())>System.currentTimeMillis()/1000)
+													SetAlarm(mTVEvent[TempInt][i].getStartTime()-100);
+											break;
 										}
 									}
-					            }  
-					        };  
-					    builder.setPositiveButton("Ok", btnListener);  
-					    builder.setNegativeButton("Cancel", null);
-					    dialog = builder.create(); 
-					    dialog.show();
-					    dialog.getWindow().setLayout(450, 450);
+									catch(Exception e)
+									{
+									    Log.d("update_bookstatus Exception#################################################", e.getMessage());
+									}
+								}
+				            }  
+				        };  
+				    builder.setPositiveButton("Ok", btnListener);  
+				    builder.setNegativeButton("Cancel", null);
+				    dialog = builder.create(); 
+				    dialog.show();
+				    dialog.getWindow().setLayout(450, 450);
 
-					    AlertDialog alert = builder.create();
- 					dialog.show();
- 
- 					WindowManager.LayoutParams lp=dialog.getWindow().getAttributes();
- 					lp.dimAmount=0.0f;
- 					dialog.getWindow().setAttributes(lp);
- 					dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);		
-						
-					}
-					catch(Exception e)
-					{
-					    Log.d(TAG,"EitItemOnClick Exception>>>>---"+e.getMessage());
-					}
-			    }
-				else
-				{
-					clear_eventnameanddetailinfo();
+				    AlertDialog alert = builder.create();
+					dialog.show();
+
+					WindowManager.LayoutParams lp=dialog.getWindow().getAttributes();
+					lp.dimAmount=0.0f;
+					dialog.getWindow().setAttributes(lp);
+					dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);		
+					
 				}
+				catch(Exception e)
+				{
+				    Log.d(TAG,"EitItemOnClick Exception>>>>---"+e.getMessage());
+				}
+				*/
+				TempItemView = v;
+				if(TempItemView  == null)
+					Log.d(TAG,"TempItemView is null");
+				else{
+					final int TempInt = EitListView.getPositionForView(TempItemView);
+					int pos = 0;
+					String items[] = new String[]{"Cancel Book", "BookPlay", "BookRecord"};
+					refresh_bookstatus(TempItemView, pos);
+					new SingleChoiseDialog(DTVEpg.this,items,pos){
+						public void onSetMessage(View v){
+							((TextView)v).setText("   ");
+						}
 
-	        }
+						public void onSetNegativeButton(){
+							
+						}
+						public void onSetPositiveButton(int which){
+							Log.d(TAG,"dialog choise="+which);
+							switch(which){
+								case 0:
+									update_bookstatus(mTVEvent[TempInt][i].getID(),0);
+								break;
+								case 1:
+									update_bookstatus(mTVEvent[TempInt][i].getID(),1);
+								break;
+								case 2:
+									update_bookstatus(mTVEvent[TempInt][i].getID(),2);
+									if((long)(mTVEvent[TempInt][i].getStartTime())>System.currentTimeMillis()/1000)
+										SetAlarm(mTVEvent[TempInt][i].getStartTime()-100);
+								break;
+							}
+						}
+					};
+				}	
+		    }
+			else{
+				clear_eventnameanddetailinfo();
+			}
+
+        }
 	}
 	
 	class EitItemOnFocusChange  implements OnFocusChangeListener{

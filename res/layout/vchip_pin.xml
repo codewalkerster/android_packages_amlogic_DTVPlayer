@@ -11,7 +11,7 @@
     > 
      <LinearLayout
     		android:layout_width="match_parent"
-    		android:layout_height="100px"
+    		android:layout_height="80px"
     		android:orientation="vertical"
     		android:padding="14px"
     		android:gravity="center"
@@ -115,7 +115,7 @@
   	
   	   <LinearLayout
 	    	  android:layout_width="fill_parent"
-    		  android:layout_height="66px"
+    		  android:layout_height="80px"
     		  android:layout_below="@+id/rating_bg_layout"
 			  android:orientation="vertical"
 			 android:background="@drawable/vchip_pin_tail_bg">

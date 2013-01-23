@@ -46,7 +46,7 @@ abstract public class SureDialog {
 			
 		};
 		
-		mDialog.setCancelable(false);
+		mDialog.setCancelable(true);
 		mDialog.setCanceledOnTouchOutside(false);
 
 		if(mDialog == null){

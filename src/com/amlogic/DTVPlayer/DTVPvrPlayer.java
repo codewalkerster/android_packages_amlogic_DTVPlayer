@@ -70,7 +70,7 @@ public class DTVPvrPlayer extends DTVActivity{
 		Log.d(TAG, "onStop");
 		super.onStop();
 		pvrHandler.removeCallbacks(pvrTimer);
-		stopPlayback();
+		
 	}
 
 	public void onDisconnected(){
@@ -348,7 +348,10 @@ public class DTVPvrPlayer extends DTVActivity{
 			public void onSetNegativeButton(){
 			}
 			public void onSetPositiveButton(){
-				DTVTimeShiftingStop();
+				DTVPvrPlayerStop();
+				Intent intent = new Intent();
+				intent.setClass(DTVPvrPlayer.this, DTVPlayer.class);
+				startActivity(intent);
 				finish();	
 			}
 		};
@@ -624,9 +627,10 @@ public class DTVPvrPlayer extends DTVActivity{
 				Log.d(TAG, "recPara: status("+recPara.getStatus()+
 					"), time "+recPara.getCurrentTime()/1000+" / "+
 					recPara.getTotalTime()/1000);
+				statusChangeUpdate(recPara.getStatus());
+				freshTimeAndSeekbar(recPara.getCurrentTime()/1000,recPara.getTotalTime()/1000);
 			}
-			statusChangeUpdate(recPara.getStatus());
-			freshTimeAndSeekbar(recPara.getCurrentTime()/1000,recPara.getTotalTime()/1000);
+	
 			pvrHandler.postDelayed(this, 1000);
 		}
 	};
