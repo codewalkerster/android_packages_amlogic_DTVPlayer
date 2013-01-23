@@ -444,7 +444,7 @@ public class DTVProgramManager extends DTVActivity{
 					title.setText("Group Operations");
 					
 					ListView list_item = (ListView)window.findViewById(R.id.list_item);
-					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,android.R.layout.simple_expandable_list_item_1,itemChoices);
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.menu_list_item,itemChoices);
 					list_item.setAdapter(adapter);  
 					list_item.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 						public void onItemClick(AdapterView<?> parent, View v, int position, long id){			
@@ -566,7 +566,7 @@ public class DTVProgramManager extends DTVActivity{
 					title.setText("Program Operations");
 					
 					ListView list_item = (ListView)window.findViewById(R.id.list_item);
-					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,android.R.layout.simple_expandable_list_item_1,itemChoices);
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.menu_list_item,itemChoices);
 					//ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.dtvsettings_list_item,itemChoices);
 					list_item.setAdapter(adapter);  
 					list_item.setOnItemClickListener(new AdapterView.OnItemClickListener(){

@@ -27,6 +27,7 @@
 		android:layout_marginLeft="30px"
 		android:layout_marginRight="30px" >
 	</RelativeLayout> 
+	<!--
 	<ListView 
 		android:id="@+id/list_item"
 		android:layout_width="fill_parent"
@@ -37,7 +38,16 @@
 		android:focusable="true"
 		android:layout_marginLeft="30px"
 		android:layout_marginRight="30px" 			
-	></ListView>     
+	></ListView>   
+	-->
+	<com.amlogic.widget.FocusScrollListView 
+		android:id="@+id/list_item"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_marginLeft="30px"
+		android:layout_marginRight="30px" 
+		android:listSelector="#00000000">
+	</com.amlogic.widget.FocusScrollListView>
 	<RelativeLayout
 		android:id="@+id/inforbar_line" 
 		android:layout_width="fill_parent"

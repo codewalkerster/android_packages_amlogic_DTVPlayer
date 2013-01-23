@@ -55,12 +55,22 @@
 				android:layout_height="336px"
 				android:paddingLeft="10px"
 				android:paddingRight="13px"
-				>		
+				>	
+				<!--
 			    <ListView 
 			      android:id="@+id/ListView_channel"
 			      android:layout_width="fill_parent"
 			      android:layout_height="fill_parent"		      
 			    ></ListView>
+			    -->
+			    <com.amlogic.widget.FocusScrollListView 
+			        android:id="@+id/ListView_channel"
+			        android:layout_width="match_parent"
+			        android:layout_height="match_parent"
+			        android:padding="0dip"
+			        android:layout_margin="0dip"
+		        	android:listSelector="#00000000">
+		    	</com.amlogic.widget.FocusScrollListView>	
 	    	</LinearLayout>
 	    	<LinearLayout
 	    		android:layout_width="fill_parent"
