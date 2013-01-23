@@ -319,12 +319,16 @@ public class DTVChannelList extends DTVActivity{
 				DTVListDealLeftAndRightKey(1);
 				break;
 			case KeyEvent.KEYCODE_DPAD_DOWN:			
-				if(cur_select_item== ListView_channel.getCount()-1)
-			    	ListView_channel.setSelection(0); 			
+				if(cur_select_item== ListView_channel.getCount()-1){
+			    	ListView_channel.setSelection(0); 	
+					return true;
+				}	
 				break;
 			case KeyEvent.KEYCODE_DPAD_UP:
-				if(cur_select_item== 0)
+				if(cur_select_item== 0){
 					ListView_channel.setSelection(ListView_channel.getCount()-1); 
+					return true;
+				}	
 				break;
 			case KeyEvent.KEYCODE_ZOOM_IN:
 				showPvrTimeSetDialog(DTVChannelList.this);
