@@ -126,7 +126,8 @@
 		android:layout_width="fill_parent"		  
 		android:background="@drawable/epg_eit_list_bg"
 		android:layout_height="180px"
-		android:layout_weight="1">	  
+		android:layout_weight="1">	
+		<!--
 		<ListView
 			android:id="@+id/list_content"
 			android:layout_marginLeft="4px"
@@ -134,6 +135,18 @@
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"	
 			android:scrollbars="vertical"/>    
+
+		-->
+		<com.amlogic.widget.FocusScrollListView 
+			android:id="@+id/list_content"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:padding="0dip"
+			android:layout_margin="0dip"
+			android:layout_marginLeft="4px"
+			android:layout_marginRight="4px" 
+			android:listSelector="#00000000">
+		</com.amlogic.widget.FocusScrollListView>		
 	</LinearLayout> 
 	   
 	<LinearLayout

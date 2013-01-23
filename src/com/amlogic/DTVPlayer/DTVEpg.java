@@ -1181,7 +1181,7 @@ public class DTVEpg extends DTVActivity{
 				    		get_detailinfo(mTVEvent[TempInt][i].getID()));
         		}
 				catch(Exception e){
-				    Log.d(">>>EitItemOnClick Exception<<<", e.getMessage());
+				    Log.d(TAG, e.getMessage());
 				}
 				/*
 				try{
@@ -1257,7 +1257,7 @@ public class DTVEpg extends DTVActivity{
 					final int TempInt = EitListView.getPositionForView(TempItemView);
 					int pos = 0;
 					String items[] = new String[]{"Cancel Book", "BookPlay", "BookRecord"};
-					refresh_bookstatus(TempItemView, pos);
+					
 					new SingleChoiseDialog(DTVEpg.this,items,pos){
 						public void onSetMessage(View v){
 							((TextView)v).setText("   ");
@@ -1268,6 +1268,7 @@ public class DTVEpg extends DTVActivity{
 						}
 						public void onSetPositiveButton(int which){
 							Log.d(TAG,"dialog choise="+which);
+							refresh_bookstatus(TempItemView, which);
 							switch(which){
 								case 0:
 									update_bookstatus(mTVEvent[TempInt][i].getID(),0);
@@ -1315,7 +1316,7 @@ public class DTVEpg extends DTVActivity{
 					}
 					catch(Exception e)
 					{
-					    Log.d("EitItemOnFocusChange Exception#################################################",e.getMessage());
+					    Log.d(TAG,e.getMessage());
 					}
 			  }
 			  else
@@ -1337,24 +1338,20 @@ public class DTVEpg extends DTVActivity{
 	    }	
 	}
 	
-	class ExitOnClick  implements OnClickListener
-    {
-	        public void onClick(View v) 
-	        { 
-			    finish();
-	        }
+	class ExitOnClick  implements OnClickListener{
+        public void onClick(View v){ 
+		    finish();
+        }
     }
 
-	class DetailOnClick  implements OnClickListener
-    {
-	        public void onClick(View v) 
-	        { 
-            	new AlertDialog.Builder(DTVEpg.this) 
-            	.setTitle("--")
-            	.setMessage(((TextView)v).getText())
-            	.setPositiveButton("ok", null)
-            	.show();
-	        }
+	class DetailOnClick  implements OnClickListener{
+        public void onClick(View v){ 
+        	new AlertDialog.Builder(DTVEpg.this) 
+        	.setTitle("--")
+        	.setMessage(((TextView)v).getText())
+        	.setPositiveButton("ok", null)
+        	.show();
+        }
     }	
 	
 	private void update_new_eit(){
