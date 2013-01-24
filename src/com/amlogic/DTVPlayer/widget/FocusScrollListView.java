@@ -37,7 +37,7 @@ public class FocusScrollListView extends ListView {
 	private boolean isSetSelection;
 
 	private boolean upAndDownKeyFlag=false;
-	private int lastItemCordinatesY;
+	private int lastItemCordinatesY=0;
 	private int cordinatesY;
 	
 	private boolean isPageScroll;
@@ -103,18 +103,17 @@ public class FocusScrollListView extends ListView {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		/*
-		if (isSetSelection) {
+		
+		if (isSetSelection&&isScroll==false) {
 			
 			if (null != getSelectedView()) {
-				canvas.drawBitmap(mBitmap, 0, getSelectedView().getTop(), null);
+				//canvas.drawBitmap(mBitmap, 0, getSelectedView().getTop(), null);
 				setScroller(getSelectedView().getTop());
 				isSetSelection = false;
-				return;
+				//return;
 			}
 		}
-		*/
-
+		
 		if(upAndDownKeyFlag){
 			mScroller.startScroll(0, lastItemCordinatesY, 0,
 								getSelectedView().getTop(), sDuration);
@@ -169,8 +168,11 @@ public class FocusScrollListView extends ListView {
 
 	@Override
 	public void setSelection(int position) {
+		Log.d(TAG,"setSelection");
+		setTmpSelection(position);
 		super.setSelection(position);
 		updateFocus();
+		//isPageScroll = true;
 	}
 
 	/**
@@ -269,6 +271,7 @@ public class FocusScrollListView extends ListView {
 						//mScroller.startScroll(0, view.getTop(), 0,
 								//top - view.getTop(), sDuration);
 						mFocusState = FOCUS_MIDDLE;
+						isScroll = true;
 					}				
 					break;
 				}
