@@ -44,9 +44,10 @@ public class DTVScanATSC extends DTVActivity{
 	public static final int SETTINGS_SCAN_BAND = 1;
 	public static final int SETTINGS_CHNO = 2;
 	public static final int SETTINGS_FREQUENCY = 3;
-	public static final int SETTINGS_MODULATION = 4;
-	public static final int SETTINGS_SCAN = 5;
-	public static final int SETTINGS_MANU_MAX = 6;
+	/*not use now. if use atsc demod need set modulation, SETTINGS_MODULATION = 4;SETTINGS_SCAN = 5;SETTINGS_MANU_MAX = 6;*/
+	public static final int SETTINGS_MODULATION = 6;
+	public static final int SETTINGS_SCAN = 4;
+	public static final int SETTINGS_MANU_MAX = 5;
 
 	/*atsc area*/
 	public static final int SETTINGS_AREA_USA = 0;
