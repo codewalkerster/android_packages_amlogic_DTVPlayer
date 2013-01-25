@@ -115,9 +115,11 @@ public class FocusScrollListView extends ListView {
 		}
 		
 		if(upAndDownKeyFlag){
-			mScroller.startScroll(0, lastItemCordinatesY, 0,
-								getSelectedView().getTop(), sDuration);
-			setScroller(getSelectedView().getTop());
+			if (null != getSelectedView()) {
+				mScroller.startScroll(0, lastItemCordinatesY, 0,
+									getSelectedView().getTop(), sDuration);
+				setScroller(getSelectedView().getTop());
+			}	
 			upAndDownKeyFlag=false;
 		}
 		
@@ -163,7 +165,6 @@ public class FocusScrollListView extends ListView {
 				}
 			}
 		}
-
 	}
 
 	@Override
@@ -210,7 +211,7 @@ public class FocusScrollListView extends ListView {
 	@Override
 	public void setAdapter(ListAdapter adapter) {
 		super.setAdapter(adapter);
-		setMSelection(0);
+		//setMSelection(0);
 	}
 
 	@Override
@@ -271,7 +272,6 @@ public class FocusScrollListView extends ListView {
 						//mScroller.startScroll(0, view.getTop(), 0,
 								//top - view.getTop(), sDuration);
 						mFocusState = FOCUS_MIDDLE;
-						isScroll = true;
 					}				
 					break;
 				}

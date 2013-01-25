@@ -170,6 +170,7 @@ public class DTVProgramManager extends DTVActivity{
 		ListView_programmanager = (ListView) findViewById(R.id.list_content);
 		myAdapter = new IconAdapter(DTVProgramManager.this,null);
 		ListView_programmanager.setOnItemSelectedListener(mOnSelectedListener);
+		ListView_programmanager.setOnKeyListener(new listOnKeyListener());
 		ListView_programmanager.setOnScrollListener(new listOnScroll()); 
 		ListView_programmanager.setOnItemClickListener(mOnItemClickListener);
 		ListView_programmanager.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -231,12 +232,176 @@ public class DTVProgramManager extends DTVActivity{
 		}
 	};
 
+	private boolean needUpdate = false;
+	private boolean move_mode=false;
+	private int moveItemPos = -1;
+	private int cur_pos = -1;
+	private int temp_pos = 0;
 	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 				int db_id=mTVProgramList[position].getID();
+				Log.d(TAG,"mOnItemClickListener pos="+position);
+
 		}
 	};
 
+	public void setMoveMode(boolean mode){
+		this.move_mode = mode;
+	}
+
+	public boolean getMoveMode(){
+		return this.move_mode;
+	}
+
+	public void setMoveItemPos(int pos){
+		this.moveItemPos = pos;
+	}
+
+	public int getMoveItemPos(){
+		return this.moveItemPos;
+	}
+
+	public void exchageItem(int first, int second){
+		Log.d(TAG,"cur_pos="+first+"-----"+"temp_pos="+second);
+		TVProgram mTemp = mTVProgramList[second];
+		mTVProgramList[second]=mTVProgramList[first];
+		mTVProgramList[first]=mTemp;
+	}
+
+	class listOnKeyListener implements OnKeyListener{
+		public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
+			// TODO Auto-generated method stub
+			Log.d(TAG, "enter key press");
+
+			if (arg2.getAction() == KeyEvent.ACTION_DOWN){
+				switch(arg1)
+				{
+					case KeyEvent.KEYCODE_DPAD_CENTER:
+					case KeyEvent.KEYCODE_ENTER:
+						if (getMoveMode()){	
+							Log.d(TAG,"switch itme " + getMoveItemPos() + "   "+myAdapter.getSelectItem());
+							//saveChange();
+							setMoveItemPos(-1);
+							setMoveMode(false);
+							myAdapter.notifyDataSetChanged();
+						}
+						break;
+					case KeyEvent.KEYCODE_DPAD_UP:
+						if (getMoveMode() && getMoveItemPos() > 0){
+							needUpdate = false;
+							exchageItem(getMoveItemPos(), getMoveItemPos() - 1);
+							setMoveItemPos(getMoveItemPos() - 1);
+							myAdapter.setSelectItem(getMoveItemPos());
+							myAdapter.notifyDataSetChanged();
+							Log.d(TAG, "press up");
+						}
+						else if (!getMoveMode() && myAdapter.getSelectItem()== 0){
+							needUpdate = true;
+							Log.d(TAG, "press up to last item");
+						}
+						else{
+					 		needUpdate = false;
+					 	}
+						break;
+					case KeyEvent.KEYCODE_DPAD_DOWN:
+						if (getMoveMode() && getMoveItemPos() < (mTVProgramList.length - 1))
+						{
+							needUpdate = false;
+							exchageItem(getMoveItemPos(), getMoveItemPos() + 1);
+							setMoveItemPos(getMoveItemPos() + 1);
+							myAdapter.setSelectItem(getMoveItemPos());
+							myAdapter.notifyDataSetChanged();
+							Log.d(TAG, "press down");
+						}
+						else if (!getMoveMode() && myAdapter.getSelectItem() == (mTVProgramList.length - 1))
+						{
+							needUpdate = true;
+							Log.d(TAG, "press down to first item");
+						}
+						 else
+					 	{
+					 		needUpdate = false;
+					 	}
+						break;
+				}
+			}
+
+			if (arg2.getAction() == KeyEvent.ACTION_UP)
+			{
+				switch(arg1)
+				{
+					case KeyEvent.KEYCODE_PAGE_UP:
+						if (getMoveMode()/* && getMoveItemPos() < (serviceList.size() - 1)*/)
+						{
+							for (int i = getMoveItemPos(); i > myAdapter.getSelectItem(); i--)
+							{
+								exchageItem(i, i - 1);
+							}
+							setMoveItemPos(myAdapter.getSelectItem());
+							myAdapter.setSelectItem(myAdapter.getSelectItem());
+							myAdapter.notifyDataSetChanged();
+							Log.d(TAG, "press page up");
+						}
+						break;
+					case KeyEvent.KEYCODE_PAGE_DOWN:
+						if (getMoveMode()/* && getMoveItemPos() < (serviceList.size() - 1)*/)
+						{
+							for (int i = getMoveItemPos(); i < myAdapter.getSelectItem(); i++)
+							{
+								exchageItem(i, i + 1);
+							}
+							setMoveItemPos(myAdapter.getSelectItem());
+							myAdapter.setSelectItem(myAdapter.getSelectItem());
+							myAdapter.notifyDataSetChanged();
+							Log.d(TAG, "press page down");
+						}
+						break;
+					case KeyEvent.KEYCODE_DPAD_UP:
+						if (needUpdate)
+						{
+							needUpdate = false;
+							myAdapter.setSelectItem(mTVProgramList.length - 1);
+							ListView_programmanager.setSelection(mTVProgramList.length - 1);
+							myAdapter.notifyDataSetChanged();
+							Log.d(TAG, "press up to last item");
+						}
+						 break;
+					case KeyEvent.KEYCODE_DPAD_DOWN:
+						if (needUpdate)
+						{
+							needUpdate = false;
+							myAdapter.setSelectItem(0);
+							ListView_programmanager.setSelection(0);
+							myAdapter.notifyDataSetChanged();
+ 							Log.d(TAG, "###ss up to last item");
+						}
+						break;
+				   }
+			}
+        	      	
+			return false;
+			
+		}
+    	 
+    }
+
+	private void DTVListDealLeftAndRightKey(int mode){
+		
+	}
+
+	private void DTVListDealUpAndDownKey(int mode){
+		switch(mode){
+			case 0://up
+				
+				cur_pos=temp_pos;
+				myAdapter.notifyDataSetChanged();
+				break;
+			case 1://down
+
+				break;
+		}
+	}
+	
 	private class IconAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Context cont;
@@ -244,6 +409,7 @@ public class DTVProgramManager extends DTVActivity{
 		private int selectItem;
 		
 		class ViewHolder {
+			ImageView icon_move;
 			TextView prono;
 			TextView text;	
 			ImageView icon_scrambled;
@@ -283,9 +449,10 @@ public class DTVProgramManager extends DTVActivity{
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;	
 			if (convertView == null){    
-				convertView = mInflater.inflate(R.layout.dtvchannellist_item, null);
+				convertView = mInflater.inflate(R.layout.dtv_programmanager_list_item, null);
 				
 				holder = new ViewHolder();
+				holder.icon_move = (ImageView)convertView.findViewById(R.id.icon_move);
 				holder.prono = (TextView)convertView.findViewById(R.id.prono);
 				holder.text = (TextView) convertView.findViewById(R.id.ItemText);
 				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
@@ -331,7 +498,15 @@ public class DTVProgramManager extends DTVActivity{
 			}	
 			else{
 				holder.icon_scrambled.setBackgroundResource(Color.TRANSPARENT);
-			}			  
+			}
+
+			if(getMoveMode()&&position==getMoveItemPos()){
+				holder.icon_move.setBackgroundResource(R.drawable.dtv_programmanager_movecursor); 
+			}	
+			else{
+				holder.icon_move.setBackgroundResource(Color.TRANSPARENT);
+			}
+			
 			return convertView;
 		}
 	}	
@@ -361,29 +536,32 @@ public class DTVProgramManager extends DTVActivity{
 		// TODO Auto-generated method stub
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_DPAD_LEFT:
+				Log.d(TAG,"-----------KEYCODE_DPAD_LEFT-------------");
 				DTVListDealLeftAndRightKey(0);
 				break;		
-			case KeyEvent.KEYCODE_DPAD_RIGHT:	
+			case KeyEvent.KEYCODE_DPAD_RIGHT:
+				Log.d(TAG,"-----------KEYCODE_DPAD_RIGHT-------------");
 				DTVListDealLeftAndRightKey(1);
 				break;
-			case KeyEvent.KEYCODE_DPAD_DOWN:			
+			case KeyEvent.KEYCODE_DPAD_DOWN:	
+				Log.d(TAG,"-----------KEYCODE_DPAD_DOWN-------------");
 				if(cur_select_item== ListView_programmanager.getCount()-1)
-			    	ListView_programmanager.setSelection(0); 			
+					ListView_programmanager.setSelection(0); 	
 				break;
 			case KeyEvent.KEYCODE_DPAD_UP:
+				Log.d(TAG,"-----------KEYCODE_DPAD_UP-------------");	
 				if(cur_select_item== 0)
-					ListView_programmanager.setSelection(ListView_programmanager.getCount()-1); 
+						ListView_programmanager.setSelection(ListView_programmanager.getCount()-1); 
 				break;
 			case KeyEvent.KEYCODE_ZOOM_IN:
 				return true;
+			case KeyEvent.KEYCODE_BACK:
+				if(move_mode)
+					move_mode=false;
+				break;
 		}
 		return super.onKeyDown(keyCode, event);
 	}	  
-	
-	private void DTVListDealLeftAndRightKey(int mode){
-		
-	}
-
 	
 	private boolean [] b=null;
 	public void programGroupOperate(int pos){
@@ -550,7 +728,8 @@ public class DTVProgramManager extends DTVActivity{
 			//(skip==false)?getString(R.string.add_skip):getString(R.string.del_skip),
 			(lock==false)?getString(R.string.add_lock):getString(R.string.del_lock),
 			getString(R.string.move),
-			getString(R.string.add_into_group)
+			getString(R.string.add_into_group),
+			"Move"
 		};
 
 		final CustomDialog mCustomDialog = new CustomDialog(mContext);
@@ -622,6 +801,13 @@ public class DTVProgramManager extends DTVActivity{
 									break;
 								case 5: //add into group
 									programGroupOperate(pos);
+									mCustomDialog.dismissDialog();
+									break;
+								case 6:
+									setMoveMode(true);
+									setMoveItemPos(pos);
+									myAdapter.notifyDataSetChanged();
+									mCustomDialog.dismissDialog();
 									break;
 								default:
 									break;

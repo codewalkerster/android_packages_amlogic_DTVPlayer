@@ -135,7 +135,7 @@
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"	
 			android:scrollbars="vertical"/>    
-
+		
 		-->
 		<com.amlogic.widget.FocusScrollListView 
 			android:id="@+id/list_content"
@@ -146,7 +146,8 @@
 			android:layout_marginLeft="4px"
 			android:layout_marginRight="4px" 
 			android:listSelector="#00000000">
-		</com.amlogic.widget.FocusScrollListView>		
+		</com.amlogic.widget.FocusScrollListView>	
+		
 	</LinearLayout> 
 	   
 	<LinearLayout

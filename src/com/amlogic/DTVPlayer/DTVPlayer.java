@@ -90,7 +90,6 @@ public class DTVPlayer extends DTVActivity{
 
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
-
 	}
 
 	public void onMessage(TVMessage msg){
@@ -191,22 +190,7 @@ public class DTVPlayer extends DTVActivity{
 		Log.d(TAG,">>>>>onRestart<<<<<<");
 		super.onRestart();
 
-		/*
-		if(mDvb==null)
-			return;
-		if(mDvb.isPlaying()==false)
-			dvb_play();
-			if(mDvb.getSubtitleStatus()){
-				getSubtitle().setDemux(0); //Use demux0, as dvb play using demux0
-				startSubtitle(db_id);	
-			}else{
-				getSubtitle().setDemux(0); //Use demux0, as dvb play using demux0
-			}
-		getchannelData(service_type,channel_number);	
-
-		if(!mDvb.isRecording())
-			hidePvrIcon();
-		*/
+	
 	}
 
 	@Override
@@ -214,15 +198,7 @@ public class DTVPlayer extends DTVActivity{
 		Log.d(TAG, ">>>>>>>>onResume<<<<<<<<");
 		super.onResume();
 
-		/*
-		if(getSubtitle()!=null){
-			Log.d(TAG,"resume subtitle");
-			getSubtitle().setDemux(0); //Use demux0, as dvb play using demux0
-			getSubtitle().resume(mDvb.getSubtitleStatus());	
-		}
-		SystemProperties.set("vplayer.hideStatusBar.enable", "true");
-		signal_dis_play = true;
-		*/
+
 	}
 	
 	
@@ -236,15 +212,14 @@ public class DTVPlayer extends DTVActivity{
 	protected void onStop(){
 		Log.d(TAG, "onStop");
 		super.onStop();
-	
 	}
-
 
 	public void onDestroy() {
         Log.d(TAG, "onDestroy");
 		SystemProperties.set("vplayer.hideStatusBar.enable", "false");
         super.onDestroy();
     }
+
 	public void onNewIntent(Intent intent){
 		Log.d(TAG, ">>>>>onNewIntent<<<<<");
 		super.onNewIntent(intent);
@@ -258,16 +233,24 @@ public class DTVPlayer extends DTVActivity{
 		}
 	
 		if(bundle!=null){	
-			if(bundle.getString("activity_tag").equals("DTVChannelList")){
+			if(bundle.getString("activity_tag").equals("DTVChannelList")){			
 				int db_id = bundle.getInt("db_id");
+				int serviceType = bundle.getInt("service_type");
+				Log.d(TAG,"channel list db_id="+db_id +"---type="+serviceType );
+				if(serviceType==TVProgram.TYPE_RADIO){
+					setProgramType(TVProgram.TYPE_RADIO);
+					Log.d(TAG,"setProgramType(TVProgram.TYPE_RADIO)");
+				}	
+				else{
+					setProgramType(TVProgram.TYPE_TV);
+					Log.d(TAG,"setProgramType(TVProgram.TYPE_TV)");
+				}
 				DTVPlayerPlayById(db_id);
 			}
 			else{
 				int db_id = DTVPlayerGetCurrentProgramID();
 				DTVPlayerPlayById(db_id);
 			}
-
-		
 		}
 		else{
 			Log.d(TAG,">>>playValid<<<");
@@ -651,7 +634,7 @@ public class DTVPlayer extends DTVActivity{
 					bundle_list.putInt("db_id", DTVPlayerGetCurrentProgramID());
 					pickerIntent.putExtras(bundle_list);
 					pickerIntent.setClass(DTVPlayer.this, DTVChannelList.class);
- 		            startActivity(pickerIntent);
+ 		           	startActivity(pickerIntent);
  		            break;
 				case R.id.Button_mainmenu_epg:
 					HideMainMenu();
@@ -1500,6 +1483,8 @@ public class DTVPlayer extends DTVActivity{
 		if(mTVEventFollow!=null){
 			dtvplayer_next_event=mTVEventFollow.getName();
 		}
+
+		
 	}
 
 	private boolean DTVPlayerSetFav(){

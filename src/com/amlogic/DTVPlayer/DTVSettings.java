@@ -22,10 +22,10 @@ public class DTVSettings{
 	}
 	
 	public void setTeltextBound(){
-		mContext.setConfig("tv:subtitle:margin_left",60);
-		mContext.setConfig("tv:subtitle:margin_right",60);
-		mContext.setConfig("tv:subtitle:margin_top",100);
-		mContext.setConfig("tv:subtitle:margin_bottom",100);
+		mContext.setConfig("tv:subtitle:margin_left",30);
+		mContext.setConfig("tv:subtitle:margin_right",30);
+		mContext.setConfig("tv:subtitle:margin_top",30);
+		mContext.setConfig("tv:subtitle:margin_bottom",30);
 	}
 	public boolean getSubtitleStatus(){
 		if(mContext.getBooleanConfig("tv:subtitle:enable"))
