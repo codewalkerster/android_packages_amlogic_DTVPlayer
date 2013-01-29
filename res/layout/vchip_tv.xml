@@ -5,202 +5,296 @@
     android:layout_height="720px"
     >  
 
-	<RelativeLayout 
-	    android:layout_width="997px"
-	    android:layout_height="675px"
+	<LinearLayout 
+	    android:layout_width="748px"
+	    android:layout_height="wrap_content"
 	    android:layout_centerInParent="true"  
-	    android:orientation="vertical"
-	    android:background="@drawable/p_ctl_tv_bg"
+		android:orientation="vertical"> 
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="80px"
+			android:orientation="vertical"
+			android:padding="14px"
+			android:gravity="center"
+			android:background="@drawable/vchip_pin_head_bg">
 	    >  
 	    	
 	    <TextView
 	        android:id="@+id/title"
 	        android:layout_width="match_parent"
-	        android:layout_height="50px"
+	        android:layout_height="35px"
 	        android:layout_gravity="center_horizontal"
 	        android:text="@string/parent_control_TV_title"
 	        android:textColor="#FFFFFFFF"
 	 		android:gravity="center"
-	        android:textSize="32px" 
-	        android:layout_marginTop="30px"
-	        android:layout_marginBottom="30px"/>
-			<RelativeLayout
-				android:layout_width="fill_parent"
-				android:layout_height="3px"
-				android:background="@drawable/line"
-				android:layout_marginRight="20px"
-				android:layout_marginLeft="20px"
-				android:layout_below="@+id/title"
-			>	
-			</RelativeLayout>  
-	      
-	    <RelativeLayout
-		    	  android:layout_width="545px"
-	    		  android:layout_height="425px" 
-	    		  android:layout_marginTop="130px"	     	
-	    		  android:layout_marginLeft="200px"	 
-	    		  android:background="@drawable/tv"
-	    		  android:id="@+id/rating_tv_bg_layout"
-	  			>
-	  		<!-- button matrix -->
-	  		<LinearLayout
-		    	  android:layout_width="368px"
-	    		  android:layout_height="360px"
-	    		  android:layout_marginTop="57px"	     	
-	    		  android:layout_marginLeft="168px"	  
-	    		  android:orientation="horizontal"
-	  			>
-	  		<!-- row 0 -->	
-	  			<LinearLayout
-	  		 	  android:layout_width="wrap_content"
-	    		  android:layout_height="fill_parent"
-	    		  android:orientation="vertical" 
-	    		  android:layout_weight="1"
-	  			  >
-					<ListView
-			        android:id="@+id/list_All"  
-			        android:layout_width="62px"
-			        android:layout_height="match_parent"
-			        android:layout_gravity="center"
-			        android:cacheColorHint="#00000000"
-			        android:divider="#0000"
-			        android:dividerHeight="0px"
-			        android:focusable="true"
-			        android:listSelector="@drawable/rating_unlocked"
-			         />
-				</LinearLayout>	
-			<!-- row  1-->	
-	  			<LinearLayout
-	  		 	  android:layout_width="wrap_content"
-	    		  android:layout_height="fill_parent"
-	    		  android:orientation="vertical" 
-	    		  android:layout_weight="1"
-	  			  >
-					<ListView
-			        android:id="@+id/list_FV"  
-			        android:layout_width="62px"
-			        android:layout_height="match_parent"
-			        android:layout_gravity="center"
-			        android:cacheColorHint="#00000000"
-			        android:divider="#0000"
-			        android:dividerHeight="0px"
-			        android:focusable="true"
-			        android:listSelector="@drawable/rating_unlocked"
-			         />
-				</LinearLayout>	
-			<!-- row 2 -->	
-	  			<LinearLayout
-	  		 	  android:layout_width="wrap_content"
-	    		  android:layout_height="fill_parent"
-	    		  android:orientation="vertical" 
-	    		  android:layout_weight="1"
-	  			  >
-					<ListView
-			        android:id="@+id/list_V"  
-			        android:layout_width="62px"
-			        android:layout_height="match_parent"
-			        android:layout_gravity="center"
-			        android:cacheColorHint="#00000000"
-			        android:divider="#0000"
-			        android:dividerHeight="0px"
-			        android:focusable="true"
-			        android:listSelector="@drawable/rating_unlocked"
-			         />
-				</LinearLayout>	
-			<!-- row 3 -->	
-	  			<LinearLayout
-	  		 	  android:layout_width="wrap_content"
-	    		  android:layout_height="fill_parent"
-	    		  android:orientation="vertical" 
-	    		  android:layout_weight="1"
-	  			  >
-					 <ListView
-			        android:id="@+id/list_S"  
-			        android:layout_width="62px"
-			        android:layout_height="match_parent"
-			        android:layout_gravity="center"
-			        android:cacheColorHint="#00000000"
-			        android:divider="#0000"
-			        android:dividerHeight="0px"
-			        android:focusable="true"
-			        android:listSelector="@drawable/rating_unlocked"
-			         />
-				</LinearLayout>	
-			<!-- row 4 -->	
-	  			<LinearLayout
-	  		 	  android:layout_width="wrap_content"
-	    		  android:layout_height="fill_parent"
-	    		  android:orientation="vertical" 
-	    		  android:layout_weight="1"
-	  			  >
-					 <ListView
-			        android:id="@+id/list_L"  
-			        android:layout_width="62px"
-			        android:layout_height="match_parent"
-			        android:layout_gravity="center"
-			        android:cacheColorHint="#00000000"
-			        android:divider="#0000"
-			        android:dividerHeight="0px"
-			        android:focusable="true"
-			        android:listSelector="@drawable/rating_unlocked"
-			         />
-				</LinearLayout>	
-			<!-- row 5 -->	
-	  			<LinearLayout
-	  		 	  android:layout_width="wrap_content"
-	    		  android:layout_height="fill_parent"
-	    		  android:orientation="vertical" 
-	    		  android:layout_weight="1"
-	  			  >
-					  <ListView
-			        android:id="@+id/list_D"  
-			        android:layout_width="62px"
-			        android:layout_height="match_parent"
-			        android:layout_gravity="center"
-			        android:cacheColorHint="#00000000"
-			        android:divider="#0000"
-			        android:dividerHeight="0px"
-			        android:focusable="true"
-			        android:listSelector="@drawable/rating_unlocked"
-			         />
-				</LinearLayout>		
-			
-			
-			
-	  		</LinearLayout>		
-	    </RelativeLayout>
-	    
-	    <RelativeLayout
-		    	  android:layout_width="124px"
-	    		  android:layout_height="78px"
-	    		  android:background="@drawable/vchip_help"
-	    		  android:layout_toRightOf="@+id/rating_tv_bg_layout"
-	    		   android:layout_marginLeft="30px"
-	    		  android:layout_alignTop="@+id/rating_tv_bg_layout"
-	  			>	
-	  	</RelativeLayout>
+	        android:textSize="25px" 
+	        android:layout_marginTop="20px"
+	        android:layout_marginBottom="20px"/>
+
+		<RelativeLayout
+			android:layout_width="fill_parent"
+			android:layout_height="3px"
+			android:background="@drawable/line"
+			android:layout_marginRight="15px"
+			android:layout_marginLeft="15px"
+			android:layout_below="@+id/title"
+				 
+				/>		
+		</LinearLayout> 
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:paddingTop="20px"
+			android:paddingBottom="20px"
+			android:background="@drawable/vchip_pin_body_bg"
+			>		  
+	        
+		    <RelativeLayout
+			    	  android:layout_width="400px"
+		    		  android:layout_height="268px" 	     	
+		    		  android:layout_marginLeft="133px"	 
+		    		  android:background="@drawable/tv"
+		    		  android:id="@+id/rating_tv_bg_layout"
+		  			>
+		  		<!-- button matrix -->
+		  		<LinearLayout
+			    	  android:layout_width="384px"
+		    		  android:layout_height="276px"
+		    		  android:layout_marginTop="30px"	     	
+		    		  android:layout_marginLeft="124px"	  
+		    		  android:orientation="horizontal"
+		  			>
+		  		<!-- row 0 -->	
+		  			<LinearLayout
+		  		 	  android:layout_width="wrap_content"
+		    		  android:layout_height="fill_parent"
+		    		  android:orientation="vertical" 
+		    		  android:layout_weight="1"
+		  			  >
+		  			  	<!--
+						<ListView
+					        android:id="@+id/list_All"  
+					        android:layout_width="62px"
+					        android:layout_height="match_parent"
+					        android:layout_gravity="center"
+					        android:cacheColorHint="#00000000"
+					        android:divider="#0000"
+					        android:dividerHeight="0px"
+					        android:focusable="true"
+					        android:listSelector="@drawable/rating_unlocked"
+				         />
+
+						-->
+					 	<com.amlogic.widget.FocusScrollListView 
+					        android:id="@+id/list_All"  
+					        android:layout_width="62px"
+					        android:layout_height="match_parent"
+					        android:layout_gravity="center"
+					        android:cacheColorHint="#00000000"
+					        android:divider="#0000"
+					        android:dividerHeight="0px"
+					        android:focusable="true"
+					        android:listSelector="#00000000">
+					    </com.amlogic.widget.FocusScrollListView>	
+				         
+					</LinearLayout>	
+				<!-- row  1-->	
+		  			<LinearLayout
+		  		 	  android:layout_width="wrap_content"
+		    		  android:layout_height="fill_parent"
+		    		  android:orientation="vertical" 
+		    		  android:layout_weight="1"
+		  			  >
+		  			  <!--
+						<ListView
+				        android:id="@+id/list_FV"  
+				        android:layout_width="62px"
+				        android:layout_height="match_parent"
+				        android:layout_gravity="center"
+				        android:cacheColorHint="#00000000"
+				        android:divider="#0000"
+				        android:dividerHeight="0px"
+				        android:focusable="true"
+				        android:listSelector="@drawable/rating_unlocked"
+				         />
+						-->
+				         <com.amlogic.widget.FocusScrollListView 
+					        android:id="@+id/list_FV"  
+					        android:layout_width="62px"
+					        android:layout_height="match_parent"
+					        android:layout_gravity="center"
+					        android:cacheColorHint="#00000000"
+					        android:divider="#0000"
+					        android:dividerHeight="0px"
+					        android:focusable="true"
+					        android:listSelector="#00000000">
+					    </com.amlogic.widget.FocusScrollListView>	
+					</LinearLayout>	
+				<!-- row 2 -->	
+		  			<LinearLayout
+		  		 	  android:layout_width="wrap_content"
+		    		  android:layout_height="fill_parent"
+		    		  android:orientation="vertical" 
+		    		  android:layout_weight="1"
+		  			  >
+		  			  <!--
+						<ListView
+				        android:id="@+id/list_V"  
+				        android:layout_width="62px"
+				        android:layout_height="match_parent"
+				        android:layout_gravity="center"
+				        android:cacheColorHint="#00000000"
+				        android:divider="#0000"
+				        android:dividerHeight="0px"
+				        android:focusable="true"
+				        android:listSelector="@drawable/rating_unlocked"
+				         />
+				         -->
+				         <com.amlogic.widget.FocusScrollListView 
+					        android:id="@+id/list_V"  
+					        android:layout_width="62px"
+					        android:layout_height="match_parent"
+					        android:layout_gravity="center"
+					        android:cacheColorHint="#00000000"
+					        android:divider="#0000"
+					        android:dividerHeight="0px"
+					        android:focusable="true"
+					        android:listSelector="#00000000">
+					    </com.amlogic.widget.FocusScrollListView>	
+					</LinearLayout>	
+				<!-- row 3 -->	
+		  			<LinearLayout
+		  		 	  android:layout_width="wrap_content"
+		    		  android:layout_height="fill_parent"
+		    		  android:orientation="vertical" 
+		    		  android:layout_weight="1"
+		  			  >
+		  			  	<!--
+						<ListView
+				        android:id="@+id/list_S"  
+				        android:layout_width="62px"
+				        android:layout_height="match_parent"
+				        android:layout_gravity="center"
+				        android:cacheColorHint="#00000000"
+				        android:divider="#0000"
+				        android:dividerHeight="0px"
+				        android:focusable="true"
+				        android:listSelector="@drawable/rating_unlocked"
+				         />
+				         -->
+				         <com.amlogic.widget.FocusScrollListView 
+					       	android:id="@+id/list_S"  
+					        android:layout_width="62px"
+					        android:layout_height="match_parent"
+					        android:layout_gravity="center"
+					        android:cacheColorHint="#00000000"
+					        android:divider="#0000"
+					        android:dividerHeight="0px"
+					        android:focusable="true"
+					        android:listSelector="#00000000">
+					    </com.amlogic.widget.FocusScrollListView>	
+					</LinearLayout>	
+				<!-- row 4 -->	
+		  			<LinearLayout
+		  		 	  android:layout_width="wrap_content"
+		    		  android:layout_height="fill_parent"
+		    		  android:orientation="vertical" 
+		    		  android:layout_weight="1"
+		  			  >
+		  			  	<!--
+						 <ListView
+				        android:id="@+id/list_L"  
+				        android:layout_width="62px"
+				        android:layout_height="match_parent"
+				        android:layout_gravity="center"
+				        android:cacheColorHint="#00000000"
+				        android:divider="#0000"
+				        android:dividerHeight="0px"
+				        android:focusable="true"
+				        android:listSelector="@drawable/rating_unlocked"
+				         />
+				         -->
+				          <com.amlogic.widget.FocusScrollListView 
+					        android:id="@+id/list_L"  
+					        android:layout_width="62px"
+					        android:layout_height="match_parent"
+					        android:layout_gravity="center"
+					        android:cacheColorHint="#00000000"
+					        android:divider="#0000"
+					        android:dividerHeight="0px"
+					        android:focusable="true"
+					        android:listSelector="#00000000">
+					    </com.amlogic.widget.FocusScrollListView>	
+					</LinearLayout>	
+				<!-- row 5 -->	
+		  			<LinearLayout
+		  		 	  android:layout_width="wrap_content"
+		    		  android:layout_height="fill_parent"
+		    		  android:orientation="vertical" 
+		    		  android:layout_weight="1"
+		  			  >
+		  			  	<!--
+						  <ListView
+				        android:id="@+id/list_D"  
+				        android:layout_width="62px"
+				        android:layout_height="match_parent"
+				        android:layout_gravity="center"
+				        android:cacheColorHint="#00000000"
+				        android:divider="#0000"
+				        android:dividerHeight="0px"
+				        android:focusable="true"
+				        android:listSelector="@drawable/rating_unlocked"
+				         />
+				         -->
+				         <com.amlogic.widget.FocusScrollListView 
+					        android:id="@+id/list_D"  
+					        android:layout_width="62px"
+					        android:layout_height="match_parent"
+					        android:layout_gravity="center"
+					        android:cacheColorHint="#00000000"
+					        android:divider="#0000"
+					        android:dividerHeight="0px"
+					        android:focusable="true"
+					        android:listSelector="#00000000">
+					    </com.amlogic.widget.FocusScrollListView>	
+					</LinearLayout>		
+				
+				
+				
+		  		</LinearLayout>		
+		    </RelativeLayout>
+		    
+		    <RelativeLayout
+				android:layout_width="93px"
+				android:layout_height="52px"
+				android:background="@drawable/vchip_help"
+				android:layout_marginLeft="23px">	
+		  	</RelativeLayout>
+		</LinearLayout>  	
 	    
 	    <LinearLayout
-		    	  android:layout_width="fill_parent"
-	    		  android:layout_height="100px"
-	    		  android:layout_below="@+id/rating_tv_bg_layout"
-	    		  android:layout_marginRight="20px"
-				  android:layout_marginLeft="20px"
-				 android:orientation="vertical">
-	 
+			android:layout_width="fill_parent"
+			android:layout_height="60px"
+			android:orientation="vertical"
+			android:background="@drawable/vchip_pin_tail_bg">
+ 
 	  	     <RelativeLayout
 	  	     	 android:id="@+id/inforbar_line" 
 		    	 android:layout_width="fill_parent"
 	    		 android:layout_height="3px"
-	    		 android:background="@drawable/line"
-	  			>	
-	  	     </RelativeLayout>
+				android:layout_marginRight="18px"
+				android:layout_marginLeft="15px"
+				android:background="@drawable/line">
+			</RelativeLayout>
 	  	     
-	  	     <LinearLayout
-	    		android:layout_width="match_parent"
-	    		android:layout_height="match_parent"
-	    		android:orientation="horizontal"
-	    		android:gravity="center">
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:orientation="horizontal"
+				android:gravity="center"
+				>
 	    		
 	    		<ImageView 
 	    			android:layout_width="wrap_content"
@@ -214,8 +308,8 @@
 			        android:layout_gravity="center"
 			        android:text="@string/help_info_move"
 			        android:textColor="#FFFFFFFF"
-			        android:textSize="30px" 
-			        android:layout_marginRight="30px"
+			        android:textSize="20sp" 
+			        android:layout_marginRight="22px"
 			        />
 	    		<ImageView 
 	    			android:layout_width="wrap_content"
@@ -228,8 +322,8 @@
 			        android:layout_gravity="center"
 			        android:text="@string/help_info_select"
 			        android:textColor="#FFFFFFFF"
-			        android:textSize="30px"
-			        android:layout_marginRight="30px"
+			        android:textSize="20sp"
+			        android:layout_marginRight="22px"
 			        />
 	    		<ImageView 
 	    			android:layout_width="wrap_content"
@@ -242,9 +336,9 @@
 			        android:layout_gravity="center"
 			        android:text="@string/help_info_return"
 			        android:textColor="#FFFFFFFF"
-			        android:textSize="30px" />
+			        android:textSize="20sp" />
 	    	</LinearLayout>
 	  	 </LinearLayout>
-	</RelativeLayout>
+	</LinearLayout>
 </RelativeLayout>
 

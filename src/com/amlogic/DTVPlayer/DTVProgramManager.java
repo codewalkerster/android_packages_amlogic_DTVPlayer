@@ -326,15 +326,12 @@ public class DTVProgramManager extends DTVActivity{
 				}
 			}
 
-			if (arg2.getAction() == KeyEvent.ACTION_UP)
-			{
+			if (arg2.getAction() == KeyEvent.ACTION_UP){
 				switch(arg1)
 				{
 					case KeyEvent.KEYCODE_PAGE_UP:
-						if (getMoveMode()/* && getMoveItemPos() < (serviceList.size() - 1)*/)
-						{
-							for (int i = getMoveItemPos(); i > myAdapter.getSelectItem(); i--)
-							{
+						if (getMoveMode()){
+							for (int i = getMoveItemPos(); i > myAdapter.getSelectItem(); i--){
 								exchageItem(i, i - 1);
 							}
 							setMoveItemPos(myAdapter.getSelectItem());
@@ -344,7 +341,7 @@ public class DTVProgramManager extends DTVActivity{
 						}
 						break;
 					case KeyEvent.KEYCODE_PAGE_DOWN:
-						if (getMoveMode()/* && getMoveItemPos() < (serviceList.size() - 1)*/)
+						if (getMoveMode())
 						{
 							for (int i = getMoveItemPos(); i < myAdapter.getSelectItem(); i++)
 							{
@@ -356,6 +353,7 @@ public class DTVProgramManager extends DTVActivity{
 							Log.d(TAG, "press page down");
 						}
 						break;
+						/*
 					case KeyEvent.KEYCODE_DPAD_UP:
 						if (needUpdate)
 						{
@@ -376,6 +374,7 @@ public class DTVProgramManager extends DTVActivity{
  							Log.d(TAG, "###ss up to last item");
 						}
 						break;
+						*/
 				   }
 			}
         	      	
@@ -536,22 +535,18 @@ public class DTVProgramManager extends DTVActivity{
 		// TODO Auto-generated method stub
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_DPAD_LEFT:
-				Log.d(TAG,"-----------KEYCODE_DPAD_LEFT-------------");
 				DTVListDealLeftAndRightKey(0);
 				break;		
 			case KeyEvent.KEYCODE_DPAD_RIGHT:
-				Log.d(TAG,"-----------KEYCODE_DPAD_RIGHT-------------");
 				DTVListDealLeftAndRightKey(1);
 				break;
 			case KeyEvent.KEYCODE_DPAD_DOWN:	
-				Log.d(TAG,"-----------KEYCODE_DPAD_DOWN-------------");
 				if(cur_select_item== ListView_programmanager.getCount()-1)
 					ListView_programmanager.setSelection(0); 	
 				break;
 			case KeyEvent.KEYCODE_DPAD_UP:
-				Log.d(TAG,"-----------KEYCODE_DPAD_UP-------------");	
 				if(cur_select_item== 0)
-						ListView_programmanager.setSelection(ListView_programmanager.getCount()-1); 
+					ListView_programmanager.setSelection(ListView_programmanager.getCount()-1); 
 				break;
 			case KeyEvent.KEYCODE_ZOOM_IN:
 				return true;

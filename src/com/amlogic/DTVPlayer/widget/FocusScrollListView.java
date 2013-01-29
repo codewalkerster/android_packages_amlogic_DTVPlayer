@@ -69,7 +69,7 @@ public class FocusScrollListView extends ListView {
 		m = new Matrix();
 		
 		mBitmap = BitmapFactory.decodeResource(getResources(),
-				R.drawable.channel_item_light);
+				R.drawable.transparent);
 		
 		initPrivateMethods();
 	}
