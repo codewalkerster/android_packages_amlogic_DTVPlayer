@@ -3,19 +3,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="horizontal"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:layout_height="fill_parent"
+	>
 
 	<ImageView android:id="@+id/icon"
 		android:layout_width="30px"
 		android:layout_height="30px"
-		android:layout_gravity="center"
+		android:layout_gravity="center_vertical"
 		android:layout_marginLeft="20px"
+		android:visibility="invisible"
 		>
 	</ImageView>
 
 	<TextView android:id="@+id/text"
 		android:layout_gravity="center_vertical"
-		android:layout_width="240px"
+		android:gravity="left|center"
+		android:layout_width="220px"
 		android:layout_height="40px" 
 		android:textSize="20sp"
 		android:singleLine="true" 
@@ -28,7 +31,7 @@
 	<ImageView android:id="@+id/icon1"
 		android:layout_width="35px"
 		android:layout_height="30px" 
-		android:layout_gravity="center"
+		android:layout_gravity="center_vertical"
 		android:gravity="center"
 		android:visibility="invisible"
 		>
@@ -37,7 +40,7 @@
 	<TextView android:id="@+id/info"
 		android:layout_gravity="center_vertical"
 		android:gravity="center"
-		android:layout_width="220px"
+		android:layout_width="200px"
 		android:layout_height="40px" 
 		android:textSize="18sp"
 		android:singleLine="true" 
@@ -49,9 +52,10 @@
 
 	<ImageView android:id="@+id/icon2"
 		android:layout_width="35px"
-		android:layout_height="30px" 
+		android:layout_height="30px"
+		android:layout_marginRight="30px"
 		android:gravity="center"
-		android:layout_gravity="center"
+		android:layout_gravity="center_vertical"
 		android:visibility="invisible"
 		>
 	</ImageView>
