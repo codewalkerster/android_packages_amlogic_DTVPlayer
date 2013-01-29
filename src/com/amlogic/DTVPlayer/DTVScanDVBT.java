@@ -222,12 +222,30 @@ public class DTVScanDVBT extends DTVActivity{
 				}
 				break;
 			case KeyEvent.KEYCODE_BACK:	
+				if(dtvscandvbt_scan_mode == DTVSCANDVBT_SETTING_SCAN_MODE)
+				{
+					DTVScanDVBT_GotoDTVPlayer();
+					ret = true;				
+				}
+				else if(dtvscandvbt_scan_mode == DTVSCANDVBT_SETTING_MANU_SCAN_MODE)
+				{
+					DTVScanDVBTUiSettingInit();
+					ret = true;				
+				}				
+				else if(dtvscandvbt_scan_mode == DTVSCANDVBT_SCAN_MODE)
+				{				
+					DTVScanDVBTUiSettingInit();
+					ret = true;
+				}
+				break;	
+			case KeyEvent.KEYCODE_DPAD_CENTER:	
 				if(dtvscandvbt_scan_mode == DTVSCANDVBT_SCAN_MODE)
 				{				
 					DTVScanDVBT_GotoDTVPlayer();
 					ret = true;
 				}
-				break;				
+				break;
+				
 			default:
 				break;
 		}
@@ -634,6 +652,8 @@ public class DTVScanDVBT extends DTVActivity{
 
 		dvbscandvbt_manu_chno = 0;
 
+		DTVScanDVBT_SettingUpdateArea();
+
 		ui_dvbsandvbt_setting_list_adapt.notifyDataSetChanged();
 	}		
 
@@ -650,7 +670,37 @@ public class DTVScanDVBT extends DTVActivity{
 
 		dvbscandvbt_manu_chno = 0;
 
+		DTVScanDVBT_SettingUpdateArea();
+
 		ui_dvbsandvbt_setting_list_adapt.notifyDataSetChanged();	
+	}
+
+	private void DTVScanDVBT_SettingUpdateArea()
+	{
+		String region = "Default DVB-T UK";
+
+		switch(dvbscandvbt_area)
+		{
+			case DTVScanDVBT.SETTINGS_AREA_UK:	
+				region = "Default DVB-T UK";
+				break;
+			case DTVScanDVBT.SETTINGS_AREA_AUSTRALIA:	
+				region = "Default DVB-T AUSTRALIA";
+				break;
+			case DTVScanDVBT.SETTINGS_AREA_ITALY:	
+				region = "Default DVB-T ITALY";
+				break;
+			case DTVScanDVBT.SETTINGS_AREA_FRANCE:	
+				region = "Default DVB-T FRANCE";
+				break;
+			case DTVScanDVBT.SETTINGS_AREA_TAIWAN:
+				region = "Default DVB-T TAIWAN";
+				break;
+			default:
+				break;
+		}
+		
+		setConfig("tv:scan:dtv:region", region);
 	}
 
 	private void DTVScanDVBT_SettingListItemArrowLcn()

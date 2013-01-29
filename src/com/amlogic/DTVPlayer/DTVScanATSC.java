@@ -44,9 +44,10 @@ public class DTVScanATSC extends DTVActivity{
 	public static final int SETTINGS_SCAN_BAND = 1;
 	public static final int SETTINGS_CHNO = 2;
 	public static final int SETTINGS_FREQUENCY = 3;
-	public static final int SETTINGS_MODULATION = 4;
-	public static final int SETTINGS_SCAN = 5;
-	public static final int SETTINGS_MANU_MAX = 6;
+	/*not use now. if use atsc demod need set modulation, SETTINGS_MODULATION = 4;SETTINGS_SCAN = 5;SETTINGS_MANU_MAX = 6;*/
+	public static final int SETTINGS_MODULATION = 6;
+	public static final int SETTINGS_SCAN = 4;
+	public static final int SETTINGS_MANU_MAX = 5;
 
 	/*atsc area*/
 	public static final int SETTINGS_AREA_USA = 0;
@@ -229,12 +230,29 @@ public class DTVScanATSC extends DTVActivity{
 				}
 				break;
 			case KeyEvent.KEYCODE_BACK:	
+				if(dtvscanatsc_scan_mode == DTVSCANATSC_SETTING_SCAN_MODE)
+				{
+					DTVScanATSC_GotoDTVPlayer();
+					ret = true;				
+				}
+				else if(dtvscanatsc_scan_mode == DTVSCANATSC_SETTING_MANU_SCAN_MODE)
+				{
+					DTVScanATSCUiSettingInit();
+					ret = true;				
+				}				
+				else if(dtvscanatsc_scan_mode == DTVSCANATSC_SCAN_MODE)
+				{				
+					DTVScanATSCUiSettingInit();
+					ret = true;
+				}
+				break;	
+			case KeyEvent.KEYCODE_DPAD_CENTER:	
 				if(dtvscanatsc_scan_mode == DTVSCANATSC_SCAN_MODE)
 				{				
 					DTVScanATSC_GotoDTVPlayer();
 					ret = true;
 				}
-				break;				
+				break;		
 			default:
 				break;
 		}
@@ -1586,10 +1604,10 @@ public class DTVScanATSC extends DTVActivity{
 
 	private void DTVScanATSC_StartManuScan()
 	{
-		Log.d(TAG, "DTVScanATSC_StartManuScan");
+		Log.d(TAG, "DTVScanATSC_StartManuScan" + dvbscanatsc_manu_freq);
 	
 		TVScanParams sp;	
-
+	
 		switch(dvbscanatsc_manu_modulation)
 		{
 				case DTVScanATSC.SETTINGS_MODULATION_QAM_AUTO:
