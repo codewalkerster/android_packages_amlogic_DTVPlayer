@@ -162,7 +162,7 @@ public class DTVScanATSC extends DTVActivity{
 				scanfreqinfo.setText(msg.getScanCurChanParams().getFrequency()/1000+"KHz");
 				
 				if (msg.getScanProgramName() != null) {
-					Log.d(TAG, "Scan update: new program >> "+ msg.getScanProgramName());
+					Log.d(TAG, "Scan update: new program >> "+ msg.getScanProgramType() + " "+ msg.getScanProgramName());
 					DTVScanATSC_ScanListAddSvr(msg.getScanProgramType(), msg.getScanProgramName());
 				}
 				
@@ -1491,6 +1491,8 @@ public class DTVScanATSC extends DTVActivity{
 		serviceinfo.setServiceType(service_type);
 		serviceinfo.setName(service_name);
 
+		Log.d(TAG, "DTVScanATSC_ScanListAddSvr "+ service_name);
+
 		if (service_type == serviceInfo.SERVICE_TYPE_TV)
 		{
 			serviceinfo.setId(++ui_dvbsanatsc_scantv_srv_list_index);
@@ -1569,7 +1571,9 @@ public class DTVScanATSC extends DTVActivity{
 				convertView.setTag(mv);
 			}else{
 				mv = (ViewHolder)convertView.getTag();
-			}        
+			}    
+
+			Log.d(TAG, "getView "+ position);
 
 			fillData(mv, position);
 
@@ -1583,6 +1587,7 @@ public class DTVScanATSC extends DTVActivity{
 				serviceInfo serviceinfo = getServiceInfoByPos(position, this.serviceType);
 				if (null != serviceinfo)
 				{
+					Log.d(TAG, "fillData "+ serviceinfo.getName());
 					mv.srv_id.setText(serviceinfo.getId() + "");
 					mv.srv_name.setText(serviceinfo.getName());	
 				}
@@ -1597,7 +1602,7 @@ public class DTVScanATSC extends DTVActivity{
 
 		TVScanParams sp;	
 
-		sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_OFDM);
+		sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_ATSC);
 
 		startScan(sp);
 	}
