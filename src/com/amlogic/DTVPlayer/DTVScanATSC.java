@@ -244,6 +244,8 @@ public class DTVScanATSC extends DTVActivity{
 				{				
 					DTVScanATSCUiSettingInit();
 					ret = true;
+
+					stopScan(false);
 				}
 				break;	
 			case KeyEvent.KEYCODE_DPAD_CENTER:	
@@ -251,6 +253,8 @@ public class DTVScanATSC extends DTVActivity{
 				{				
 					DTVScanATSC_GotoDTVPlayer();
 					ret = true;
+
+					stopScan(false);
 				}
 				break;		
 			default:

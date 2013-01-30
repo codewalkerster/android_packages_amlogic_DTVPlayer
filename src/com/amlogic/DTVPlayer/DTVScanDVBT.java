@@ -236,6 +236,8 @@ public class DTVScanDVBT extends DTVActivity{
 				{				
 					DTVScanDVBTUiSettingInit();
 					ret = true;
+
+					stopScan(false);
 				}
 				break;	
 			case KeyEvent.KEYCODE_DPAD_CENTER:	
@@ -243,6 +245,8 @@ public class DTVScanDVBT extends DTVActivity{
 				{				
 					DTVScanDVBT_GotoDTVPlayer();
 					ret = true;
+
+					stopScan(false);
 				}
 				break;
 				
