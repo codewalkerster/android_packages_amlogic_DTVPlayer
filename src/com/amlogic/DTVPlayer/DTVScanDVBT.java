@@ -233,20 +233,20 @@ public class DTVScanDVBT extends DTVActivity{
 					ret = true;				
 				}				
 				else if(dtvscandvbt_scan_mode == DTVSCANDVBT_SCAN_MODE)
-				{				
+				{			
+					stopScan(false);
+				
 					DTVScanDVBTUiSettingInit();
 					ret = true;
-
-					stopScan(false);
 				}
 				break;	
 			case KeyEvent.KEYCODE_DPAD_CENTER:	
 				if(dtvscandvbt_scan_mode == DTVSCANDVBT_SCAN_MODE)
-				{				
+				{			
+					stopScan(false);
+				
 					DTVScanDVBT_GotoDTVPlayer();
 					ret = true;
-
-					stopScan(false);
 				}
 				break;
 				
@@ -325,6 +325,10 @@ public class DTVScanDVBT extends DTVActivity{
 			}
 			ui_dvbsandvbt_scantv_list.setAdapter(ui_dvbsandvbt_scantv_list_adapter);
 		}  
+		else
+		{
+			ui_dvbsandvbt_scantv_list.setAdapter(ui_dvbsandvbt_scantv_list_adapter);
+		}
 
 		ui_dvbsandvbt_scanradio_list = (ListView)findViewById(R.id.dvbscanscan_listradio);
 		
@@ -339,6 +343,10 @@ public class DTVScanDVBT extends DTVActivity{
 			}
 			ui_dvbsandvbt_scanradio_list.setAdapter(ui_dvbsandvbt_scanradio_list_adapter);
 		}
+		else
+		{
+			ui_dvbsandvbt_scanradio_list.setAdapter(ui_dvbsandvbt_scanradio_list_adapter);
+		}	
          
 		ui_dvbsandvbt_scantv_list.setItemsCanFocus(false);
 		ui_dvbsandvbt_scantv_list.setClickable(false);
