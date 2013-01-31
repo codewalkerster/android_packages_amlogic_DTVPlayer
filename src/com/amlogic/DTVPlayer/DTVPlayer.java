@@ -62,8 +62,9 @@ public class DTVPlayer extends DTVActivity{
 		mDTVSettings.setTeltextBound();
 		
 		if(bundle!=null){	
-			int db_id = DTVPlayerGetCurrentProgramID();
-			DTVPlayerPlayById(db_id);		
+			//int db_id = DTVPlayerGetCurrentProgramID();
+			//DTVPlayerPlayById(db_id);	
+			playValid();
 			ShowControlBar();
 			updateInforbar();
 			ShowProgramNo(pronumber);
@@ -90,7 +91,6 @@ public class DTVPlayer extends DTVActivity{
 
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
-
 	}
 
 	public void onMessage(TVMessage msg){
@@ -133,6 +133,7 @@ public class DTVPlayer extends DTVActivity{
 					dismissDialog(2);
 				break;
 			case TVMessage.TYPE_PROGRAM_START:
+				RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
 				DTVPlayerGetCurrentProgramData();
 				ShowControlBar();
 				updateInforbar();
@@ -191,22 +192,7 @@ public class DTVPlayer extends DTVActivity{
 		Log.d(TAG,">>>>>onRestart<<<<<<");
 		super.onRestart();
 
-		/*
-		if(mDvb==null)
-			return;
-		if(mDvb.isPlaying()==false)
-			dvb_play();
-			if(mDvb.getSubtitleStatus()){
-				getSubtitle().setDemux(0); //Use demux0, as dvb play using demux0
-				startSubtitle(db_id);	
-			}else{
-				getSubtitle().setDemux(0); //Use demux0, as dvb play using demux0
-			}
-		getchannelData(service_type,channel_number);	
-
-		if(!mDvb.isRecording())
-			hidePvrIcon();
-		*/
+	
 	}
 
 	@Override
@@ -214,15 +200,7 @@ public class DTVPlayer extends DTVActivity{
 		Log.d(TAG, ">>>>>>>>onResume<<<<<<<<");
 		super.onResume();
 
-		/*
-		if(getSubtitle()!=null){
-			Log.d(TAG,"resume subtitle");
-			getSubtitle().setDemux(0); //Use demux0, as dvb play using demux0
-			getSubtitle().resume(mDvb.getSubtitleStatus());	
-		}
-		SystemProperties.set("vplayer.hideStatusBar.enable", "true");
-		signal_dis_play = true;
-		*/
+
 	}
 	
 	
@@ -236,15 +214,14 @@ public class DTVPlayer extends DTVActivity{
 	protected void onStop(){
 		Log.d(TAG, "onStop");
 		super.onStop();
-	
 	}
-
 
 	public void onDestroy() {
         Log.d(TAG, "onDestroy");
 		SystemProperties.set("vplayer.hideStatusBar.enable", "false");
         super.onDestroy();
     }
+
 	public void onNewIntent(Intent intent){
 		Log.d(TAG, ">>>>>onNewIntent<<<<<");
 		super.onNewIntent(intent);
@@ -258,16 +235,24 @@ public class DTVPlayer extends DTVActivity{
 		}
 	
 		if(bundle!=null){	
-			if(bundle.getString("activity_tag").equals("DTVChannelList")){
+			if(bundle.getString("activity_tag").equals("DTVChannelList")){			
 				int db_id = bundle.getInt("db_id");
+				int serviceType = bundle.getInt("service_type");
+				Log.d(TAG,"channel list db_id="+db_id +"---type="+serviceType );
+				if(serviceType==TVProgram.TYPE_RADIO){
+					setProgramType(TVProgram.TYPE_RADIO);
+					Log.d(TAG,"setProgramType(TVProgram.TYPE_RADIO)");
+				}	
+				else{
+					setProgramType(TVProgram.TYPE_TV);
+					Log.d(TAG,"setProgramType(TVProgram.TYPE_TV)");
+				}
 				DTVPlayerPlayById(db_id);
 			}
 			else{
 				int db_id = DTVPlayerGetCurrentProgramID();
 				DTVPlayerPlayById(db_id);
 			}
-
-		
 		}
 		else{
 			Log.d(TAG,">>>playValid<<<");
@@ -427,8 +412,8 @@ public class DTVPlayer extends DTVActivity{
 	private RelativeLayout RelativeLayout_videobcak=null;
 	private RelativeLayout RelativeLayout_program_number=null;
 	private RelativeLayout RelativeLayout_radio_bg=null;
-	private RelativeLayout RelativeLayout_loading_icon=null;
 	private RelativeLayout RelativeLayout_recording_icon=null;
+	private RelativeLayout RelativeLayout_loading_icon=null;
 
 	/*main menu*/
 	Button Button_mainmenu_list=null;
@@ -463,8 +448,8 @@ public class DTVPlayer extends DTVActivity{
 		RelativeLayout_program_number = (RelativeLayout)findViewById(R.id.RelativeLayoutProNumer);
 		RelativeLayout_radio_bg = (RelativeLayout)findViewById(R.id.RelativeLayoutRadioBg);
 		RelativeLayout_recording_icon = (RelativeLayout)findViewById(R.id.RelativeLayoutPvrIcon);
-		RelativeLayout_loading_icon = (RelativeLayout)findViewById(R.id.RelativeLayoutLoadingIcon);
 		RelativeLayout_videobcak= (RelativeLayout)findViewById(R.id.RelativeLayout_video);
+		RelativeLayout_loading_icon = (RelativeLayout)findViewById(R.id.RelativeLayoutLoadingIcon);
 
 		Text_MTS_info = (TextView) findViewById(R.id.Text_MTS_info);
 		Text_screentype_info = (TextView) findViewById(R.id.Text_screentype_info);
@@ -607,6 +592,7 @@ public class DTVPlayer extends DTVActivity{
 		findViewById(R.id.RelativeLayout_video).setOnClickListener(new MouseClick());
 		RelativeLayout_inforbar.setVisibility(View.INVISIBLE);
 		RelativeLayout_radio_bg.setVisibility(View.INVISIBLE);
+		RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
 		
 		init_Animation();
 		
@@ -673,7 +659,7 @@ public class DTVPlayer extends DTVActivity{
 					bundle_list.putInt("db_id", DTVPlayerGetCurrentProgramID());
 					pickerIntent.putExtras(bundle_list);
 					pickerIntent.setClass(DTVPlayer.this, DTVChannelList.class);
- 		            startActivity(pickerIntent);
+ 		           	startActivity(pickerIntent);
  		            break;
 				case R.id.Button_mainmenu_epg:
 					HideMainMenu();
@@ -719,8 +705,14 @@ public class DTVPlayer extends DTVActivity{
 					HideMainMenu();
 					HideControlBar();
 					break;
-				case R.id.Button_mainmenu_skip:		
-					
+				case R.id.Button_mainmenu_skip:	
+					/*
+					Intent Intent_test = new Intent();
+					Intent_test.setClass(DTVPlayer.this, MyScroler.class);
+					startActivity(Intent_test);
+					HideMainMenu();
+					HideControlBar();	
+					*/
 					break;			
 			}
 		}
@@ -1522,6 +1514,8 @@ public class DTVPlayer extends DTVActivity{
 		if(mTVEventFollow!=null){
 			dtvplayer_next_event=mTVEventFollow.getName();
 		}
+
+		
 	}
 
 	private boolean DTVPlayerSetFav(){

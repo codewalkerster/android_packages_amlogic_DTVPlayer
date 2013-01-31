@@ -22,10 +22,10 @@ public class DTVSettings{
 	}
 	
 	public void setTeltextBound(){
-		mContext.setConfig("tv:subtitle:margin_left",60);
-		mContext.setConfig("tv:subtitle:margin_right",60);
-		mContext.setConfig("tv:subtitle:margin_top",100);
-		mContext.setConfig("tv:subtitle:margin_bottom",100);
+		mContext.setConfig("tv:subtitle:margin_left",30);
+		mContext.setConfig("tv:subtitle:margin_right",30);
+		mContext.setConfig("tv:subtitle:margin_top",30);
+		mContext.setConfig("tv:subtitle:margin_bottom",30);
 	}
 	public boolean getSubtitleStatus(){
 		if(mContext.getBooleanConfig("tv:subtitle:enable"))
@@ -110,7 +110,16 @@ public class DTVSettings{
 	}
 
 	public String getScanRegion(){
-		return mContext.getStringConfig("tv:scan:dtv:region");	
+		String region = mContext.getStringConfig("tv:scan:dtv:region");	
+		String tmp="ATSC";
+		
+		if(region!=null){
+			for(int i=0;i<region.length();i++){
+				if(region.regionMatches(i,tmp,0,tmp.length()))
+					return "ATSC";
+			}
+		}	
+		return region;
 	}
 
 	public void setRecordStoragePath(String path){
@@ -120,5 +129,6 @@ public class DTVSettings{
 	public void factoryReset(){
 		mContext.restoreFactorySetting();
 	}
+
 }
 

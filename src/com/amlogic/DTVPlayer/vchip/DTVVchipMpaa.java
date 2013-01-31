@@ -29,6 +29,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.KeyEvent;
 
+import com.amlogic.tvutil.TVDimension;
+
 public class DTVVchipMpaa extends Activity{
     private static final String TAG = "DTVVchipMpaa";
     private static SharedPreferences mLast = null;
@@ -54,23 +56,24 @@ public class DTVVchipMpaa extends Activity{
         list_mpaa.setAdapter(list_mpaa_adapter);
         
     }
-    
+
+	private TVDimension dm=null;
+	String[] abb={"G","PG","PG-13","R","NC-17","X","NR"};	
     protected void onStart(){
 		super.onStart();
-		/*
-		VchipProvider.attach(this);
-		VchipProvider.addDimension(getContentResolver(), 0, getString(R.string.parent_control_MPAA), Rating_status);
-		VchipProvider.query(getContentResolver(), 0, getString(R.string.parent_control_MPAA), Rating_status);
-		*/
+		dm = TVDimension.selectByName(this, TVDimension.REGION_US, "MPAA");	
+		Rating_status=dm.getLockStatus(abb); 	
+		for(int i=0;i<Rating_status.length;i++){
+			Log.d(TAG,"value ="+Rating_status[i]);
+		}
 	}
-	
-	protected void onStop()
-	{
+
+	protected void onStop(){
 		super.onStop();
-		/*
-		VchipProvider.update(getContentResolver(), 0, getString(R.string.parent_control_MPAA), Rating_status, true);
-		VchipProvider.detach();
-		*/
+		for(int i=0;i<Rating_status.length;i++){
+			Log.d(TAG,"value ="+Rating_status[i]);
+		}
+		dm.setLockStatus(abb,Rating_status);
 	}
 
     private class listOnItemClick implements OnItemClickListener{

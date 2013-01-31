@@ -37,7 +37,7 @@ public class FocusScrollListView extends ListView {
 	private boolean isSetSelection;
 
 	private boolean upAndDownKeyFlag=false;
-	private int lastItemCordinatesY;
+	private int lastItemCordinatesY=0;
 	private int cordinatesY;
 	
 	private boolean isPageScroll;
@@ -51,7 +51,7 @@ public class FocusScrollListView extends ListView {
 	private float sy;
 	private float sx;
 	
-	private int sDuration = 300;
+	private int sDuration = 200;
 	
 	private Method method_pageScroll;
 	
@@ -69,7 +69,7 @@ public class FocusScrollListView extends ListView {
 		m = new Matrix();
 		
 		mBitmap = BitmapFactory.decodeResource(getResources(),
-				R.drawable.channel_item_light);
+				R.drawable.transparent);
 		
 		initPrivateMethods();
 	}
@@ -104,21 +104,22 @@ public class FocusScrollListView extends ListView {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		
-		if (isSetSelection) {
+		if (isSetSelection&&isScroll==false) {
 			
 			if (null != getSelectedView()) {
-				Log.d(TAG,"0000000");
-				canvas.drawBitmap(mBitmap, 0, getSelectedView().getTop(), null);
+				//canvas.drawBitmap(mBitmap, 0, getSelectedView().getTop(), null);
 				setScroller(getSelectedView().getTop());
 				isSetSelection = false;
-				return;
+				//return;
 			}
 		}
-
+		
 		if(upAndDownKeyFlag){
-			mScroller.startScroll(0, lastItemCordinatesY, 0,
-								getSelectedView().getTop(), sDuration);
-			setScroller(getSelectedView().getTop());
+			if (null != getSelectedView()) {
+				mScroller.startScroll(0, lastItemCordinatesY, 0,
+									getSelectedView().getTop(), sDuration);
+				setScroller(getSelectedView().getTop());
+			}	
 			upAndDownKeyFlag=false;
 		}
 		
@@ -130,21 +131,14 @@ public class FocusScrollListView extends ListView {
 			}
 		}
 
-	
-		Log.d(TAG,"11111111");
 		if (isPageScroll) {
 			if (null != getSelectedView()) {
-				
-				
 				cordinatesY = getSelectedView().getTop();
 				setScroller(getSelectedView().getTop());
 				isPageScroll = false;
-
-				Log.d(TAG,"222222="+cordinatesY);
 			}
 		} else {
 			cordinatesY = mScroller.getCurrY();
-			Log.d(TAG,"3333="+cordinatesY);
 		}
 
 		canvas.drawBitmap(mBitmap, 0, cordinatesY, null);
@@ -171,13 +165,15 @@ public class FocusScrollListView extends ListView {
 				}
 			}
 		}
-
 	}
 
 	@Override
 	public void setSelection(int position) {
+		Log.d(TAG,"setSelection");
+		setTmpSelection(position);
 		super.setSelection(position);
 		updateFocus();
+		//isPageScroll = true;
 	}
 
 	/**
@@ -189,7 +185,6 @@ public class FocusScrollListView extends ListView {
 	public void setMSelection(int position) {
 		setTmpSelection(position);
 		setSelection(position);
-		isPageScroll = true;
 	}
 
 	private void updateFocus() {
@@ -216,80 +211,72 @@ public class FocusScrollListView extends ListView {
 	@Override
 	public void setAdapter(ListAdapter adapter) {
 		super.setAdapter(adapter);
-		setMSelection(0);
+		//setMSelection(0);
 	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		
-		View view = getSelectedView();
+			View view = getSelectedView();
 		
 			if (null != view) {
 				switch (keyCode) {
 				case KeyEvent.KEYCODE_DPAD_DOWN:
 					upAndDownKeyFlag = true;
 					lastItemCordinatesY = view.getTop();
-					isScroll = true;
-					/*
 					if (getLastVisiblePosition() == getAdapter().getCount() - 1
 							&& getSelectedItemPosition() == getLastVisiblePosition() - 1
 							&& mFocusState == FOCUS_MIDDLE) {
-						top = view.getTop() + itemHeight + getDividerHeight();
-						mScroller.startScroll(0, view.getTop(), 0,
-								top - view.getTop(), sDuration);
+						//top = view.getTop() + itemHeight + getDividerHeight();
+						//mScroller.startScroll(0, view.getTop(), 0,
+								//top - view.getTop(), sDuration);
 						isScroll = true;
 						mFocusState = FOCUS_MIDDLE;
 						break;
 					}
 					if (getSelectedItemPosition() < getLastVisiblePosition() - 1) {
-						top = view.getTop() + itemHeight + getDividerHeight();
-						mScroller.startScroll(0, view.getTop(), 0,
-								top - view.getTop(), sDuration);
+						//top = view.getTop() + itemHeight + getDividerHeight();
+						//mScroller.startScroll(0, view.getTop(), 0,
+								//top - view.getTop(), sDuration);
 						isScroll = true;
 						mFocusState = FOCUS_MIDDLE;
 					} 
 					else if (getSelectedItemPosition() == getLastVisiblePosition() - 1) {
 						if (mFocusState != FOCUS_BOTTOM) {
-							top = listHeight - itemHeight
-									- getVerticalFadingEdgeLength()
-									- getDividerHeight();
-							mScroller.startScroll(0, view.getTop(), 0, top
-									- view.getTop(), sDuration);
+							//top = listHeight - itemHeight
+									//- getVerticalFadingEdgeLength()
+									//- getDividerHeight();
+							//mScroller.startScroll(0, view.getTop(), 0, top
+									//- view.getTop(), sDuration);
 							mFocusState = FOCUS_BOTTOM;
 						}
 					}
-					*/
 					break;
-					
 				case KeyEvent.KEYCODE_DPAD_UP:
 					upAndDownKeyFlag = true;
 					lastItemCordinatesY = view.getTop();
-					isScroll = true;
-					/*
 					if (getSelectedItemPosition() == getFirstVisiblePosition() + 1) {
 						if (mFocusState != FOCUS_TOP) {
-							top = 0 + getDividerHeight()
-									+ getVerticalFadingEdgeLength();
-							mScroller.startScroll(0, view.getTop(), 0, top
-									- view.getTop(), sDuration);
+							
+							//top = 0 + getDividerHeight()
+								//	+ getVerticalFadingEdgeLength();
+							//mScroller.startScroll(0, view.getTop(), 0, top
+								//	- view.getTop(), sDuration);
 							mFocusState = FOCUS_TOP;
 						}
 						break;
 					}
 
 					if (getSelectedItemPosition() > getFirstVisiblePosition()) {
-						top = view.getTop() - itemHeight - getDividerHeight();
-						mScroller.startScroll(0, view.getTop(), 0,
-								top - view.getTop(), sDuration);
+						//top = view.getTop() - itemHeight - getDividerHeight();
+						//mScroller.startScroll(0, view.getTop(), 0,
+								//top - view.getTop(), sDuration);
 						mFocusState = FOCUS_MIDDLE;
-					}
-					*/
+					}				
 					break;
-
 				}
-				
 			}
-		Log.i("ListView",
+		Log.d(TAG,
 				String.valueOf("listHeight " + listHeight + " itemHeight "
 						+ itemHeight + " top " + top));
 		return super.onKeyDown(keyCode, event);

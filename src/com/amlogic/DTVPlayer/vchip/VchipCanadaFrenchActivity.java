@@ -29,6 +29,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.KeyEvent;
 
+import com.amlogic.tvutil.TVDimension;
+
 public class VchipCanadaFrenchActivity extends Activity{
     private static final String TAG = "VchipCanadaFrenchActivity";
     private static final int MPAA_TOTAL_RATINGS = 7;
@@ -63,30 +65,21 @@ public class VchipCanadaFrenchActivity extends Activity{
         
     }
     
-    protected void onStart(){
+    private TVDimension dm=null;
+	String[] abb={ "G", "8 ans+","13 ans+","16 ans+","18 ans+"};		   
+	protected void onStart(){
 		super.onStart();
-
-		/*
-		VchipProvider.attach(this);
-		
-		VchipProvider.addDimension(getContentResolver(), 0, getString(R.string.parent_control_Canada_French), Rating_status);
-
-		VchipProvider.query(getContentResolver(), 0, getString(R.string.parent_control_Canada_French), Rating_status);
-		*/
+		dm = TVDimension.selectByName(this, TVDimension.REGION_CANADA, "Codes français du Canada");	
+		Rating_status=dm.getLockStatus(abb); 			
 	}
-	
+
 	protected void onStop(){
 		super.onStop();
-		/*
-		VchipProvider.update(getContentResolver(), 0, getString(R.string.parent_control_Canada_French), Rating_status, true);
-		VchipProvider.detach();
-		*/
+		dm.setLockStatus(abb,Rating_status);
 	}
 
     private class listOnItemClick implements OnItemClickListener{
     	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long position) {   
-    		System.out.println("id---------" + arg2);
-        	Log.d("#####","#####################"+position);
         	int p=(int)position;
         	
         	if(Rating_status[p]==0)

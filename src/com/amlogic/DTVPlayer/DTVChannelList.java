@@ -71,7 +71,8 @@ public class DTVChannelList extends DTVActivity{
 
 	private LinearLayout LinearLayoutListView=null;
 	private void DTVChannelListUIInit(){
-	    Bundle bundle = this.getIntent().getExtras();
+
+		Bundle bundle = this.getIntent().getExtras();
 		if(bundle!=null){
 	    	db_id = bundle.getInt("db_id");
 			service_type=getCurrentProgramType();
@@ -122,13 +123,13 @@ public class DTVChannelList extends DTVActivity{
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtvchannellist); 
+		mDTVSettings = new DTVSettings(this);
+		DTVChannelListUIInit();
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
-		/*get list data*/
-		mDTVSettings = new DTVSettings(this);
-		DTVChannelListUIInit();
+		myAdapter.notifyDataSetChanged();
 	}
 
 	public void onDisconnected(){
@@ -167,17 +168,28 @@ public class DTVChannelList extends DTVActivity{
 
 	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
-			int db_id=mTVProgramList[position].getID();
-			//DTVPlayerPlayById(db_id);
-			
+			int db_id=mTVProgramList[position].getID();	
+			int serviceType = mTVProgramList[position].getType();
+			/*
+			if(serviceType==TVProgram.TYPE_RADIO){
+				setProgramType(TVProgram.TYPE_RADIO);
+				Log.d(TAG,"setProgramType(TVProgram.TYPE_RADIO)");
+			}	
+			else{
+				setProgramType(TVProgram.TYPE_TV);
+				Log.d(TAG,"setProgramType(TVProgram.TYPE_TV)");
+			}
+			*/
 			Bundle bundle = new Bundle();
 			bundle.putInt("db_id",db_id);
+			bundle.putInt("service_type",serviceType);
 			bundle.putString("activity_tag","DTVChannelList");
 			Intent in = new Intent();
 			in.setClass(DTVChannelList.this, DTVPlayer.class);
 			in.putExtras(bundle);
 			startActivity(in);
-		    DTVChannelList.this.finish();
+			DTVChannelList.this.finish();
+
 		}
 	};
 
@@ -318,13 +330,17 @@ public class DTVChannelList extends DTVActivity{
 			case KeyEvent.KEYCODE_DPAD_RIGHT:	
 				DTVListDealLeftAndRightKey(1);
 				break;
-			case KeyEvent.KEYCODE_DPAD_DOWN:			
-				if(cur_select_item== ListView_channel.getCount()-1)
-			    	ListView_channel.setSelection(0); 			
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+				if(cur_select_item== ListView_channel.getCount()-1){
+			    	ListView_channel.setSelection(0); 	
+					return true;
+				}	
 				break;
 			case KeyEvent.KEYCODE_DPAD_UP:
-				if(cur_select_item== 0)
+				if(cur_select_item== 0){
 					ListView_channel.setSelection(ListView_channel.getCount()-1); 
+					return true;
+				}	
 				break;
 			case KeyEvent.KEYCODE_ZOOM_IN:
 				showPvrTimeSetDialog(DTVChannelList.this);

@@ -25,9 +25,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.KeyEvent;
 
+import com.amlogic.tvutil.TVDimension;
+
 public class DTVVchipTv extends Activity{
     private static final String TAG = "DTVVchipTv";
-    
     
     static private int[] Rating_status_ALL={1,1,1,1,1,1,};
     static private int[] Rating_status_FV={-1,1,-1,-1,-1,-1,};
@@ -58,284 +59,271 @@ public class DTVVchipTv extends Activity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-       
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         setContentView(R.layout.vchip_tv);    
-        InitTVMap();
     }
-    
+
+	private TVDimension[] dm=new TVDimension[6];
+	String[] abb={"TV-Y","TV-Y7","TV-G","TV-PG","TV-14","TV-MA"};	
     protected void onStart(){
 		super.onStart();
-		/*
-		VchipProvider.attach(this);
-		
-		VchipProvider.addDimension(getContentResolver(), 0, "ALL", Rating_status_ALL);
-		VchipProvider.addDimension(getContentResolver(), 0, "FV", Rating_status_FV);
-		VchipProvider.addDimension(getContentResolver(), 0, "V", Rating_status_V);
-		VchipProvider.addDimension(getContentResolver(), 0, "S", Rating_status_S);
-		VchipProvider.addDimension(getContentResolver(), 0, "L", Rating_status_L);
-		VchipProvider.addDimension(getContentResolver(), 0, "D", Rating_status_D);
+	
+		dm[0] = TVDimension.selectByName(this, TVDimension.REGION_US, "All");	
+		Rating_status_ALL=dm[0].getLockStatus(abb); 
 
-		VchipProvider.query(getContentResolver(), 0, "ALL", Rating_status_ALL);
-		VchipProvider.query(getContentResolver(), 0, "FV", Rating_status_FV);
-		VchipProvider.query(getContentResolver(), 0, "V", Rating_status_V);
-		VchipProvider.query(getContentResolver(), 0, "S", Rating_status_S);
-		VchipProvider.query(getContentResolver(), 0, "L", Rating_status_L);
-		VchipProvider.query(getContentResolver(), 0, "D", Rating_status_D);
-		*/
+		dm[1] = TVDimension.selectByName(this, TVDimension.REGION_US, "Fantasy violence");	
+		Rating_status_FV=dm[1].getLockStatus(abb); 
+		
+		dm[2] = TVDimension.selectByName(this, TVDimension.REGION_US, "Violence");	
+		Rating_status_V=dm[2].getLockStatus(abb); 
+		
+		dm[3] = TVDimension.selectByName(this, TVDimension.REGION_US, "Sex");	
+		Rating_status_S=dm[3].getLockStatus(abb); 
+		
+		dm[4]= TVDimension.selectByName(this, TVDimension.REGION_US, "Language");	
+		Rating_status_L=dm[4].getLockStatus(abb); 
+		
+		dm[5] = TVDimension.selectByName(this, TVDimension.REGION_US, "Dialogue");	
+		Rating_status_D=dm[5].getLockStatus(abb); 
+
+		InitTVMap();
 	}
 	
 	protected void onStop(){
 		super.onStop();
-		/*
-		VchipProvider.update(getContentResolver(), 0, "ALL", Rating_status_ALL, false);
-		VchipProvider.update(getContentResolver(), 0, "FV", Rating_status_FV, false);
-		VchipProvider.update(getContentResolver(), 0, "V", Rating_status_V, false);
-		VchipProvider.update(getContentResolver(), 0, "S", Rating_status_S, false);
-		VchipProvider.update(getContentResolver(), 0, "L", Rating_status_L, false);
-		VchipProvider.update(getContentResolver(), 0, "D", Rating_status_D, true);
 		
-		VchipProvider.detach();
-		*/
+		dm[0].setLockStatus(abb,Rating_status_ALL);
+		dm[1].setLockStatus(abb,Rating_status_FV);
+		dm[2].setLockStatus(abb,Rating_status_V);
+		dm[3].setLockStatus(abb,Rating_status_S);
+		dm[4].setLockStatus(abb,Rating_status_L);
+		dm[5].setLockStatus(abb,Rating_status_D);
 	}
 
     private class listOnItemClick implements OnItemClickListener{
     	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long position) {   
-    		System.out.println("id---------" + arg2);
-        	Log.d("#####","#####################"+position);
         	int p=(int)position;
-
         	switch (arg0.getId()) {
-			
-			case R.id.list_All:
-				if(p<=1)
-				{
-					if(Rating_status_ALL[p]==0) //block
-		        	{
-						for(int i=p;i<2;i++)
-		        		{
-							Rating_status_ALL[i]=1;
-		        		}
-						if(Rating_status_FV[1]==0)
-							Rating_status_FV[1]=1;
+				case R.id.list_All:
+					if(p<=1){
+						if(Rating_status_ALL[p]==0) //block
+			        	{
+							for(int i=p;i<2;i++)
+			        		{
+								Rating_status_ALL[i]=1;
+			        		}
+							if(Rating_status_FV[1]==0)
+								Rating_status_FV[1]=1;
+							
+			        	}	
+			        	else  //unblock
+			        	{
+			        		for(int i=0;i<=p;i++)
+			        		{
+			        			if(Rating_status_ALL[i]<0)
+			        				continue;
+			        			else
+			        				Rating_status_ALL[i]=0;
+			        		}	
+
+							if(Rating_status_FV[1]==1&&p==1)
+								Rating_status_FV[1]=0;
+			        	}	
 						
+					}
+					else
+					{
+				
+						if(Rating_status_ALL[p]==0) //block
+			        	{
+							for(int i=p;i<Rating_status_ALL.length;i++)
+			        		{
+								Rating_status_ALL[i]=1;
+								if(Rating_status_V[i]!=-1)
+									Rating_status_V[i]=1;
+								if(Rating_status_S[i]!=-1)
+									Rating_status_S[i]=1;
+								if(Rating_status_L[i]!=-1)
+									Rating_status_L[i]=1;
+								if(Rating_status_D[i]!=-1)
+									Rating_status_D[i]=1;
+								
+			        		}	
+							
+			        	}	
+			        	else //unblock
+			        	{
+			        		for(int i=2;i<=p;i++)
+			        		{
+			        			if(Rating_status_ALL[i]<0)
+			        				continue;
+			        			else
+			        			{
+			        				Rating_status_ALL[i]=0;
+									if(Rating_status_V[i]==1)
+										Rating_status_V[i]=0;
+									if(Rating_status_S[i]==1)
+										Rating_status_S[i]=0;
+									if(Rating_status_L[i]==1)
+										Rating_status_L[i]=0;
+									if(Rating_status_D[i]==1)
+										Rating_status_D[i]=0;
+			        			}
+			        		}	
+			        	}	
+					}
+					
+					list_mpaa_adapter_all.notifyDataSetChanged();
+					list_mpaa_adapter_fv.notifyDataSetChanged();
+					list_mpaa_adapter_v.notifyDataSetChanged();
+					list_mpaa_adapter_s.notifyDataSetChanged();
+					list_mpaa_adapter_l.notifyDataSetChanged();
+					list_mpaa_adapter_d.notifyDataSetChanged();
+					break;
+				case R.id.list_FV:
+					if(Rating_status_FV[p]==0)  //block
+		        	{
+		        		for(int i=p;i<Rating_status_FV.length;i++)
+		        		{
+							if(Rating_status_FV[i]<0)
+		        				continue;
+		        			else
+							    Rating_status_FV[i]=1;
+		        		}	
 		        	}	
-		        	else  //unblock
+		        	else    //unblock
 		        	{
 		        		for(int i=0;i<=p;i++)
 		        		{
-		        			if(Rating_status_ALL[i]<0)
+		        			if(Rating_status_FV[i]<0)
 		        				continue;
 		        			else
-		        				Rating_status_ALL[i]=0;
+		        				Rating_status_FV[i]=0;
 		        		}	
 
-						if(Rating_status_FV[1]==1&&p==1)
-							Rating_status_FV[1]=0;
+						Rating_status_ALL[0]=0;
+						Rating_status_ALL[1]=0;
 		        	}	
 					
-					
-				}
-				else
-				{
-			
-					if(Rating_status_ALL[p]==0) //block
+					list_mpaa_adapter_fv.notifyDataSetChanged();
+					list_mpaa_adapter_all.notifyDataSetChanged();
+					break;
+				case R.id.list_V:
+					if(Rating_status_V[p]==0) //block
 		        	{
-						for(int i=p;i<Rating_status_ALL.length;i++)
+		        		for(int i=p;i<Rating_status_V.length;i++)
 		        		{
-							Rating_status_ALL[i]=1;
-							if(Rating_status_V[i]!=-1)
-								Rating_status_V[i]=1;
-							if(Rating_status_S[i]!=-1)
-								Rating_status_S[i]=1;
-							if(Rating_status_L[i]!=-1)
-								Rating_status_L[i]=1;
-							if(Rating_status_D[i]!=-1)
-								Rating_status_D[i]=1;
-							
+		        			Rating_status_V[i]=1;
+		        		}		
+		        	}	
+		        	else
+		        	{
+		        		for(int i=0;i<=p;i++)
+		        		{
+		        			if(Rating_status_V[i]<0)
+		        			{
+		        				continue;
+		        			}
+							else
+		        			{
+		        				Rating_status_V[i]=0;
+								
+								if(Rating_status_ALL[i]==1)
+									Rating_status_ALL[i]=0;
+							}
 		        		}	
-
-						
 		        	}	
-		        	else //unblock
+					
+					list_mpaa_adapter_v.notifyDataSetChanged();
+					list_mpaa_adapter_all.notifyDataSetChanged();
+					break;
+				case R.id.list_S:
+					if(Rating_status_S[p]==0)
 		        	{
-		        		for(int i=2;i<=p;i++)
+		        		for(int i=p;i<Rating_status_S.length;i++)
 		        		{
-		        			if(Rating_status_ALL[i]<0)
+		        			Rating_status_S[i]=1;
+		        		}	
+		        	}	
+		        	else
+		        	{
+		        		for(int i=0;i<=p;i++)
+		        		{
+		        			if(Rating_status_S[i]<0)
 		        				continue;
 		        			else
 		        			{
-		        				Rating_status_ALL[i]=0;
-								if(Rating_status_V[i]==1)
-									Rating_status_V[i]=0;
-								if(Rating_status_S[i]==1)
-									Rating_status_S[i]=0;
-								if(Rating_status_L[i]==1)
-									Rating_status_L[i]=0;
-								if(Rating_status_D[i]==1)
-									Rating_status_D[i]=0;
+		        				Rating_status_S[i]=0;
+		        				if(Rating_status_ALL[i]==1)
+									Rating_status_ALL[i]=0;
+							}
+		        		}	
+		        	}	
+					
+					list_mpaa_adapter_s.notifyDataSetChanged();
+					list_mpaa_adapter_all.notifyDataSetChanged();
+					break;
+				case R.id.list_L:
+					if(Rating_status_L[p]==0)
+		        	{
+		        		for(int i=p;i<Rating_status_L.length;i++)
+		        		{
+		        			Rating_status_L[i]=1;
+		        		}	
+		        	}	
+		        	else
+		        	{
+		        		for(int i=0;i<=p;i++)
+		        		{
+		        			if(Rating_status_L[i]<0)
+		        				continue;
+		        			else
+		        			{
+		        				Rating_status_L[i]=0;
+								if(Rating_status_ALL[i]==1)
+									Rating_status_ALL[i]=0;
 		        			}
+							
 		        		}	
 
-						
+					
 		        	}	
-				}
-				
-				list_mpaa_adapter_all.notifyDataSetChanged();
-				list_mpaa_adapter_fv.notifyDataSetChanged();
-				list_mpaa_adapter_v.notifyDataSetChanged();
-				list_mpaa_adapter_s.notifyDataSetChanged();
-				list_mpaa_adapter_l.notifyDataSetChanged();
-				list_mpaa_adapter_d.notifyDataSetChanged();
-				break;
-			case R.id.list_FV:
-				if(Rating_status_FV[p]==0)  //block
-	        	{
-	        		for(int i=p;i<Rating_status_FV.length;i++)
-	        		{
-						if(Rating_status_FV[i]<0)
-	        				continue;
-	        			else
-						    Rating_status_FV[i]=1;
-	        		}	
 					
-	        	}	
-	        	else    //unblock
-	        	{
-	        		for(int i=0;i<=p;i++)
-	        		{
-	        			if(Rating_status_FV[i]<0)
-	        				continue;
-	        			else
-	        				Rating_status_FV[i]=0;
-	        		}	
-
-					Rating_status_ALL[0]=0;
-					Rating_status_ALL[1]=0;
-	        	}	
-				
-				list_mpaa_adapter_fv.notifyDataSetChanged();
-				list_mpaa_adapter_all.notifyDataSetChanged();
-				break;
-			case R.id.list_V:
-				if(Rating_status_V[p]==0) //block
-	        	{
-	        		for(int i=p;i<Rating_status_V.length;i++)
-	        		{
-	        			Rating_status_V[i]=1;
-	        		}		
-	        	}	
-	        	else
-	        	{
-	        		for(int i=0;i<=p;i++)
-	        		{
-	        			if(Rating_status_V[i]<0)
-	        			{
-	        				continue;
-	        			}
-						else
-	        			{
-	        				Rating_status_V[i]=0;
-							
-							if(Rating_status_ALL[i]==1)
-								Rating_status_ALL[i]=0;
-						}
-	        		}	
-
+					list_mpaa_adapter_l.notifyDataSetChanged();
+					list_mpaa_adapter_all.notifyDataSetChanged();
+					break;
+				case R.id.list_D:
+					if(Rating_status_D[p]==0)
+		        	{
+		        		for(int i=p;i<Rating_status_D.length;i++)
+		        		{
+							if(Rating_status_D[i]<0)
+		        				continue;
+		        			else
+								Rating_status_D[i]=1;
+		        		}	
+		        	}	
+		        	else
+		        	{
+		        		for(int i=0;i<=p;i++)
+		        		{
+		        			if(Rating_status_D[i]<0)
+		        				continue;
+		        			else
+		        			{
+								Rating_status_D[i]=0;
+								if(Rating_status_ALL[i]==1)
+									Rating_status_ALL[i]=0;
+		        			}	
+		        		}	
+		        	}	
 					
-	        	}	
-				
-				list_mpaa_adapter_v.notifyDataSetChanged();
-				list_mpaa_adapter_all.notifyDataSetChanged();
-				break;
-			case R.id.list_S:
-				if(Rating_status_S[p]==0)
-	        	{
-	        		for(int i=p;i<Rating_status_S.length;i++)
-	        		{
-	        			Rating_status_S[i]=1;
-	        		}	
-	        	}	
-	        	else
-	        	{
-	        		for(int i=0;i<=p;i++)
-	        		{
-	        			if(Rating_status_S[i]<0)
-	        				continue;
-	        			else
-	        			{
-	        				Rating_status_S[i]=0;
-	        				if(Rating_status_ALL[i]==1)
-								Rating_status_ALL[i]=0;
-						}
-	        		}	
-	        	}	
-				
-				list_mpaa_adapter_s.notifyDataSetChanged();
-				list_mpaa_adapter_all.notifyDataSetChanged();
-				break;
-			case R.id.list_L:
-				if(Rating_status_L[p]==0)
-	        	{
-	        		for(int i=p;i<Rating_status_L.length;i++)
-	        		{
-	        			Rating_status_L[i]=1;
-	        		}	
-	        	}	
-	        	else
-	        	{
-	        		for(int i=0;i<=p;i++)
-	        		{
-	        			if(Rating_status_L[i]<0)
-	        				continue;
-	        			else
-	        			{
-	        				Rating_status_L[i]=0;
-							if(Rating_status_ALL[i]==1)
-								Rating_status_ALL[i]=0;
-	        			}
-						
-	        		}	
-
-				
-	        	}	
-				
-				list_mpaa_adapter_l.notifyDataSetChanged();
-				list_mpaa_adapter_all.notifyDataSetChanged();
-				break;
-			case R.id.list_D:
-				if(Rating_status_D[p]==0)
-	        	{
-	        		for(int i=p;i<Rating_status_D.length;i++)
-	        		{
-						if(Rating_status_D[i]<0)
-	        				continue;
-	        			else
-							Rating_status_D[i]=1;
-	        		}	
-	        	}	
-	        	else
-	        	{
-	        		for(int i=0;i<=p;i++)
-	        		{
-	        			if(Rating_status_D[i]<0)
-	        				continue;
-	        			else
-	        			{
-							Rating_status_D[i]=0;
-							if(Rating_status_ALL[i]==1)
-								Rating_status_ALL[i]=0;
-	        			}	
-	        		}	
-	        	}	
-				
-				list_mpaa_adapter_d.notifyDataSetChanged();
-				list_mpaa_adapter_all.notifyDataSetChanged();
-				break;
+					list_mpaa_adapter_d.notifyDataSetChanged();
+					list_mpaa_adapter_all.notifyDataSetChanged();
+					break;
         	}
         	
  
@@ -344,14 +332,12 @@ public class DTVVchipTv extends Activity{
     }
     
     	
-    void InitTVMap()
-    {
+    void InitTVMap(){
     	 list_mpaa_all = (ListView) findViewById(R.id.list_All);
     	 list_mpaa_all.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
          list_mpaa_adapter_all = new RatingAdapter(this,Rating_status_ALL);
          list_mpaa_all.setOnItemClickListener(new listOnItemClick());
          list_mpaa_all.setAdapter(list_mpaa_adapter_all);
-         
          
          list_mpaa_fv = (ListView) findViewById(R.id.list_FV);
          list_mpaa_fv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -395,13 +381,13 @@ public class DTVVchipTv extends Activity{
 		private int[] listitem; 
 
 		static class ViewHolder {
-	    ImageView image;
+	   	 ImageView image;
 		}
 
 		public RatingAdapter(Context context) {
-		super();
-		cont = context;
-		mInflater=LayoutInflater.from(context);
+			super();
+			cont = context;
+			mInflater=LayoutInflater.from(context);
 		
 		}
 
@@ -409,25 +395,22 @@ public class DTVVchipTv extends Activity{
 			super();
 			cont = context;
 			listitem=list;
-			mInflater=LayoutInflater.from(context);
-			
-			}
+			mInflater=LayoutInflater.from(context);	
+		}
 		
 		
 		public int getCount() {
-		
-		return listitem.length;
+			return listitem.length;
 		}
 
 		
 		public Object getItem(int position) {
-		
-		return position;
+			return position;
 		}
 		
 	
 		public long getItemId(int position) {
-		return position;
+			return position;
 		}
 		
 		
@@ -437,8 +420,6 @@ public class DTVVchipTv extends Activity{
 			return super.isEnabled(position);
 		}
 
-
-	
 		public View getView(int position, View convertView, ViewGroup parent) {
 		Log.d(TAG,"getView"+position);	
 		ViewHolder holder;
@@ -456,26 +437,15 @@ public class DTVVchipTv extends Activity{
 		  }
 		
 		  // Bind the data efficiently with the holder.
-		 if(listitem[position]==1)
-		 {
+		 if(listitem[position]==1){
 			 holder.image.setImageResource(R.drawable.rating_locked);
 			 holder.image.setVisibility(View.VISIBLE);
 		 }	 
 			 
-			 
 		 else
 			 //holder.image.setBackgroundResource(R.drawable.rating_unlocked);
 			 holder.image.setVisibility(View.INVISIBLE);
-
-		  
-		  switch(position)
-		  {
-		  	case 1: 
-		  	
-			break;
-	
-		  }
-		  
+  
 		  return convertView;
 		}
 	  }	
@@ -525,7 +495,6 @@ public class DTVVchipTv extends Activity{
 		list_mpaa_adapter_s.notifyDataSetChanged();
 		list_mpaa_adapter_l.notifyDataSetChanged();
 		list_mpaa_adapter_d.notifyDataSetChanged();
-
 	
 	 }
 

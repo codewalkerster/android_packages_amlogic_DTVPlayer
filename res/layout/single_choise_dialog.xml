@@ -1,82 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="620px"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginLeft="45px" 
     android:layout_centerInParent="true"  
     android:orientation="vertical"
-    android:background="@drawable/dialog_bg"
     > 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="34px"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/enter_password"
-        android:textColor="#FFFFFFFF"
- 		android:gravity="center"
-        android:textSize="24px" 
-        android:layout_marginTop="20px"
-        android:layout_marginBottom="10px" />	
-	<RelativeLayout
-		android:id="@+id/inforbar_line" 
-		android:layout_width="fill_parent"
-		android:layout_height="3px"
-		android:background="@drawable/line"
-		android:layout_marginLeft="30px"
-		android:layout_marginRight="30px" >
-	</RelativeLayout> 
-	<!--
-	<ListView 
-		android:id="@+id/list_item"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:cacheColorHint="#00000000"
-		android:divider="#0000"
-		android:dividerHeight="0px"
-		android:focusable="true"
-		android:layout_marginLeft="30px"
-		android:layout_marginRight="30px" 			
-	></ListView>   
-	-->
-	<com.amlogic.widget.FocusScrollListView 
-		android:id="@+id/list_item"
+   <LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_marginLeft="30px"
-		android:layout_marginRight="30px" 
-		android:listSelector="#00000000">
-	</com.amlogic.widget.FocusScrollListView>
-	<RelativeLayout
-		android:id="@+id/inforbar_line" 
-		android:layout_width="fill_parent"
-		android:layout_height="3px"
-		android:background="@drawable/line"
-		android:layout_marginLeft="30px"
-		android:layout_marginRight="30px" >
-	</RelativeLayout> 
-    <LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
+		android:layout_height="80px"
+		android:orientation="vertical"
 		android:padding="14px"
-		android:layout_marginBottom="20px" 
-		android:gravity="center">
-		
-		<Button android:id="@+id/no"
-		   android:layout_width="wrap_content"
-           android:layout_height="45px"
-       	   android:background="@drawable/button_pin_null"
-       	   android:layout_weight="1"
-           />
-           
-		<Button android:id="@+id/yes"
-		   android:layout_width="wrap_content"
-           android:layout_height="45px"
-       	   android:background="@drawable/button_pin_null"
-       	   android:layout_weight="1"
-           />
-	</LinearLayout>
+		android:gravity="center"
+		android:background="@drawable/vchip_pin_head_bg">
+		<TextView
+			android:id="@+id/title"
+			android:layout_width="match_parent"
+			android:layout_height="34px"
+			android:layout_gravity="center_horizontal"
+			android:text="@string/enter_password"
+			android:textColor="#FFFFFFFF"
+			android:gravity="center"
+			android:textSize="24px" 
+			android:layout_marginTop="20px"
+			android:layout_marginBottom="10px" />	
+	</LinearLayout> 
+	<LinearLayout
+    		android:layout_width="match_parent"
+    		android:layout_height="wrap_content"
+    		android:orientation="horizontal"
+    		android:padding="14px"
+    		android:gravity="center"
+    		android:background="@drawable/vchip_pin_body_bg">
+		<!--
+		<ListView 
+			android:id="@+id/list_item"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:cacheColorHint="#00000000"
+			android:divider="#0000"
+			android:dividerHeight="0px"
+			android:focusable="true"
+			android:layout_marginLeft="30px"
+			android:layout_marginRight="30px" 			
+		></ListView>   
+		-->
+		<com.amlogic.widget.FocusScrollListView 
+			android:id="@+id/list_item"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_marginLeft="30px"
+			android:layout_marginRight="30px" 
+			android:listSelector="#00000000">
+		</com.amlogic.widget.FocusScrollListView>
+	</LinearLayout> 
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="95px"
+		android:layout_below="@+id/rating_bg_layout"
+		android:orientation="vertical"
+		android:background="@drawable/vchip_pin_tail_bg">
+		<RelativeLayout
+			android:id="@+id/inforbar_line" 
+			android:layout_width="fill_parent"
+			android:layout_height="3px"
+			android:background="@drawable/line"
+			android:layout_marginLeft="30px"
+			android:layout_marginRight="30px" >
+		</RelativeLayout> 
+	    <LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:padding="14px"
+			android:layout_marginBottom="20px" 
+			android:gravity="center">
+			
+			<Button android:id="@+id/no"
+			   android:layout_width="wrap_content"
+	           android:layout_height="45px"
+	       	   android:background="@drawable/button_pin_null"
+	       	   android:layout_weight="1"
+	           />
+	           
+			<Button android:id="@+id/yes"
+			   android:layout_width="wrap_content"
+	           android:layout_height="45px"
+	       	   android:background="@drawable/button_pin_null"
+	       	   android:layout_weight="1"
+	           />
+		</LinearLayout>
+	</LinearLayout>	
 </LinearLayout>
+
 

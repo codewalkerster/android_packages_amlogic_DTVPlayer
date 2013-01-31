@@ -70,7 +70,7 @@ public class DTVPvrPlayer extends DTVActivity{
 		Log.d(TAG, "onStop");
 		super.onStop();
 		pvrHandler.removeCallbacks(pvrTimer);
-		
+		stopPlayback();
 	}
 
 	public void onDisconnected(){
