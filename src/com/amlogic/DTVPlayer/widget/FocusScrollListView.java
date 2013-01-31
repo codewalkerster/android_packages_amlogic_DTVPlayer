@@ -51,7 +51,7 @@ public class FocusScrollListView extends ListView {
 	private float sy;
 	private float sx;
 	
-	private int sDuration = 300;
+	private int sDuration = 200;
 	
 	private Method method_pageScroll;
 	

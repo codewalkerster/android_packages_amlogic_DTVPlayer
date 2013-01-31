@@ -9,21 +9,20 @@
 		>
 	<TextView       
 		android:id="@+id/prono"
-		android:layout_gravity="center_vertical"
-		android:gravity="right|center_vertical"
+		android:gravity="left|center_vertical"
 		android:paddingRight="30px"
-		android:layout_width="80px"
+		android:layout_width="120px"
 		android:layout_height="42px" 
 		android:textSize="20sp"
-		android:layout_marginLeft="10px"
+		android:layout_marginLeft="40px"
 		android:singleLine="true" 
 		android:ellipsize="marquee">  
 	</TextView>  
 
 	<TextView       
 		android:id="@+id/ItemText"
-		android:gravity="center_vertical"
-		android:layout_width="380px"
+		android:gravity="left|center_vertical"
+		android:layout_width="320px"
 		android:layout_height="42px" 
 		android:textSize="20sp"
 		android:layout_marginLeft="10px"
@@ -34,14 +33,14 @@
 	<ImageView android:id="@+id/icon_scrambled"
 		android:layout_width="30px"
 		android:layout_height="30px"
-		android:layout_gravity="center"/>
+		android:gravity="center"/>
 	<ImageView android:id="@+id/icon_fav"
 		android:layout_width="30px"
 		android:layout_height="30px"
-		android:layout_gravity="center"/>		 	 
+		android:gravity="center"/>		 	 
 	<ImageView android:id="@+id/icon"
 		android:layout_width="30px"
 		android:layout_height="30px"
-		android:layout_gravity="center"
-		android:layout_marginLeft="5px"/>
+		android:gravity="center"
+		android:layout_marginRight="40px"/>
 </LinearLayout>  

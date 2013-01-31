@@ -592,7 +592,7 @@ public class DTVPlayer extends DTVActivity{
 		findViewById(R.id.RelativeLayout_video).setOnClickListener(new MouseClick());
 		RelativeLayout_inforbar.setVisibility(View.INVISIBLE);
 		RelativeLayout_radio_bg.setVisibility(View.INVISIBLE);
-		RelativeLayout_loading_icon.setVisibility(View.VISIBLE);
+		RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
 		
 		init_Animation();
 		

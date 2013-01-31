@@ -29,6 +29,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.KeyEvent;
 
+import com.amlogic.tvutil.TVDimension;
+
 public class VchipCanadaEnglishActivity extends Activity{
     private static final String TAG = "VchipCanadaEnglishActivity";
     private static SharedPreferences mLast = null;
@@ -61,30 +63,27 @@ public class VchipCanadaEnglishActivity extends Activity{
         
     }
     
-    protected void onStart(){
+	private TVDimension dm=null;
+	String[] abb={"Children","8+", "General","PG","14+","18+"};
+	protected void onStart(){
 		super.onStart();
-		/*
-		VchipProvider.attach(this);
-		
-		VchipProvider.addDimension(getContentResolver(), 0, getString(R.string.parent_control_Canada_English), Rating_status);
-
-		VchipProvider.query(getContentResolver(), 0, getString(R.string.parent_control_Canada_English), Rating_status);
-		*/
+		dm = TVDimension.selectByName(this, TVDimension.REGION_CANADA, "Canadian English Language Rating");	
+		Rating_status=dm.getLockStatus(abb); 			
+		for(int i=0;i<Rating_status.length;i++){
+			Log.d(TAG,"value ="+Rating_status[i]);
+		}
 	}
 	
-	protected void onStop()
-	{
+	protected void onStop(){
 		super.onStop();
-		/*
-		VchipProvider.update(getContentResolver(), 0, getString(R.string.parent_control_Canada_English), Rating_status, true);
-		VchipProvider.detach();
-		*/
+		for(int i=0;i<Rating_status.length;i++){
+			Log.d(TAG,"value ="+Rating_status[i]);
+		}
+		dm.setLockStatus(abb,Rating_status);
 	}
 
     private class listOnItemClick implements OnItemClickListener{
     	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long position) {   
-    		System.out.println("id---------" + arg2);
-        	Log.d("#####","#####################"+position);
         	int p=(int)position;
         	
         	if(Rating_status[p]==0)
