@@ -200,7 +200,7 @@ public class DTVProgramManager extends DTVActivity{
 				return false;
 			}
 		});
-		
+
 		ListView_programmanager.setAdapter(myAdapter);
 		create_group_button();
 
@@ -562,13 +562,14 @@ public class DTVProgramManager extends DTVActivity{
 			case KeyEvent.KEYCODE_DPAD_RIGHT:
 				DTVListDealLeftAndRightKey(1);
 				break;
-			case KeyEvent.KEYCODE_DPAD_DOWN:	
-				if(cur_select_item== ListView_programmanager.getCount()-1){
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+				Log.d(TAG,"---"+cur_select_item);
+				if(cur_select_item == ListView_programmanager.getCount()-1){
 					ListView_programmanager.setSelection(0); 	
 					return true;
 				}	
 				break;
-			case KeyEvent.KEYCODE_DPAD_UP:
+			case KeyEvent.KEYCODE_DPAD_UP:		
 				if(cur_select_item== 0){
 					Button mButton=getGroupButtonById(TabIndex);
 					if(mButton!=null)
@@ -884,6 +885,22 @@ public class DTVProgramManager extends DTVActivity{
 					return false;
 				}
 			});
+
+			TempButton.setOnKeyListener(new OnKeyListener() {
+				@Override
+				public boolean onKey(View v, int keyCode, KeyEvent event) {
+					switch(keyCode)
+					{
+						case KeyEvent.KEYCODE_DPAD_DOWN:
+							if (event.getAction() == KeyEvent.ACTION_DOWN) {
+								ListView_programmanager.requestFocus();
+							}
+							break;
+					} 	
+					return false;
+				}
+				
+			});
 			
 			TempButton.setSingleLine(true);
 			TempButton.setEllipsize(TextUtils.TruncateAt.valueOf("MARQUEE"));
@@ -940,6 +957,23 @@ public class DTVProgramManager extends DTVActivity{
 					
 					return false;
 				}
+			});
+
+			TempButton.setOnKeyListener(new OnKeyListener() {
+				@Override
+				public boolean onKey(View v, int keyCode, KeyEvent event) {
+					switch(keyCode)
+					{
+						case KeyEvent.KEYCODE_DPAD_DOWN:
+							if (event.getAction() == KeyEvent.ACTION_DOWN) {
+								ListView_programmanager.setSelection(0); 
+								return true;
+							}
+							break;
+					} 	
+					return false;
+				}
+				
 			});
 			
 			TempButton.setSingleLine(true);
