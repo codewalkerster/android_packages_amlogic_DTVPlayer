@@ -53,7 +53,26 @@ public class DTVProgramManager extends DTVActivity{
 	private int TVProgramCurrentId = -1;
 	private int TabIndex = TVProgramCurrentId;
 
-	private int getVProgramCurrentIndex(){
+	private Button mButtonTv=null;
+	private Button mButtonRadio=null;
+	private Button mButtonFav=null;
+
+	private Button getGroupButtonById(int id){
+		Button temp=null;
+		if(id==-1)
+			temp=mButtonTv;
+		else if(id==-2)
+			temp=mButtonRadio;
+		else if(id==-3)
+			temp=mButtonFav;
+		else {
+			LinearLayout mLinearLayout = (LinearLayout)findViewById(R.id.LinearLayoutGroupButton) ;
+			temp = (Button) mLinearLayout.findViewById(id);
+		}
+		return temp;
+	}
+
+	private int getProgramCurrentIndex(){
 		if(TVProgramCurrentId!=-1){
 			for(int i=0;i<mProgramGroup.length;i++){
 				if(TVProgramCurrentId==mProgramGroup[i].getID())
@@ -184,6 +203,9 @@ public class DTVProgramManager extends DTVActivity{
 		
 		ListView_programmanager.setAdapter(myAdapter);
 		create_group_button();
+
+		if(mButtonTv!=null)	
+			mButtonTv.requestFocus();
 	}
 
 	public void onCreate(Bundle savedInstanceState){
@@ -541,12 +563,17 @@ public class DTVProgramManager extends DTVActivity{
 				DTVListDealLeftAndRightKey(1);
 				break;
 			case KeyEvent.KEYCODE_DPAD_DOWN:	
-				if(cur_select_item== ListView_programmanager.getCount()-1)
+				if(cur_select_item== ListView_programmanager.getCount()-1){
 					ListView_programmanager.setSelection(0); 	
+					return true;
+				}	
 				break;
 			case KeyEvent.KEYCODE_DPAD_UP:
-				if(cur_select_item== 0)
-					ListView_programmanager.setSelection(ListView_programmanager.getCount()-1); 
+				if(cur_select_item== 0){
+					Button mButton=getGroupButtonById(TabIndex);
+					if(mButton!=null)
+						mButton.requestFocus();
+				}
 				break;
 			case KeyEvent.KEYCODE_ZOOM_IN:
 				return true;
@@ -668,7 +695,7 @@ public class DTVProgramManager extends DTVActivity{
 												TextView title = (TextView)window.findViewById(R.id.title);
 												title.setText(R.string.edit);
 												final EditText mEditText = (EditText)window.findViewById(R.id.edit);
-												mEditText.setText(mProgramGroup[getVProgramCurrentIndex()].getName());
+												mEditText.setText(mProgramGroup[getProgramCurrentIndex()].getName());
 												Button no = (Button)window.findViewById(R.id.no);
 												no.setText(R.string.no);
 												Button yes = (Button)window.findViewById(R.id.yes);
@@ -823,9 +850,22 @@ public class DTVProgramManager extends DTVActivity{
 				new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);					
 			TempLP.leftMargin = 2;
 			TempLP.bottomMargin = 1;
-			
+
 			Button TempButton;
 			TempButton = new Button(this);
+
+			switch(i){
+				case 0:
+					mButtonTv = TempButton;
+					break;
+				case 1:
+					mButtonRadio= TempButton;
+					break;
+				case 2:
+					mButtonFav= TempButton;
+					break;
+			}
+			
 			
 			TempButton.setId(mProgramGroup[i].getID());
 			TempButton.setTextColor(Color.WHITE);
@@ -871,6 +911,18 @@ public class DTVProgramManager extends DTVActivity{
 			
 			Button TempButton;
 			TempButton = new Button(this);
+
+			switch(i){
+				case 0:
+					mButtonTv = TempButton;
+					break;
+				case 1:
+					mButtonRadio= TempButton;
+					break;
+				case 2:
+					mButtonFav= TempButton;
+					break;
+			}
 			
 			TempButton.setId(mProgramGroup[i].getID());
 			TempButton.setTextColor(Color.WHITE);
