@@ -41,30 +41,21 @@ public class RRTDimensionsEnter extends Activity{
     private static String[] mAbbrev= null;
     private static String mValue[] = null;
     private static String mDimension = null;
-    ListView list_mpaa;
-	private TVDimension TVDimensionItem=null;
+    ListView mListView=null;
+    RatingAdapter mListView_adapter=null;
+    private TVDimension TVDimensionItem=null;
 	
-    RatingAdapter list_mpaa_adapter=null;
-    
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-       
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
-        setContentView(R.layout.dimensions_rating);
-
-		Window w = getWindow();
-		WindowManager.LayoutParams wl = w.getAttributes();
-		wl.x = 450;
-		wl.y = 0;
-		w.setAttributes(wl);
+        setContentView(R.layout.dtvsettings);
 		
         Bundle bundle = this.getIntent().getExtras();
-		
 		if(bundle!=null){
 			mDimension = bundle.getString("Dimension");
 			index = bundle.getInt("Index");
@@ -80,12 +71,12 @@ public class RRTDimensionsEnter extends Activity{
 			finish();
 		}
 		
-		list_mpaa = (ListView) findViewById(R.id.list_dimensions_rating);
-        list_mpaa.setItemsCanFocus(false);
-        list_mpaa.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        list_mpaa_adapter = new RatingAdapter(this);
-        list_mpaa.setOnItemClickListener(new listOnItemClick());
-        list_mpaa.setAdapter(list_mpaa_adapter);
+		mListView = (ListView) findViewById(R.id.settings_list);
+        mListView.setItemsCanFocus(false);
+        mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        mListView_adapter = new RatingAdapter(this);
+        mListView.setOnItemClickListener(new listOnItemClick());
+        mListView.setAdapter(mListView_adapter);
 
 		TextView title = (TextView)findViewById(R.id.title);
 		title.setText(mDimension);
@@ -115,7 +106,7 @@ public class RRTDimensionsEnter extends Activity{
         			Rating_status[i]=0;
         		}	
         	}	
-        	list_mpaa_adapter.notifyDataSetChanged();	
+        	mListView_adapter.notifyDataSetChanged();	
         }      	
     }
     
@@ -134,96 +125,87 @@ public class RRTDimensionsEnter extends Activity{
 		}
 
 		public RatingAdapter(Context context) {
-		super();
-		cont = context;
-		mInflater=LayoutInflater.from(context);
+			super();
+			cont = context;
+			mInflater=LayoutInflater.from(context);
 		
 		}
 
-		
 		public int getCount() {
-		
-		return Rating_status.length;
+			return Rating_status.length;
 		}
 
 		
-		public Object getItem(int position) {
-		
-		return position;
+		public Object getItem(int position) {		
+			return position;
 		}
 		
 		
 		public long getItemId(int position) {
-		return position;
+			return position;
 		}
 		
 		
 		public boolean isEnabled(int position) {
-		
-			    return super.isEnabled(position);
+		    return super.isEnabled(position);
 		}
-
-
 		
 		public View getView(int position, View convertView, ViewGroup parent) {
-		ViewHolder holder;
-		if (convertView == null) {
-		   convertView = mInflater.inflate(R.layout.dimensions_rating_list_item, null);
-		   holder = new ViewHolder();
-		   holder.text0	= (TextView) convertView.findViewById(R.id.dimensiongs_content0);
-		   holder.text1	= (TextView) convertView.findViewById(R.id.dimensiongs_content1);
-		   holder.image = (ImageView) convertView.findViewById(R.id.image);
-		   convertView.setTag(holder);
-		}else {
-		  // Get the ViewHolder back to get fast access to the TextView
-		  // and the ImageView.
-		  holder = (ViewHolder) convertView.getTag();
-		  }
+			ViewHolder holder;
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.dimensions_rating_list_item, null);
+				holder = new ViewHolder();
+				holder.text0	= (TextView) convertView.findViewById(R.id.dimensiongs_content0);
+				holder.text1	= (TextView) convertView.findViewById(R.id.dimensiongs_content1);
+				holder.image = (ImageView) convertView.findViewById(R.id.image);
+				convertView.setTag(holder);
+			}else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
 
-		 holder.text1.setText(mValue[position]);
-		 holder.text0.setText(mAbbrev[position]);
+			holder.text1.setText(mValue[position]);
+			holder.text0.setText(mAbbrev[position]);
+			holder.text0.setTextColor(Color.WHITE);
+			holder.text1.setTextColor(Color.WHITE);
 
-		 Log.d(TAG,"!!!!!!!!!!!!!"+mValue[position]+"######"+mAbbrev[position]);	
-
-		 
-		  // Bind the data efficiently with the holder.
-		 if(Rating_status[position]==1)
-		 {
-			
-			 holder.image.setImageResource(R.drawable.rating_locked);
-			 //holder.image.setVisibility(View.VISIBLE);
-		 } 	 
-		 else
-		 {
-			 holder.image.setImageResource(R.drawable.rating_unlocked);
-			 
-		 }	
+			Log.d(TAG,"!!!!!!!!!!!!!"+mValue[position]+"######"+mAbbrev[position]);	
+			// Bind the data efficiently with the holder.
+			if(Rating_status[position]==1){
+				holder.image.setImageResource(R.drawable.rating_locked);
+				//holder.image.setVisibility(View.VISIBLE);
+			} 	 
+			else{
+				holder.image.setImageResource(R.drawable.rating_unlocked);
+			}	
 		 		  
-		  return convertView;
+		  	return convertView;
 		}
-	  }	
+	}	
 
-	  public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
-
-	   switch (keyCode) {
-		
-		case KeyEvent.KEYCODE_A:		
-    		for(int i=0;i<Rating_status.length;i++)
-    		{
-    			Rating_status[i]=1;
-    		}	
-        	list_mpaa_adapter.notifyDataSetChanged();	
-			break;
-		case KeyEvent.KEYCODE_D:
-    		for(int i=0;i<Rating_status.length;i++)
-    		{
-    			Rating_status[i]=0;
-    		}	
-        	list_mpaa_adapter.notifyDataSetChanged();
-			break;
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_A:		
+				for(int i=0;i<Rating_status.length;i++)
+				{
+					Rating_status[i]=1;
+				}	
+				mListView_adapter.notifyDataSetChanged();	
+				break;
+			case KeyEvent.KEYCODE_D:
+				for(int i=0;i<Rating_status.length;i++)
+				{
+					Rating_status[i]=0;
+				}	
+				mListView_adapter.notifyDataSetChanged();
+				break;
+			case KeyEvent.KEYCODE_BACK:	
+				setResult(RESULT_OK,null);
+				break;	
 		}
 		return super.onKeyDown(keyCode, event);
 	}	
-	
+
 }

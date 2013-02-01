@@ -121,24 +121,30 @@ public class DTVVChip extends DTVActivity{
  				case 1:
  					intent.setClass(DTVVChip.this,DTVVchipTv.class);
  					startActivityForResult(intent, 111);
- 					break;
+					onHide();
+					break;
  				case 2:
  					intent.setClass(DTVVChip.this,DTVVchipMpaa.class);
  					startActivityForResult(intent, 112);
+					onHide();
  					break;
-					
  				case 3:
  					intent.setClass(DTVVChip.this,VchipCanadaEnglishActivity.class);
  					startActivityForResult(intent, 113);
- 					break;
+					onHide();
+					break;
  				case 4:
  					intent.setClass(DTVVChip.this,VchipCanadaFrenchActivity.class);
  					startActivityForResult(intent, 114);
+					onHide();
  					break;
 				case 5:
 					intent.setClass(DTVVChip.this,RRTDimensions.class);
  					startActivityForResult(intent, 115);
+					onHide();
  					break;
+				case 6:
+ 					break;	
  				
  			}
 			
@@ -284,6 +290,13 @@ public class DTVVChip extends DTVActivity{
 							break;
 					}
 					break;
+				case 111:	
+				case 112:
+				case 113:
+				case 114:	
+				case 115:
+					onShow();
+					break;
 			}
 		}	
 	}
@@ -303,6 +316,16 @@ public class DTVVChip extends DTVActivity{
 		}
 		return super.onKeyDown(keyCode, event);
 	}	  
+
+	private  void onHide(){
+		RelativeLayout RelativeLayoutParent = (RelativeLayout)findViewById(R.id.RelativeLayoutParent);
+		RelativeLayoutParent.setVisibility(View.INVISIBLE);
+	} 
+	
+	private void onShow(){
+		RelativeLayout RelativeLayoutParent = (RelativeLayout)findViewById(R.id.RelativeLayoutParent);
+		RelativeLayoutParent.setVisibility(View.VISIBLE);
+	}
 
 }
 

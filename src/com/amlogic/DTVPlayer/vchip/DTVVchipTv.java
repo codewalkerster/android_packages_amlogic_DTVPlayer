@@ -546,17 +546,19 @@ public class DTVVchipTv extends Activity{
 	 }
 
 
-	  public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
-
-	   switch (keyCode) {
+		switch (keyCode) {
 		
-		case KeyEvent.KEYCODE_A:		
-    		unblockAll();
-			break;
-		case KeyEvent.KEYCODE_D:
-    		blockAll();
-			break;
+			case KeyEvent.KEYCODE_A:		
+	    		unblockAll();
+				break;
+			case KeyEvent.KEYCODE_D:
+	    		blockAll();
+				break;
+			case KeyEvent.KEYCODE_BACK:	
+				setResult(RESULT_OK,null);
+				break;
 		}
 		return super.onKeyDown(keyCode, event);
 	}		

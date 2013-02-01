@@ -182,25 +182,27 @@ public class VchipCanadaEnglishActivity extends Activity{
 		}
 	  }	
 
-	 public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 
-	   switch (keyCode) {
-		
-		case KeyEvent.KEYCODE_A:		
-    		for(int i=0;i<Rating_status.length;i++)
-    		{
-    			Rating_status[i]=1;
-    		}	
-        	list_mpaa_adapter.notifyDataSetChanged();	
-			break;
-		case KeyEvent.KEYCODE_D:
-    		for(int i=0;i<Rating_status.length;i++)
-    		{
-    			Rating_status[i]=0;
-    		}	
-        	list_mpaa_adapter.notifyDataSetChanged();
-			break;
+		switch (keyCode) {	
+			case KeyEvent.KEYCODE_A:		
+	    		for(int i=0;i<Rating_status.length;i++)
+	    		{
+	    			Rating_status[i]=1;
+	    		}	
+	        	list_mpaa_adapter.notifyDataSetChanged();	
+				break;
+			case KeyEvent.KEYCODE_D:
+	    		for(int i=0;i<Rating_status.length;i++)
+	    		{
+	    			Rating_status[i]=0;
+	    		}	
+	        	list_mpaa_adapter.notifyDataSetChanged();
+				break;
+			case KeyEvent.KEYCODE_BACK:	
+					setResult(RESULT_OK,null);
+					break;		
 		}
 		return super.onKeyDown(keyCode, event);
 	}	
