@@ -104,16 +104,7 @@ public class VchipCanadaEnglishActivity extends Activity{
         }      	
     }
     
-    
- 
-    
-    	
-    void InitMpaaMap(int rating)
-    {
- 
-    }
-   
-	private static class RatingAdapter extends BaseAdapter {
+  	private static class RatingAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Bitmap mIcon1;
 		private Bitmap mIcon2;

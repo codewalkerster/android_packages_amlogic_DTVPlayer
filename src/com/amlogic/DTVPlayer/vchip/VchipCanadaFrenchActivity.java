@@ -99,53 +99,7 @@ public class VchipCanadaFrenchActivity extends Activity{
         	list_mpaa_adapter.notifyDataSetChanged();	
         }      	
     }
-    
-    
-    public void setRating(String rating_value)
-	{
-    	
-		if(rating_value.equals("on"))
-				mLast.edit().putInt("SWITCH_STATUS", 0)
-				    .commit();
-		else if(rating_value.equals("off"))
-				mLast.edit().putInt("SWITCH_STATUS", 1)
-				    .commit();
-		return;				
-	}
 
-	static int getRating()
-	{
-		int mode=0;
-		mode = mLast.getInt("SWITCH_STATUS", 0);
-		return mode;
-	}
-    
-    	
-    void InitMpaaMap(int rating)
-    {
-  
-    	switch(rating)
-    	{
-    	  case 0:
-    		  //rating_0.
-    		  break;
-    	  case 1:
-    		  break;
-    	  case 2:
-    		  break;
-    	  case 3:
-    		  break;
-    	  case 4:
-    		  break;
-    	  case 5:
-    		  break;
-    	  case 6:
-    		  break;
-    	
-    	}
-    	
-    }
-   
 	private static class RatingAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Bitmap mIcon1;
