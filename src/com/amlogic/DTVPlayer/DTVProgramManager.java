@@ -563,7 +563,6 @@ public class DTVProgramManager extends DTVActivity{
 				DTVListDealLeftAndRightKey(1);
 				break;
 			case KeyEvent.KEYCODE_DPAD_DOWN:
-				Log.d(TAG,"---"+cur_select_item);
 				if(cur_select_item == ListView_programmanager.getCount()-1){
 					ListView_programmanager.setSelection(0); 	
 					return true;
@@ -881,7 +880,6 @@ public class DTVProgramManager extends DTVActivity{
 				public boolean onLongClick(View view) {
 					Log.d(TAG,"long Click");
 					createMenuChoiceDialogForGroup(DTVProgramManager.this);
-					
 					return false;
 				}
 			});

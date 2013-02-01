@@ -557,7 +557,7 @@ public class DTVTimeshifting extends DTVActivity{
 
 
 
-		if(mDTVSettings.getScanRegion().equals("ATSC")==false){
+		if(mDTVSettings.getScanRegion().contains("ATSC")==false){
 			Text_proname.setText(Integer.toString(DTVPlayer.dtvplayer_pronumber)+"  "+DTVPlayer.dtvplayer_name);
 		}
 		else{
