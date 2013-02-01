@@ -27,9 +27,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.os.SystemProperties;
 
+import com.amlogic.tvutil.TVDimension;
 
 public class RRTDimensions extends Activity {
-	private final static String TAG="###RRTDimensions###";
+	private final static String TAG="RRTDimensions";
 	public  static final int RRT_REGION = 1;
 	ListView myView;
 	Intent intent = new Intent();
@@ -38,7 +39,7 @@ public class RRTDimensions extends Activity {
 	IconAdapter adapter=null;
 	List<Map<String, Object>> list = null;
 	
-	private static String[] ListItemTitle=null;
+	private String[] ListItemTitle=null;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,29 +51,8 @@ public class RRTDimensions extends Activity {
 		wl.y = -100;
 		w.setAttributes(wl);
 
-		/*
-		mLast = PreferenceManager.getDefaultSharedPreferences(this);
+		getData();
 
-		//get the dimensions
-		Cursor cursor = getContentResolver().query(DVBClient.TABLE_DIMENSION ,
-								new String[]{"name"}, "rating_region="+RRT_REGION,  
-								null, null);
-		if(cursor != null) {
-			if (cursor.getCount() > 0) {
-				int i= 0;
-				ListItemTitle = new String[cursor.getCount()];
-				cursor.moveToFirst();
-				while (!cursor.isAfterLast()) {
-					ListItemTitle[i] = new String(cursor.getString(0));
-					Log.d(TAG, "get dimension name :" + ListItemTitle[i]);
-					cursor.moveToNext();
-					i++;
-				}
-				cursor.close();
-			}
-		}
-		*/
-		
 		if (ListItemTitle == null) {
 			Log.d(TAG, "No dimension data of this region, will not display!");
 			finish();
@@ -86,19 +66,35 @@ public class RRTDimensions extends Activity {
 		myView.setAdapter(adapter);
 		
 	}
+
+	public static TVDimension[] mTVDimension=null;
+
+	public static TVDimension[] getTVDimension(){
+		return mTVDimension;
+	}
 	
-	
-	 class listOnItemClick implements OnItemClickListener{
-	    	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long position) {   
+	private void getData(){
+		mTVDimension = TVDimension.selectUSDownloadable(this);
+		if(mTVDimension!=null){
+			ListItemTitle = new String[mTVDimension.length];
+			for(int i=0;i<mTVDimension.length;i++){
+				ListItemTitle[i]= mTVDimension[i].getName();
+			}
+		}
+	}
+
+
+	class listOnItemClick implements OnItemClickListener{
+		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long position) {   
 	            
-	    		System.out.println("id---------" + arg2);
-	          Log.d("#####","#####################"+position);
-	 			    bundle = new Bundle();
-	 				bundle.putString("Dimension", ListItemTitle[(int)position]);
-	 				intent.putExtras(bundle);
-	 				intent.setClass(RRTDimensions.this,RRTDimensionsEnter.class);
-	 				startActivityForResult(intent,30);
-	 			   
+			System.out.println("id---------" + arg2);
+			Log.d("#####","#####################"+position);
+			bundle = new Bundle();
+			bundle.putString("Dimension", ListItemTitle[(int)position]);
+			bundle.putInt("Index",position);
+			intent.putExtras(bundle);
+			intent.setClass(RRTDimensions.this,RRTDimensionsEnter.class);
+			startActivityForResult(intent,30);		   
 	    }
 
 	 }
@@ -111,81 +107,70 @@ public class RRTDimensions extends Activity {
 		private List<Map<String, Object>> listItems;
 
 		static class ViewHolder {
-		TextView text;
-	    TextView   text2; 
-	    //ImageView icon;
-	    //ImageButton  iboolean;
-	    //ImageView icon1;
+			TextView text;
+			TextView   text2; 
+			//ImageView icon;
+			//ImageButton  iboolean;
+			//ImageView icon1;
 		}
 
 		public IconAdapter(Context context) {
-		super();
-		cont = context;
-		//listItems = list;
-		mInflater=LayoutInflater.from(context);
-		  //mIcon1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.p1);
-		  
+			super();
+			cont = context;
+			//listItems = list;
+			mInflater=LayoutInflater.from(context);
+			//mIcon1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.p1);
 		}
 
-		
 		public int getCount() {
 			if (ListItemTitle != null)
 				return ListItemTitle.length;
 			else 
 				return 0;
 		}
-
 		
-		public Object getItem(int position) {
-		
-		return position;
+		public Object getItem(int position) {		
+			return position;
 		}
 		
-		
 		public long getItemId(int position) {
-		return position;
+			return position;
 		}
 			
 		public View getView(int position, View convertView, ViewGroup parent) {
-		ViewHolder holder;
-		if (convertView == null) {
-		   convertView = mInflater.inflate(R.layout.list_item, null);
-		   holder = new ViewHolder();
-		   holder.text = (TextView) convertView.findViewById(R.id.title);
-		   holder.text2 = (TextView) convertView.findViewById(R.id.text2);
-		   //holder.iboolean = (ImageButton)convertView.findViewById(R.id.iboolean);
-		   //holder.icon1 = (ImageView)convertView.findViewById(R.id.icon1);
-		   convertView.setTag(holder);
-		}else {
-		  // Get the ViewHolder back to get fast access to the TextView
-		  // and the ImageView.
-		  holder = (ViewHolder) convertView.getTag();
-		  }
-		
-		  // Bind the data efficiently with the holder.
-		  holder.text.setText(ListItemTitle[position]);
-		  //holder.text2.setText(ListItemTitle[position]);
-		  
-		 
+			ViewHolder holder;
+			if (convertView == null) {
+			   convertView = mInflater.inflate(R.layout.list_item, null);
+			   holder = new ViewHolder();
+			   holder.text = (TextView) convertView.findViewById(R.id.title);
+			   holder.text2 = (TextView) convertView.findViewById(R.id.text2);
+			   //holder.iboolean = (ImageButton)convertView.findViewById(R.id.iboolean);
+			   //holder.icon1 = (ImageView)convertView.findViewById(R.id.icon1);
+			   convertView.setTag(holder);
+			}else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			// Bind the data efficiently with the holder.
+			holder.text.setText(ListItemTitle[position]);
+			//holder.text2.setText(ListItemTitle[position]);
+
 			//holder.icon.setImageBitmap(mIcon1);		
 			//convertView.setBackgroundColor(Color.TRANSPARENT); 
-				holder.text.setTextColor(Color.WHITE);
-			    holder.text2.setTextColor(Color.WHITE);
-		  
-		  
-		  
-		  
-		  return convertView;
+			holder.text.setTextColor(Color.WHITE);
+			holder.text2.setTextColor(Color.WHITE);
+
+			return convertView;
 		}
-	  }	
+	}	
 			
-	  protected void onListItemClick(ListView l, View v, int position, long id)
-	  {
-		 Log.d("#####","#####################"+position);	
-	  }
-	  
-	void setText(int position,int res_id)
-	{
+	protected void onListItemClick(ListView l, View v, int position, long id){
+		Log.d("#####","#####################"+position);	
+	}
+
+	void setText(int position,int res_id){
 		/*
 		 Map<String, Object> map;
 		 map = list.get(position); 
@@ -205,14 +190,12 @@ public class RRTDimensions extends Activity {
 		Log.d("#################","#######onActivityResult");
 		int p=-1;
 		
-		if(data!=null)
-		{
+		if(data!=null){
 			Bundle bundle =data.getExtras();
 			p = bundle.getInt("position");			
 		}		
 		
-		if(resultCode == RESULT_OK)
-		{
+		if(resultCode == RESULT_OK){
 			switch(requestCode)
 			{
 			  case 11:

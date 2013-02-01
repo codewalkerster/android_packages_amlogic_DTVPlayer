@@ -30,15 +30,19 @@ import android.graphics.Color;
 import android.view.KeyEvent;
 import android.database.Cursor;
 
+import com.amlogic.tvutil.TVDimension;
+
 public class RRTDimensionsEnter extends Activity{
     private static final String TAG = "RRTDimensionsEnter";
     private static final int MPAA_TOTAL_RATINGS = 7;
     private static SharedPreferences mLast = null;
+	private int index=0;
     static private int Rating_status[]=null;
     private static String[] mAbbrev= null;
     private static String mValue[] = null;
     private static String mDimension = null;
     ListView list_mpaa;
+	private TVDimension TVDimensionItem=null;
 	
     RatingAdapter list_mpaa_adapter=null;
     
@@ -49,7 +53,7 @@ public class RRTDimensionsEnter extends Activity{
        
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         setContentView(R.layout.dimensions_rating);
 
@@ -60,24 +64,17 @@ public class RRTDimensionsEnter extends Activity{
 		w.setAttributes(wl);
 		
         Bundle bundle = this.getIntent().getExtras();
-		/*
-		if(bundle!=null)
-		{
+		
+		if(bundle!=null){
 			mDimension = bundle.getString("Dimension");
-			int valueCount = VchipProvider.getValueCount(getContentResolver(), RRTDimensions.RRT_REGION, mDimension);
-			if (valueCount > 0) {
-				Rating_status = new int[valueCount];
-				mAbbrev = new String[valueCount];
-				mValue = new String[valueCount];
-				//get the abbrev & value text
-				VchipProvider.query(getContentResolver(), RRTDimensions.RRT_REGION, mDimension, Rating_status, mAbbrev, mValue);
-				for(int i=0;i<valueCount;i++)
-				{
-					Log.d(TAG, "#######"+mAbbrev[i]);
-				}
-			}
+			index = bundle.getInt("Index");
+			TVDimension[] mTVDimension =  RRTDimensions.getTVDimension();
+			TVDimensionItem = mTVDimension[index];
+			mAbbrev = TVDimensionItem.getAbbrev();
+			mValue = TVDimensionItem.getText();
+			Rating_status = TVDimensionItem.getLockStatus();
 		}
-		*/
+		
 		if (Rating_status == null || mAbbrev == null || mValue == null) {
 			Log.d(TAG, "No value data of this dimension, will not display!");
 			finish();
@@ -96,37 +93,25 @@ public class RRTDimensionsEnter extends Activity{
     
     protected void onStart() {
     	super.onStart();
-    	
-    	//VchipProvider.attach(this);
     }
     
     protected void onStop() {
     	super.onStop();
-    	/*
-    	if (mDimension != null && Rating_status != null)
-    		VchipProvider.update(getContentResolver(), RRTDimensions.RRT_REGION, mDimension, Rating_status, true);
-    		
-    	VchipProvider.detach();
-    	*/
+		TVDimensionItem.setLockStatus(Rating_status);
     }
     
     private class listOnItemClick implements OnItemClickListener{
     	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long position) {   
     		System.out.println("id---------" + arg2);
-        	Log.d("#####","#####################"+position);
         	int p=(int)position;
         	
-        	if(Rating_status[p]==0)
-        	{
-        		for(int i=p;i<Rating_status.length;i++)
-        		{
+        	if(Rating_status[p]==0){
+        		for(int i=p;i<Rating_status.length;i++){
         			Rating_status[i]=1;
         		}	
         	}	
-        	else
-        	{
-        		for(int i=0;i<=p;i++)
-        		{
+        	else{
+        		for(int i=0;i<=p;i++){
         			Rating_status[i]=0;
         		}	
         	}	
@@ -135,8 +120,7 @@ public class RRTDimensionsEnter extends Activity{
     }
     
     
-    public void setRating(String rating_value)
-	{
+    public void setRating(String rating_value){
     	
 		if(rating_value.equals("on"))
 				mLast.edit().putInt("SWITCH_STATUS", 0)
