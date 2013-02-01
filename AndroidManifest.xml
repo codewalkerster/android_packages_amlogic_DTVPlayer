@@ -33,6 +33,9 @@
 		<activity android:name=".DTVScanDVBC" android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVScanDVBT" android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVScanDVBS" android:theme="@style/Transparent"/>
+		<activity android:name=".DTVScanDvbsDBManagement" android:theme="@style/Transparent"/>
+		<activity android:name=".DTVScanDvbsUnicableConfig" android:theme="@style/Transparent"/>
+		
 		<activity android:name=".DTVScanATSC" android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVVChip"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVDeviceBrowser"	android:theme="@style/Transparent"/>
