@@ -326,12 +326,10 @@ public class DTVVchipTv extends Activity{
 					
 					list_mpaa_adapter_d.notifyDataSetChanged();
 					list_mpaa_adapter_all.notifyDataSetChanged();
-					setupData();
+					
 					break;
         	}
-        	
- 
-        	
+        	setupData();
         }      	
     }
     
@@ -425,7 +423,7 @@ public class DTVVchipTv extends Activity{
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
-		Log.d(TAG,"getView"+position);	
+		//Log.d(TAG,"getView"+position);	
 		ViewHolder holder;
 		if (convertView == null) {
 		   convertView = mInflater.inflate(R.layout.tv_rating_list_item, null);

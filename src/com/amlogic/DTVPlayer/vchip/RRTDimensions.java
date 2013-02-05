@@ -72,6 +72,7 @@ public class RRTDimensions extends Activity {
 		mTVDimension = TVDimension.selectUSDownloadable(this);
 		if(mTVDimension!=null){
 			ListItemTitle = new String[mTVDimension.length];
+			Log.d(TAG,"item count="+mTVDimension.length);
 			for(int i=0;i<mTVDimension.length;i++){
 				ListItemTitle[i]= mTVDimension[i].getName();
 			}
