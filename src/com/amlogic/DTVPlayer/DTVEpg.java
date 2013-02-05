@@ -384,96 +384,75 @@ public class DTVEpg extends DTVActivity{
 	}
 	
 	private void create_proganddate(){
+		/*
 		LinearLayout proganddate_view  = (LinearLayout)findViewById(R.id.epg_layout_ProgNameAndDate);
 		TextView TempTexView;
-		TempTexView = new TextView(DTVEpg.this);
-		TempTexView.setId(EIT_TITLE_PROGNAME_ID);
-		TempTexView.setText("");
+		((LinearLayout)proganddate_view).addView(TempTexView); 
+		*/
 
-		TempTexView.setTextSize(24F);
+		TextView  program_name = (TextView)findViewById(R.id.Text_program_name);
+		program_name.setText("");
+
+		program_name.setTextSize(24F);
 		switch(Layout_size){
 			case LAYOUT_SMALL:
-				TempTexView.setTextSize(18F);
+				program_name.setTextSize(18F);
 			break;
 			case LAYOUT_SMALL576:
-				TempTexView.setTextSize(20F);
+				program_name.setTextSize(20F);
 			break;
 			case LAYOUT_MID:
-				TempTexView.setTextSize(24F);
+				program_name.setTextSize(24F);
 			break;
 			
 			case LAYOUT_LARGE:
-				TempTexView.setTextSize(28F);
+				program_name.setTextSize(28F);
 			break;
 		}
 		
-		TextPaint tp = TempTexView.getPaint();
+		TextPaint tp = program_name.getPaint();
         tp.setFakeBoldText(true);
-		TempTexView.setTextColor(Color.WHITE);
-		TempTexView.setGravity(Gravity.LEFT);
+		program_name.setTextColor(Color.WHITE);
+		program_name.setGravity(Gravity.LEFT);
 
-		TempTexView.setHeight(40);
+		program_name.setHeight(40);
 		switch(Layout_size){
 			case LAYOUT_SMALL:
-				TempTexView.setHeight(35);
+				program_name.setHeight(35);
 			break;
 			case LAYOUT_SMALL576:
-				TempTexView.setHeight(38);
+				program_name.setHeight(38);
 			break;
 			
 			case LAYOUT_MID:
-				TempTexView.setHeight(40);
+				program_name.setHeight(40);
 			break;
 			
 			case LAYOUT_LARGE:
-				TempTexView.setHeight(60);
+				program_name.setHeight(60);
+			break;
+		}	
+	
+		TextView  date = (TextView)findViewById(R.id.Text_date);
+		date.setTextColor(Color.WHITE);
+		date.setGravity(Gravity.LEFT);
+		date.setHeight(36);
+
+		switch(Layout_size){
+			case LAYOUT_SMALL:
+				date.setHeight(30);
+			break;
+			case LAYOUT_SMALL576:
+				date.setHeight(33);
+			break;
+			case LAYOUT_MID:
+				date.setHeight(36);
+			break;
+			case LAYOUT_LARGE:
+				date.setHeight(80);
 			break;
 		}
 		
-		((LinearLayout)proganddate_view).addView(TempTexView); 
-		TempTexView = new TextView(DTVEpg.this);
-		TempTexView.setId(EIT_TITLE_CURRENTTIME_ID);
-		TempTexView.setText("");
-		TempTexView.setTextSize(20F);
-		switch(Layout_size)
-		{
-			case LAYOUT_SMALL:
-				TempTexView.setTextSize(15F);
-			break;
-			case LAYOUT_SMALL576:
-				TempTexView.setTextSize(18F);
-			break;
-			case LAYOUT_MID:
-				TempTexView.setTextSize(20F);
-			break;
-			
-			case LAYOUT_LARGE:
-				TempTexView.setTextSize(20F);
-			break;
-		}
-		
-		TempTexView.setTextColor(Color.WHITE);
-		TempTexView.setGravity(Gravity.LEFT);
-		TempTexView.setHeight(36);
-
-		switch(Layout_size)
-		{
-			case LAYOUT_SMALL:
-				TempTexView.setHeight(30);
-			break;
-			case LAYOUT_SMALL576:
-				TempTexView.setHeight(33);
-			break;
-			case LAYOUT_MID:
-				TempTexView.setHeight(36);
-			break;
-			case LAYOUT_LARGE:
-				TempTexView.setHeight(80);
-			break;
-		}
-
-		((LinearLayout)proganddate_view).addView(TempTexView); 
-
 	}
 	
 	/******************used after connect service*******************/
@@ -489,13 +468,13 @@ public class DTVEpg extends DTVActivity{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
 		String today = sdf.format(date); 
 		TextView TempTexView; 
-		TempTexView = (TextView)findViewById(EIT_TITLE_CURRENTTIME_ID);
+		TempTexView = (TextView)findViewById(R.id.Text_date);
 		TempTexView.setText((""+today));
 	}
 	
 	private void refresh_progname(){		
 		TextView TempTexView; 
-		TempTexView = (TextView)findViewById(EIT_TITLE_PROGNAME_ID);
+		TempTexView = (TextView)findViewById(R.id.Text_program_name);
 		TempTexView.setText(DTVEpg_get_currentprogname());
 	}
 	

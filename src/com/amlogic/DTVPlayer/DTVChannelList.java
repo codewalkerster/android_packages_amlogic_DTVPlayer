@@ -257,7 +257,7 @@ public class DTVChannelList extends DTVActivity{
 		
 			// Bind the data efficiently with the holder.
 
-			if(mDTVSettings.getScanRegion().equals("ATSC")==false){
+			if(mDTVSettings.getScanRegion().contains("ATSC")==false){
 				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber()));
 			}
 			else{

@@ -33,12 +33,12 @@ public class DTVVChip extends DTVActivity{
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtvvchip_settings);
-		DTVVChipUIInit();
+		
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
-		
+		DTVVChipUIInit();
 	}
 
 	public void onDisconnected(){
@@ -121,34 +121,39 @@ public class DTVVChip extends DTVActivity{
  				case 1:
  					intent.setClass(DTVVChip.this,DTVVchipTv.class);
  					startActivityForResult(intent, 111);
- 					break;
+					onHide();
+					break;
  				case 2:
  					intent.setClass(DTVVChip.this,DTVVchipMpaa.class);
  					startActivityForResult(intent, 112);
+					onHide();
  					break;
-					
  				case 3:
  					intent.setClass(DTVVChip.this,VchipCanadaEnglishActivity.class);
  					startActivityForResult(intent, 113);
- 					break;
+					onHide();
+					break;
  				case 4:
  					intent.setClass(DTVVChip.this,VchipCanadaFrenchActivity.class);
  					startActivityForResult(intent, 114);
+					onHide();
  					break;
 				case 5:
 					intent.setClass(DTVVChip.this,RRTDimensions.class);
  					startActivityForResult(intent, 115);
+					onHide();
  					break;
+				case 6:
+ 					break;	
  				
  			}
-			
-			/*
+			/*		
 			int version = Integer.valueOf(android.os.Build.VERSION.SDK);
 			if (version >= 5) {
 				overridePendingTransition(R.anim.zoomin, R.anim.zoomout); 
 			}
-        	*/   	
-			
+			*/
+        	 	
         }      	
     }
 	
@@ -214,13 +219,16 @@ public class DTVVChip extends DTVActivity{
 			holder.text2.setText(null);
 			  
 			if(getSwitch()==false){  
-			  if (position>=1)
+			  if (position>=1){
 				 holder.text.setTextColor(Color.GRAY);
+				 holder.text2.setTextColor(Color.GRAY);
+			  }	 
 			}	
 			else{
 				//holder.icon.setImageBitmap(mIcon1);		
 				//convertView.setBackgroundColor(Color.TRANSPARENT); 
 				holder.text.setTextColor(Color.WHITE);
+				holder.text2.setTextColor(Color.WHITE);	
 			}	
 			holder.text2.setTextColor(Color.YELLOW);
 			switch(position){
@@ -284,6 +292,13 @@ public class DTVVChip extends DTVActivity{
 							break;
 					}
 					break;
+				case 111:	
+				case 112:
+				case 113:
+				case 114:	
+				case 115:
+					onShow();
+					break;
 			}
 		}	
 	}
@@ -303,6 +318,16 @@ public class DTVVChip extends DTVActivity{
 		}
 		return super.onKeyDown(keyCode, event);
 	}	  
+
+	private  void onHide(){
+		RelativeLayout RelativeLayoutParent = (RelativeLayout)findViewById(R.id.RelativeLayoutParent);
+		RelativeLayoutParent.setVisibility(View.INVISIBLE);
+	} 
+	
+	private void onShow(){
+		RelativeLayout RelativeLayoutParent = (RelativeLayout)findViewById(R.id.RelativeLayoutParent);
+		RelativeLayoutParent.setVisibility(View.VISIBLE);
+	}
 
 }
 

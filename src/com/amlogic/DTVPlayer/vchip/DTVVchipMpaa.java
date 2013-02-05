@@ -70,6 +70,10 @@ public class DTVVchipMpaa extends Activity{
 
 	protected void onStop(){
 		super.onStop();
+		
+	}
+
+	private void setupData(){
 		for(int i=0;i<Rating_status.length;i++){
 			Log.d(TAG,"value ="+Rating_status[i]);
 		}
@@ -108,55 +112,11 @@ public class DTVVchipMpaa extends Activity{
 			}
 			
         	list_mpaa_adapter.notifyDataSetChanged();	
+			setupData();
         }      	
     }
     
-    
-    public void setRating(String rating_value)
-	{
-    	
-		if(rating_value.equals("on"))
-				mLast.edit().putInt("SWITCH_STATUS", 0)
-				    .commit();
-		else if(rating_value.equals("off"))
-				mLast.edit().putInt("SWITCH_STATUS", 1)
-				    .commit();
-		return;				
-	}
-
-	static int getRating()
-	{
-		int mode=0;
-		mode = mLast.getInt("SWITCH_STATUS", 0);
-		return mode;
-	}
-    
-    	
-    void InitMpaaMap(int rating)
-    {
   
-    	switch(rating)
-    	{
-    	  case 0:
-    		  //rating_0.
-    		  break;
-    	  case 1:
-    		  break;
-    	  case 2:
-    		  break;
-    	  case 3:
-    		  break;
-    	  case 4:
-    		  break;
-    	  case 5:
-    		  break;
-    	  case 6:
-    		  break;
-    	
-    	}
-    	
-    }
-   
 	private static class RatingAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Bitmap mIcon1;
@@ -241,25 +201,28 @@ public class DTVVchipMpaa extends Activity{
 		}
 	  }	
 
-	  public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 
-	   switch (keyCode) {
+		switch (keyCode) {
 		
-		case KeyEvent.KEYCODE_A:		
-    		for(int i=0;i<Rating_status.length;i++)
-    		{
-    			Rating_status[i]=1;
-    		}	
-        	list_mpaa_adapter.notifyDataSetChanged();	
-			break;
-		case KeyEvent.KEYCODE_D:
-    		for(int i=0;i<Rating_status.length;i++)
-    		{
-    			Rating_status[i]=0;
-    		}	
-        	list_mpaa_adapter.notifyDataSetChanged();
-			break;
+			case KeyEvent.KEYCODE_A:		
+	    		for(int i=0;i<Rating_status.length;i++)
+	    		{
+	    			Rating_status[i]=1;
+	    		}	
+	        	list_mpaa_adapter.notifyDataSetChanged();	
+				break;
+			case KeyEvent.KEYCODE_D:
+	    		for(int i=0;i<Rating_status.length;i++)
+	    		{
+	    			Rating_status[i]=0;
+	    		}	
+	        	list_mpaa_adapter.notifyDataSetChanged();
+				break;
+			case KeyEvent.KEYCODE_BACK:	
+				setResult(RESULT_OK,null);
+				break;		
 		}
 		return super.onKeyDown(keyCode, event);
 	}	

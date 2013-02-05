@@ -16,7 +16,7 @@
 		android:id="@+id/prono"
 		android:gravity="center_vertical"
 		android:paddingRight="30px"
-		android:layout_width="80px"
+		android:layout_width="130px"
 		android:layout_height="42px" 
 		android:textSize="20sp"
 		android:layout_marginLeft="20px"
@@ -46,5 +46,6 @@
 	<ImageView android:id="@+id/icon"
 		android:layout_width="30px"
 		android:layout_height="30px"
-		android:layout_marginLeft="10px"/>
+		android:layout_marginLeft="10px"
+		android:layout_marginRight="20px"/>
 </LinearLayout>  

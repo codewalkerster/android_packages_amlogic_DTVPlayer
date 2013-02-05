@@ -111,14 +111,6 @@ public class DTVSettings{
 
 	public String getScanRegion(){
 		String region = mContext.getStringConfig("tv:scan:dtv:region");	
-		String tmp="ATSC";
-		
-		if(region!=null){
-			for(int i=0;i<region.length();i++){
-				if(region.regionMatches(i,tmp,0,tmp.length()))
-					return "ATSC";
-			}
-		}	
 		return region;
 	}
 

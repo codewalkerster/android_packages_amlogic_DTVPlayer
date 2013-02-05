@@ -54,9 +54,10 @@ public class DTVPlayer extends DTVActivity{
 		Log.d(TAG, "connected");
 		//set input source on DTV
 		setInputSource(TVConst.SourceInput.SOURCE_DTV);
-		if(isHavePragram()==false){
-			showNoProgramDia();
+		if(isHavePragram()==false){ 
+			showNoProgramDia(); 
 		}
+		
 		
 		mDTVSettings = new DTVSettings(this);
 		mDTVSettings.setTeltextBound();
@@ -226,9 +227,11 @@ public class DTVPlayer extends DTVActivity{
 		Log.d(TAG, ">>>>>onNewIntent<<<<<");
 		super.onNewIntent(intent);
 	    setIntent(intent);
-
-		if(isHavePragram()==false)
-			showNoProgramDia();
+		boolean bHasPro = false;
+		if(isHavePragram()==false){ 
+			showNoProgramDia(); 
+			bHasPro = true;
+		}
 		
 		if(intent!=null){
 			bundle = intent.getExtras();
@@ -259,9 +262,11 @@ public class DTVPlayer extends DTVActivity{
 			playValid();
 		}
 
-		ShowControlBar();
-		updateInforbar();
-		ShowProgramNo(pronumber);
+		if(bHasPro==false){
+			ShowControlBar();
+			updateInforbar();
+			ShowProgramNo(pronumber);
+		}	
 	}
 
 	@Override
@@ -599,7 +604,7 @@ public class DTVPlayer extends DTVActivity{
 	}
 
 	private void showNoProgramDia(){
-		new SureDialog(DTVPlayer.this){
+		new SureDialog(DTVPlayer.this,false){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getString(R.string.dtvplayer_no_channel_stored));
 			}
@@ -614,7 +619,7 @@ public class DTVPlayer extends DTVActivity{
 
 				String region;
 				try {
-					region = getConfig("tv:scan:dtv:region").getString();
+					region = mDTVSettings.getScanRegion();
 				} catch (Exception e) {
 					e.printStackTrace();
 					Log.d(TAG, "Cannot read dtv region !!!");
@@ -633,6 +638,11 @@ public class DTVPlayer extends DTVActivity{
 					Log.d(TAG, "goto DTVScanATSC");
 					Intent_scan.setClass(DTVPlayer.this, DTVScanATSC.class);
 				}
+				else if(region.contains("DVBS"))
+				{
+					Log.d(TAG, "goto DTVScanDVBS");
+					Intent_scan.setClass(DTVPlayer.this, DTVScanDVBS.class);
+				}	
 				
 				startActivity(Intent_scan);
 			}
@@ -898,7 +908,7 @@ public class DTVPlayer extends DTVActivity{
 		ImageView_icon_sub=(ImageView)findViewById(R.id.ImageView_icon_sub);
 		ImageView_icon_txt=(ImageView)findViewById(R.id.ImageView_icon_txt);
 
-		if(mDTVSettings.getScanRegion().equals("ATSC"))
+		if(mDTVSettings.getScanRegion().contains("ATSC"))
 			Text_channel_type.setText(dtvplayer_atsc_antenna_source);
 		else
 			Text_channel_type.setText(null);
@@ -931,7 +941,7 @@ public class DTVPlayer extends DTVActivity{
 		else
 			Text_nextevent.setText(dtvplayer_next_event);
 
-		if(mDTVSettings.getScanRegion().equals("ATSC")==false){
+		if(mDTVSettings.getScanRegion().contains("ATSC")==false){
 			Text_proname.setText(Integer.toString(dtvplayer_pronumber)+"  "+dtvplayer_name);
 		}
 		else{
@@ -1106,40 +1116,46 @@ public class DTVPlayer extends DTVActivity{
 		public void run() {
 			if(number_key_down){	
 				hidePasswordDialog();
-				if((DTVPlayerCheckNumerInputIsValid(pronumber)==false)||(pronumber<=0)){
-					toast = Toast.makeText(
-						DTVPlayer.this, 
-			    		R.string.invalid_input,
-			    		Toast.LENGTH_SHORT);
-						toast.setGravity(Gravity.CENTER, 0, 0);
-						toast.show();
-						pronumber = 0;	
-						pronumber_string ="";
-						HideProgramNo();
+				if(mDTVSettings.getScanRegion().contains("ATSC")){
+					Log.d(TAG,"prono_timer_runnable ---pronumber_string="+pronumber_string);
+					
 				}
-				else{	
-					if(DTVPlayerIsRecording()){
-
-						new SureDialog(DTVPlayer.this){
-							public void onSetMessage(View v){
-								((TextView)v).setText(getString(R.string.dtvplayer_change_channel));
-							}
-
-							public void onSetNegativeButton(){
-								
-							}
-							public void onSetPositiveButton(){
-								DTVPlayerStopRecording();
-								DTVPlayerPlayByProNo(pronumber);
-							}
-						};
+				else{				
+					if((DTVPlayerCheckNumerInputIsValid(pronumber)==false)||(pronumber<=0)){
+						toast = Toast.makeText(
+							DTVPlayer.this, 
+				    		R.string.invalid_input,
+				    		Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+							pronumber = 0;	
+							pronumber_string ="";
+							HideProgramNo();
 					}
-					else{
-						DTVPlayerPlayByProNo(pronumber);
-						pronumber = 0;	
-						pronumber_string ="";
-						HideProgramNo();
-					}
+					else{	
+						if(DTVPlayerIsRecording()){
+
+							new SureDialog(DTVPlayer.this){
+								public void onSetMessage(View v){
+									((TextView)v).setText(getString(R.string.dtvplayer_change_channel));
+								}
+
+								public void onSetNegativeButton(){
+									
+								}
+								public void onSetPositiveButton(){
+									DTVPlayerStopRecording();
+									DTVPlayerPlayByProNo(pronumber);
+								}
+							};
+						}
+						else{
+							DTVPlayerPlayByProNo(pronumber);
+							pronumber = 0;	
+							pronumber_string ="";
+							HideProgramNo();
+						}
+					}	
 				}	
 				number_key_down = false;
 			}	
@@ -1151,7 +1167,7 @@ public class DTVPlayer extends DTVActivity{
 	private void DTVDealDigtalKey(int value){
 		int number_key_value=0;
 
-		if(mDTVSettings.getScanRegion().equals("ATSC")){
+		if(mDTVSettings.getScanRegion().contains("ATSC")){
 			if(DTVPlayerInTeletextStatus==false){
 				prono_timer_handler.removeCallbacks(prono_timer_runnable);
 				
@@ -1174,6 +1190,9 @@ public class DTVPlayer extends DTVActivity{
 								pronumber_string=Integer.toString(pronumber)+"-";
 							}
 						}	
+						else{
+							pronumber_string=Integer.toString(dtvplayer_pronumber_major)
+						}
 					}
 					else
 						pronumber_string=Integer.toString(dtvplayer_pronumber_major)+"-";
@@ -1446,7 +1465,7 @@ public class DTVPlayer extends DTVActivity{
 		mTVProgram=DTVPlayerGetDataByCurrentID();
 
 		dtvplayer_program_number= mTVProgram.getNumber();
-		if(mDTVSettings.getScanRegion().equals("ATSC")==false){
+		if(mDTVSettings.getScanRegion().contains("ATSC")==false){
 			
 			dtvplayer_pronumber= mTVProgram.getNumber().getNumber();
 			dtvplayer_pronumber_major = dtvplayer_program_number.getMajor();
@@ -1459,6 +1478,7 @@ public class DTVPlayer extends DTVActivity{
 			Log.d(TAG,"ATSC pronumber="+dtvplayer_pronumber_major+"-"+dtvplayer_pronumber_minor);
 		}
 
+		dtvplayer_b_epg = false;
 		dtvplayer_service_type = mTVProgram.getType();
 		dtvplayer_name = mTVProgram.getName();
 		dtvplayer_b_lock = mTVProgram.getLockFlag();
@@ -1508,12 +1528,19 @@ public class DTVPlayer extends DTVActivity{
 			dtvplayer_cur_event=mTVEventPresent.getName();
 			dtvplayer_event_des=mTVEventPresent.getEventDescr();
 			dtvplayer_event_ext_des=mTVEventPresent.getEventExtDescr();
+			dtvplayer_b_epg = true;
 		}
 
 		TVEvent mTVEventFollow=mTVProgram.getFollowingEvent(this,getUTCTime());	
 		if(mTVEventFollow!=null){
 			dtvplayer_next_event=mTVEventFollow.getName();
+			dtvplayer_b_epg = true;
 		}
+
+		Log.d(TAG,"dtvplayer_cur_event: = "+dtvplayer_cur_event);
+		Log.d(TAG,"dtvplayer_event_des: = "+dtvplayer_event_des);
+		Log.d(TAG,"dtvplayer_event_ext_des: = "+dtvplayer_event_ext_des);
+		Log.d(TAG,"dtvplayer_next_event: = "+dtvplayer_next_event);
 
 		
 	}

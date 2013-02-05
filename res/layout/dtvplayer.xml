@@ -114,16 +114,33 @@
 			android:layout_marginLeft="5px"
 			android:layout_alignParentBottom="true"
 			android:layout_marginBottom="6px">
-			<TextView 
-			      android:id="@+id/Text_nextevent"
-			      android:text="@string/dtvplayer_no_next_event"
-			      android:layout_width="fill_parent"
-			      android:layout_height="26px"
-			      android:layout_below="@+id/Text_curevent"
-			      android:textSize="20px"  
-			      android:paddingLeft="33px"
-			      >
-			</TextView>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				> 
+				<TextView 
+				      android:id="@+id/Text_nextevent"
+				      android:text="@string/dtvplayer_no_next_event"
+				      android:layout_width="fill_parent"
+				      android:layout_height="26px"
+				      android:textSize="20px"  
+				      android:paddingLeft="33px"
+				      android:singleLine="true" 
+				      android:layout_weight="1"
+				      >
+				</TextView>
+				<TextView 
+				      android:id="@+id/Text_parent_rate"
+				      android:layout_width="fill_parent"
+				      android:layout_height="26px"
+				      android:textSize="20px"  
+				      android:paddingLeft="33px"
+				      android:singleLine="true" 
+				      android:layout_weight="1"
+				      >
+				</TextView>
+			</LinearLayout>
 		</RelativeLayout>
 
 		<RelativeLayout android:layout_width="fill_parent" 
@@ -219,6 +236,7 @@
 				android:textSize="32px"
 				android:layout_below="@+id/LinearLayoutNoAndName"
 				android:gravity="left"
+				android:singleLine="true" 
 				android:shadowColor="@android:color/white"
 				>
 			</TextView>

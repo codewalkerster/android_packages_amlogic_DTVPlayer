@@ -94,7 +94,10 @@ public class DTVVchipTv extends Activity{
 	
 	protected void onStop(){
 		super.onStop();
-		
+		//setupData();	
+	}
+
+	private void setupData(){
 		dm[0].setLockStatus(abb,Rating_status_ALL);
 		dm[1].setLockStatus(abb,Rating_status_FV);
 		dm[2].setLockStatus(abb,Rating_status_V);
@@ -323,6 +326,7 @@ public class DTVVchipTv extends Activity{
 					
 					list_mpaa_adapter_d.notifyDataSetChanged();
 					list_mpaa_adapter_all.notifyDataSetChanged();
+					setupData();
 					break;
         	}
         	
@@ -546,17 +550,19 @@ public class DTVVchipTv extends Activity{
 	 }
 
 
-	  public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
-
-	   switch (keyCode) {
+		switch (keyCode) {
 		
-		case KeyEvent.KEYCODE_A:		
-    		unblockAll();
-			break;
-		case KeyEvent.KEYCODE_D:
-    		blockAll();
-			break;
+			case KeyEvent.KEYCODE_A:		
+	    		unblockAll();
+				break;
+			case KeyEvent.KEYCODE_D:
+	    		blockAll();
+				break;
+			case KeyEvent.KEYCODE_BACK:	
+				setResult(RESULT_OK,null);
+				break;
 		}
 		return super.onKeyDown(keyCode, event);
 	}		

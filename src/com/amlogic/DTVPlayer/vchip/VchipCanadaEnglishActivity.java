@@ -76,6 +76,9 @@ public class VchipCanadaEnglishActivity extends Activity{
 	
 	protected void onStop(){
 		super.onStop();
+	}
+
+	private void setupData(){
 		for(int i=0;i<Rating_status.length;i++){
 			Log.d(TAG,"value ="+Rating_status[i]);
 		}
@@ -101,19 +104,11 @@ public class VchipCanadaEnglishActivity extends Activity{
         		}	
         	}	
         	list_mpaa_adapter.notifyDataSetChanged();	
+			setupData();
         }      	
     }
     
-    
- 
-    
-    	
-    void InitMpaaMap(int rating)
-    {
- 
-    }
-   
-	private static class RatingAdapter extends BaseAdapter {
+  	private static class RatingAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Bitmap mIcon1;
 		private Bitmap mIcon2;
@@ -191,25 +186,27 @@ public class VchipCanadaEnglishActivity extends Activity{
 		}
 	  }	
 
-	 public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 
-	   switch (keyCode) {
-		
-		case KeyEvent.KEYCODE_A:		
-    		for(int i=0;i<Rating_status.length;i++)
-    		{
-    			Rating_status[i]=1;
-    		}	
-        	list_mpaa_adapter.notifyDataSetChanged();	
-			break;
-		case KeyEvent.KEYCODE_D:
-    		for(int i=0;i<Rating_status.length;i++)
-    		{
-    			Rating_status[i]=0;
-    		}	
-        	list_mpaa_adapter.notifyDataSetChanged();
-			break;
+		switch (keyCode) {	
+			case KeyEvent.KEYCODE_A:		
+	    		for(int i=0;i<Rating_status.length;i++)
+	    		{
+	    			Rating_status[i]=1;
+	    		}	
+	        	list_mpaa_adapter.notifyDataSetChanged();	
+				break;
+			case KeyEvent.KEYCODE_D:
+	    		for(int i=0;i<Rating_status.length;i++)
+	    		{
+	    			Rating_status[i]=0;
+	    		}	
+	        	list_mpaa_adapter.notifyDataSetChanged();
+				break;
+			case KeyEvent.KEYCODE_BACK:	
+					setResult(RESULT_OK,null);
+					break;		
 		}
 		return super.onKeyDown(keyCode, event);
 	}	

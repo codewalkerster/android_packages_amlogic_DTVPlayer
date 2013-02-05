@@ -110,7 +110,7 @@ public class DTVSettingsUI extends DTVActivity{
 
 	private void DTVSettingUIInit(){
 		Log.d(TAG,"scan region="+mDTVSettings.getScanRegion());
-		if(mDTVSettings.getScanRegion().equals("ATSC"))	
+		if(mDTVSettings.getScanRegion().contains("ATSC"))	
 			DATA = getResources().getStringArray(R.array.settings_content_atsc);
 		else
 			DATA = getResources().getStringArray(R.array.settings_content);
@@ -170,8 +170,7 @@ public class DTVSettingsUI extends DTVActivity{
 
 	class listOnKeyListener implements OnKeyListener{
 		public boolean onKey(View v, int keyCode, KeyEvent event) {					
-			switch(keyCode)
-			{
+			switch(keyCode){
 				case KeyEvent.KEYCODE_DPAD_DOWN:
 				case KeyEvent.KEYCODE_DPAD_UP:	
 					if (event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -238,7 +237,7 @@ public class DTVSettingsUI extends DTVActivity{
 				 	showTimeshiftingTimeSettingDialog(info_cur);
 					break;
 				 case SETTINGS_PARENTAL_RATING_SET:
-				 	if(mDTVSettings.getScanRegion().equals("ATSC")){
+				 	if(mDTVSettings.getScanRegion().contains("ATSC")){
 						//DTVVChip
 						DTVSetting_GotoDTVVChip();
 					}
@@ -458,7 +457,7 @@ public class DTVSettingsUI extends DTVActivity{
 				}
 				break;
 		     case SETTINGS_PARENTAL_RATING_SET:
-			 	if(mDTVSettings.getScanRegion().equals("ATSC")){
+			 	if(mDTVSettings.getScanRegion().contains("ATSC")){
 					 holder.info.setVisibility(View.INVISIBLE);
 					 holder.icon1.setVisibility(View.INVISIBLE);
 			    	 holder.icon.setImageBitmap(mIcon4);
@@ -490,14 +489,14 @@ public class DTVSettingsUI extends DTVActivity{
 
 				break;
 			case SETTINGS_CC:
-				if(mDTVSettings.getScanRegion().equals("ATSC")){
+				if(mDTVSettings.getScanRegion().contains("ATSC")){
 					 holder.info.setVisibility(View.INVISIBLE);
 					 holder.icon1.setVisibility(View.INVISIBLE);
 			    	 holder.icon.setImageBitmap(mIcon4);
 				}
 				break;
 			case SETTINGS_ANTENNA_SOURCE:
-				if(mDTVSettings.getScanRegion().equals("ATSC")){
+				if(mDTVSettings.getScanRegion().contains("ATSC")){
 					holder.info.setVisibility(View.VISIBLE);
 					holder.icon1.setVisibility(View.INVISIBLE);
 					holder.icon.setImageBitmap(mIcon4);

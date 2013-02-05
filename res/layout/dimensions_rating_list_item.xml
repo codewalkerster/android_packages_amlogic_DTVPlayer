@@ -1,31 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="horizontal"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="horizontal"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
 	android:id="@+id/imagesListItem"	
-	android:gravity="center"
-  > 
+	android:layout_gravity="center_vertical"> 
     <TextView
         android:id="@+id/dimensiongs_content0"
         android:layout_width="10px"
-        android:layout_height="wrap_content"
+        android:layout_height="40px"
         android:layout_weight="3" 
-        android:layout_centerVertical="true"
-        android:gravity="left"
-        android:paddingLeft="20dp"
-        android:textSize="30px" 
-        android:singleLine="true"/>
+        android:gravity="left|center_vertical"
+        android:paddingLeft="40dp"
+		android:textSize="18sp"
+        android:singleLine="true"
+        android:layout_marginLeft="20px"/>
 	
       <TextView android:id="@+id/dimensiongs_content1" 
     	android:layout_width="10px"
-    	android:layout_height="wrap_content" 
+    	android:layout_height="40px" 
     	android:layout_weight="10" 
-    	android:gravity="center"
-    	android:layout_centerVertical="true"
-    	android:textSize="30px"
-	  	android:layout_gravity="center_vertical"
+    	android:gravity="center_vertical"
+    	android:textSize="18sp"
 	  	android:singleLine="true"
 	  	android:ellipsize="marquee"  
         android:marqueeRepeatLimit="marquee_forever"
@@ -33,10 +30,11 @@
 
     <ImageView
         android:id="@+id/image"
-        android:layout_width="62px"
-    	android:layout_height="56px" 
+        android:layout_width="40px"
+    	android:layout_height="40px" 
         android:layout_weight="1" 
 		android:padding="8px"
 		android:scaleType="centerInside"
+		android:layout_marginRight="20px"
         />	
 </LinearLayout>
