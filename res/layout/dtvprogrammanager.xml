@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>  
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" 
-	android:layout_gravity="center"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="1280px"
+    android:layout_height="720px"
+    android:id="@+id/RelativeLayoutParent">
+	
+	<LinearLayout 
+		android:id="@+id/RelativeLayoutBG"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="100px" 
+		android:layout_width="800px" 
+		android:layout_height="520px"
+		android:background="@drawable/settings_bg"
+		android:orientation="vertical">  
     
 	<LinearLayout
 	    android:orientation="vertical"  
-	    android:background="@drawable/epg_title_bg"
 	    android:layout_height="wrap_content"
 	    android:layout_width="fill_parent"> 
 	    
@@ -17,18 +24,20 @@
 		    android:layout_width="fill_parent"
 		    android:layout_weight="1">   
 		 	<TextView  
-				android:id="@+id/editProgramDescription"
-				android:textSize="20sp"
-				android:paddingLeft = "50px"
+				android:id="@+id/ProgramManagerDescription"
+				android:textSize="24sp"
+				android:paddingLeft = "65px"
 				android:paddingTop = "30px"	
 				android:layout_gravity="center|left"	
 				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"/>  		  
+				android:layout_height="fill_parent"
+				android:layout_marginBottom="10px"/>  		  
 		</LinearLayout>
 	
 		<LinearLayout
 		    android:orientation="horizontal"  
-		    android:layout_marginLeft="10px"
+		    android:layout_marginLeft="12px"
+		    android:layout_marginRight="20px"
 		    android:layout_marginBottom="10px"
 		    android:layout_height="50px"
 		    android:layout_width="wrap_content">  
@@ -46,85 +55,10 @@
 			</HorizontalScrollView> 	
 		</LinearLayout>
 	</LinearLayout>
-	 <!-- 
-	<LinearLayout   
-	    android:orientation="horizontal"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content">	  
-	<LinearLayout
-	    android:orientation="horizontal"
-	    android:gravity="right"
-	    android:layout_gravity="center_vertical"
-	    android:layout_width="60px"    	    
-	    android:layout_height="32px"
-	    >	
-	  <ImageView 
-	 	
-	  	android:focusable="false"
-	  	android:focusableInTouchMode="false"	  	
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
-      	
-     </LinearLayout>
-        <TextView
-		  	android:id="@+id/programSerail"
-		  	android:layout_width="20px"
-		  	android:layout_height="wrap_content"
-		  	android:gravity="center"
-		  	android:textSize="20sp"
-		  	android:layout_gravity="center_vertical"
-		  	android:singleLine="true" 
-		  	android:layout_weight="1"/>
-		<TextView
-		  	android:id="@+id/programName"
-		  	android:layout_width="80px"
-		  	android:gravity="center"
-		  	android:textSize="20sp"
-		  	android:layout_gravity="center_vertical"
-		  	android:layout_height="wrap_content"
-		  	android:singleLine="true"
-		  	android:layout_weight="2"/>					 				  
-	  					  
-	  	<TextView
-		  	android:id="@+id/programDelete"
-		  	android:layout_width="40px"
-		  	android:gravity="center"
-		  	android:textSize="20sp"
-		  	android:layout_gravity="center_vertical"
-		  	android:layout_height="wrap_content"
-		  	android:layout_weight="1"/>
-	  	
-	  	<TextView
-		  	android:id="@+id/programLocked"
-		  	android:layout_width="40px"
-		  	android:gravity="center"
-		  	android:textSize="20sp"
-		  	android:layout_gravity="center_vertical"
-		  	android:layout_height="wrap_content"
-		  	android:layout_weight="1"/>	
-
-		<TextView
-		  	android:id="@+id/programHid"
-		  	android:layout_width="32px"
-		  	android:gravity="center"
-		  	android:textSize="20sp"
-		  	android:layout_gravity="center_vertical"
-		  	android:layout_height="wrap_content"
-		  	android:layout_weight="1"/>		  	
-		<TextView
-		  	android:id="@+id/programFav"
-		  	android:layout_width="32px"
-		  	android:gravity="center"
-		  	android:textSize="20sp"
-		  	android:layout_gravity="center_vertical"
-		  	android:layout_height="wrap_content"
-		  	android:layout_weight="1"/>	
- 	  </LinearLayout>
-	-->	
+	 
 	<LinearLayout
 		android:orientation="vertical"
 		android:layout_width="fill_parent"		  
-		android:background="@drawable/epg_eit_list_bg"
 		android:layout_height="180px"
 		android:layout_weight="1">	
 		<!--
@@ -149,49 +83,70 @@
 		</com.amlogic.widget.FocusScrollListView>	
 		
 	</LinearLayout> 
-	   
+
 	<LinearLayout
-		  android:orientation="horizontal"
-		  android:background="@drawable/epg_bottom_bg"
-		  android:layout_width="fill_parent"
-		  android:layout_height="51px">
-		  
-		<TextView
-			android:id="@+id/editProgramOpDes01"
-			android:layout_marginLeft="40px"
-			android:layout_marginTop="5px"
-			android:textSize="16sp"
-			android:layout_width="wrap_content"
-			android:layout_height="fill_parent"
-			android:layout_weight="1"/>	
-		<TextView
-			android:id="@+id/editProgramOpDes02"
-			android:layout_marginTop="5px"
-			android:textSize="16sp"
-			android:layout_width="wrap_content"
-			android:layout_height="fill_parent"
-			android:layout_weight="1"/>
-		<TextView
-			android:id="@+id/editProgramOpDes03"
-			android:layout_marginTop="5px"
-			android:textSize="16sp"
-			android:layout_width="wrap_content"
-			android:layout_height="fill_parent"
-			android:layout_weight="1"/>
-		<TextView
-			android:id="@+id/editProgramOpDes04"
-			android:layout_marginTop="5px"
-			android:textSize="16sp"
-			android:layout_width="wrap_content"
-			android:layout_height="fill_parent"
-			android:layout_weight="1"/>
-		<TextView
-			android:id="@+id/editProgramOpDes05"
-			android:layout_marginTop="5px"
-			android:textSize="16sp"
-			android:layout_width="wrap_content"
-			android:layout_height="fill_parent"
-			android:layout_weight="1"/>
- 
-	</LinearLayout>	
-</LinearLayout>	
+    		android:layout_width="fill_parent"
+			android:layout_height="50px"
+			android:layout_marginRight="20px"
+			android:layout_marginLeft="20px"
+    		android:orientation="vertical">
+			<RelativeLayout
+				android:id="@+id/inforbar_line" 
+				android:layout_width="fill_parent"
+				android:layout_height="2px"
+				android:background="@drawable/line"
+				>	
+			</RelativeLayout>
+	     
+  	     	<LinearLayout
+	    		android:layout_width="match_parent"
+	    		android:layout_height="match_parent"
+	    		android:orientation="horizontal"
+	    		android:gravity="center"
+	    		android:layout_marginBottom="8px">
+    		
+	    		<ImageView 
+	    			android:layout_width="wrap_content"
+	    			android:layout_height="wrap_content"
+					android:background="@drawable/move"
+	    		>
+	    		</ImageView>
+	    		<TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center"
+			        android:text="@string/help_info_move"
+			        android:textColor="#FFFFFFFF"
+			        android:textSize="20sp" 
+			        android:layout_marginRight="30px"
+			        />
+	    		<ImageView 
+	    			android:layout_width="wrap_content"
+	    			android:layout_height="wrap_content"
+					android:background="@drawable/enter"
+	    		></ImageView>
+	    		<TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center"
+			        android:text="@string/help_info_select"
+			        android:textColor="#FFFFFFFF"
+			        android:textSize="20sp"
+			        android:layout_marginRight="30px"
+			        />
+	    		<ImageView 
+	    			android:layout_width="wrap_content"
+	    			android:layout_height="wrap_content"
+					android:background="@drawable/return_icon"
+	    		></ImageView>
+	    		<TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center"
+			        android:text="@string/help_info_return"
+			        android:textColor="#FFFFFFFF"
+			        android:textSize="20sp" />
+    		</LinearLayout>
+		</LinearLayout>	
+	</LinearLayout>
+</RelativeLayout>

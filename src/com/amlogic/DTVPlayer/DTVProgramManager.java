@@ -41,7 +41,9 @@ import com.amlogic.widget.CustomDialog.ICustomDialog;
 
 public class DTVProgramManager extends DTVActivity{
 	private static final String TAG="DTVProgramManager";
-	
+ 
+	private DTVSettings mDTVSettings=null;
+	private TextView mTextview=null;
 	ListView ListView_programmanager=null;
 	TextView Text_title=null;
 	private int cur_select_item=0;
@@ -185,7 +187,7 @@ public class DTVProgramManager extends DTVActivity{
 		DTVProgramManagerGroupButtonData();
 		//init list data
 		getListFavorite();
-		
+		mTextview = (TextView) findViewById(R.id.ProgramManagerDescription);
 		ListView_programmanager = (ListView) findViewById(R.id.list_content);
 		myAdapter = new IconAdapter(DTVProgramManager.this,null);
 		ListView_programmanager.setOnItemSelectedListener(mOnSelectedListener);
@@ -213,11 +215,13 @@ public class DTVProgramManager extends DTVActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtvprogrammanager); 
 		/*get list data*/
-		DTVProgramManagerUIInit();
+		
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
+		mDTVSettings = new DTVSettings(this);
+		DTVProgramManagerUIInit();
 	}
 
 	public void onDisconnected(){
@@ -407,6 +411,14 @@ public class DTVProgramManager extends DTVActivity{
     }
 
 	private void DTVListDealLeftAndRightKey(int mode){
+		switch(mode){
+			case 0://left
+			case 1://right
+				Button mButton=getGroupButtonById(TabIndex);
+				if(mButton!=null)
+					mButton.requestFocus();
+				break;
+		}
 		
 	}
 
@@ -488,9 +500,15 @@ public class DTVProgramManager extends DTVActivity{
 			}
 		
 			// Bind the data efficiently with the holder.
-			holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber()));
-			holder.text.setText(mTVProgramList[position].getName());
+			
+			String region = mDTVSettings.getScanRegion();
+			if(region.contains("ATSC")){
+				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getMajor())+"-"+Integer.toString(mTVProgramList[position].getNumber().getMinor()));
+			}
+			else
+				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber()));
 
+			holder.text.setText(mTVProgramList[position].getName());
 			if(db_id == mTVProgramList[position].getID()){  
 				//convertView.setBackgroundColor(Color.RED);  
 				holder.text.setTextColor(Color.YELLOW);
@@ -748,10 +766,9 @@ public class DTVProgramManager extends DTVActivity{
 			getString(R.string.delete),
 			(fav==false)?getString(R.string.add_fav):getString(R.string.del_fav),
 			//(skip==false)?getString(R.string.add_skip):getString(R.string.del_skip),
-			(lock==false)?getString(R.string.add_lock):getString(R.string.del_lock),
+			(lock==false)?getString(R.string.add_lock):getString(R.string.del_lock),		
 			getString(R.string.move),
-			getString(R.string.add_into_group),
-			"Move"
+			getString(R.string.add_into_group)
 		};
 
 		final CustomDialog mCustomDialog = new CustomDialog(mContext);
@@ -800,6 +817,7 @@ public class DTVProgramManager extends DTVActivity{
 													mTVProgramList[pos].setProgramName(mEditText.getText().toString());
 													myAdapter.notifyDataSetChanged();
 													mEditCustomDialog.dismissDialog();
+													mCustomDialog.dismissDialog();
 												}
 											});	    
 										}
@@ -808,6 +826,7 @@ public class DTVProgramManager extends DTVActivity{
 								case 1: //delete
 									deleteProgramFromDB(pos);
 									myAdapter.notifyDataSetChanged();
+									mCustomDialog.dismissDialog();
 									break;
 								case 2: //fav
 									dealFav(pos);
@@ -820,15 +839,13 @@ public class DTVProgramManager extends DTVActivity{
 									mCustomDialog.dismissDialog();
 									break;
 								case 4: //move
-									break;
-								case 5: //add into group
-									programGroupOperate(pos);
-									mCustomDialog.dismissDialog();
-									break;
-								case 6:
 									setMoveMode(true);
 									setMoveItemPos(pos);
 									myAdapter.notifyDataSetChanged();
+									mCustomDialog.dismissDialog();
+									break;
+								case 5: //add into group
+									programGroupOperate(pos);
 									mCustomDialog.dismissDialog();
 									break;
 								default:
@@ -865,8 +882,7 @@ public class DTVProgramManager extends DTVActivity{
 					mButtonFav= TempButton;
 					break;
 			}
-			
-			
+						
 			TempButton.setId(mProgramGroup[i].getID());
 			TempButton.setTextColor(Color.WHITE);
 			TempButton.setTextSize(22F);
@@ -964,6 +980,7 @@ public class DTVProgramManager extends DTVActivity{
 					{
 						case KeyEvent.KEYCODE_DPAD_DOWN:
 							if (event.getAction() == KeyEvent.ACTION_DOWN) {
+								ListView_programmanager.requestFocus();
 								ListView_programmanager.setSelection(0); 
 								return true;
 							}
@@ -1003,6 +1020,7 @@ public class DTVProgramManager extends DTVActivity{
 			if (isFocused==true){
 				((Button)v).setBackgroundColor(GROUP_TIEM_FOCUSCOLOR);
 				TVProgramCurrentId = ((Button)v).getId();
+				mTextview.setText(((Button)v).getText());
 				if(TVProgramCurrentId!=-1){
 					getListGroupById(TVProgramCurrentId);
 					TabIndex = TVProgramCurrentId;

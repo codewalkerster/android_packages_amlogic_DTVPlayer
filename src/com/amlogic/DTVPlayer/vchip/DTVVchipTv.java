@@ -94,7 +94,10 @@ public class DTVVchipTv extends Activity{
 	
 	protected void onStop(){
 		super.onStop();
-		
+		//setupData();	
+	}
+
+	private void setupData(){
 		dm[0].setLockStatus(abb,Rating_status_ALL);
 		dm[1].setLockStatus(abb,Rating_status_FV);
 		dm[2].setLockStatus(abb,Rating_status_V);
@@ -323,6 +326,7 @@ public class DTVVchipTv extends Activity{
 					
 					list_mpaa_adapter_d.notifyDataSetChanged();
 					list_mpaa_adapter_all.notifyDataSetChanged();
+					setupData();
 					break;
         	}
         	

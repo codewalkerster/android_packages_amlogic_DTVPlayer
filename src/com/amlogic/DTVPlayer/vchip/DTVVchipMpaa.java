@@ -70,6 +70,10 @@ public class DTVVchipMpaa extends Activity{
 
 	protected void onStop(){
 		super.onStop();
+		
+	}
+
+	private void setupData(){
 		for(int i=0;i<Rating_status.length;i++){
 			Log.d(TAG,"value ="+Rating_status[i]);
 		}
@@ -108,6 +112,7 @@ public class DTVVchipMpaa extends Activity{
 			}
 			
         	list_mpaa_adapter.notifyDataSetChanged();	
+			setupData();
         }      	
     }
     

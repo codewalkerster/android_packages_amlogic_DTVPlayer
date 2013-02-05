@@ -22,6 +22,24 @@ android:id="@+id/epg_layout_parent"
 			android:layout_marginLeft ="40px"
 			android:layout_marginTop  ="30px"
 			android:orientation="vertical" >
+				<TextView 
+				      android:id="@+id/Text_program_name"
+				      android:layout_width="fill_parent"
+				      android:layout_height="40px"
+				      android:textSize="26px"  
+				      android:singleLine="true" 
+				      >
+				</TextView>
+				
+				<TextView 
+				      android:id="@+id/Text_date"
+				      android:layout_width="fill_parent"
+				      android:layout_height="26px"
+				      android:textSize="20px"  
+				      android:singleLine="true" 
+				      >
+				</TextView>
+				
 		   </LinearLayout>
 		   
 			<LinearLayout

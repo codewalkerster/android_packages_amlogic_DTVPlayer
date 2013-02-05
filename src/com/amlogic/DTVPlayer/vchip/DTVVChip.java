@@ -33,12 +33,12 @@ public class DTVVChip extends DTVActivity{
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtvvchip_settings);
-		DTVVChipUIInit();
+		
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
-		
+		DTVVChipUIInit();
 	}
 
 	public void onDisconnected(){
@@ -147,14 +147,13 @@ public class DTVVChip extends DTVActivity{
  					break;	
  				
  			}
-			
-			/*
+			/*		
 			int version = Integer.valueOf(android.os.Build.VERSION.SDK);
 			if (version >= 5) {
 				overridePendingTransition(R.anim.zoomin, R.anim.zoomout); 
 			}
-        	*/   	
-			
+			*/
+        	 	
         }      	
     }
 	
@@ -220,13 +219,16 @@ public class DTVVChip extends DTVActivity{
 			holder.text2.setText(null);
 			  
 			if(getSwitch()==false){  
-			  if (position>=1)
+			  if (position>=1){
 				 holder.text.setTextColor(Color.GRAY);
+				 holder.text2.setTextColor(Color.GRAY);
+			  }	 
 			}	
 			else{
 				//holder.icon.setImageBitmap(mIcon1);		
 				//convertView.setBackgroundColor(Color.TRANSPARENT); 
 				holder.text.setTextColor(Color.WHITE);
+				holder.text2.setTextColor(Color.WHITE);	
 			}	
 			holder.text2.setTextColor(Color.YELLOW);
 			switch(position){

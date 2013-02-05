@@ -75,6 +75,10 @@ public class VchipCanadaFrenchActivity extends Activity{
 
 	protected void onStop(){
 		super.onStop();
+		
+	}
+
+	private void setupData(){
 		dm.setLockStatus(abb,Rating_status);
 	}
 
@@ -97,6 +101,7 @@ public class VchipCanadaFrenchActivity extends Activity{
         		}	
         	}	
         	list_mpaa_adapter.notifyDataSetChanged();	
+			setupData();
         }      	
     }
 

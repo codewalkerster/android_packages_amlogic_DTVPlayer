@@ -64,6 +64,39 @@ abstract public class SureDialog {
 
 	}
 
+	public SureDialog(Context context,boolean b) {
+		mContext = context;
+		mDialog = new AlertDialog(mContext){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						//dismissDialog();
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(b);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.show();
+		mDialog.setContentView(R.layout.sure_dialog);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		dialogInit(window);
+
+	}
+
 	private void dialogInit(Window window){
 		no = (Button)window.findViewById(R.id.no);
 		no.setText(R.string.no);
@@ -85,6 +118,7 @@ abstract public class SureDialog {
 		yes.setOnClickListener(new OnClickListener(){
 		          public void onClick(View v) {
 					 onSetPositiveButton();
+					 dismissDialog();
 		          }});	    
 	}
 	

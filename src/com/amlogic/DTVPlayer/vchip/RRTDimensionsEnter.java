@@ -88,8 +88,11 @@ public class RRTDimensionsEnter extends Activity{
     
     protected void onStop() {
     	super.onStop();
-		TVDimensionItem.setLockStatus(Rating_status);
     }
+
+	private void setupData(){
+		TVDimensionItem.setLockStatus(Rating_status);
+	}
     
     private class listOnItemClick implements OnItemClickListener{
     	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long position) {   
@@ -106,7 +109,8 @@ public class RRTDimensionsEnter extends Activity{
         			Rating_status[i]=0;
         		}	
         	}	
-        	mListView_adapter.notifyDataSetChanged();	
+        	mListView_adapter.notifyDataSetChanged();
+			setupData();
         }      	
     }
     
