@@ -1191,7 +1191,7 @@ public class DTVPlayer extends DTVActivity{
 							}
 						}	
 						else{
-							pronumber_string=Integer.toString(dtvplayer_pronumber_major)
+							pronumber_string=Integer.toString(dtvplayer_pronumber_major);
 						}
 					}
 					else

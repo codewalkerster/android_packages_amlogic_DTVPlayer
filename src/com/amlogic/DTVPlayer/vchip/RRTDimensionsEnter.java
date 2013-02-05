@@ -44,6 +44,7 @@ public class RRTDimensionsEnter extends Activity{
     ListView mListView=null;
     RatingAdapter mListView_adapter=null;
     private TVDimension TVDimensionItem=null;
+	private int graduatedScaleValue=0;
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +65,7 @@ public class RRTDimensionsEnter extends Activity{
 			mAbbrev = TVDimensionItem.getAbbrev();
 			mValue = TVDimensionItem.getText();
 			Rating_status = TVDimensionItem.getLockStatus();
+			graduatedScaleValue=TVDimensionItem.getGraduatedScale();
 		}
 		
 		if (Rating_status == null || mAbbrev == null || mValue == null) {
