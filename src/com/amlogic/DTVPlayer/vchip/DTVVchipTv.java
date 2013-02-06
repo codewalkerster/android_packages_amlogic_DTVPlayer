@@ -26,8 +26,9 @@ import android.graphics.Bitmap;
 import android.view.KeyEvent;
 
 import com.amlogic.tvutil.TVDimension;
+import com.amlogic.tvutil.TVMessage;
 
-public class DTVVchipTv extends Activity{
+public class DTVVchipTv extends DTVActivity{
     private static final String TAG = "DTVVchipTv";
     
     static private int[] Rating_status_ALL={1,1,1,1,1,1,};
@@ -96,6 +97,18 @@ public class DTVVchipTv extends Activity{
 		super.onStop();
 		//setupData();	
 	}
+	
+	public void onConnected() {
+		
+	}
+
+	public void onDisconnected() {
+		
+	}
+
+	public void onMessage(TVMessage m) {
+	
+	}
 
 	private void setupData(){
 		dm[0].setLockStatus(abb,Rating_status_ALL);
@@ -104,6 +117,7 @@ public class DTVVchipTv extends Activity{
 		dm[3].setLockStatus(abb,Rating_status_S);
 		dm[4].setLockStatus(abb,Rating_status_L);
 		dm[5].setLockStatus(abb,Rating_status_D);
+		replay();
 	}
 
     private class listOnItemClick implements OnItemClickListener{
