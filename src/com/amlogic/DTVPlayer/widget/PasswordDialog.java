@@ -93,11 +93,16 @@ abstract public class PasswordDialog {
 								break;	
 						}
 						return true;
+					case KeyEvent.KEYCODE_MENU:	
 					case KeyEvent.KEYCODE_BACK:	
-						dismissDialog();
+						if(onDealUpDownKey()){
+							((Activity)mContext).onKeyDown(keyCode,event);
+							return true;
+						}
 						break;
 					case KeyEvent.KEYCODE_DPAD_UP:	
 					case KeyEvent.KEYCODE_DPAD_DOWN:
+						
 						if(onDealUpDownKey()){
 							((Activity)mContext).onKeyDown(keyCode,event);
 							dismissDialog();
@@ -111,7 +116,7 @@ abstract public class PasswordDialog {
 		};
 		
 		
-		mDialog.setCancelable(false);
+		//mDialog.setCancelable(false);
 		mDialog.setCanceledOnTouchOutside(false);
 
 		if(mDialog == null){
@@ -188,6 +193,13 @@ abstract public class PasswordDialog {
     	
     }
 
+	public void setDialogContent(String c){
+		if(mDialog!=null){
+			Window window = mDialog.getWindow();
+			TextView t = (TextView)window.findViewById(R.id.content);
+			t.setText(c);
+		}	
+	}
 	
     private boolean check_pin(){
     	String cur_pin = null;

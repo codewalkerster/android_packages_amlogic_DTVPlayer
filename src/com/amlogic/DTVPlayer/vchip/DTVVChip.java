@@ -25,6 +25,7 @@ import android.text.*;
 import android.text.method.*;
 import java.lang.reflect.Field;
 import com.amlogic.widget.SingleChoiseDialog;
+import com.amlogic.tvutil.TVDimension;
 
 public class DTVVChip extends DTVActivity{
 	private static final String TAG="DTVVChip";
@@ -88,6 +89,9 @@ public class DTVVChip extends DTVActivity{
 		wl.y = -100;
 		w.setAttributes(wl);
 		*/
+
+		getRrtFlag();
+		
 		myView = (ListView) findViewById(R.id.settings_list);
 		myView.setItemsCanFocus(false);
 		myView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -99,7 +103,7 @@ public class DTVVChip extends DTVActivity{
 		TextView Title=(TextView)findViewById(R.id.title);
 		Title.setTextColor(Color.YELLOW);
 		Title.setText(R.string.parent_control_title);
-
+		
 	}
 
 	class listOnItemClick implements OnItemClickListener{
@@ -194,6 +198,12 @@ public class DTVVChip extends DTVActivity{
 				     return false;
 				}
 			}	
+			else{
+				if(bRrtFlag==false){
+					if(position==5)
+						return false;
+				}
+			}
 		    return super.isEnabled(position);
 		}
 
@@ -241,8 +251,19 @@ public class DTVVChip extends DTVActivity{
 					else {
 						holder.text2.setVisibility(View.VISIBLE);
 						holder.text2.setText(R.string.parent_control_switch_off);
+					}			
+					break;
+				case 5:
+					if(bRrtFlag==false){  			 
+						holder.text.setTextColor(Color.GRAY);
+						holder.text2.setTextColor(Color.GRAY);
+					  
 					}	
-				break;
+					else{
+						holder.text.setTextColor(Color.WHITE);
+						holder.text2.setTextColor(Color.WHITE);	
+					}	
+					break;
 			}
 			  
 			return convertView;
@@ -267,6 +288,15 @@ public class DTVVChip extends DTVActivity{
 	void updata_list(){			 
 		 adapter.notifyDataSetChanged();
 	}	
+
+
+	private boolean bRrtFlag=false;
+	private void getRrtFlag(){
+		if(TVDimension.selectUSDownloadable(this)!=null)
+			bRrtFlag=true;
+		else
+			bRrtFlag=false;
+	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub

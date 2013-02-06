@@ -112,7 +112,19 @@ public class DTVPlayer extends DTVActivity{
 				break;
 			case TVMessage.TYPE_PROGRAM_BLOCK:
 				Log.d(TAG,"BLOCK");
-				showPasswordDialog();
+				
+				switch(msg.getProgramBlockType()){
+					case TVMessage.BLOCK_BY_LOCK:
+						//showPasswordDialog(null);
+						break;
+					case TVMessage.BLOCK_BY_PARENTAL_CONTROL:
+						//showPasswordDialog(null);
+						break;
+					case TVMessage.BLOCK_BY_VCHIP:
+						//showPasswordDialog(msg.getVChipAbbrev());
+						break;
+				}
+				showPasswordDialog(msg.getVChipAbbrev());
 				break;
 			case TVMessage.TYPE_PROGRAM_UNBLOCK:
 				Log.d(TAG,"UNBLOCK");
@@ -687,12 +699,7 @@ public class DTVPlayer extends DTVActivity{
 					break;
 				case R.id.Button_mainmenu_program_manager:
 					HideMainMenu();
-					Intent pickerIntent_pro = new Intent();
-					Bundle bundle_promanage = new Bundle();
-					bundle_promanage.putInt("db_id", DTVPlayerGetCurrentProgramID());
-					pickerIntent_pro.putExtras(bundle_promanage);
-					pickerIntent_pro.setClass(DTVPlayer.this, DTVProgramManager.class);
- 		            startActivity(pickerIntent_pro);					
+					showProgramManagerDialog();				
 					break;
 				case R.id.Button_mainmenu_timeshift:
 					Intent Intent_timeshift = new Intent();
@@ -727,6 +734,37 @@ public class DTVPlayer extends DTVActivity{
 			}
 		}
     }
+
+	public void gotoProgramManager(){
+		Intent pickerIntent_pro = new Intent();
+		Bundle bundle_promanage = new Bundle();
+		bundle_promanage.putInt("db_id", DTVPlayerGetCurrentProgramID());
+		pickerIntent_pro.putExtras(bundle_promanage);
+		pickerIntent_pro.setClass(DTVPlayer.this, DTVProgramManager.class);
+        startActivity(pickerIntent_pro);
+	}
+
+	public void showProgramManagerDialog(){
+		new PasswordDialog(DTVPlayer.this){
+			public void onCheckPasswordIsRight(){
+				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
+				gotoProgramManager();	
+			}
+			public void onCheckPasswordIsFalse(){
+				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
+				toast = Toast.makeText(
+				DTVPlayer.this, 
+	    		R.string.invalid_password,
+	    		Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+			}
+			public boolean onDealUpDownKey(){
+				return false;
+			}
+		};
+	}
+		
 
 	private int bar_hide_count =0;
 	private int inforbar_distime=1000;
@@ -1734,10 +1772,10 @@ public class DTVPlayer extends DTVActivity{
 	}
 
 	PasswordDialog mPasswordDialog=null;
-	private void showPasswordDialog(){
+	private void showPasswordDialog(String t){
 		mPasswordDialog = new PasswordDialog(DTVPlayer.this){
 			public void onCheckPasswordIsRight(){
-				mDTVSettings.setCheckProgramLock(false);
+				unblock();				
 			}
 
 			public void onCheckPasswordIsFalse(){
@@ -1747,6 +1785,7 @@ public class DTVPlayer extends DTVActivity{
 				return true;
 			}
 		};
+		mPasswordDialog.setDialogContent(t);
 	}
 
 	private void showPvrDurationTimeSetDialog(Context context){

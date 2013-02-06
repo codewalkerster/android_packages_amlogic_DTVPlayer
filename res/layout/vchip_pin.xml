@@ -29,87 +29,108 @@
       </LinearLayout> 
         <LinearLayout
     		android:layout_width="match_parent"
-    		android:layout_height="100px"
-    		android:orientation="horizontal"
+    		android:layout_height="wrap_content"
+    		android:orientation="vertical"
     		android:padding="14px"
     		android:gravity="center"
     		android:background="@drawable/vchip_pin_body_bg">
-    		
-    			
-    		<!-- 
-    		<EditText android:id="@+id/pin_textedit0"
-    		   android:singleLine="true"
-    		   android:password="true"
-    		   android:maxLength="1" 
-	           android:layout_width="wrap_content"
-	           android:layout_height="60px"
-	           android:textSize="24px"	
-	           android:gravity="center"
-           	   android:numeric = "integer"
-           	   android:layout_weight="1"
-	           />
-    		<EditText android:id="@+id/pin_textedit1"
-			  android:singleLine="true"
-    		   android:password="true"
-			   android:maxLength="1" 
-	           android:layout_width="wrap_content"
-	           android:layout_height="60px"
-	           android:textSize="24px"	
-	           android:gravity="center"
-           	   android:numeric = "integer"
-           	   android:layout_weight="1"
-	           />
-    		
-    		<EditText android:id="@+id/pin_textedit2"
-    		   android:singleLine="true"
-    		   android:password="true"
-    		   android:maxLength="1" 
-	           android:layout_width="wrap_content"
-	           android:layout_height="60px" 
-	           android:textSize="24px"	
-	           android:gravity="center"
-           	   android:numeric = "integer"
-           	   android:layout_weight="1"
-	           />
-	           
-	         <EditText android:id="@+id/pin_textedit3"
-	           android:singleLine="true"
-    		   android:password="true"
-	           android:maxLength="1" 
-	           android:layout_width="wrap_content"
-	           android:layout_height="60px"
-	           android:textSize="24px"	
-	           android:gravity="center"
-           	   android:numeric = "integer"
-           	   android:layout_weight="1"
-	           />  
-    		 -->
-    		 <ImageButton android:id="@+id/pin_button0"
-	           android:layout_width="wrap_content"
-	           android:layout_height="45px"
-	           android:background="@drawable/button_pin_null"
-           	   android:layout_weight="1"
-	           />
-    		<ImageButton android:id="@+id/pin_button1"
-			   android:layout_width="wrap_content"
-	           android:layout_height="45px"
-           	   android:background="@drawable/button_pin_null"
-           	   android:layout_weight="1"
-	           />
 
-    		<ImageButton android:id="@+id/pin_button2"
-    		   android:layout_width="wrap_content"
-	           android:layout_height="45px"
-           	   android:background="@drawable/button_pin_null"
-           	   android:layout_weight="1"
-	           />
-	           
-	         <ImageButton android:id="@+id/pin_button3"
-	            android:layout_width="wrap_content"
-	           	android:layout_height="45px"
-           	   	android:background="@drawable/button_pin_null"
-           	   	android:layout_weight="1"
-	           />
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+				 <TextView
+			        android:id="@+id/content"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center_horizontal"
+			        android:textColor="#FFFFFFFF"
+			 		android:gravity="center"
+			        android:textSize="24px" 
+			        />	
+    		</LinearLayout> 
+
+    		<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="100px"
+				android:orientation="horizontal"
+	    		android:padding="14px"
+	    		android:gravity="center"
+				>
+	    		<!-- 
+	    		<EditText android:id="@+id/pin_textedit0"
+	    		   android:singleLine="true"
+	    		   android:password="true"
+	    		   android:maxLength="1" 
+		           android:layout_width="wrap_content"
+		           android:layout_height="60px"
+		           android:textSize="24px"	
+		           android:gravity="center"
+	           	   android:numeric = "integer"
+	           	   android:layout_weight="1"
+		           />
+	    		<EditText android:id="@+id/pin_textedit1"
+				  android:singleLine="true"
+	    		   android:password="true"
+				   android:maxLength="1" 
+		           android:layout_width="wrap_content"
+		           android:layout_height="60px"
+		           android:textSize="24px"	
+		           android:gravity="center"
+	           	   android:numeric = "integer"
+	           	   android:layout_weight="1"
+		           />
+	    		
+	    		<EditText android:id="@+id/pin_textedit2"
+	    		   android:singleLine="true"
+	    		   android:password="true"
+	    		   android:maxLength="1" 
+		           android:layout_width="wrap_content"
+		           android:layout_height="60px" 
+		           android:textSize="24px"	
+		           android:gravity="center"
+	           	   android:numeric = "integer"
+	           	   android:layout_weight="1"
+		           />
+		           
+		         <EditText android:id="@+id/pin_textedit3"
+		           android:singleLine="true"
+	    		   android:password="true"
+		           android:maxLength="1" 
+		           android:layout_width="wrap_content"
+		           android:layout_height="60px"
+		           android:textSize="24px"	
+		           android:gravity="center"
+	           	   android:numeric = "integer"
+	           	   android:layout_weight="1"
+		           />  
+	    		 -->
+	    		 <ImageButton android:id="@+id/pin_button0"
+		           android:layout_width="wrap_content"
+		           android:layout_height="45px"
+		           android:background="@drawable/button_pin_null"
+	           	   android:layout_weight="1"
+		           />
+	    		<ImageButton android:id="@+id/pin_button1"
+				   android:layout_width="wrap_content"
+		           android:layout_height="45px"
+	           	   android:background="@drawable/button_pin_null"
+	           	   android:layout_weight="1"
+		           />
+
+	    		<ImageButton android:id="@+id/pin_button2"
+	    		   android:layout_width="wrap_content"
+		           android:layout_height="45px"
+	           	   android:background="@drawable/button_pin_null"
+	           	   android:layout_weight="1"
+		           />
+		           
+		         <ImageButton android:id="@+id/pin_button3"
+		            android:layout_width="wrap_content"
+		           	android:layout_height="45px"
+	           	   	android:background="@drawable/button_pin_null"
+	           	   	android:layout_weight="1"
+		           />
+	          </LinearLayout>  
     	</LinearLayout>
         	
   	
