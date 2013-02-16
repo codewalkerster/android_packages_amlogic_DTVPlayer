@@ -241,20 +241,20 @@ public class DTVScanATSC extends DTVActivity{
 					ret = true;				
 				}				
 				else if(dtvscanatsc_scan_mode == DTVSCANATSC_SCAN_MODE)
-				{				
+				{			
+					stopScan(false);
+				
 					DTVScanATSCUiSettingInit();
 					ret = true;
-
-					stopScan(false);
 				}
 				break;	
 			case KeyEvent.KEYCODE_DPAD_CENTER:	
 				if(dtvscanatsc_scan_mode == DTVSCANATSC_SCAN_MODE)
-				{				
+				{			
+					stopScan(false);
+				
 					DTVScanATSC_GotoDTVPlayer();
 					ret = true;
-
-					stopScan(false);
 				}
 				break;		
 			default:
@@ -331,7 +331,11 @@ public class DTVScanATSC extends DTVActivity{
 				ui_dvbsanatsc_scantv_list_adapter.setServiceType(serviceInfo.SERVICE_TYPE_TV);
 			}
 			ui_dvbsanatsc_scantv_list.setAdapter(ui_dvbsanatsc_scantv_list_adapter);
-		}  
+		}
+		else
+		{
+			ui_dvbsanatsc_scantv_list.setAdapter(ui_dvbsanatsc_scantv_list_adapter);
+		}
 
 		ui_dvbsanatsc_scanradio_list = (ListView)findViewById(R.id.dvbscanscan_listradio);
 		
@@ -346,6 +350,10 @@ public class DTVScanATSC extends DTVActivity{
 			}
 			ui_dvbsanatsc_scanradio_list.setAdapter(ui_dvbsanatsc_scanradio_list_adapter);
 		}
+		else
+		{
+			ui_dvbsanatsc_scanradio_list.setAdapter(ui_dvbsanatsc_scanradio_list_adapter);
+		}		
          
 		ui_dvbsanatsc_scantv_list.setItemsCanFocus(false);
 		ui_dvbsanatsc_scantv_list.setClickable(false);
@@ -1501,6 +1509,7 @@ public class DTVScanATSC extends DTVActivity{
 		{
 			serviceinfo.setId(++ui_dvbsanatsc_scantv_srv_list_index);
 			ui_dvbsanatsc_scantv_srv_list.add(serviceinfo); 
+			Log.d(TAG, "DTVScanATSC_ScanListAddSvr "+ ui_dvbsanatsc_scantv_srv_list_index);
 			ui_dvbsanatsc_scantv_list.setSelection(ui_dvbsanatsc_scantv_srv_list_index - 1);
 			ui_dvbsanatsc_scantv_list_adapter.notifyDataSetChanged();
 		}
