@@ -979,6 +979,9 @@ public class DTVPlayer extends DTVActivity{
 		else
 			Text_nextevent.setText(dtvplayer_next_event);
 
+		TextView Text_parent_rate = (TextView) findViewById(R.id.Text_parent_rate);	
+		
+
 		if(mDTVSettings.getScanRegion().contains("ATSC")==false){
 			Text_proname.setText(Integer.toString(dtvplayer_pronumber)+"  "+dtvplayer_name);
 		}

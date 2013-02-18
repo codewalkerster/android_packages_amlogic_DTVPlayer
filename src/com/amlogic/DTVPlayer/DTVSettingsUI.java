@@ -215,7 +215,7 @@ public class DTVSettingsUI extends DTVActivity{
 				
 				case SETTINGS_START_SCAN:
 					{
-						DTVSetting_GotoDTVScanDvbt();
+						DTVSetting_GotoDTVScan();
 						DTVSettingsUI.this.finish();
 					}	
 					//if(DTV.getStaticSubtitle()!=null)
@@ -855,7 +855,7 @@ public class DTVSettingsUI extends DTVActivity{
 	}	
 
 
-	private void DTVSetting_GotoDTVScanDvbt(){
+	private void DTVSetting_GotoDTVScan(){
 		Intent Intent_scan = new Intent();
 
 		String region;
@@ -869,17 +869,19 @@ public class DTVSettingsUI extends DTVActivity{
 
 		Log.d(TAG, "region = " + region);
 		
-		if(region.contains("DVB-T"))
-		{
+		if(region.contains("DVB-T")){
 			Log.d(TAG, "goto DTVScanDVBT");
 			Intent_scan.setClass(DTVSettingsUI.this, DTVScanDVBT.class);
 		}
-		else if(region.contains("ATSC"))
-		{
+		else if(region.contains("ATSC")){
 			Log.d(TAG, "goto DTVScanATSC");
 			Intent_scan.setClass(DTVSettingsUI.this, DTVScanATSC.class);
 		}
-		
+		else if(region.contains("DVBS")){
+			Log.d(TAG, "goto DTVScanDVBS");
+			Intent_scan.setClass(DTVPlayer.this, DTVScanDVBS.class);
+		}	
+						
 		startActivityForResult(Intent_scan, 1);	
 		
 	}
