@@ -1,10 +1,28 @@
 package com.amlogic.DTVPlayer;
 
-import java.lang.reflect.Field;
-import android.app.Activity;
+import android.util.Log;
 import android.os.Bundle;
-import android.content.Context;
-import android.content.Intent;
+import com.amlogic.tvutil.TVMessage;
+import com.amlogic.tvutil.TVConst;
+import com.amlogic.tvutil.TVProgram;
+import com.amlogic.tvutil.TVProgramNumber;
+import com.amlogic.tvactivity.TVActivity;
+import com.amlogic.tvutil.TVChannelParams;
+import com.amlogic.tvutil.TVScanParams;
+import com.amlogic.tvutil.TVConst;
+
+import java.util.*;
+import android.view.*;
+import android.view.View.*;
+import android.view.animation.*;
+import android.widget.*;
+import android.widget.AbsListView.OnScrollListener;
+import android.app.*;
+import android.content.*;
+import android.graphics.*;
+import android.text.*;
+import android.text.method.*;
+import java.lang.reflect.Field;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,10 +78,6 @@ import android.view.View.OnKeyListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.ProgressBar;
 
-import com.amlogic.dvb.DVBFrontendSignalInfo;
-import com.amlogic.dvb.DVBSatelliteParameter;
-import com.amlogic.dvb.DVBFrontEndPara;
-import com.amlogic.dvb.DVBUnicableSetting;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Looper;
@@ -508,6 +522,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 	}
 
 
+	/*
 	private DVBUnicableSetting getUnicableSetting() {
 			DVBUnicableSetting set = null;
 			
@@ -517,11 +532,12 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 			}
 			return set;
 		}
-		
+
+	*/	
 		private boolean isUnicableOn() {
-			DVBUnicableSetting setting = getUnicableSetting();
-			if (setting != null && setting.getUnicableOn())
-				return true;
+			//DVBUnicableSetting setting = getUnicableSetting();
+			//if (setting != null && setting.getUnicableOn())
+				//return true;
 				
 			return false;
 		}	
@@ -2936,7 +2952,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		public void handleMessage(Message msg) {  
 			   switch (msg.what) { 
 					case 50: 
-			   		 	updataSignalInfo2((DVBFrontendSignalInfo)msg.obj);
+			   		 	//updataSignalInfo2((DVBFrontendSignalInfo)msg.obj);
 					break;
 				}  
 		}
@@ -3084,7 +3100,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 	}
 
 
-
+	/*
 	private void updataSignalInfo2(DVBFrontendSignalInfo info )
 	{
 		
@@ -3131,7 +3147,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		diaBuilder.setView(dvbs_set_limit_list); 
 		
 	}
-
+	*/
 
 	private AlertDialog.Builder diaBuilder;
 	private AlertDialog alert; 

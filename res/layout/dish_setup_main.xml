@@ -11,7 +11,7 @@
 		android:layout_width="fill_parent">
     
 		<TextView  
-			android:background="@drawable/title_bg"
+			android:background="@drawable/epg_title_bg"
 			android:layout_gravity="center|left"	
 			android:layout_width="fill_parent"	    
 			android:layout_height="90px"
@@ -214,7 +214,7 @@
 			  	
 		<LinearLayout
 			android:orientation="vertical"
-			android:background="@drawable/bottom_bg"
+			android:background="@drawable/epg_eit_list_bg"
 			android:layout_width="fill_parent"
 			android:layout_height="125px"
 			android:paddingLeft="30px"
