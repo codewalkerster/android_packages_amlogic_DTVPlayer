@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="620px"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="45px" 
-    android:layout_centerInParent="true"  
-    android:orientation="vertical"
-    android:background="@drawable/vchip_pin"
-    > 
+	android:layout_width="620px"
+	android:layout_height="wrap_content"
+	android:layout_marginLeft="45px" 
+	android:layout_centerInParent="true"  
+	android:orientation="vertical"
+	> 
      <LinearLayout
     		android:layout_width="match_parent"
     		android:layout_height="80px"
@@ -23,7 +21,7 @@
 		        android:layout_gravity="center_horizontal"
 		        android:text="@string/enter_password"
 		        android:textColor="#FFFFFFFF"
-		 				android:gravity="center"
+		 		android:gravity="center"
 		        android:textSize="24px" 
 		        android:layout_marginTop="20px"/>	
       </LinearLayout> 
@@ -44,14 +42,13 @@
 			        android:layout_height="wrap_content"
 			        android:layout_gravity="center_horizontal"
 			        android:textColor="#FFFFFFFF"
-			 		android:gravity="center"
-			        android:textSize="24px" 
+			 		android:gravity="center" 
 			        />	
     		</LinearLayout> 
 
     		<LinearLayout
 				android:layout_width="match_parent"
-				android:layout_height="100px"
+				android:layout_height="60px"
 				android:orientation="horizontal"
 	    		android:padding="14px"
 	    		android:gravity="center"

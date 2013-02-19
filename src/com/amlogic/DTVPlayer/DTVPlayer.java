@@ -1156,7 +1156,9 @@ public class DTVPlayer extends DTVActivity{
 				hidePasswordDialog();
 				if(mDTVSettings.getScanRegion().contains("ATSC")){
 					Log.d(TAG,"prono_timer_runnable ---pronumber_string="+pronumber_string);
-					
+					pronumber = 0;	
+					pronumber_string ="";
+					HideProgramNo();
 				}
 				else{				
 					if((DTVPlayerCheckNumerInputIsValid(pronumber)==false)||(pronumber<=0)){
@@ -1779,6 +1781,12 @@ public class DTVPlayer extends DTVActivity{
 			}
 
 			public void onCheckPasswordIsFalse(){
+				toast = Toast.makeText(
+				DTVPlayer.this, 
+	    		R.string.invalid_password,
+	    		Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
 			}
 
 			public boolean onDealUpDownKey(){
