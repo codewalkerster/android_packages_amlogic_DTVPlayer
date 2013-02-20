@@ -22,7 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
 	    
+	    <activity android:name=".DTVMainMenu"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVSettingsUI"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVChannelList" android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVEpg" android:theme="@style/Transparent"/> 

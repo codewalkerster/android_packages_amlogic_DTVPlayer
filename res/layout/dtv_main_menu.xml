@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="1280px"
+    android:layout_height="720px"
+    >  
+<!--MainMenu-->
+	<RelativeLayout android:id="@+id/RelativeLayoutMainMenu"
+				android:layout_height="458px"
+				android:layout_width="149px"
+				android:background="@drawable/dtvplayer_main_menu_bg" 
+				android:layout_alignParentLeft="true"
+				android:layout_marginTop="94px"
+				android:layout_marginLeft="8px"
+				>
+
+		<LinearLayout 
+			android:layout_width="fill_parent"  
+			android:layout_height="fill_parent"
+			android:orientation="horizontal" >
+			<LinearLayout 
+				android:layout_width="60px"  
+				android:layout_height="fill_parent"
+				android:gravity="center">       
+
+				<com.amlogic.widget.RotateableTextView
+
+					android:id="@+id/Text_button_info"
+					android:layout_width="300px"   
+					android:layout_height="300px" 
+					android:textSize="20px"  
+					android:singleLine="true"
+					android:gravity="center_vertical"
+					android:paddingBottom="70px"
+					android:textColor="@color/yellow">
+				</com.amlogic.widget.RotateableTextView
+>
+			</LinearLayout>
+
+			<LinearLayout 
+				android:layout_width="wrap_content"  
+				android:layout_height="fill_parent"
+				android:gravity="center">  
+				 
+				<LinearLayout 
+					        android:layout_width="wrap_content"  
+					        android:orientation="vertical" 
+					        android:layout_height="wrap_content">  
+					<Button android:id="@+id/Button_mainmenu_list"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_pro_list"
+							android:layout_marginLeft="2px" />
+					<Button android:id="@+id/Button_mainmenu_epg"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_epg"
+							android:layout_marginLeft="2px" />
+					<Button android:id="@+id/Button_mainmenu_settings"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_setting"
+							android:layout_marginLeft="2px" />		
+					<Button android:id="@+id/Button_mainmenu_program_manager"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_info" android:layout_marginLeft="5px" />
+					<Button android:id="@+id/Button_mainmenu_timeshift"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_timeshift"
+							android:layout_marginLeft="2px" />
+					<Button android:id="@+id/Button_mainmenu_prv"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_pvr"
+							android:layout_marginLeft="2px" />
+					<Button android:id="@+id/Button_mainmenu_manage"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_pvr_man"
+							android:layout_marginLeft="2px" />
+					<Button android:id="@+id/Button_mainmenu_skip"
+							android:layout_width="60px" android:layout_height="52px"
+							android:background="@drawable/dtvplayer_button_skip"
+							android:layout_marginLeft="2px" />
+				</LinearLayout>
+			</LinearLayout>
+		</LinearLayout>
+	</RelativeLayout>
+</RelativeLayout>
+	

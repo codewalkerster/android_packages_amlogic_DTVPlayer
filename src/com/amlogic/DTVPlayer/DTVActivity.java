@@ -134,6 +134,12 @@ abstract public class DTVActivity extends TVActivity{
 		TVProgramNumber mTVProgramNumber = new TVProgramNumber(pronumber);
 		playProgram(mTVProgramNumber);
 	}
+
+	public void DTVPlayerPlayAtscByProNo(int major, int minor){
+		TVProgramNumber mTVProgramNumber = new TVProgramNumber(major,minor);
+		playProgram(mTVProgramNumber);
+	}
+	
 	public void DTVPlayerPlayById(int db_id){
 		playProgram(db_id);
 	}
@@ -320,6 +326,10 @@ abstract public class DTVActivity extends TVActivity{
 
 	public void DTVSetSubtitleStatus(boolean value){
 		setConfig("tv:subtitle:enable",value);
+	}
+
+	public boolean DTVGetATSCAtvEnable(){
+		return getBooleanConfig("tv:atv:enable");
 	}
 
 	public int DTVGetScreenMode(){

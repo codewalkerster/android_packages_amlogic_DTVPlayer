@@ -1612,11 +1612,11 @@ public class DTVScanATSC extends DTVActivity{
 	private void DTVScanATSC_StartAutoScan()
 	{
 		Log.d(TAG, "DTVScanATSC_StartAutoScan");
-
 		TVScanParams sp;	
-
-		sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_ATSC);
-
+		if(DTVGetATSCAtvEnable())
+			sp = TVScanParams.adtvScanParams(0, TVChannelParams.MODE_ATSC);
+		else
+			sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_ATSC);
 		startScan(sp);
 	}
 

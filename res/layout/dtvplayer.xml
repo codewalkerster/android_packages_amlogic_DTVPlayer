@@ -335,7 +335,7 @@
 		
 	<!--Program Number display-->	
 	<RelativeLayout android:id="@+id/RelativeLayoutProNumer"
-		android:layout_width="210px"
+		android:layout_width="270px"
 		android:layout_height="85px"
 		android:background="@drawable/dtvplayer_pvr_icon_bg"
 		android:layout_alignParentTop="true"

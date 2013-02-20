@@ -254,6 +254,7 @@ public class DTVPlayer extends DTVActivity{
 				int db_id = bundle.getInt("db_id");
 				int serviceType = bundle.getInt("service_type");
 				Log.d(TAG,"channel list db_id="+db_id +"---type="+serviceType );
+				hidePasswordDialog();
 				if(serviceType==TVProgram.TYPE_RADIO){
 					setProgramType(TVProgram.TYPE_RADIO);
 					Log.d(TAG,"setProgramType(TVProgram.TYPE_RADIO)");
@@ -299,10 +300,11 @@ public class DTVPlayer extends DTVActivity{
 				updateInforbar();
 				break;
 			case KeyEvent.KEYCODE_DPAD_DOWN:
-				if(mainmenu_show_flag){
-					break;
-				}
-				else{
+				//if(mainmenu_show_flag){
+					//break;
+				//}
+				//else
+				{
 					if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){
 						DTVTTGotoPreviousPage();
 					}	
@@ -313,10 +315,11 @@ public class DTVPlayer extends DTVActivity{
 				}
 			case KeyEvent.KEYCODE_DPAD_UP:
 				Log.d(TAG,"KEYCODE_DPAD_UP");
-				if(mainmenu_show_flag){
-					break;
-				}
-				else{
+				//if(mainmenu_show_flag){
+					//break;
+				//}
+				//else
+					{
 					if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){
 						DTVTTGotoNextPage();
 					}	
@@ -339,10 +342,11 @@ public class DTVPlayer extends DTVActivity{
 				DTVDealDigtalKey(keyCode);
 				return true;
 			case KeyEvent.KEYCODE_BACK:
-				if(mainmenu_show_flag){
-					HideMainMenu();
-				}
-				else if(inforbar_show_flag){
+				//if(mainmenu_show_flag){
+					//HideMainMenu();
+				//}
+				//else 
+				if(inforbar_show_flag){
 					HideControlBar();
 				}
 				else if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){	
@@ -362,7 +366,7 @@ public class DTVPlayer extends DTVActivity{
 				if(inforbar_show_flag==false){
 					ShowControlBar();
 				}
-				else if(mainmenu_show_flag==false)
+				else //if(mainmenu_show_flag==false)
 					ShowMainMenu();
 				return true;
 			case KeyEvent.KEYCODE_ENTER:
@@ -413,9 +417,9 @@ public class DTVPlayer extends DTVActivity{
 				showAudioLanguageDialog(DTVPlayer.this);
 				break;	
 			case KeyEvent.KEYCODE_MENU:
-				if(mainmenu_show_flag)
-					HideMainMenu();
-				else
+				//if(mainmenu_show_flag)
+					//HideMainMenu();
+				//else
 					ShowMainMenu();
 				return true;
 		}
@@ -765,7 +769,6 @@ public class DTVPlayer extends DTVActivity{
 		};
 	}
 		
-
 	private int bar_hide_count =0;
 	private int inforbar_distime=1000;
 	private int bar_auto_hide_duration=5;
@@ -862,21 +865,30 @@ public class DTVPlayer extends DTVActivity{
 
 	private boolean mainmenu_show_flag=false;
 	private void ShowMainMenu(){
+		/*
 		if((mainmenu_show_flag==false)&&(RelativeLayout_mainmenu!=null&&mainMenuShowAction!=null)){	
 			RelativeLayout_mainmenu.startAnimation(mainMenuShowAction);   
 			RelativeLayout_mainmenu.setVisibility(View.VISIBLE);
 			RelativeLayout_mainmenu.requestFocus();
 		}
+		*/
 		mainmenu_show_flag = true;	
+
+		Intent intent = new Intent();
+		intent.setClass(DTVPlayer.this, DTVMainMenu.class);
+        startActivity(intent);
+		overridePendingTransition(R.anim.slide_left, R.anim.slide_right); 
 	}
 
 	private void HideMainMenu(){
+		/*
 		if(mainmenu_show_flag){	
 			if(RelativeLayout_mainmenu!=null&&mainMenuHideAction!=null){
 				RelativeLayout_mainmenu.startAnimation(mainMenuHideAction);   
 				RelativeLayout_mainmenu.setVisibility(View.INVISIBLE);
 			}
 		}
+		*/
 		mainmenu_show_flag = false;
 	}
 	
@@ -1159,6 +1171,11 @@ public class DTVPlayer extends DTVActivity{
 					pronumber = 0;	
 					pronumber_string ="";
 					HideProgramNo();
+					
+					Log.d(TAG,"PROGRAM NUMBER:---"+input_major+"-"+input_minor);
+					DTVPlayerPlayAtscByProNo(input_major,input_minor);
+					input_major=0;	
+					input_minor=0;
 				}
 				else{				
 					if((DTVPlayerCheckNumerInputIsValid(pronumber)==false)||(pronumber<=0)){
@@ -1203,6 +1220,8 @@ public class DTVPlayer extends DTVActivity{
 		}   
 	};
 
+	private int input_major = 0;
+	private int input_minor = 0;
 	private static boolean DTVPlayerInTeletextStatus=false;
 	private void DTVDealDigtalKey(int value){
 		int number_key_value=0;
@@ -1213,7 +1232,7 @@ public class DTVPlayer extends DTVActivity{
 				
 				if(value==KeyEvent.KEYCODE_MEDIA_NEXT){
 					boolean hasflag=false;
-					if(pronumber_string!=null){
+					if(pronumber_string.equals("")==false){
 						for(int i=0;i<pronumber_string.length();i++){
 							if(pronumber_string.regionMatches(i,"-",0,1)){
 								Log.d(TAG,"has--------"+pronumber_string);
@@ -1224,29 +1243,63 @@ public class DTVPlayer extends DTVActivity{
 
 						if(hasflag==false){
 							if(pronumber==0){
-								pronumber_string=Integer.toString(dtvplayer_pronumber_major)+"-";
+								pronumber_string=Integer.toString(dtvplayer_pronumber_major)+"-";	
 							}
 							else{
 								pronumber_string=Integer.toString(pronumber)+"-";
+								input_major = pronumber;
+								input_minor = 0;
 							}
 						}	
 						else{
+							
 							pronumber_string=Integer.toString(dtvplayer_pronumber_major);
+							input_major = dtvplayer_pronumber_major;
+							input_minor = dtvplayer_pronumber_minor;
 						}
 					}
-					else
+					else{
 						pronumber_string=Integer.toString(dtvplayer_pronumber_major)+"-";
+						input_major = dtvplayer_pronumber_major;
+						input_minor = 0;
+					}	
+					pronumber=0;
 				}
 				else{
+					boolean hasflag=false;
+					
+					for(int i=0;i<pronumber_string.length();i++){
+						if(pronumber_string.regionMatches(i,"-",0,1)){
+							Log.d(TAG,"has--------"+pronumber_string);
+							hasflag=true;
+							break;
+						}	
+					}						
+					
 					number_key_value = value - KeyEvent.KEYCODE_0;
-					pronumber = pronumber*10+number_key_value;
-					Log.d(TAG,"pronumber_string1="+pronumber_string);
-					pronumber_string =pronumber_string + Integer.toString(number_key_value);
-					Log.d(TAG,"pronumber_string2="+pronumber_string);
+					
+					if(hasflag){
+						if(pronumber>=10){
+							pronumber = number_key_value;
+						}	
+						else{
+							pronumber = pronumber*10+number_key_value;
+						}	
+						input_minor = pronumber;
+						pronumber_string =Integer.toString(input_major)+"-"+Integer.toString(input_minor);
+					}
+					else{
+						if(pronumber>=100){
+							pronumber = number_key_value;
+						}	
+						else{
+							pronumber = pronumber*10+number_key_value;
+						}	
+						input_major = pronumber;
+						pronumber_string =Integer.toString(input_major);
+					}
 				}
-				if(pronumber>9999){
-					pronumber = number_key_value;
-				}	
+				
 				Log.d(TAG,"pronumber_string="+pronumber_string);
 				showProgramNo(pronumber_string);
 				prono_timer_handler.postDelayed(prono_timer_runnable, 2000);
