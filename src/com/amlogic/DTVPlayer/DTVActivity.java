@@ -40,6 +40,9 @@ import java.lang.reflect.Field;
 abstract public class DTVActivity extends TVActivity{
     private static final String TAG="DTVActivity";
 	private TVProgram TVProgram=null;
+	private static int dtvactivity_actived_num = 0;
+	//private static int dtvlayout_gravity = Gravity.CENTER;
+	
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
@@ -48,11 +51,183 @@ abstract public class DTVActivity extends TVActivity{
 		WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+	@Override
+	public void setContentView (int layoutResID){
+		//super.setContentView(layoutResID);
+		setContentViewdtv(layoutResID);
+	}
+	private void setContentViewdtv (int layoutResID){
+		/*reset layout by reproduction rate*/
+		String outputmode = SystemProperties.get("ubootenv.var.outputmode");
+		int x = 0, y = 0, w = 0, h = 0;
+		
+		Log.d(TAG, "setContentView " + outputmode);
+		
+		if(outputmode.equals("1080p") == true){
+			x = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputx"));
+			y = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputy"));
+			w = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputwidth"));
+			h = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputheight"));
+		}
+		else if(outputmode.equals("1080i") == true){
+			x = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputx"));
+			y = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputy"));
+			w = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputwidth"));
+			h = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputheight"));		
+		}
+		else if(outputmode.equals("720p") == true){
+			x = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputx"));
+			y = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputy"));
+			w = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputwidth"));
+			h = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputheight"));		
+		}
+		else if(outputmode.equals("576p") == true){
+			x = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputx"));
+			y = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputy"));
+			w = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputwidth"));
+			h = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputheight"));			
+		}
+		else if(outputmode.equals("576i") == true){
+			x = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputx"));
+			y = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputy"));
+			w = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputwidth"));
+			h = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputheight"));					
+		}
+		else if(outputmode.equals("480p") == true){
+			x = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputx"));
+			y = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputy"));
+			w = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputwidth"));
+			h = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputheight"));			
+		}
+		else if(outputmode.equals("480i") == true){
+			x = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputx"));
+			y = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputy"));
+			w = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputwidth"));
+			h = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputheight"));				
+		}		
+/*
+		AbsoluteLayout root = new AbsoluteLayout(this);
+
+		if(x == 0 && y == 0 && w == 0 && h == 0){
+			Log.e(TAG, "screen error");
+		}
+		else{
+			LayoutParams params = new AbsoluteLayout.LayoutParams(w, h, x, y);
+			root.setLayoutParams(params);
+		}
+
+		LayoutInflater inflater = LayoutInflater.from(this);
+		View reproduction_view = inflater.inflate(layoutResID, null); 
+
+		if(x == 0 && y == 0 && w == 0 && h == 0){
+			Log.e(TAG, "reproduction error");
+		}
+		else{
+			LayoutParams reproduction_params = new AbsoluteLayout.LayoutParams(w, h, x, y);
+			
+			root.addView(reproduction_view);
+
+			super.setContentView(root, reproduction_params);	
+			
+			Log.d(TAG, "DTVActivity_ResetLayoutbyReprodRate " + x + " " + y + " " + w + " " + h);
+		}
+*/		
+
+
+		AbsoluteLayout root1 = new AbsoluteLayout(this);
+		RelativeLayout root2 = new RelativeLayout(this);
+		
+		LayoutParams params1 = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
+		//root1.setLayoutParams(params1);
+		LayoutParams params2 = new LayoutParams(w, h);
+		//root2.setLayoutParams(params2);
+		//root2.setGravity(dtvlayout_gravity); 
+
+		LayoutInflater inflater = LayoutInflater.from(this);
+		View reproduction_view = inflater.inflate(layoutResID, null); 
+
+		LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
+		//Log.d(TAG, "########## w=" + params.width + "h=" + params.height);
+
+		if(x == 0 && y == 0 && w == 0 && h == 0){
+			Log.e(TAG, "reproduction error");
+		}
+		else{
+
+			super.setContentView(root1, params1);
+
+			root1.addView(root2, params2);
+
+			root2.setX(x);
+			root2.setY(y);
+			
+			root2.addView(reproduction_view, params);
+
+			/*
+			AbsoluteLayout.LayoutParams params = (AbsoluteLayout.LayoutParams)root.getLayoutParams();
+			params.x = x;
+			params.y = y;
+			params.width = w;
+			params.height = h;
+			root.setLayoutParams(params);
+			*/
+			
+			Log.d(TAG, "DTVActivity_ResetLayoutbyReprodRate " + x + " " + y + " " + w + " " + h);
+		}
+
+			
+	}	
+	
+	@Override
+	protected void onStart(){
+		Log.d(TAG, "onStart");
+		DTVActivity_ActivedStateManage(true);
+		super.onStart();
+	}
+
+	@Override
+	protected void onStop(){
+		Log.d(TAG, "onStop");
+		DTVActivity_ActivedStateManage(false);
+		super.onStop();
+	}
+
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
     }
+
+	private void DTVActivity_ActivedStateManage(boolean actived){
+		Log.d(TAG, "DTVActivity_ActivedStateManage actived " + actived + " dtvactivity_actived_num " + dtvactivity_actived_num);
+		if(actived){
+			if(dtvactivity_actived_num == 0){
+				/*stop music play when dtv actived*/
+				Intent stopMusicIntent = new Intent();
+				stopMusicIntent.setAction("com.android.music.musicservicecommand.pause");
+				stopMusicIntent.putExtra("command", "stop");
+				sendBroadcast(stopMusicIntent);
+
+				Intent exitMusicIntent = new Intent();
+				exitMusicIntent.setAction("com.android.music.musicservicecommand.pause");
+				exitMusicIntent.putExtra("command", "exit");
+				sendBroadcast(exitMusicIntent);
+
+				/*set vpath*/
+				setInputSource(TVConst.SourceInput.SOURCE_DTV);
+			}
+
+			dtvactivity_actived_num++;
+		}
+		else{
+			dtvactivity_actived_num--;
+
+			if(dtvactivity_actived_num == 0){
+				/*reset vpath, this is borrow SOURCE_ATV parameter*/
+				setInputSource(TVConst.SourceInput.SOURCE_ATV);
+			}			
+		}
+	}
 	
 	/***************DTVPlayer****************/
 	public String secToTime(long i, Boolean isTotalTime){

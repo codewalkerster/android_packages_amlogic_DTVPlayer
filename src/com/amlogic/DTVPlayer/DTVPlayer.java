@@ -53,7 +53,7 @@ public class DTVPlayer extends DTVActivity{
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		//set input source on DTV
-		setInputSource(TVConst.SourceInput.SOURCE_DTV);
+		//setInputSource(TVConst.SourceInput.SOURCE_DTV);
 		if(isHavePragram()==false){ 
 			showNoProgramDia(); 
 		}
@@ -659,6 +659,11 @@ public class DTVPlayer extends DTVActivity{
 					Log.d(TAG, "goto DTVScanDVBS");
 					Intent_scan.setClass(DTVPlayer.this, DTVScanDVBS.class);
 				}	
+				else if(region.contains("DVB-C"))
+				{
+					Log.d(TAG, "goto DTVScanDVBC");
+					Intent_scan.setClass(DTVPlayer.this, DTVScanDVBC.class);				
+				}
 				
 				startActivity(Intent_scan);
 			}

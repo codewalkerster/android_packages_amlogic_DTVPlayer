@@ -1,189 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/dvbscan_layout"
-	android:background="@drawable/settings_bg"
-	android:orientation="vertical"
-	android:layout_gravity="center"  
-	android:layout_width="820px" 
-	android:layout_height="576px">    
-    
-	<LinearLayout android:id="@+id/dvbscanscan_titlelayout"
-		android:layout_width="fill_parent" 
-		android:layout_height="50px">  
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/Dtvscan_scanLayout"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent"
+	android:background="#00000000"
+	android:foreground="#00000000">
+
+	<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/dvbscan_layout"
+		android:background="@drawable/settings_bg"
+		android:layout_centerHorizontal="true"
+		android:orientation="vertical"
+		android:layout_gravity="center"  
+		android:layout_width="820px" 
+		android:layout_height="576px">    
+	    
+		<LinearLayout android:id="@+id/dvbscanscan_titlelayout"
+			android:layout_width="fill_parent" 
+			android:layout_height="50px">  
+				<TextView 
+					android:id="@+id/dvbscanscan_title"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:gravity="center"
+					android:textSize="24sp"
+					>
+				</TextView>
+		</LinearLayout> 
+
+		<LinearLayout android:id="@+id/dvbscanscan_listtitlelayout"
+			android:orientation="horizontal"
+			android:layout_width="fill_parent" 
+			android:layout_height="50px">  
+				
 			<TextView 
-				android:id="@+id/dvbscanscan_title"
-				android:layout_width="fill_parent"
+				android:id="@+id/dvbscanscan_tvtitle"
+				android:layout_width="330px"
 				android:layout_height="fill_parent"
 				android:gravity="center"
-				android:textSize="24sp"
+				android:textSize="20sp"
 				>
 			</TextView>
-	</LinearLayout> 
-
-	<LinearLayout android:id="@+id/dvbscanscan_listtitlelayout"
-		android:orientation="horizontal"
-		android:layout_width="fill_parent" 
-		android:layout_height="50px">  
-			
-		<TextView 
-			android:id="@+id/dvbscanscan_tvtitle"
-			android:layout_width="330px"
-			android:layout_height="fill_parent"
-			android:gravity="center"
-			android:textSize="20sp"
-			>
-		</TextView>
-		
-		<TextView 
-			android:layout_width="60px"
-			android:layout_height="fill_parent"
-			android:gravity="center"
-			android:textSize="20sp"
-			>
-		</TextView>
-		
-		<TextView 
-			android:id="@+id/dvbscanscan_radiotitle"
-			android:layout_width="330px"
-			android:layout_height="fill_parent"
-			android:gravity="center"
-			android:textSize="20sp"
-			>
-		</TextView>
-	</LinearLayout> 
-           
-	<LinearLayout android:id="@+id/dvbscanscan_listlayout"
-		android:orientation="horizontal"
-		android:layout_width="fill_parent" 
-		android:layout_height="322px">		 
-			  
-			<ListView 
-				android:id="@+id/dvbscanscan_listtv"
-				android:layout_width="280px"
-				android:layout_height="fill_parent"
-				>
-			</ListView>  
 			
 			<TextView 
 				android:layout_width="60px"
 				android:layout_height="fill_parent"
 				android:gravity="center"
-				android:textSize="24sp"
+				android:textSize="20sp"
 				>
 			</TextView>
-
-			<ListView 
-				android:id="@+id/dvbscanscan_listradio"
-				android:layout_width="280px"
-				android:layout_height="fill_parent"
-				>
-			</ListView> 
-	</LinearLayout>   
-     
-	<LinearLayout android:id="@+id/dvbscanprogress_layout"
-		android:layout_width="fill_parent" 
-		android:layout_height="40px">		 
-			  
-			<ProgressBar
-				android:id="@+id/dvbscanprogressbar"
-				style="?android:attr/progressBarStyleHorizontal"
-				android:background="@drawable/dtvscan_progress_bg"	  
-				android:layout_gravity="center_vertical"
-				android:layout_width="600px"
-				android:layout_height="16px"	
-				android:gravity="center_vertical"
-				android:visibility="gone"
-				>
-			</ProgressBar>
+			
 			<TextView 
-				android:id="@+id/dvbscan_progresspercentage"
-				android:layout_width="120px"
+				android:id="@+id/dvbscanscan_radiotitle"
+				android:layout_width="330px"
 				android:layout_height="fill_parent"
-				android:layout_gravity="center_vertical"
 				android:gravity="center"
 				android:textSize="20sp"
 				>
 			</TextView>
-	</LinearLayout>
+		</LinearLayout> 
+	           
+		<LinearLayout android:id="@+id/dvbscanscan_listlayout"
+			android:orientation="horizontal"
+			android:layout_width="fill_parent" 
+			android:layout_height="322px">		 
+				  
+				<ListView 
+					android:id="@+id/dvbscanscan_listtv"
+					android:layout_width="280px"
+					android:layout_height="fill_parent"
+					>
+				</ListView>  
+				
+				<TextView 
+					android:layout_width="60px"
+					android:layout_height="fill_parent"
+					android:gravity="center"
+					android:textSize="24sp"
+					>
+				</TextView>
 
-	<LinearLayout android:id="@+id/dvbscanscanfreqinfo_layout"
-		android:layout_width="fill_parent" 
-		android:layout_height="50px"
-		android:layout_marginTop = "5px">		 
-			<TextView 
-				android:id="@+id/dvbscan_scanfreqinfo"
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:gravity="center"
-				android:textSize="24sp"
-				>
-			</TextView>
-	</LinearLayout>
-    <LinearLayout
-			android:layout_width="fill_parent"
-			android:layout_height="50px"
-			android:layout_marginRight="20px"
-			android:layout_marginLeft="20px"
-			android:orientation="vertical">
-			<RelativeLayout
-				android:id="@+id/inforbar_line" 
-				android:layout_width="fill_parent"
-				android:layout_height="2px"
-				android:background="@drawable/line"
-				>	
-			</RelativeLayout>
+				<ListView 
+					android:id="@+id/dvbscanscan_listradio"
+					android:layout_width="280px"
+					android:layout_height="fill_parent"
+					>
+				</ListView> 
+		</LinearLayout>   
 	     
-		     <LinearLayout
-	    		android:layout_width="match_parent"
-	    		android:layout_height="match_parent"
-	    		android:orientation="horizontal"
-	    		android:gravity="center"
-	    		android:layout_marginBottom="8px">
-			
-	    		<ImageView 
-	    			android:layout_width="wrap_content"
-	    			android:layout_height="wrap_content"
-					android:background="@drawable/move"
-	    		>
-	    		</ImageView>
-	    		<TextView
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_gravity="center"
-			        android:text="@string/help_info_move"
-			        android:textColor="#FFFFFFFF"
-			        android:textSize="20sp" 
-			        android:layout_marginRight="30px"
-			        />
-	    		<ImageView 
-	    			android:layout_width="wrap_content"
-	    			android:layout_height="wrap_content"
-					android:background="@drawable/enter"
-	    		></ImageView>
-	    		<TextView
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_gravity="center"
-			        android:text="@string/help_info_select"
-			        android:textColor="#FFFFFFFF"
-			        android:textSize="20sp"
-			        android:layout_marginRight="30px"
-			        />
-	    		<ImageView 
-	    			android:layout_width="wrap_content"
-	    			android:layout_height="wrap_content"
-					android:background="@drawable/return_icon"
-	    		></ImageView>
-	    		<TextView
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_gravity="center"
-			        android:text="@string/help_info_return"
-			        android:textColor="#FFFFFFFF"
-			        android:textSize="20sp" />
-			</LinearLayout>
-		</LinearLayout>	
- </LinearLayout>
-     
+		<LinearLayout android:id="@+id/dvbscanprogress_layout"
+			android:layout_width="fill_parent" 
+			android:layout_height="40px">		 
+				  
+				<ProgressBar
+					android:id="@+id/dvbscanprogressbar"
+					style="?android:attr/progressBarStyleHorizontal"
+					android:background="@drawable/dtvscan_progress_bg"	  
+					android:layout_gravity="center_vertical"
+					android:layout_width="600px"
+					android:layout_height="16px"	
+					android:gravity="center_vertical"
+					android:visibility="gone"
+					>
+				</ProgressBar>
+				<TextView 
+					android:id="@+id/dvbscan_progresspercentage"
+					android:layout_width="120px"
+					android:layout_height="fill_parent"
+					android:layout_gravity="center_vertical"
+					android:gravity="center"
+					android:textSize="20sp"
+					>
+				</TextView>
+		</LinearLayout>
+
+		<LinearLayout android:id="@+id/dvbscanscanfreqinfo_layout"
+			android:layout_width="fill_parent" 
+			android:layout_height="50px"
+			android:layout_marginTop = "5px">		 
+				<TextView 
+					android:id="@+id/dvbscan_scanfreqinfo"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:gravity="center"
+					android:textSize="24sp"
+					>
+				</TextView>
+		</LinearLayout>
+	    <LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="50px"
+				android:layout_marginRight="20px"
+				android:layout_marginLeft="20px"
+				android:orientation="vertical">
+				<RelativeLayout
+					android:id="@+id/inforbar_line" 
+					android:layout_width="fill_parent"
+					android:layout_height="2px"
+					android:background="@drawable/line"
+					>	
+				</RelativeLayout>
+		     
+			     <LinearLayout
+		    		android:layout_width="match_parent"
+		    		android:layout_height="match_parent"
+		    		android:orientation="horizontal"
+		    		android:gravity="center"
+		    		android:layout_marginBottom="8px">
+				
+		    		<ImageView 
+		    			android:layout_width="wrap_content"
+		    			android:layout_height="wrap_content"
+						android:background="@drawable/move"
+		    		>
+		    		</ImageView>
+		    		<TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:text="@string/help_info_move"
+				        android:textColor="#FFFFFFFF"
+				        android:textSize="20sp" 
+				        android:layout_marginRight="30px"
+				        />
+		    		<ImageView 
+		    			android:layout_width="wrap_content"
+		    			android:layout_height="wrap_content"
+						android:background="@drawable/enter"
+		    		></ImageView>
+		    		<TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:text="@string/help_info_select"
+				        android:textColor="#FFFFFFFF"
+				        android:textSize="20sp"
+				        android:layout_marginRight="30px"
+				        />
+		    		<ImageView 
+		    			android:layout_width="wrap_content"
+		    			android:layout_height="wrap_content"
+						android:background="@drawable/return_icon"
+		    		></ImageView>
+		    		<TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:text="@string/help_info_return"
+				        android:textColor="#FFFFFFFF"
+				        android:textSize="20sp" />
+				</LinearLayout>
+			</LinearLayout>	
+	 </LinearLayout>
+ </RelativeLayout>
 
