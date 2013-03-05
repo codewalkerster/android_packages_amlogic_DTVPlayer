@@ -42,11 +42,13 @@ public class DTVScanDvbsUnicableConfig extends DTVActivity{
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
+		super.onConnected();
 		DTVScanDvbsUnicableConfig_UIInit();
 	}
 
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
+		super.onDisconnected();
 	}
 
 	public void onMessage(TVMessage msg){

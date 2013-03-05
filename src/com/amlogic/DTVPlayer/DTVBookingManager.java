@@ -44,11 +44,13 @@ public class DTVBookingManager extends DTVActivity{
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
+		super.onConnected();
 		DTVBookingManagerUIInit();
 	}
 
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
+		super.onDisconnected();
 	}
 
 	public void onMessage(TVMessage msg){

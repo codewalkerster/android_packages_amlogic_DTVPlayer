@@ -52,6 +52,7 @@ public class DTVPlayer extends DTVActivity{
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
+		super.onConnected();
 		//set input source on DTV
 		//setInputSource(TVConst.SourceInput.SOURCE_DTV);
 		if(isHavePragram()==false){ 
@@ -92,6 +93,7 @@ public class DTVPlayer extends DTVActivity{
 
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
+		super.onDisconnected();
 	}
 
 	public void onMessage(TVMessage msg){

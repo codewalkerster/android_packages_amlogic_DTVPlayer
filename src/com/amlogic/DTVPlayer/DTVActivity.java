@@ -42,6 +42,8 @@ abstract public class DTVActivity extends TVActivity{
 	private TVProgram TVProgram=null;
 	private static int dtvactivity_actived_num = 0;
 	//private static int dtvlayout_gravity = Gravity.CENTER;
+	private boolean connected = false;
+	private boolean delay_setinput_source = false;
 	
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
@@ -51,6 +53,21 @@ abstract public class DTVActivity extends TVActivity{
 		WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+	public void onConnected(){
+		Log.d(TAG, "connected");
+		connected = true;
+		if(delay_setinput_source){
+			delay_setinput_source = false;			
+			setInputSource(TVConst.SourceInput.SOURCE_DTV);
+		}
+	}
+
+	public void onDisconnected(){
+		Log.d(TAG, "disconnected");
+		connected = false;
+		delay_setinput_source = false;
+	}	
+	
 	@Override
 	public void setContentView (int layoutResID){
 		//super.setContentView(layoutResID);
@@ -214,7 +231,14 @@ abstract public class DTVActivity extends TVActivity{
 				sendBroadcast(exitMusicIntent);
 
 				/*set vpath*/
-				setInputSource(TVConst.SourceInput.SOURCE_DTV);
+				if(connected){
+					setInputSource(TVConst.SourceInput.SOURCE_DTV);
+				}
+				else{
+					delay_setinput_source = true;
+				}
+
+				Log.d(TAG, "DTVActivity_ActivedStateManage actived stop music set vpath");
 			}
 
 			dtvactivity_actived_num++;

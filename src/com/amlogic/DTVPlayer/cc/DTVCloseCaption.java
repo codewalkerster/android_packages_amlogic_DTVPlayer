@@ -45,11 +45,13 @@ public class DTVCloseCaption extends DTVActivity{
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
+		super.onConnected();
 		DTVCloseCaptionUIInit();
 	}
 
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
+		super.onDisconnected();
 	}
 
 	public void onMessage(TVMessage msg){

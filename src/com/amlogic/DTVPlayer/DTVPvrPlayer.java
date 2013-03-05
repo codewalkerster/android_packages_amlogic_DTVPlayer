@@ -46,6 +46,7 @@ public class DTVPvrPlayer extends DTVActivity{
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
+		super.onConnected();
 		startPlayback(record_id);
 		pvrHandler.postDelayed(pvrTimer, 1000);
 	}
@@ -75,7 +76,7 @@ public class DTVPvrPlayer extends DTVActivity{
 
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
-
+		super.onDisconnected();
 		
 	}
 

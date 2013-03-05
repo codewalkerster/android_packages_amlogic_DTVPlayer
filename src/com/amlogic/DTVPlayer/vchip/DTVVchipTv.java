@@ -99,11 +99,11 @@ public class DTVVchipTv extends DTVActivity{
 	}
 	
 	public void onConnected() {
-		
+		super.onConnected();
 	}
 
 	public void onDisconnected() {
-		
+		super.onDisconnected();
 	}
 
 	public void onMessage(TVMessage m) {
