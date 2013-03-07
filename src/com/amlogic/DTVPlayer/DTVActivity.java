@@ -80,43 +80,43 @@ abstract public class DTVActivity extends TVActivity{
 		
 		Log.d(TAG, "setContentView " + outputmode);
 		
-		if(outputmode.equals("1080p") == true){
+		if(outputmode.contains("1080p") == true){
 			x = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputx"));
 			y = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputy"));
 			w = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputwidth"));
 			h = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputheight"));
 		}
-		else if(outputmode.equals("1080i") == true){
+		else if(outputmode.contains("1080i") == true){
 			x = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputx"));
 			y = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputy"));
 			w = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputwidth"));
 			h = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputheight"));		
 		}
-		else if(outputmode.equals("720p") == true){
+		else if(outputmode.contains("720p") == true){
 			x = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputx"));
 			y = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputy"));
 			w = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputwidth"));
 			h = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputheight"));		
 		}
-		else if(outputmode.equals("576p") == true){
+		else if(outputmode.contains("576p") == true){
 			x = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputx"));
 			y = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputy"));
 			w = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputwidth"));
 			h = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputheight"));			
 		}
-		else if(outputmode.equals("576i") == true){
+		else if(outputmode.contains("576i") == true){
 			x = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputx"));
 			y = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputy"));
 			w = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputwidth"));
 			h = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputheight"));					
 		}
-		else if(outputmode.equals("480p") == true){
+		else if(outputmode.contains("480p") == true){
 			x = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputx"));
 			y = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputy"));
 			w = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputwidth"));
 			h = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputheight"));			
 		}
-		else if(outputmode.equals("480i") == true){
+		else if(outputmode.contains("480i") == true){
 			x = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputx"));
 			y = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputy"));
 			w = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputwidth"));
@@ -168,6 +168,7 @@ abstract public class DTVActivity extends TVActivity{
 
 		if(x == 0 && y == 0 && w == 0 && h == 0){
 			Log.e(TAG, "reproduction error");
+			super.setContentView(layoutResID);
 		}
 		else{
 
