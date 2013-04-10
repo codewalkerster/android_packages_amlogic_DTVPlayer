@@ -1,4 +1,4 @@
-package com.amlogic.DTVPlayer;
+																package com.amlogic.DTVPlayer;
 
 import android.util.Log;
 import android.os.Bundle;
