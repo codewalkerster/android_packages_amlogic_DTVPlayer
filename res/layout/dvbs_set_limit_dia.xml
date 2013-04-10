@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+	<ListView
+		android:id="@+id/set_limit_list"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"					     				     
+		android:scrollbars="vertical"/> 		
+
+	<LinearLayout
+	    	android:orientation="vertical"
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="fill_parent"
+	    	android:layout_marginTop="20px">
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent" 
+			android:layout_marginLeft="60px"
+			android:layout_marginRight="20dp">
+
+			<TextView
+				android:layout_width="200px"
+				android:textSize="20sp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:singleLine="true"
+				android:text="@string/ts_frequency"/>
+			<TextView android:id="@+id/edittext_frequency"
+				android:layout_width="300px"
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:textSize="20sp"/>
+		</LinearLayout>
+
+		
+		<LinearLayout
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="fill_parent" android:layout_marginLeft="60px"
+			android:layout_marginRight="20dp">
+			<TextView
+				android:layout_width="200px"
+				android:textSize="20sp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:singleLine="true"
+				android:text="@string/ts_polarity"/>
+
+			<TextView
+				android:id="@+id/polarization"
+				android:layout_width="80px"
+				android:layout_height="wrap_content"
+				android:textSize="20sp"
+			></TextView>
+
+		</LinearLayout>
+	    
+		<LinearLayout
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="fill_parent" android:layout_marginLeft="60px"
+			android:layout_marginRight="20dp">
+			<TextView
+				android:layout_width="200px"
+				android:textSize="20sp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:singleLine="true"
+				android:text="@string/ts_symbol"/>
+			<TextView android:id="@+id/edittext_symbol"
+				android:layout_width="300px"
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:textSize="20sp"/>
+		</LinearLayout>
+
+		<LinearLayout
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="fill_parent" android:layout_marginLeft="60px"
+			android:layout_marginRight="20dp">
+			<TextView
+				android:layout_width="200px"
+				android:textSize="20sp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:singleLine="true"
+				android:text="@string/lock_status"/>
+
+			 <CheckBox
+			 	android:id="@+id/checkStatus"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				/> 
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
+
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:layout_marginLeft="60px"
+				android:layout_marginRight="20dp">
+				 <TextView
+				 	android:text="@string/strength"
+				 	android:textSize="20sp"
+					android:layout_width="110px" 
+					android:layout_height="wrap_content"
+					android:layout_weight="1"/>
+				<ProgressBar
+					android:id="@+id/ProgressBarSNR" 
+					android:layout_gravity="center_vertical"
+					android:layout_width="wrap_content" 
+					android:layout_height="16px"
+					style="?android:attr/progressBarStyleHorizontal" 
+					android:layout_weight="10"/>
+				<TextView  
+					android:id="@+id/snr_value"
+					android:singleLine="true"
+					android:textSize="20sp"
+					android:layout_width="70px" 
+					android:layout_height="wrap_content"
+					android:paddingLeft="30px"
+					android:layout_weight="1"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:layout_marginLeft="60px"
+				android:layout_marginRight="20dp">
+				 <TextView  
+				 	android:text="@string/quality"
+				 	android:textSize="20sp"
+					android:layout_width="110px" 
+					android:layout_height="wrap_content"
+					android:layout_weight="1"/>
+				<ProgressBar
+					android:id="@+id/ProgressBarAGC" 
+					android:layout_gravity="center_vertical"
+					android:layout_width="wrap_content" 
+					android:layout_height="16px"
+					style="?android:attr/progressBarStyleHorizontal"
+					android:layout_weight="10"/>
+				<TextView
+					android:id="@+id/agc_value"
+					android:singleLine="true"
+					android:layout_width="70px"
+					android:textSize="20sp"
+					android:layout_height="wrap_content"
+					android:paddingLeft="30px"
+					android:layout_weight="1"/>
+			</LinearLayout>
+			<!--
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:layout_marginLeft="60px"
+				android:layout_marginRight="20dp">
+				 <TextView  
+				 	android:text="@string/ber"
+				 	android:textSize="20sp"
+					android:layout_width="70px" 
+					android:layout_height="wrap_content"
+					android:layout_weight="1"/>
+				<ProgressBar
+					android:id="@+id/ProgressBarBER" 
+					android:layout_gravity="center_vertical"
+					android:layout_width="wrap_content" 
+					android:layout_height="16px"
+					style="?android:attr/progressBarStyleHorizontal"
+					android:layout_weight="10"/>
+				<TextView  
+					android:id="@+id/ber_value"
+					android:singleLine="true"
+					android:textSize="20sp"
+					android:layout_width="70px" 
+					android:layout_height="wrap_content"
+					android:paddingLeft="30px"
+					android:layout_weight="1"/>
+			</LinearLayout>
+			-->
+	    	</LinearLayout>
+	</LinearLayout>
+</LinearLayout>
+ 
