@@ -1811,7 +1811,7 @@ public class DTVPlayer extends DTVActivity{
 					tail.setText(R.string.dtvplayer_pvr_min);
 
 					final EditText mEditText = (EditText)window.findViewById(R.id.edit);
-					mEditText.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(5)});
+					mEditText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(5)});
 					mEditText.setText(null);
 					Button no = (Button)window.findViewById(R.id.no);
 					no.setText(R.string.no);

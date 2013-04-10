@@ -543,7 +543,7 @@ public class DTVChannelList extends DTVActivity{
 					EditText editText;
 					
 					editText = (EditText)window.findViewById(R.id.edittext_time_duration);
-					editText.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(5)});
+					editText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(5)});
 
 					dp=(DatePicker)window.findViewById(R.id.dPicker);
 					pvr_time_init();

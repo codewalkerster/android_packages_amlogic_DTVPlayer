@@ -1,6 +1,5 @@
 package com.amlogic.DTVPlayer;
 
-
 public class DbTransponder{
 
 	private int scan_id;

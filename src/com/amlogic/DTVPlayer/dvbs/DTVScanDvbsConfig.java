@@ -1,5 +1,7 @@
 package com.amlogic.DTVPlayer;
 
+import java.util.List;
+import java.util.ArrayList;
 import android.util.Log;
 import android.os.Bundle;
 import com.amlogic.tvutil.TVMessage;
@@ -7,107 +9,37 @@ import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVProgram;
 import com.amlogic.tvutil.TVProgramNumber;
 import com.amlogic.tvactivity.TVActivity;
+import com.amlogic.tvutil.TVChannel;
 import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
+import com.amlogic.tvutil.TVEvent;
+import com.amlogic.tvutil.DTVPlaybackParams;
+import com.amlogic.tvutil.DTVRecordParams;
+import com.amlogic.tvutil.TVSatellite;
+import com.amlogic.tvutil.TVSatelliteParams;
 
-import java.util.*;
+import android.text.*;
+import android.text.method.*;
 import android.view.*;
 import android.view.View.*;
 import android.view.animation.*;
 import android.widget.*;
-import android.widget.AbsListView.OnScrollListener;
 import android.app.*;
 import android.content.*;
+import android.os.*;
 import android.graphics.*;
-import android.text.*;
-import android.text.method.*;
-import java.lang.reflect.Field;
-
-import java.util.ArrayList;
-import java.util.List;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.CheckBox;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.CompoundButton;
-import android.view.LayoutInflater;
-import android.widget.ListView;
-import android.view.ViewGroup;
-import android.view.View;
-import android.view.KeyEvent;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.util.DisplayMetrics;
-
-import android.widget.AdapterView;
+import android.graphics.Color;
+import android.content.*;
+import android.util.*;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.view.View.OnLongClickListener;  
-import android.widget.LinearLayout;
+import android.view.View.OnLongClickListener; 
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 
-import android.view.Display;
-
-import android.view.Window;
-import android.view.WindowManager;
-import android.media.AudioManager;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation.AnimationListener;
-
-import java.io.IOException;
-import java.io.File;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.util.Log;
-import android.database.sqlite.SQLiteDatabase;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.text.InputFilter;
-import android.view.View.OnKeyListener;
-import android.view.View.OnFocusChangeListener;
-import android.widget.ProgressBar;
-
-import android.os.Handler;
-import android.os.Message;
-import android.os.Looper;
-import android.text.TextUtils;
-
-import android.widget.Toast;
-import android.view.Gravity;
-import android.widget.RelativeLayout;
-
-import java.io.InputStream;
-import java.io.FileInputStream;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NameList;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import com.amlogic.widget.PasswordDialog;
-import com.amlogic.widget.SureDialog;
-import com.amlogic.widget.SingleChoiseDialog;
-import com.amlogic.widget.MutipleChoiseDialog;
-import com.amlogic.widget.PasswordSettingDialog;
-
-public class DTVScanDvbsScanConfig  extends DTVActivity {
+public class DTVScanDvbsConfig  extends DTVActivity {
 	/** Called when the activity is first created. */
-	private final static String TAG = "DTVScanDvbsScanConfig";
+	private final static String TAG = "DTVScanDvbsConfig";
 	private static  SharedPreferences mLast = null;
 	private SatAdapter mySatAdapter=null;
 	private TsAdapter myTsAdapter=null;
@@ -136,32 +68,28 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 	private RelativeLayout bufferLayout;
 	static Context mContext=null;
 
-	public void onCreate(Bundle savedInstanceState){
-		Log.d(TAG, "onCreate");
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dish_setup_main);	
-		DTVScanDvbsScanConfigUIInit();
-	}
-
 	@Override
-	protected void onStop(){
-		Log.d(TAG, "onStop");
-		super.onStop();
+	public void onCreate(Bundle savedInstanceState) {
+		Log.d(TAG,"onCreate");
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.dish_setup_main);
+		mContext=this;
+		mTVSatellite = new TVSatellite();
 	}
 	
 	public void onConnected(){
 		Log.d(TAG, "connected");
-		
-		/*
-		DVBControl mControl = new DVBControl("/sys/class/video/screen_mode");
-		mControl.setValue(Integer.toString(0));
-		
-		mLockDvb.stopPlaying(true);	
-		*/
+		super.onConnected();
+		DTVScanDvbsConfig_UIInit();
+
+		//DVBControl mControl = new DVBControl("/sys/class/video/screen_mode");
+		//mControl.setValue(Integer.toString(0));		
+		//mLockDvb.stopPlaying(true);	
 	}
 
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
+		super.onDisconnected();
 	}
 
 	public void onMessage(TVMessage msg){
@@ -186,33 +114,32 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		}
 	}
 
-	private void DTVScanDvbsScanConfigUIInit() {
-		mContext=this;
-		
+	private void DTVScanDvbsConfig_UIInit(){
 		sat_list = (ListView)findViewById(R.id.sat_list);
+
 		tsInfoTitleLayout = (LinearLayout)findViewById(R.id.ts_info_title_layout);
 		satInfoTitleLayout = (LinearLayout)findViewById(R.id.sat_info_title_layout);
 
 		sat_list.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 		public void onItemSelected(AdapterView<?> parent, View view,
-			int position, long id) {
-				Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
+		int position, long id) {
+			Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
 
-				list_cur_pos = position;
-				if(ListStatus==0){
-					gobal_ts_cur_pos = 0;
-					gobal_sat_cur_pos = list_cur_pos;
-					TextView sat_name = (TextView) findViewById(R.id.sat_name);
-					sat_name.setTextColor(Color.YELLOW);
-					sat_name.setText(ScanSatAndtsInfoList.get(list_cur_pos).getName());
-					if(myLnbSetAdapter!=null)
-						myLnbSetAdapter.notifyDataSetChanged();
-				}	
-			}
+			list_cur_pos = position;
+			if(ListStatus==0){
+				gobal_ts_cur_pos = 0;
+				gobal_sat_cur_pos = list_cur_pos;
+				TextView sat_name = (TextView) findViewById(R.id.sat_name);
+				sat_name.setTextColor(Color.YELLOW);
+				sat_name.setText(ScanSatAndtsInfoList.get(list_cur_pos).getName());
+				if(myLnbSetAdapter!=null)
+					myLnbSetAdapter.notifyDataSetChanged();
+			}	
+		}
 
-			public void onNothingSelected(AdapterView<?> parent) {
-			}
+		public void onNothingSelected(AdapterView<?> parent) {
+		}
 		});
 
 		sat_list.setOnItemClickListener(new AdapterView.OnItemClickListener(){
@@ -220,9 +147,6 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 					int arg2, long arg3) {
 				// TODO Auto-generated method stub
 				System.out.println("onItemSelected arg0 " + arg0);
-				System.out.println("onItemSelected arg1 " + arg1);
-				System.out.println("onItemSelected arg2 " + arg2);
-				System.out.println("onItemSelected arg3 " + arg3);
 				ImageView image_cur = (ImageView)arg1.findViewById(R.id.icon);
 				if(ListStatus ==0){
 					
@@ -297,7 +221,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 			}	        	   
 	        });
 
-
+		/*get data*/
 		ScanSatAndtsInfoList = getScanListSatAndTsDataFromBuildDB();
  		/*
 		new Thread(){
@@ -322,11 +246,10 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		show_no_satellites_info();
 		
 		if (null == mySatAdapter){
-			mySatAdapter = new SatAdapter(DTVScanDvbsScanConfig.this,ScanSatAndtsInfoList);
+			mySatAdapter = new SatAdapter(DTVScanDvbsConfig.this,ScanSatAndtsInfoList);
 		}
 
-		sat_list.setOnFocusChangeListener(new OnFocusChangeListener()
-		{
+		sat_list.setOnFocusChangeListener(new OnFocusChangeListener(){
 			public void onFocusChange(View v, boolean isFocused)
 			{
 				// TODO Auto-generated method stub
@@ -351,27 +274,26 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 
 		//sat lnb
 		if (null == myLnbSetAdapter){
-			myLnbSetAdapter = new LnbSetAdapter(DTVScanDvbsScanConfig.this);
+			myLnbSetAdapter = new LnbSetAdapter(DTVScanDvbsConfig.this);
 		}
 		sat_lnb_list.setAdapter(myLnbSetAdapter);
 		myLnbSetAdapter.notifyDataSetChanged();
 
 		sat_lnb_list.setOnKeyListener( new OnKeyListener(){
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
-	        			
-					// TODO Auto-generated method stub
-					switch(keyCode)
-					{	
-						case KeyEvent.KEYCODE_DPAD_LEFT:
-							if(ScanSatAndtsInfoList.size()>0){
+				// TODO Auto-generated method stub
+				switch(keyCode)
+				{	
+					case KeyEvent.KEYCODE_DPAD_LEFT:
+						if(ScanSatAndtsInfoList.size()>0){
 
-								sat_list.requestFocus();
-								sat_list.setSelection(list_cur_pos);
-							}			
-							return true;
-					}
-					return false;
-	            }
+							sat_list.requestFocus();
+							sat_list.setSelection(list_cur_pos);
+						}			
+						return true;
+				}
+				return false;
+            }
 			
 		});	
 
@@ -380,7 +302,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		if(getTsData(gobal_sat_cur_pos)!=null){
 			if (null == myTsAdapter)
 		       {
-		    	   myTsAdapter = new TsAdapter(DTVScanDvbsScanConfig.this,tsInfoList);
+		    	   myTsAdapter = new TsAdapter(DTVScanDvbsConfig.this,tsInfoList);
 		       }   
 		}
 	
@@ -411,23 +333,26 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		TextView test = (TextView)this.findViewById(R.id.no_data_info);
 		
 		test.setOnLongClickListener (new OnLongClickListener () {
-				@Override
-				public boolean onLongClick(View v) {
-					Log.d(TAG,"long Click");
-					if(ListStatus ==0){
-						
-					}
-					else{
-						showTsAddDia();
-					}
-					return false;
+			@Override
+			public boolean onLongClick(View v) {
+				Log.d(TAG,"long Click");
+				if(ListStatus ==0){
+					showSatAddDia();
 				}
-			});
+				else{
+					showTsAddDia();
+				}
+				return false;
+			}
+		});
+	}
 
+	protected void onStart(){
+		super.onStart();
 	}
 
 	private void createMenuChoiceDialog(){
-
+	
 		String[] itemChoices = {getString(R.string.dish_setup_conf_button_des1_info),getString(R.string.dish_setup_conf_button_des2_info),getString(R.string.dish_setup_conf_button_des3_info),getString(R.string.dish_setup_conf_button_des4_info),getString(R.string.dish_setup_conf_button_des6_info),getString(R.string.dish_setup_conf_button_des8_info)};
 		String[] itemChoices1 = {getString(R.string.dish_setup_conf_button_des1_info),getString(R.string.dish_setup_conf_button_des2_info),getString(R.string.dish_setup_conf_button_des3_info),getString(R.string.dish_setup_conf_button_des4_info),getString(R.string.dish_setup_conf_button_des6_info),getString(R.string.dish_setup_conf_button_des8_info),getString(R.string.dish_setup_conf_button_des7_info)};
 		
@@ -442,7 +367,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 					ListStatus =1;
 					gobal_sat_cur_pos = list_cur_pos;
 					getTsData(gobal_sat_cur_pos);
-					myTsAdapter = new TsAdapter(DTVScanDvbsScanConfig.this,tsInfoList);
+					myTsAdapter = new TsAdapter(DTVScanDvbsConfig.this,tsInfoList);
 					sat_list.setAdapter(myTsAdapter);
 					myTsAdapter.notifyDataSetChanged();
 					sat_list.requestFocus();
@@ -521,26 +446,38 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 			mMenuChoiceDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
 
+	protected void onStop(){
+		Log.d(TAG,"onStop");	
+		
+		super.onStop();
+	}
 
+	protected void onDestory(){
+		super.onDestroy();
+	}
+
+	private void getUnicableSetting() {
+		
+	}
 	/*
 	private DVBUnicableSetting getUnicableSetting() {
-			DVBUnicableSetting set = null;
-			
-			if (mLockDvb != null) {
-				set = new DVBUnicableSetting();
-				mLockDvb.getUnicableSetting(set);
-			}
-			return set;
+		DVBUnicableSetting set = null;
+		
+		if (mLockDvb != null) {
+			set = new DVBUnicableSetting();
+			mLockDvb.getUnicableSetting(set);
 		}
-
-	*/	
-		private boolean isUnicableOn() {
-			//DVBUnicableSetting setting = getUnicableSetting();
-			//if (setting != null && setting.getUnicableOn())
-				//return true;
-				
-			return false;
-		}	
+		return set;
+	}
+	*/
+	private boolean isUnicableOn() {
+		/*
+		DVBUnicableSetting setting = getUnicableSetting();
+		if (setting != null && setting.getUnicableOn())
+			return true;
+		*/	
+		return false;
+	}	
 	
 	private void show_no_satellites_info(){
 		 TextView no_data_info = (TextView)this.findViewById(R.id.no_data_info);
@@ -580,229 +517,158 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		//set_location.setVisibility(View.GONE);
 	}
 
+	private TVSatellite mTVSatellite=null;
+	private TVSatellite[] list_sat=null;
 	private  List<DbSat>  getScanListSatAndTsDataFromBuildDB(){
 		int n=0;
 		int numColumn=0;
 		int sat_no=0;
-		Cursor cur=null;
 
 		List<DbSat> DbSat = new ArrayList<DbSat>();
 
-		cur = this.getContentResolver().query(DVBClient.TABLE_SAT_PARA , null, 
-			null, null, "db_id");
-
-		n = cur.getCount();
-		if(n>0)			
-		{
-			cur.moveToFirst();
-			while (!cur.isAfterLast()) {
+	 	list_sat = mTVSatellite.tvSatelliteList(mContext);
+		if(list_sat!=null){
+			n = list_sat.size();
+			for(int i=0;i<n;i++){
 				DbSat satInfoNode = new DbSat();	
-
-				numColumn= cur.getColumnIndex("db_id");
-				int  scan_id = cur.getInt(numColumn);  				
+				TVSatellite temp = list_sat.get(i);
+				
+				int  scan_id = temp.getSatelliteId();				
 				//Log.d(TAG,"scan_id"+scan_id);			
 				satInfoNode.setScanId(scan_id);
-				
-				/*
-				numColumn = cur.getColumnIndex("sat_id");    	
-				int  sat_id = cur.getInt(numColumn);  				
-				Log.d(TAG,"sat_id"+sat_id);			
-				satInfoNode.setId(sat_id);	
-				*/
-				
-				//selected
-
-				numColumn = cur.getColumnIndex("sat_longitude");    
-				int  sat_longitude = cur.getInt(numColumn);  		
+							
+				int  sat_longitude = temp.tv_satparams.getSatelliteLongitude();		
 				//Log.d(TAG,"sat_longitude"+sat_longitude);			
 				satInfoNode.setPosition(sat_longitude);
-					
+				
+				//selected	
 				satInfoNode.setFlags(0);						
 
-				numColumn = cur.getColumnIndex("pos_num");    
-				int  pos_num = cur.getInt(numColumn);  		
+				int  pos_num = temp.tv_satparams.getMotorPositionNum();				
 				//Log.d(TAG,"pos_num"+pos_num);			
 				satInfoNode.setPositionNumber(pos_num);	
 
-				numColumn = cur.getColumnIndex("sat_name");    		
-				String name = cur.getString(numColumn);  		
+					
+				String name = temp.getSatelliteName();				
 				//Log.d(TAG,"sat_name"+name);				
 				satInfoNode.setName(name);		
 
-				numColumn = cur.getColumnIndex("lnb_num");
-				int lnb_no = cur.getInt(numColumn);
-				satInfoNode.setLnbNo(lnb_no);
-			
 				satInfoNode.setLNBType(0);	
 
-				numColumn = cur.getColumnIndex("lof_lo");    
-				int  lof_lo = cur.getInt(numColumn);  		
+				int  lof_lo = temp.tv_satparams.getSatelliteLnbLofLo();		
 				//Log.d(TAG,"lof_lo"+lof_lo);			
 				satInfoNode.setLoLOF(lof_lo);	
 
-				numColumn = cur.getColumnIndex("lof_hi");    
-				int  lof_hi= cur.getInt(numColumn);  		
+				int  lof_hi= temp.tv_satparams.getSatelliteLnbLofhi();			
 				//Log.d(TAG,"lof_hi"+lof_hi);			
 				satInfoNode.setHiLOF(lof_hi);
 
-
-				numColumn = cur.getColumnIndex("lof_threshold");    
-				int  lof_threshold= cur.getInt(numColumn);  		
+				int  lof_threshold= temp.tv_satparams.getSatelliteLnbLofthreadhold();			
 				//Log.d(TAG,"lof_threshold"+lof_threshold);			
 				satInfoNode.setLofThreshold(lof_threshold);
 				
-
-				numColumn = cur.getColumnIndex("voltage");    
-				int  voltage = cur.getInt(numColumn);  		
+				int  voltage = temp.tv_satparams.getSecVoltage();  		
 				//Log.d(TAG,"voltage"+voltage);			
 				satInfoNode.setLNBPwrOnOff(voltage);	
 
-				numColumn = cur.getColumnIndex("signal_22khz");    
-				int  signal_22khz = cur.getInt(numColumn);  		
+				int  signal_22khz = temp.tv_satparams.getSec22k();  	  		
 				//Log.d(TAG,"signal_22khz"+signal_22khz);			
 				satInfoNode.set22KOnOff(signal_22khz);	
 
-				numColumn = cur.getColumnIndex("tone_burst");    
-				int  tone_burst = cur.getInt(numColumn);  		
+				int  tone_burst = temp.tv_satparams.getSecToneBurst();  	 		
 				//Log.d(TAG,"tone_burst"+tone_burst);			
 				satInfoNode.setToneburstType(tone_burst);	
-
 				
-				numColumn = cur.getColumnIndex("diseqc_mode");    
-				int  diseqc_mode = cur.getInt(numColumn);  		
+				int  diseqc_mode = temp.tv_satparams.getDiseqcMode();  	
 				//Log.d(TAG,"diseqc_mode"+diseqc_mode);				
 				satInfoNode.setSwtPort(diseqc_mode);
 
-				numColumn = cur.getColumnIndex("committed_cmd");    
-				int  lnb_diseqc_mode_config10 = cur.getInt(numColumn);  		
+				int  lnb_diseqc_mode_config10 = temp.tv_satparams.getDiseqcCommitted();  	 		
 				//Log.d(TAG,"lnb_diseqc_mode_config1.0"+lnb_diseqc_mode_config10);			
 				satInfoNode.setLnbConfig10(lnb_diseqc_mode_config10);	
 
-				numColumn = cur.getColumnIndex("uncommitted_cmd");    
-				int  lnb_diseqc_mode_config11 = cur.getInt(numColumn);  		
+				int  lnb_diseqc_mode_config11 = temp.tv_satparams.getDiseqcUncommitted(); 		
 				//Log.d(TAG,"lnb_diseqc_mode_config1.1"+lnb_diseqc_mode_config11);			
 				satInfoNode.setLnbConfig11(lnb_diseqc_mode_config11);	
 			
 				satInfoNode.setMotMode(0);
 
-				numColumn = cur.getColumnIndex("motor_num");    
-				int  moto_no = cur.getInt(numColumn);  		
+				int  moto_no = temp.tv_satparams.getMotorNum(); 	 		
 				//Log.d(TAG,"motor_num"+moto_no);			
 				satInfoNode.setMotoNo(moto_no);
 
-				numColumn = cur.getColumnIndex("fast_diseqc");    
-				int  fast_diseqc = cur.getInt(numColumn);  		
+				int  fast_diseqc = temp.tv_satparams.getDiseqcFast();   		
 				//Log.d(TAG,"fast_diseqc"+fast_diseqc);			
 				satInfoNode.setFastDiseqc(fast_diseqc);
 
-				numColumn = cur.getColumnIndex("sequence_repeat");    
-				int  sequence_repeat = cur.getInt(numColumn);  		
+				int  sequence_repeat = temp.tv_satparams.getDiseqcSequenceRepeat();   		
 				//Log.d(TAG,"sequence_repeat"+sequence_repeat);			
 				satInfoNode.setDiseqcRepeat(sequence_repeat);
 
-				numColumn = cur.getColumnIndex("cmd_order");    
-				int  cmd_order = cur.getInt(numColumn);  		
+				int  cmd_order = temp.tv_satparams.getDiseqcOrder();    		
 				//Log.d(TAG,"diseqc_sequence"+cmd_order);			
 				satInfoNode.setDiseqcSequence(cmd_order);
 
-				numColumn = cur.getColumnIndex("longitude");    
-				double  longitude = cur.getDouble(numColumn);  		
+				double  longitude = temp.tv_satparams.getSatelliteRecLocalLongitude();   		
 				//Log.d(TAG,"longitude"+longitude);			
 				satInfoNode.setLongitude(longitude);
 
-				numColumn = cur.getColumnIndex("latitude");    
-				double  latitude = cur.getDouble(numColumn);  		
+				double  latitude = temp.tv_satparams.getSatelliteRecLocalLatitude();  	
 				//Log.d(TAG,"latitude"+latitude);			
 				satInfoNode.setLatitude(latitude);
 				
-				DbSat.add(satInfoNode);		
-		
-				cur.moveToNext();		
-			}			     
-		}			
-		else		
-		{		
-			return null;	
+				DbSat.add(satInfoNode);	
+			}
 		}
-		
-		cur.close();	
 		
 		return DbSat;		
 	}
 
-	static Cursor cur_ts=null;
+
+		
+	private TVChannel mTVChannel=null;
+	private TVChannel[] list_ts=null;	
 	static List<DbTransponder> tsInfoArrayList=null;
 	static List<DbTransponder> getScanTsList(DbSat satInfoNode){
 		int n=0,numColumn=0;
 		if(satInfoNode.transponder==null){
 			int id = satInfoNode.getScanId();
-			cur_ts = mContext.getContentResolver().query(DVBClient.TABLE_TS ,null,"db_sat_para_id="+ id,  
-		 null, "freq");
-				
-				//add transponder info to listnode
-				if(cur_ts==null){
-					cur_ts.close();						
-				}	
 
-				
-				n = cur_ts.getCount();	
-				if(n>0){	
-					tsInfoArrayList = new ArrayList<DbTransponder>();
-					cur_ts.moveToFirst();	
-					while (!cur_ts.isAfterLast()) {	
-						DbTransponder tsInfoNode = new DbTransponder();
-						
-						numColumn = cur_ts.getColumnIndex("db_sat_para_id");
-						int  ts_scan_id = cur_ts.getInt(numColumn);
-						//Log.d(TAG,"ts_scan_id"+ts_scan_id);
-						tsInfoNode.setScanId(ts_scan_id);
+			list_ts = mTVChannel.tvChannelList(mContext,id);
+			if(list_ts!=null){
+				n = list_ts.size();
+				tsInfoArrayList = new ArrayList<DbTransponder>();
+				for(int i=0;i<n;i++){
+					DbTransponder tsInfoNode = new DbTransponder();
+					TVChannel temp = list_ts.get(i);
 
-						
-						numColumn = cur_ts.getColumnIndex("db_id");
-						int  db_id = cur_ts.getInt(numColumn);
-						//Log.d(TAG,"db_id"+db_id);
-						tsInfoNode.setDbId(db_id);
-	
-						numColumn = cur_ts.getColumnIndex("ts_id");
-						int  ts_id = cur_ts.getInt(numColumn);
-						//Log.d(TAG,"ts_id"+ts_id);
-						tsInfoNode.setId(ts_id);
+					int  ts_scan_id = id;
+					//Log.d(TAG,"ts_scan_id"+ts_scan_id);
+					tsInfoNode.setScanId(ts_scan_id);
 
+					int  db_id = temp.getID();
+					//Log.d(TAG,"db_id"+db_id);
+					tsInfoNode.setDbId(db_id);
 
-						numColumn = cur_ts.getColumnIndex("freq");
-						int  frequency = cur_ts.getInt(numColumn);
-						//Log.d(TAG,"frequency"+frequency);
-						tsInfoNode.setFrequency(frequency);
+					int  ts_id =  temp.getDVBTSID();
+					//Log.d(TAG,"ts_id"+ts_id);
+					tsInfoNode.setId(ts_id);
 
-						numColumn = cur_ts.getColumnIndex("polar");
-						int  polarization = cur_ts.getInt(numColumn); 
-						//Log.d(TAG,"polarization"+polarization);
-						tsInfoNode.setPolarization(polarization);	
+					int  frequency = temp.params.getFrequency();
+					//Log.d(TAG,"frequency"+frequency);
+					tsInfoNode.setFrequency(frequency);
 
-						numColumn = cur_ts.getColumnIndex("symb");   
-						int symbol = cur_ts.getInt(numColumn);  			
-						//Log.d(TAG,"symbol"+symbol);	
-						tsInfoNode.setSymbol(symbol);
+					int  polarization = temp.params.getPolarisation();
+					//Log.d(TAG,"polarization"+polarization);
+					tsInfoNode.setPolarization(polarization);	
 
-						
-						/*
-						numColumn = cur_ts.getColumnIndex("fec_inner");   
-						int fec_inner = cur_ts.getInt(numColumn);  			
-						Log.d(TAG,"fec_inner"+fec_inner);	
-						tsInfoNode.setFecInner(fec_inner);
-						*/
-						
-						tsInfoArrayList.add(tsInfoNode);				
-						
-						cur_ts.moveToNext();					
-					}
-					satInfoNode.transponder=tsInfoArrayList;
-				}				
-				else	{					
-					n=0;	
-				}	
-				
-				cur_ts.close();	
+					int symbol = temp.params.getSymbolRate();
+					//Log.d(TAG,"symbol"+symbol);	
+					tsInfoNode.setSymbol(symbol);
+					
+					tsInfoArrayList.add(tsInfoNode);	
+				}
+			}	
 		}
 		
 		return satInfoNode.transponder;			
@@ -830,7 +696,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 					gobal_sat_cur_pos = list_cur_pos;
 					
 					getTsData(gobal_sat_cur_pos);
-					myTsAdapter = new TsAdapter(DTVScanDvbsScanConfig.this,tsInfoList);
+					myTsAdapter = new TsAdapter(DTVScanDvbsConfig.this,tsInfoList);
 					sat_list.setAdapter(myTsAdapter);
 					myTsAdapter.notifyDataSetChanged();
 					sat_list.requestFocus();
@@ -891,7 +757,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				if(mLockDvb!=null){
 					if(mLockDvb.isRecording()){
 						Toast toast = Toast.makeText(
-						DTVScanDvbsScanConfig.this, 
+						DTVScanDvbsConfig.this, 
 				    		R.string.pvr_is_running,
 				    		Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
@@ -940,7 +806,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				}
 				else{
 					returnSettings();
-					DTVScanDvbsScanConfig.this.finish();
+					DTVScanDvbsConfig.this.finish();
 				}	
 				break;
 		}
@@ -948,12 +814,10 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		return super.onKeyDown(keyCode, event);
 	}	
 
-	private void returnSettings()
-	{
-		
-			Intent intent = new Intent();
-			intent.setClass(DTVScanDvbsScanConfig.this, DvbsSettings.class);
-			startActivity(intent);
+	private void returnSettings(){
+		Intent intent = new Intent();
+		intent.setClass(DTVScanDvbsConfig.this, DvbsSettings.class);
+		startActivity(intent);
 	}
 
 
@@ -963,9 +827,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		else{
 		
 		}	
-	
 	}
-
 	
 	private DbTransponder  queryTsData(int cur_pos){
 		return getTsInfoByPostion(cur_pos);	 
@@ -991,6 +853,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				i++;
 			}
 			// sync to file database
+			/*
 			if(mLockDvb!=null){
 				mLockDvb.syncDatabase(DVBClient.TABLE_SAT_PARA, -1);
 				mLockDvb.syncDatabase(DVBClient.TABLE_TS, -1);
@@ -998,16 +861,40 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 			}
 			else
 				Log.d(TAG,">>>>>>>>>>>>>>>>DVBPlayer.getConnect().syncDatabase fail<<<<<<<<<<<<<<<");
+			*/
 		}
 		return selected_flag;
 	}
 
+	private TVSatellite[] removeSatFromList(TVSatellite[] a,int index){
+	    int len=a.length;
+	    if(index<0||index>=len){
+	        return a;
+	    }
+	    TVProgram[] result=new TVSatellite[len-1];
+	    System.arraycopy(a,0,result,0,index);
+	    System.arraycopy(a,index+1,result,index,len-index-1);
+	    return result;
+	}
+
+	private TVChannel[] removeTsFromList(TVChannel[] a,int index){
+	    int len=a.length;
+	    if(index<0||index>=len){
+	        return a;
+	    }
+	    TVProgram[] result=new TVChannel[len-1];
+	    System.arraycopy(a,0,result,0,index);
+	    System.arraycopy(a,index+1,result,index,len-index-1);
+	    return result;
+	}
+	
 	private void deleteSatData(int cur_pos, boolean sync_db) {
 		DbSat sat_node = getSatInfoByPostion(cur_pos);
 		
 		int scan_id = sat_node.getScanId();
 		Log.d(TAG,"scan_id"+scan_id);
 
+		/*
 		Cursor cur = this.getContentResolver().query(DVBClient.TABLE_RECORD, null,
 			"db_srv_id in (select db_id from srv_table where db_sat_para_id="+scan_id+") and status="
 			+DVBClient.REC_RECORDING, null, null);
@@ -1032,7 +919,15 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 			mLockDvb.syncDatabase(DVBClient.TABLE_TS, -1);
 			mLockDvb.syncDatabase(DVBClient.TABLE_SERVICE, -1);
 		}
-
+		*/
+		mTVSatellite.tvSatelliteDel(this,scan_id);
+		list_sat[cur_pos].tvSatelliteDel(this,scan_id);
+		list_sat = removeSatFromList(list_sat,cur_pos);
+		
+		/*
+		Log.d(TAG, "Current is recording , stop recording now ...");
+				mLockDvb.stopRecording();
+		*/		
 	}
 	
 	private void deleteSatData(int cur_pos){
@@ -1057,12 +952,14 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				i++;
 			}
 
+			/*
 			if(mLockDvb!=null){
 				mLockDvb.syncDatabase(DVBClient.TABLE_TS, -1);
 				mLockDvb.syncDatabase(DVBClient.TABLE_SERVICE, -1);
 			}	
 			else
 				Log.d(TAG,">>>>>>>>>>>>>>>>DVBPlayer.getConnect().syncDatabase fail<<<<<<<<<<<<<<<");
+			*/
 		}
 		return selected_flag;
 	}
@@ -1076,6 +973,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		DbSat sat_node = getSatInfoByPostion(cur_sat_pos);
 		int sat_id  = sat_node.getId();
 
+		/*
 		Cursor cur = this.getContentResolver().query(DVBClient.TABLE_RECORD, null,
 			"db_srv_id in (select db_id from srv_table where db_ts_id="+db_id+") and status="
 			+DVBClient.REC_RECORDING,null, null);
@@ -1099,6 +997,11 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 			mLockDvb.syncDatabase(DVBClient.TABLE_TS, -1);
 			mLockDvb.syncDatabase(DVBClient.TABLE_SERVICE, -1);
 		}	
+		*/
+		list_ts[cur_pos].tvChannelDel();
+		//list_ts[cur_pos].tvChannelDel(this,scan_id);
+		list_ts = removeTsFromList(list_ts,cur_pos);
+		
 	}
 
 	private void  deleteTsData(int cur_sat_pos, int cur_pos){
@@ -1107,7 +1010,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 
 	private boolean getConflictTp(int scan_id, int fre, int sym, int polarization){
 		int n=0;
-		
+		/*
 		Cursor cur_ts =this.getContentResolver().query(DVBClient.TABLE_TS, null,"db_sat_para_id="+scan_id+" and freq="+fre+" and symb="+sym +" and polar="+polarization, null, null);	
 		if(cur_ts!=null){
 			n = cur_ts.getCount();
@@ -1119,7 +1022,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				return false;
 			}										
 		}	
-		
+		*/
 		return false;
 	}
 
@@ -1171,25 +1074,28 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 	}
 
 	private void editSatData(int scan_id,ContentValues values){
+		/*
 		this.getContentResolver().update(DVBClient.TABLE_SAT_PARA, values,"db_id="+scan_id, null);
 		if(mLockDvb!=null)
 			mLockDvb.syncDatabase(DVBClient.TABLE_SAT_PARA, scan_id);
 		else
 			Log.d(TAG,">>>>>>>>>>>>>>>>DVBPlayer.getConnect().syncDatabase fail<<<<<<<<<<<<<<<");
+		*/
 	}
 
 	private void addSatData(ContentValues values, DbSat sat_node){
-		
+		/*
 		this.getContentResolver().insert(DVBClient.TABLE_SAT_PARA,  values);
 		if(mLockDvb!=null)
 			mLockDvb.syncDatabase(DVBClient.TABLE_SAT_PARA, -1);
 		else
 			Log.d(TAG,">>>>>>>>>>>>>>>>DVBPlayer.getConnect().syncDatabase fail<<<<<<<<<<<<<<<");
 		ScanSatAndtsInfoList.add(sat_node);
+		*/
 	}
 
 	private void editTsData(int cur_sat_pos, int cur_pos,ContentValues values){
-
+		/*
 		DbTransponder ts_node = getTsInfoByPostion(cur_pos);
 		int db_id  = ts_node.getDbId();
 		Log.d(TAG,"db_id"+db_id);
@@ -1202,10 +1108,11 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 			mLockDvb.syncDatabase(DVBClient.TABLE_TS, db_id);
 		else
 			Log.d(TAG,">>>>>>>>>>>>>>>>DVBPlayer.getConnect().syncDatabase fail<<<<<<<<<<<<<<<");
-
+		*/
 	}
 
 	private void addTsData(int cur_sat_pos, ContentValues values, DbTransponder ts){
+		/*
 		DbSat sat_node = getSatInfoByPostion(cur_sat_pos);
 		int scan_id = sat_node.getScanId();
 		
@@ -1235,6 +1142,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 			tsInfoList.add(ts);
 			sat_node.transponder = tsInfoList;
 		}	
+		*/
 	}
 
 	private void showDeleteDia(){
@@ -1246,7 +1154,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 			}
 		}
 		
-		builder = new AlertDialog.Builder(DTVScanDvbsScanConfig.this);
+		builder = new AlertDialog.Builder(DTVScanDvbsConfig.this);
 		builder.setMessage(R.string.sure_delete)
 		    .setCancelable(false)
 		    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -1423,7 +1331,6 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 			}
 		});
 
-		
 		checkboxSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             
 			@Override
@@ -1683,7 +1590,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				break;
 		}
 
-		builder = new AlertDialog.Builder(DTVScanDvbsScanConfig.this);	
+		builder = new AlertDialog.Builder(DTVScanDvbsConfig.this);	
 		builder.setTitle(R.string.dish_setup_lnb_power);
 		builder.setIcon( android.R.drawable.ic_dialog_info);
 		builder.setSingleChoiceItems(new String[] { "13V", "18V","Off","13v/18v"}, pos, new DialogInterface.OnClickListener() {
@@ -2510,7 +2417,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				if(edittext_angle0.getText().toString().equals("")||edittext_angle1.getText().toString().equals("")||edittext_latitude_angle0.getText().toString().equals("")||edittext_angle1.getText().toString().equals("")){
 					
 					Toast toast = Toast.makeText(
-					DTVScanDvbsScanConfig.this, 
+					DTVScanDvbsConfig.this, 
 					R.string.lo_la_input_invalid,
 					Toast.LENGTH_SHORT);
 					toast.setGravity(Gravity.CENTER, 0, 0);
@@ -2531,7 +2438,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				int temp=Integer.parseInt(edittext_angle0.getText().toString())*10+Integer.parseInt(edittext_angle1.getText().toString());
 				if(temp>1800){
 					Toast toast = Toast.makeText(
-					DTVScanDvbsScanConfig.this, 
+					DTVScanDvbsConfig.this, 
 					R.string.lo_la_input_invalid,
 					Toast.LENGTH_SHORT);
 					toast.setGravity(Gravity.CENTER, 0, 0);
@@ -2551,7 +2458,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				temp=Integer.parseInt(edittext_latitude_angle0.getText().toString())*10+Integer.parseInt(edittext_latitude_angle1.getText().toString());
 				if(temp>900){
 					Toast toast = Toast.makeText(
-					DTVScanDvbsScanConfig.this, 
+					DTVScanDvbsConfig.this, 
 					R.string.lo_la_input_invalid,
 					Toast.LENGTH_SHORT);
 					toast.setGravity(Gravity.CENTER, 0, 0);
@@ -2605,7 +2512,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				else 
 					values.put("latitude",0-latitude_direction);
 				
-				DTVScanDvbsScanConfig.this.getContentResolver().update(DVBClient.TABLE_SAT_PARA, values,null, null);
+				DTVScanDvbsConfig.this.getContentResolver().update(DVBClient.TABLE_SAT_PARA, values,null, null);
 				
 				if(mLockDvb!=null)
 					mLockDvb.syncDatabase(DVBClient.TABLE_SAT_PARA, -1);
@@ -2849,7 +2756,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 	private void showSureDia(){
 		
 		
-		builder = new AlertDialog.Builder(DTVScanDvbsScanConfig.this);
+		builder = new AlertDialog.Builder(DTVScanDvbsConfig.this);
 		builder.setMessage(R.string.sure)
 		    .setCancelable(true)
 		    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -2989,35 +2896,35 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 					Log.d(TAG,"------------------------getFrontEndInfoThread---------------");
 					switch (msg.what) { 
 						case ROTOR_CMD_STOP_MOVING: {													
-								mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STOP_MOVING,null);						
+								//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STOP_MOVING,null);						
 							}
 							break;
 						case ROTOR_CMD_DISABLE_LIMIT:
 							{							
-								mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_DISABLE_LIMIT,null);
+								//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_DISABLE_LIMIT,null);
 							}
 							break;
 						case ROTOR_CMD_SET_ELIMIT:	//!< para: None
 							{	Log.d(TAG,">>>>>>>ROTOR_CMD_SET_ELIMIT<<<<<<");						
-								mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_SET_ELIMIT,null);
+								//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_SET_ELIMIT,null);
 							}
 							break;
 						case ROTOR_CMD_SET_WLIMIT:	//!< para: None
 							{							
 								
-								Log.d(TAG,">>>>>>>ROTOR_CMD_SET_WLIMIT<<<<<<");
+								//Log.d(TAG,">>>>>>>ROTOR_CMD_SET_WLIMIT<<<<<<");
 								mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_SET_WLIMIT,null);
 							}
 							break;
 						case ROTOR_CMD_MOVE_EAST:	//!< para: "move_unit"
-							mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_MOVE_EAST,(String)msg.obj);
+							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_MOVE_EAST,(String)msg.obj);
 							break;
 						case ROTOR_CMD_MOVE_WEST:	//!< para: "move_unit"
-							mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_MOVE_WEST,(String)msg.obj);
+							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_MOVE_WEST,(String)msg.obj);
 							break;
 						case ROTOR_CMD_STORE_POSITION:	//!< para: "position_number"
 							{							
-								mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STORE_POSITION,(String)msg.obj);
+								//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STORE_POSITION,(String)msg.obj);
 							}
 							break;
 						
@@ -3028,11 +2935,12 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 							break;
 						case ROTOR_CMD_GOTOX	://!< para: "position_number"
 							{							
-								mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_GOTOX,(String)msg.obj);
+								//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_GOTOX,(String)msg.obj);
 							}
 							break;	
 						case 50:
-							{							
+							{		
+								/*
 								DVBFrontendSignalInfo info = new DVBFrontendSignalInfo();
 
 								if(mLockDvb!=null)
@@ -3046,31 +2954,32 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 			
 								EventHandler ha =new EventHandler(Looper.getMainLooper());  
 								ha.sendMessage(message);
+								*/
 							}
 							break;
 						case LNB_CONTROL_CMD_13V:
-							if(mLockDvb!=null)
-								mLockDvb.setvoltage(0);
+							//if(mLockDvb!=null)
+								//mLockDvb.setvoltage(0);
 							break;
 						case LNB_CONTROL_CMD_18V:
-							if(mLockDvb!=null)
-								mLockDvb.setvoltage(1);
+							//if(mLockDvb!=null)
+								//mLockDvb.setvoltage(1);
 							break;
 						case  LNB_CONTROL_CMD_POWER_OFF:
-							if(mLockDvb!=null)
-								mLockDvb.setvoltage(2);
+							//if(mLockDvb!=null)
+								//mLockDvb.setvoltage(2);
 							break;
 						case LNB_CONTROL_CMD_POWER_AUTO:
-							if(mLockDvb!=null)
-								mLockDvb.setvoltage(3);
+							//if(mLockDvb!=null)
+								//mLockDvb.setvoltage(3);
 							break;
 						case  LNB_CONTROL_CMD_22K_ON:
-							if(mLockDvb!=null)
-								mLockDvb.set22k(0);
+							//if(mLockDvb!=null)
+								//mLockDvb.set22k(0);
 							break;
 						case LNB_CONTROL_CMD_22K_OFF:
-							if(mLockDvb!=null)
-								mLockDvb.set22k(1);
+							//if(mLockDvb!=null)
+								//mLockDvb.set22k(1);
 							break;
 							
 						default:
@@ -3101,8 +3010,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 
 
 	/*
-	private void updataSignalInfo2(DVBFrontendSignalInfo info )
-	{
+	private void updataSignalInfo2(DVBFrontendSignalInfo info ){
 		
 		int ber = info.getBER();
 
@@ -3188,7 +3096,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		final DbTransponder TsInfo  = queryTsData(list_cur_pos);
 
 
-		DVBSatelliteParameter sat_para = new DVBSatelliteParameter();
+		TVSatelliteParams sat_para = new TVSatelliteParams();
 
 		//sat_para.lnb_num = SatInfo.getLnbNo();//lnb No.
 		sat_para.name = SatInfo.getName(); //satellite name
@@ -3209,25 +3117,25 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 
 
 		if(SatInfo.getSwtPort()==DbSat.LNB_DISEQC_12){
-			sat_para.diseqc_mode = DVBSatelliteParameter.DISEQC_MODE_V1_2;
+			sat_para.diseqc_mode = TVSatelliteParams.DISEQC_MODE_V1_2;
 			sat_para.position_number = SatInfo.getPositionNumber();
 		}
 		else if(SatInfo.getSwtPort()==DbSat.LNB_DISEQC_13){
-			sat_para.diseqc_mode = DVBSatelliteParameter.DISEQC_MODE_V1_3;
+			sat_para.diseqc_mode = TVSatelliteParams.DISEQC_MODE_V1_3;
 			sat_para.position_number = SatInfo.getPositionNumber();
 		}
 		
 		//!< longitude direction GO_EAST, GO_WEST
 		if(mLast.getString("longitude_direction","East").equals("East"))
-			sat_para.lo_direction = DVBSatelliteParameter.GO_EAST;
+			sat_para.lo_direction = TVSatelliteParams.GO_EAST;
 		else
-			sat_para.lo_direction = DVBSatelliteParameter.GO_WEST;
+			sat_para.lo_direction = TVSatelliteParams.GO_WEST;
 		
 		//!< latitude direction GO_NORTH, GO_SOUTH
 		if(mLast.getString("latitude_direction","North").equals("North"))
-			sat_para.la_direction = DVBSatelliteParameter.GO_NORTH;
+			sat_para.la_direction = TVSatelliteParams.GO_NORTH;
 		else
-			sat_para.la_direction = DVBSatelliteParameter.GO_SOUTH;
+			sat_para.la_direction = TVSatelliteParams.GO_SOUTH;
 
 		sat_para.longitude = mLast.getInt("longitude_angle",0);
 		sat_para.latitude = mLast.getInt("latitude_angle",0);
@@ -3383,7 +3291,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 						case KeyEvent.KEYCODE_DPAD_RIGHT:
 							if(SetLimitItemSelected==0){
 								Log.d(TAG,"KEYCODE_DPAD_RIGHT"+SetLimitItemSelected);
-								t.onSetupCmd(mLockDvb.ROTOR_CMD_MOVE_EAST,(Object)new String("0"));
+								//t.onSetupCmd(mLockDvb.ROTOR_CMD_MOVE_EAST,(Object)new String("0"));
 								text.setText("East");
 								hideMoveIcon(icon);
 								showMoveIcon(icon1);
@@ -3392,7 +3300,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 							}
 							else if(SetLimitItemSelected==1) {
 								Log.d(TAG,"KEYCODE_DPAD_RIGHT"+SetLimitItemSelected);
-								t.onSetupCmd(mLockDvb.ROTOR_CMD_MOVE_EAST,(Object)new String("1"));
+								//t.onSetupCmd(mLockDvb.ROTOR_CMD_MOVE_EAST,(Object)new String("1"));
 								text.setText("East");
 								showMoveIcon1(icon1,text);	
 								adapter.notifyDataSetChanged();
@@ -3402,7 +3310,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 						case KeyEvent.KEYCODE_DPAD_LEFT:
 							if(SetLimitItemSelected==0){
 								Log.d(TAG,"KEYCODE_DPAD_LEFT"+SetLimitItemSelected);
-								t.onSetupCmd(mLockDvb.ROTOR_CMD_MOVE_WEST,(Object)new String("0"));
+								//t.onSetupCmd(mLockDvb.ROTOR_CMD_MOVE_WEST,(Object)new String("0"));
 								text.setText("West");
 								hideMoveIcon(icon1);
 								showMoveIcon(icon);
@@ -3411,7 +3319,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 							}
 							else if(SetLimitItemSelected==1) {
 								Log.d(TAG,"KEYCODE_DPAD_LEFT"+SetLimitItemSelected);
-								t.onSetupCmd(mLockDvb.ROTOR_CMD_MOVE_WEST,(Object)new String("1"));
+								//t.onSetupCmd(mLockDvb.ROTOR_CMD_MOVE_WEST,(Object)new String("1"));
 								text.setText("West");
 								showMoveIcon1(icon,text);
 								adapter.notifyDataSetChanged();
@@ -3431,7 +3339,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 								hideMoveIcon(icon);
 								hideMoveIcon(icon1);
 								text.setText("Stop");
-								t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
+								//t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
 								
 							}
 							break;
@@ -3459,7 +3367,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 							timer_position_adjust_ts_signal_info_handler.removeCallbacks(timer_position_adjust_ts_signal_info_runnable);  
 							if(resetrotorstatuscache){
 								resetrotorstatuscache = false;
-								mLockDvb.resetrotorstatuscache();
+								//mLockDvb.resetrotorstatuscache();
 							}
 							}         
 							});	
@@ -3480,12 +3388,15 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 	public static class DefaultList{
 		int scan_id;
 		int sat_id;
-		TVSatelliteParams sat;
+		//DVBSatelliteParameter sat;
+		//ArrayList<DVBFrontEndPara> ts_list=null;
+		//TVSatelliteParams sat;
 		ArrayList<TVChannelParams> ts_list=null;
 	}
 	
 	private static ArrayList<DefaultList> default_list=null;
 
+	/*
 	private static  ArrayList<DefaultList> getScanParaList(){
 		if(default_list==null)
 			default_list = new ArrayList<DefaultList>();
@@ -3768,14 +3679,14 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		
 		return default_list;
 	}
-
+	*/
 
 	private boolean checkHasTpInfo(String mode){
 		int count = 0;
 		if(!(mode.equals("blind"))){
-			for(int i=0;i<DTVScanDvbsScanConfig.getDefaultList().size();i++){
-				if(DTVScanDvbsScanConfig.getDefaultList().get(i).ts_list!=null){
-					count = count + DTVScanDvbsScanConfig.getDefaultList().get(i).ts_list.size();
+			for(int i=0;i<DTVScanDvbsConfig.getDefaultList().size();i++){
+				if(DTVScanDvbsConfig.getDefaultList().get(i).ts_list!=null){
+					count = count + DTVScanDvbsConfig.getDefaultList().get(i).ts_list.size();
 				}
 				else 
 					continue;
@@ -3794,13 +3705,14 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 	private AlertDialog.Builder scanBuilder;
 	ScanModeAdapter mScanModeAdapter = null;
 	private void showScanConfigDia(){
+		/*
 		ContentValues values=null;
 		scanBuilder = new AlertDialog.Builder(this);
 	        scanBuilder.setTitle(R.string.scan_mode);
 		ListView mList = new ListView(this);
 
 		if(mScanModeAdapter==null)
-			mScanModeAdapter = new ScanModeAdapter(DTVScanDvbsScanConfig.this);
+			mScanModeAdapter = new ScanModeAdapter(DTVScanDvbsConfig.this);
 		mList.setAdapter(mScanModeAdapter);
 		mList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 				public void onItemClick(AdapterView<?> arg0, View arg1,
@@ -3851,7 +3763,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 							}
 							
 							break;
-						/*	
+							
 						case 2:
 							String service_mode = mLast.getString("scan_service_mode","all");
 							if(service_mode.equals("all")){
@@ -3867,7 +3779,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 								mLast.edit().putString ("scan_service_mode","all").commit();
 							}
 							break;
-						*/	
+						
 					}
 				}	
 		 });
@@ -3881,12 +3793,12 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				String crypted = mLast.getString("scan_mode_crypted","all");
 				String service_mode = mLast.getString("scan_service_mode","all");
 				Log.d(TAG,"@mode="+mode+"@crypted="+crypted+"@service_mode="+service_mode);
-				getScanParaList();
+				//getScanParaList();
 
 				if(checkHasTpInfo(mode)){
 				
 					Intent intent_scan= new Intent();
-					intent_scan.setClass(DTVScanDvbsScanConfig.this,DvbsScanResult.class);
+					intent_scan.setClass(DTVScanDvbsConfig.this,DvbsScanResult.class);
 
 					Bundle bundle_scan_dvbs = new Bundle();	
 					bundle_scan_dvbs.putString("scan_mode", mode);
@@ -3894,11 +3806,11 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 					
 					//startActivityForResult(intent_scan,1);	
 					startActivity(intent_scan);	
-					DTVScanDvbsScanConfig.this.finish();
+					DTVScanDvbsConfig.this.finish();
 				}
 				else{
 					Toast toast = Toast.makeText(
-						DTVScanDvbsScanConfig.this, 
+						DTVScanDvbsConfig.this, 
 				    		R.string.can_not_search,
 				    		Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
@@ -3934,15 +3846,12 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 
 		System.out.println("H = " + displayMetrics.heightPixels);
 		System.out.println("W = " + displayMetrics.widthPixels);
-
-		//alert.getWindow().setLayout(displayMetrics.widthPixels / 2, /*displayMetrics.heightPixels * 2 / 3*/-1);
-		
 		
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
 		lp.dimAmount=0.00f;
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-		
+		*/
 	}
 
 
@@ -4029,7 +3938,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				if(getConflictSat(sat_node.getScanId(),temp)){
 					
 					Toast toast = Toast.makeText(
-										DTVScanDvbsScanConfig.this, 
+										DTVScanDvbsConfig.this, 
 										"Satellite angle is already exist",
 										Toast.LENGTH_SHORT);
 									toast.setGravity(Gravity.CENTER, 0, 0);
@@ -4156,7 +4065,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				if(getConflictSat(sat_node.getScanId(),sat_node.getPosition())){
 					
 					Toast toast = Toast.makeText(
-										DTVScanDvbsScanConfig.this, 
+										DTVScanDvbsConfig.this, 
 										"Satellite angle is already exist",
 										Toast.LENGTH_SHORT);
 									toast.setGravity(Gravity.CENTER, 0, 0);
@@ -4323,7 +4232,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				if(getConflictTp(TsInfo.getScanId(),(Integer.parseInt(edittext_frequency.getText().toString())*1000),(Integer.parseInt(edittext_symbol.getText().toString())*1000),(polarization.getText().toString().equals("H"))==true?0:1)){
 					
 					Toast toast = Toast.makeText(
-										DTVScanDvbsScanConfig.this, 
+										DTVScanDvbsConfig.this, 
 										"Transponder is already exist",
 										Toast.LENGTH_SHORT);
 									toast.setGravity(Gravity.CENTER, 0, 0);
@@ -4604,7 +4513,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				
 				if (freq <= 0 || symb <= 0) {
 					Toast toast = Toast.makeText(
-								DTVScanDvbsScanConfig.this, 
+								DTVScanDvbsConfig.this, 
 								"Invalid value",
 								Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
@@ -4615,7 +4524,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				int scan_id = sat_node.getScanId();
 				if(getConflictTp(scan_id,TsInfo.getFrequency(),TsInfo.getSymbol(),TsInfo.getPolarization())){	
 					Toast toast = Toast.makeText(
-										DTVScanDvbsScanConfig.this, 
+										DTVScanDvbsConfig.this, 
 										"Transponder angle is already exist",
 										Toast.LENGTH_SHORT);
 									toast.setGravity(Gravity.CENTER, 0, 0);
@@ -4625,7 +4534,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 					addTsData(gobal_sat_cur_pos,values,TsInfo);
 					TsInfo.setDbId(getTsDbId(scan_id, freq, symb, polar));
 					getTsData(gobal_sat_cur_pos);
-					myTsAdapter = new TsAdapter(DTVScanDvbsScanConfig.this,tsInfoList);
+					myTsAdapter = new TsAdapter(DTVScanDvbsConfig.this,tsInfoList);
 					sat_list.setAdapter(myTsAdapter);
 					myTsAdapter.notifyDataSetChanged();
 					sat_list.setSelection(sat_list.getCount()-1);
@@ -4684,37 +4593,9 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		}
 
 		return tsInfoList;
-	 }
-
-	
-
-	private  DvbsDBHelper mLockDvbsHelper = null;
-	private DvbsDBHelper MyDBHelper(){
-		Context context;
-		if(mLockDvbsHelper==null){
-	           
-		     try{
-	                context = getApplicationContext();
-	                if(context.databaseList().length == 0){
-				mLockDvbsHelper = new DvbsDBHelper(getApplicationContext());
-				List<DbSat> DbSat = readDefaultXML();
-
-				if(DbSat!=null){
-					addSatInfoToDB(DbSat);
-				}		
-						
-	                }
-			else
-				mLockDvbsHelper = new DvbsDBHelper(getApplicationContext());
-	            }catch(Exception e){
-	            }	
-				
-		}
-
-		return mLockDvbsHelper;
 	}
 
-
+	/*
 	private int satellite_id=0;
 	private int transponder_id=0;
  	private List<DbSat> readDefaultXML() {
@@ -4803,7 +4684,9 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 				
 		return DbSat;
 	}
+	*/
 
+	/*
 	void addSatInfoToDB( List<DbSat> value){
 				
 		Log.d(TAG,"addSatInfoToDB==="+value.size());
@@ -4860,8 +4743,8 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 		db.close();
 		
 	  }
-	 public DbSat getSatInfoByPostion(int position)
-	    {
+	  */
+	public DbSat getSatInfoByPostion(int position){
 		if(ScanSatAndtsInfoList == null)
 			return null;
 		if (position >= ScanSatAndtsInfoList.size())
@@ -4874,18 +4757,15 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 
 	 class SatAdapter extends BaseAdapter{
     		private LayoutInflater mInflater;
-    		
-    		
     		private Context cont;
     		private List<DbSat> listItems;
     		private int selectItem;
     		
-
     		class ViewHolder {
 				ImageView icon;
 				TextView     sat_id;
 				TextView     direction;
-    				TextView     position;
+    			TextView     position;
 				TextView     name;		      		
 				TextView 	   band;
 				
@@ -5716,17 +5596,17 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 			super();
 			cont = context;
 
-			listItems = new String[2];
+			listItems = new String[3];
 			
 			listItems[0]= cont.getResources().getString(R.string.scan_mode);
 			listItems[1]= cont.getResources().getString(R.string.scan_crypted);
-			//listItems[2]= cont.getResources().getString(R.string.scan_service_type);
+			listItems[2]= cont.getResources().getString(R.string.scan_service_type);
 			
 			
 			mInflater=LayoutInflater.from(context);
 			mIcon1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.set_subtitle);
 			mIcon2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.set_picture_size);
-			//mIcon3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.set_audio_track);
+			mIcon3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.set_audio_track);
 		}
 
 		public int getCount() {
@@ -5811,7 +5691,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 					
 				}
 				break;
-			/*	
+				
 			case 2:
 				String service_mode = mLast.getString("scan_service_mode","all");
 				holder.icon.setImageBitmap(mIcon3);
@@ -5826,7 +5706,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 					holder.info.setText(R.string.scan_service_radio);		
 				}
 				break;
-			*/	
+				
 		}
 
 		return convertView;
@@ -5930,7 +5810,7 @@ public class DTVScanDvbsScanConfig  extends DTVActivity {
 	}
 
 	public static ArrayList<DefaultList> getDefaultList(){
-		return DTVScanDvbsScanConfig.default_list;
+		return DTVScanDvbsConfig.default_list;
 	}
 
 	@Override
