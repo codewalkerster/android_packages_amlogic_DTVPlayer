@@ -165,7 +165,7 @@ public class DTVScanDvbsUnicableConfig extends DTVActivity{
 		final int position = pos;
 		builder = new AlertDialog.Builder(this);	
 		final EditText editText = new EditText(this);
-		editText.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(4)});
+		editText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(4)});
 		//editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
 		builder.setTitle(R.string.edit_title);
