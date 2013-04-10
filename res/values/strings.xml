@@ -3,6 +3,7 @@
     <string name="app_name">DTVPlayer</string>
 
 	<!--gobal-->
+	<string name="sure">Are you sure?</string>
 	<string name="on">On</string>
     <string name="off">Off</string>
 	<string name="cancel">Cancel</string>

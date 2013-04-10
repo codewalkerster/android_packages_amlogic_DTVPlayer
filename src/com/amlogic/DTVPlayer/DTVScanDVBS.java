@@ -88,7 +88,7 @@ public class DTVScanDVBS extends DTVActivity{
 					case 0:
 						{	
 							Intent intent_dish_setup = new Intent();
-							intent_dish_setup.setClass(DTVScanDVBS.this, DTVScanDvbsScanConfig.class);
+							intent_dish_setup.setClass(DTVScanDVBS.this, DTVScanDvbsConfig.class);
  							startActivity(intent_dish_setup);
 							DTVScanDVBS.this.finish();
 						}	
