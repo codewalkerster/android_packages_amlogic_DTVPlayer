@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout    
+   android:layout_width="fill_parent"    
+   xmlns:android="http://schemas.android.com/apk/res/android"    
+   android:orientation="horizontal"  
+   android:layout_height="wrap_content"       
+   android:paddingBottom="3px"    
+   android:paddingLeft="10px">
+
+	  <ImageView android:id="@+id/icon"
+  			android:layout_width="30px"
+		 	 android:layout_height="30px"
+		 	 android:layout_gravity="center"
+		 	 android:layout_weight="1"/>
+	
+	 <TextView
+	  	android:id="@+id/ts_no"
+	  	android:layout_width="20px"
+	  	android:textSize="20sp"
+	  	android:layout_height="wrap_content"
+	  	android:gravity="center"
+	  	android:layout_gravity="center_vertical"
+	  	android:singleLine="true"
+	  	android:layout_weight="8"/>
+
+        <TextView
+	  	android:id="@+id/frequency"
+	  	android:layout_width="20px"
+	  	android:textSize="20sp"
+	  	android:layout_height="wrap_content"
+	  	android:gravity="center"
+	  	android:layout_gravity="center_vertical"
+	  	android:singleLine="true"
+	  	android:layout_weight="16"/>
+	 <TextView
+	  	android:id="@+id/polarity"
+	  	android:layout_width="20px"
+	  	android:textSize="20sp"
+	  	android:layout_height="wrap_content"
+	  	android:paddingLeft="30px"
+	  	android:gravity="center"
+	  	android:layout_gravity="center_vertical"
+	  	android:singleLine="true"
+	  	android:layout_weight="10"/>  
+	  <TextView
+	  	android:id="@+id/symbol"
+	  	android:layout_width="20px"
+	  	android:textSize="20sp"
+	  	android:layout_height="wrap_content"
+	  	android:gravity="center"
+	  	android:layout_gravity="center_vertical"
+	  	android:singleLine="true"
+	  	android:layout_weight="16"/> 
+	  
+</LinearLayout>  
