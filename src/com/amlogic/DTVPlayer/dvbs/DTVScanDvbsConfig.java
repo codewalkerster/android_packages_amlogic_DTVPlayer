@@ -638,9 +638,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	static List<DbTransponder> getScanTsList(DbSat satInfoNode){
 		int n=0,numColumn=0;
 		if(satInfoNode.transponder==null){
-			int id = satInfoNode.getScanId();
+			int sat_id = satInfoNode.getScanId();
 
-			list_ts = TVChannel.tvChannelList(mContext,id);
+			list_ts = TVChannel.tvChannelList(mContext,sat_id);
 			if(list_ts!=null){
 				n = list_ts.length;
 				tsInfoArrayList = new ArrayList<DbTransponder>();
@@ -648,7 +648,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					DbTransponder tsInfoNode = new DbTransponder();
 					TVChannel temp = list_ts[i];
 
-					int  ts_scan_id = id;
+					int  ts_scan_id = sat_id;
 					//Log.d(TAG,"ts_scan_id"+ts_scan_id);
 					tsInfoNode.setScanId(ts_scan_id);
 
@@ -851,7 +851,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				DbSat sat_temp = ScanSatAndtsInfoList.get(i);		
 				if(sat_temp.getSelectedFlag()){
 					//add to default list	
-					deleteSatData(i, false);
+					deleteSatData(i);
 					ScanSatAndtsInfoList.remove(i);
 					selected_flag=true;
 					i--;
@@ -885,50 +885,17 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	    return result;
 	}
 	
-	private void deleteSatData(int cur_pos, boolean sync_db) {
+	private void deleteSatData(int cur_pos){
 		DbSat sat_node = getSatInfoByPostion(cur_pos);
-		
 		int scan_id = sat_node.getScanId();
 		Log.d(TAG,"scan_id"+scan_id);
-
-		/*
-		Cursor cur = this.getContentResolver().query(DVBClient.TABLE_RECORD, null,
-			"db_srv_id in (select db_id from srv_table where db_sat_para_id="+scan_id+") and status="
-			+DVBClient.REC_RECORDING, null, null);
-		if (cur != null) {
-			if (cur.getCount() > 0) {
-				Log.d(TAG, "Current is recording , stop recording now ...");
-				mLockDvb.stopRecording();
-			}
-			cur.close();
-		}
-		this.getContentResolver().delete(DVBClient.TABLE_RECORD, 
-			"db_srv_id in (select db_id from srv_table where db_sat_para_id="+scan_id+") and status<"
-			+DVBClient.REC_RECORDING,null);
-		this.getContentResolver().delete(DVBClient.TABLE_GRP_MAP,
-			"db_srv_id in (select db_id from srv_table where db_sat_para_id="+scan_id+")",null);
-		this.getContentResolver().delete(DVBClient.TABLE_SAT_PARA, "db_id=" +  scan_id,null);
-		this.getContentResolver().delete(DVBClient.TABLE_TS, "db_sat_para_id=" +  scan_id,null);
-		this.getContentResolver().delete(DVBClient.TABLE_SERVICE,"db_sat_para_id="+scan_id,null);
-		if(mLockDvb!=null && sync_db){
-			mLockDvb.syncDatabase(DVBClient.TABLE_GRP_MAP, -1);
-			mLockDvb.syncDatabase(DVBClient.TABLE_SAT_PARA, -1);
-			mLockDvb.syncDatabase(DVBClient.TABLE_TS, -1);
-			mLockDvb.syncDatabase(DVBClient.TABLE_SERVICE, -1);
-		}
-		*/
 		mTVSatellite.tvSatelliteDel(this,scan_id);
 		list_sat[cur_pos].tvSatelliteDel(this,scan_id);
 		list_sat = removeSatFromList(list_sat,cur_pos);
-		
 		/*
 		Log.d(TAG, "Current is recording , stop recording now ...");
 				mLockDvb.stopRecording();
 		*/		
-	}
-	
-	private void deleteSatData(int cur_pos){
-		deleteSatData(cur_pos, true);
 	}
 
 	private boolean deleteSelectedTsData(int cur_sat_pos){
@@ -941,68 +908,28 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				DbTransponder ts_node = tsInfoList.get(i);			
 				if(ts_node.getSelectedFlag()){
 					//add to default list	
-					deleteTsData(cur_sat_pos,i, false);
+					deleteTsData(cur_sat_pos,i);
 					tsInfoList.remove(i);
 					selected_flag=true;
 					i--;
 				}
 				i++;
 			}
-
-			/*
-			if(mLockDvb!=null){
-				mLockDvb.syncDatabase(DVBClient.TABLE_TS, -1);
-				mLockDvb.syncDatabase(DVBClient.TABLE_SERVICE, -1);
-			}	
-			else
-				Log.d(TAG,">>>>>>>>>>>>>>>>DVBPlayer.getConnect().syncDatabase fail<<<<<<<<<<<<<<<");
-			*/
 		}
 		return selected_flag;
 	}
 
 	
-	private void  deleteTsData(int cur_sat_pos, int cur_pos, boolean sync_db){
+	private void  deleteTsData(int cur_sat_pos, int cur_pos){
 		DbTransponder ts_node = getTsInfoByPostion(cur_pos);
 		int db_id = ts_node.getDbId();
 		int scan_id = ts_node.getScanId();
 
 		DbSat sat_node = getSatInfoByPostion(cur_sat_pos);
-		int sat_id  = sat_node.getId();
+		int sat_id  = sat_node.getScanId();
 
-		/*
-		Cursor cur = this.getContentResolver().query(DVBClient.TABLE_RECORD, null,
-			"db_srv_id in (select db_id from srv_table where db_ts_id="+db_id+") and status="
-			+DVBClient.REC_RECORDING,null, null);
-		if (cur != null) {
-			if (cur.getCount() > 0) {
-				Log.d(TAG, "Current is recording , stop recording now ...");
-				mLockDvb.stopRecording();
-			}
-			cur.close();
-		}
-		
-		this.getContentResolver().delete(DVBClient.TABLE_RECORD, 
-			"db_srv_id in (select db_id from srv_table where db_ts_id="+db_id+") and status<"
-			+DVBClient.REC_RECORDING,null);
-		this.getContentResolver().delete(DVBClient.TABLE_GRP_MAP,
-			"db_srv_id in (select db_id from srv_table where db_ts_id="+db_id+")",null);	
-		this.getContentResolver().delete(DVBClient.TABLE_TS, "db_id="+db_id,null);
-		this.getContentResolver().delete(DVBClient.TABLE_SERVICE,"db_sat_para_id="+scan_id+" and db_ts_id="+db_id,null);
-		if(mLockDvb!=null && sync_db){
-			mLockDvb.syncDatabase(DVBClient.TABLE_GRP_MAP, -1);
-			mLockDvb.syncDatabase(DVBClient.TABLE_TS, -1);
-			mLockDvb.syncDatabase(DVBClient.TABLE_SERVICE, -1);
-		}	
-		*/
 		list_ts[cur_pos].tvChannelDel(mContext);
-		//list_ts[cur_pos].tvChannelDel(this,scan_id);
 		list_ts = removeTsFromList(list_ts,cur_pos);
-		
-	}
-
-	private void  deleteTsData(int cur_sat_pos, int cur_pos){
-		deleteTsData(cur_sat_pos, cur_pos, true);
 	}
 
 	private boolean getConflictTp(int scan_id, int fre, int sym, int polarization){
@@ -1072,26 +999,122 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		return db_id;
 	}
 
-	private void editSatData(int scan_id,ContentValues values){
-		/*
-		this.getContentResolver().update(DVBClient.TABLE_SAT_PARA, values,"db_id="+scan_id, null);
-		if(mLockDvb!=null)
-			mLockDvb.syncDatabase(DVBClient.TABLE_SAT_PARA, scan_id);
-		else
-			Log.d(TAG,">>>>>>>>>>>>>>>>DVBPlayer.getConnect().syncDatabase fail<<<<<<<<<<<<<<<");
-		*/
+	private void editSatData(int scan_id,ContentValues values,String mode){
+		
+		TVSatellite temp_TVSatellite = TVSatellite.tvSatelliteSelect(mContext,scan_id);
+
+		if(mode.equals("sat")){
+			String name = (String)(Object)values.get("sat_name");
+			temp_TVSatellite.setSatelliteName(name);
+			int sat_longitude = (int)values.getAsInteger("sat_longitude");
+			temp_TVSatellite.setSatelliteLongitude((double)sat_longitude);
+		}
+		else if(mode.equals("tone_burst")){
+			int tone_burst = (int)values.getAsInteger("tone_burst");
+			temp_TVSatellite.setSecToneBurst(tone_burst);
+		}
+		else if(mode.equals("motor_num")){
+			int motor_num = (int)values.getAsInteger("motor_num");
+			temp_TVSatellite.setMotorNum(motor_num);
+		}
+		else if(mode.equals("voltage")){
+			int voltage = (int)values.getAsInteger("voltage");
+			temp_TVSatellite.setSecVoltage(voltage);
+		}
+		else if(mode.equals("signal_22khz")){
+			int signal_22khz = (int)values.getAsInteger("signal_22khz");
+			temp_TVSatellite.setSec22k(signal_22khz);
+		}
+		
+		else if(mode.equals("lof")){
+			int lof_lo = (int)values.getAsInteger("lof_lo");
+			int lof_hi = (int)values.getAsInteger("lof_hi");
+			int lof_threshold = (int)values.getAsInteger("lof_threshold");
+			temp_TVSatellite.setSatelliteLnb(0,lof_hi,lof_lo,lof_threshold);
+		}
+		else if(mode.equals("diseqc_mode")){
+			int diseqc_mode = (int)values.getAsInteger("diseqc_mode");
+			temp_TVSatellite.setDiseqcMode(diseqc_mode);
+		}
+		else if(mode.equals("committed_cmd")){
+			int committed_cmd = (int)values.getAsInteger("committed_cmd");
+			temp_TVSatellite.setDiseqcCommitted(committed_cmd);
+		}
+		else if(mode.equals("uncommitted_cmd")){
+			int uncommitted_cmd = (int)values.getAsInteger("uncommitted_cmd");
+			temp_TVSatellite.setDiseqcUncommitted(uncommitted_cmd);
+		}
+		else if(mode.equals("cmd_order")){
+			int uncommitted_cmd = (int)values.getAsInteger("uncommitted_cmd");
+			temp_TVSatellite.setDiseqcOrder(uncommitted_cmd);
+		}
+		else if(mode.equals("sequence_repeat")){
+			int uncommitted_cmd = (int)values.getAsInteger("uncommitted_cmd");
+			temp_TVSatellite.setDiseqcSequenceRepeat(uncommitted_cmd);
+		}
+		else if(mode.equals("fast_diseqc")){
+			int uncommitted_cmd = (int)values.getAsInteger("fast_diseqc");
+			temp_TVSatellite.setDiseqcFast(uncommitted_cmd);
+		}
+		
 	}
 
-	private void addSatData(ContentValues values, DbSat sat_node){
+	private void addSatData(String name,double angle){
+		DbSat sat_node  = new DbSat();
+		//ContentValues values;
+
+		TVSatellite temp_TVSatellite = new TVSatellite(mContext,name,(double)angle);
 		/*
-		this.getContentResolver().insert(DVBClient.TABLE_SAT_PARA,  values);
-		if(mLockDvb!=null)
-			mLockDvb.syncDatabase(DVBClient.TABLE_SAT_PARA, -1);
-		else
-			Log.d(TAG,">>>>>>>>>>>>>>>>DVBPlayer.getConnect().syncDatabase fail<<<<<<<<<<<<<<<");
-		ScanSatAndtsInfoList.add(sat_node);
+		values.put("sat_name", name);
+		values.put("sat_longitude",angle);
+		values.put("lnb_num",0);
+		values.put("lof_hi",10600);
+		values.put("lof_lo",9750);
+		values.put("lof_threshold",11700);
+		values.put("signal_22khz",2);
+		values.put("voltage",3);
+		values.put("motor_num",0);
+		values.put("pos_num",0);
+		
+		values.put("lo_direction",0);
+		values.put("la_direction",0);
+		values.put("longitude",0);
+		values.put("latitude",0);
+		
+		values.put("diseqc_mode",0);
+		values.put("tone_burst",0);
+		values.put("committed_cmd",0);
+		values.put("uncommitted_cmd",11700);
+		values.put("repeat_count",3);
+		values.put("sequence_repeat",0);
+		values.put("fast_diseqc",0);
+		values.put("cmd_order",0);
 		*/
+
+		sat_node.setName(name);
+		sat_node.setLongitude(angle);	
+		sat_node.setPositionNumber(0);	
+		sat_node.setLnbNo(0);
+		sat_node.setLoLOF(9750);	
+		sat_node.setHiLOF(10600);
+		sat_node.setLofThreshold(11700);
+		sat_node.setLNBPwrOnOff(3);	
+		sat_node.set22KOnOff(2);	
+		sat_node.setToneburstType(0);	
+		sat_node.setSwtPort(0);
+		sat_node.setLnbConfig10(0);	
+		sat_node.setLnbConfig11(0);	
+		sat_node.setMotoNo(0);
+		sat_node.setFastDiseqc(0);
+		sat_node.setDiseqcRepeat(0);
+		sat_node.setDiseqcSequence(0);
+		sat_node.setLongitude(0);
+		sat_node.setLatitude(0);
+		sat_node.setScanId(getSatDbIdByAngle((int)angle));
+
+		ScanSatAndtsInfoList.add(sat_node);
 	}
+	
 
 	private void editTsData(int cur_sat_pos, int cur_pos,ContentValues values){
 		/*
@@ -1111,14 +1134,14 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	}
 
 	private void addTsData(int cur_sat_pos, ContentValues values, DbTransponder ts){
-		/*
+		
 		DbSat sat_node = getSatInfoByPostion(cur_sat_pos);
 		int scan_id = sat_node.getScanId();
 		
 		values.put("db_sat_para_id",scan_id);
 		values.put("ts_id",0xffff);
 
-		values.put("src",DVBClient.SCAN_DVBS>>8);
+		//values.put("src",DVBClient.SCAN_DVBS>>8);
 		values.put("db_net_id",-1);
 		values.put("mod",0);
 		values.put("bw",0);
@@ -1127,13 +1150,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		values.put("strength",0);
 		values.put("dvbt_flag",0);
 
-
-		this.getContentResolver().insert(DVBClient.TABLE_TS, values);
-		if(mLockDvb!=null)
-			mLockDvb.syncDatabase(DVBClient.TABLE_TS, -1);
-		else
-			Log.d(TAG,">>>>>>>>>>>>>>>>DVBPlayer.getConnect().syncDatabase fail<<<<<<<<<<<<<<<");
-
+		TVChannelParams temp = new TVChannelParams(TVChannelParams.MODE_QPSK);
+		temp.dvbsParams(ts.getFrequency(), ts.getSymbol(), scan_id,ts.getPolarization());
+		TVChannel TVChannel_temp = new TVChannel(mContext,temp);
+		
 		if(tsInfoList!=null)
 			tsInfoList.add(ts);
 		else{
@@ -1141,7 +1161,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			tsInfoList.add(ts);
 			sat_node.transponder = tsInfoList;
 		}	
-		*/
+		
 	}
 
 	private void showDeleteDia(){
@@ -1230,12 +1250,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			LnbSettingItemSelected= which;
 
 			ContentValues values = new ContentValues();
-			
 			values.put("motor_num", LnbSettingItemSelected);
 			SatInfo.setMotoNo(LnbSettingItemSelected);
-
 			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values);		
+			editSatData(scan_id,values,"motor_num");		
 			myLnbSetAdapter.notifyDataSetChanged();
 		}
 		});
@@ -1518,10 +1536,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					}
 				}
 				
-				
-
 				int scan_id = SatInfo.getScanId();
-				editSatData(scan_id,values);	
+				editSatData(scan_id,values,"lof");	
 				myLnbSetAdapter.notifyDataSetChanged();
 				dialog.dismiss();
                           }
@@ -1658,7 +1674,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 			int scan_id = SatInfo.getScanId();
 			int sat_id  = SatInfo.getId();
-			editSatData(scan_id,values);	
+			editSatData(scan_id,values,"voltage");	
 			myLnbSetAdapter.notifyDataSetChanged();
 			dialog.dismiss();
 
@@ -1755,7 +1771,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			}
 				
 			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values);		
+			editSatData(scan_id,values,"signal_22khz");		
 			myLnbSetAdapter.notifyDataSetChanged();
 			}
 		});	
@@ -1842,7 +1858,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			}
 				
 			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values);		
+			editSatData(scan_id,values,"tone_burst");		
 			myLnbSetAdapter.notifyDataSetChanged();
 			}
 		});	
@@ -1948,7 +1964,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						break;
 			}
 			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values);
+			editSatData(scan_id,values,"diseqc_mode");
 			
 			myLnbSetAdapter.notifyDataSetChanged();
 			
@@ -2025,7 +2041,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			SatInfo.setLnbConfig10(LnbSettingItemSelected);
 	
 			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values);		
+			editSatData(scan_id,values,"committed_cmd");		
 			myLnbSetAdapter.notifyDataSetChanged();
 			
 			}
@@ -2102,7 +2118,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				SatInfo.setLnbConfig11(temp);
 			}		
 			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values);		
+			editSatData(scan_id,values,"uncommitted_cmd");		
 			myLnbSetAdapter.notifyDataSetChanged();
 		}
 		});
@@ -2235,7 +2251,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			}
 		
 			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values);		
+			editSatData(scan_id,values,"cmd_order");		
 			myLnbSetAdapter.notifyDataSetChanged();
 		}
 		});
@@ -2288,7 +2304,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		}
 		
 		int scan_id = SatInfo.getScanId();
-		editSatData(scan_id,values);		
+		editSatData(scan_id,values,"sequence_repeat");		
 		
 	}
 
@@ -2317,7 +2333,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		}
 		
 		int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values);		
+			editSatData(scan_id,values,"fast_diseqc");		
 		
 	}
 
@@ -3948,7 +3964,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 									toast.show();
 					return;				
 				}
-				editSatData(scan_id,values);	
+				editSatData(scan_id,values,"sat");	
 				sat_node.setPosition(temp);
 				TextView sat_name = (TextView) findViewById(R.id.sat_name);
 				sat_name.setTextColor(Color.YELLOW);
@@ -3996,8 +4012,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	}
 
 	private void showSatAddDia(){
-		
-		
+
 		ContentValues values=null;
 		satEditBuilder = new AlertDialog.Builder(this);
 	        LayoutInflater layoutInflater = LayoutInflater.from(this);  
@@ -4044,13 +4059,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 		satEditBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                           public void onClick(DialogInterface dialog, int id) {
-				ContentValues values = new ContentValues();
-				DbSat sat_node  = new DbSat();
 				int angle;
 				
-				values.put("sat_name", edittext_satname.getText().toString());
-				sat_node.setName(edittext_satname.getText().toString());
-
 				if((edittext_angle0.getText().toString().equals(""))||(edittext_angle0.getText().toString().equals(null))||
 						(edittext_angle1.getText().toString().equals(""))||(edittext_angle1.getText().toString().equals(null)))
 					{
@@ -4058,72 +4068,18 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						return;
 					}
 				
-				if(button_sat_direction.getText().equals("East")){
-					angle=Integer.parseInt(edittext_angle0.getText().toString())*10+Integer.parseInt(edittext_angle1.getText().toString());
-				}else{	
-					angle=0-(Integer.parseInt(edittext_angle0.getText().toString())*10+Integer.parseInt(edittext_angle1.getText().toString()));
-				}
-				sat_node.setPosition(angle);
-				values.put("sat_longitude",angle);
-				if(getConflictSat(sat_node.getScanId(),sat_node.getPosition())){
+					if(button_sat_direction.getText().equals("East")){
+						angle=Integer.parseInt(edittext_angle0.getText().toString())*10+Integer.parseInt(edittext_angle1.getText().toString());
+					}else{	
+						angle=0-(Integer.parseInt(edittext_angle0.getText().toString())*10+Integer.parseInt(edittext_angle1.getText().toString()));
+					}
 					
-					Toast toast = Toast.makeText(
-										DTVScanDvbsConfig.this, 
-										"Satellite angle is already exist",
-										Toast.LENGTH_SHORT);
-									toast.setGravity(Gravity.CENTER, 0, 0);
-									toast.show();
-				}else{
-					
-
-					values.put("lnb_num",0);
-					values.put("lof_hi",10600);
-					values.put("lof_lo",9750);
-					values.put("lof_threshold",11700);
-					values.put("signal_22khz",2);
-					values.put("voltage",3);
-					values.put("motor_num",0);
-					values.put("pos_num",0);
-					
-					values.put("lo_direction",0);
-					values.put("la_direction",0);
-					values.put("longitude",0);
-					values.put("latitude",0);
-					
-					values.put("diseqc_mode",0);
-					values.put("tone_burst",0);
-					values.put("committed_cmd",0);
-					values.put("uncommitted_cmd",11700);
-					values.put("repeat_count",3);
-					values.put("sequence_repeat",0);
-					values.put("fast_diseqc",0);
-					values.put("cmd_order",0);
-						
-					sat_node.setPositionNumber(0);	
-					sat_node.setLnbNo(0);
-					sat_node.setLoLOF(9750);	
-					sat_node.setHiLOF(10600);
-					sat_node.setLofThreshold(11700);
-					sat_node.setLNBPwrOnOff(3);	
-					sat_node.set22KOnOff(2);	
-					sat_node.setToneburstType(0);	
-					sat_node.setSwtPort(0);
-					sat_node.setLnbConfig10(0);	
-					sat_node.setLnbConfig11(0);	
-					sat_node.setMotoNo(0);
-					sat_node.setFastDiseqc(0);
-					sat_node.setDiseqcRepeat(0);
-					sat_node.setDiseqcSequence(0);
-					sat_node.setLongitude(0);
-					sat_node.setLatitude(0);
-
-					addSatData(values,sat_node);
-					sat_node.setScanId(getSatDbIdByAngle(angle));
+					addSatData(edittext_satname.getText().toString(),(double)angle);
 					mySatAdapter.notifyDataSetChanged();
 					sat_list.setSelection(sat_list.getCount()-1);
 					dialog.dismiss();
 				}
-                          }
+                          
                       });
                satEditBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                           public void onClick(DialogInterface dialog, int id) {
@@ -4185,8 +4141,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		edittext_symbol.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(5)});
 
 		final Button polarization = (Button) dvbs_ts_edit.findViewById(R.id.polarization);
-
-		
 
 		if(TsInfo!=null){
 			ts_number.setText(String.valueOf(list_cur_pos+1));
@@ -4484,8 +4438,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			}
 		});
 
-
-	
 		tsEditBuilder.setView(dvbs_ts_edit);
 
 		tsEditBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -4493,6 +4445,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 				DbTransponder TsInfo  = new DbTransponder();
 				ContentValues values = new ContentValues();
+
 				int freq = 0, symb = 0, polar;
 				if(edittext_frequency.getText().toString().equals("")==false){
 					freq = Integer.parseInt(edittext_frequency.getText().toString())*1000;
@@ -4536,7 +4489,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 									toast.show();
 						return;			
 				}else{
+
 					addTsData(gobal_sat_cur_pos,values,TsInfo);
+					
 					TsInfo.setDbId(getTsDbId(scan_id, freq, symb, polar));
 					getTsData(gobal_sat_cur_pos);
 					myTsAdapter = new TsAdapter(DTVScanDvbsConfig.this,tsInfoList);
