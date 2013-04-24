@@ -77,51 +77,60 @@ abstract public class DTVActivity extends TVActivity{
 		/*reset layout by reproduction rate*/
 		String outputmode = SystemProperties.get("ubootenv.var.outputmode");
 		int x = 0, y = 0, w = 0, h = 0;
+		String x_s = null, y_s = null, w_s = null, h_s = null;
 		
 		Log.d(TAG, "setContentView " + outputmode);
 		
 		if(outputmode.contains("1080p") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputheight"));
+			x_s = SystemProperties.get("ubootenv.var.1080poutputx");
+			y_s = SystemProperties.get("ubootenv.var.1080poutputy");
+			w_s = SystemProperties.get("ubootenv.var.1080poutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.1080poutputheight");
 		}
 		else if(outputmode.contains("1080i") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputheight"));		
+			x_s = SystemProperties.get("ubootenv.var.1080ioutputx");
+			y_s = SystemProperties.get("ubootenv.var.1080ioutputy");
+			w_s = SystemProperties.get("ubootenv.var.1080ioutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.1080ioutputheight");		
 		}
 		else if(outputmode.contains("720p") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputheight"));		
+			x_s = SystemProperties.get("ubootenv.var.720poutputx");
+			y_s = SystemProperties.get("ubootenv.var.720poutputy");
+			w_s = SystemProperties.get("ubootenv.var.720poutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.720poutputheight");		
 		}
 		else if(outputmode.contains("576p") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputheight"));			
+			x_s = SystemProperties.get("ubootenv.var.576poutputx");
+			y_s = SystemProperties.get("ubootenv.var.576poutputy");
+			w_s = SystemProperties.get("ubootenv.var.576poutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.576poutputheight");			
 		}
 		else if(outputmode.contains("576i") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputheight"));					
+			x_s = SystemProperties.get("ubootenv.var.576ioutputx");
+			y_s = SystemProperties.get("ubootenv.var.576ioutputy");
+			w_s = SystemProperties.get("ubootenv.var.576ioutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.576ioutputheight");					
 		}
 		else if(outputmode.contains("480p") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputheight"));			
+			x_s = SystemProperties.get("ubootenv.var.480poutputx");
+			y_s = SystemProperties.get("ubootenv.var.480poutputy");
+			w_s = SystemProperties.get("ubootenv.var.480poutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.480poutputheight");			
 		}
 		else if(outputmode.contains("480i") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputheight"));				
-		}		
+			x_s = SystemProperties.get("ubootenv.var.480ioutputx");
+			y_s = SystemProperties.get("ubootenv.var.480ioutputy");
+			w_s = SystemProperties.get("ubootenv.var.480ioutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.480ioutputheight");				
+		}	
+
+		if((x_s != null) && (y_s != null) && (w_s != null) && (h_s != null)){
+			x = Integer.parseInt(x_s);
+			y = Integer.parseInt(y_s);
+			w = Integer.parseInt(w_s);
+			h = Integer.parseInt(h_s);
+		}
+		
 /*
 		AbsoluteLayout root = new AbsoluteLayout(this);
 
