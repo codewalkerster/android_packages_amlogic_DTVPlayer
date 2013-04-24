@@ -11,12 +11,14 @@ import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVEvent;
+import com.amlogic.tvutil.TVGroup;
 
 import java.util.*;
 import java.text.*;
 import android.view.*;
 import android.view.View.*;
 import android.view.animation.*;
+import android.util.DisplayMetrics;
 import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
 import android.app.*;
@@ -29,7 +31,10 @@ import android.text.method.*;
 import android.database.*;
 import android.os.*;
 import java.lang.reflect.Field;
-
+import android.graphics.Color;
+import com.amlogic.widget.Rotate3D;
+import com.amlogic.widget.CustomDialog;
+import com.amlogic.widget.CustomDialog.ICustomDialog;
 import com.amlogic.widget.SingleChoiseDialog;
 
 public class DTVEpg extends DTVActivity{
@@ -70,6 +75,7 @@ public class DTVEpg extends DTVActivity{
 	private int  eit_notify = 0;
 	private long tickcount  = 1;
 	private int  TempFlag   = 0;	
+	private int  current_date_index=0;
 	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
@@ -78,6 +84,10 @@ public class DTVEpg extends DTVActivity{
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.dtvepg);
 		DTVEpgUIInit();
+
+		//channel list
+		mDTVSettings = new DTVSettings(this);
+		DTVChannelList_UI_Init();
 	}
 
 	public void onStart(){
@@ -87,6 +97,7 @@ public class DTVEpg extends DTVActivity{
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
+		myAdapter.notifyDataSetChanged();
 	}
 
 	public void onDisconnected(){
@@ -113,20 +124,107 @@ public class DTVEpg extends DTVActivity{
 			case TVMessage.TYPE_EVENT_UPDATE:
 				eit_notify ++ ;
 				break;	
+			case TVMessage.TYPE_PROGRAM_START:	
+				Log.d(TAG,"New program start!");
+				update_new_eit();
+				break;
 			default:
 				break;
 	
 		}
 	}
 
-	private void DTVEpgUIInit(){
-		
+	private int eit_list_cur_pos=0;
+	
+	private void DTVEpgUIInit(){	
 		cur_service_id = DTVEpgGetID();
-        
+        db_id = cur_service_id;
 		/*setup view*/
         
         EitListView  = (ListView)findViewById(R.id.EitListView);
         EitListView.setItemsCanFocus(true);
+
+		EitListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			public void onItemSelected(AdapterView<?> parent, View view,
+			int position, long id) {
+				Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
+				eit_list_cur_pos = position;
+				list_status=1;
+			}
+
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+		});
+
+		
+		EitListView.setOnKeyListener(new OnKeyListener() { 
+			public boolean onKey(View v, int keyCode, KeyEvent event) {		
+				switch(keyCode){
+					case KeyEvent.KEYCODE_TAB: //info
+						if (event.getAction() == KeyEvent.ACTION_DOWN) {
+							showInfoDia(v,current_date_index,eit_list_cur_pos);	
+						}
+						return true;
+					case KeyEvent.KEYCODE_PAGE_UP:
+						if (event.getAction() == KeyEvent.ACTION_DOWN) {
+							if(mEitListDBAdapter!=null){
+								mEitListDBAdapter.setSelectItem(myAdapter.getSelectItem());
+								mEitListDBAdapter.notifyDataSetChanged();
+							}	
+							Log.d(TAG, "press page up");
+						}
+						break;
+					case KeyEvent.KEYCODE_PAGE_DOWN:	
+
+						break;
+				} 
+				return false;
+		}}); 
+					
+		EitListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+				// TODO Auto-generated method stub				
+				final int item = position;
+				final View TempView = v;
+				int pos = 0;
+				String items[] = new String[]{"Cancel Book", "BookPlay", "BookRecord"};
+				
+				new SingleChoiseDialog(DTVEpg.this,items,pos){
+					public void onSetMessage(View v){
+						((TextView)v).setText("   ");
+					}
+
+					public void onSetNegativeButton(){
+						
+					}
+					public void onSetPositiveButton(int which){
+						Log.d(TAG,"dialog choise="+which);
+						//refresh_bookstatus(TempItemView, which);
+						final ImageView icon = (ImageView)TempView.findViewById(R.id.icon_1);
+						switch(which){
+							case 0:
+								update_bookstatus(mTVEvent[current_date_index][item].getID(),0);
+								mTVEvent[current_date_index][item].setSubFlag(0);
+								icon.setBackgroundResource(0);
+							break;
+							case 1:
+								update_bookstatus(mTVEvent[current_date_index][item].getID(),1);
+								mTVEvent[current_date_index][item].setSubFlag(1);
+								icon.setBackgroundResource(R.drawable.epg_event_book_1);
+							break;
+							case 2:
+								update_bookstatus(mTVEvent[current_date_index][item].getID(),2);
+								mTVEvent[current_date_index][item].setSubFlag(2);
+								icon.setBackgroundResource(R.drawable.epg_event_book_2);
+								if((long)(mTVEvent[current_date_index][item].getStartTime())>System.currentTimeMillis()/1000)
+									SetAlarm(mTVEvent[current_date_index][item].getStartTime()-100);
+							break;
+						}
+					}
+				};			
+			}
+		});
+		
      	    
 	    progressDialog = ProgressDialog.show(DTVEpg.this, getString(R.string.epg_loading), getString(R.string.epg_waiting), true, false);   
 		WindowManager.LayoutParams lp=progressDialog.getWindow().getAttributes();
@@ -235,6 +333,24 @@ public class DTVEpg extends DTVActivity{
 				
             }
          }.start(); 
+
+
+		ImageButton date_button0 = (ImageButton)findViewById(R.id.date_button0);
+		ImageButton date_button1 = (ImageButton)findViewById(R.id.date_button1); 
+		ImageButton date_button2 = (ImageButton)findViewById(R.id.date_button2);
+		ImageButton date_button3 = (ImageButton)findViewById(R.id.date_button3); 
+		ImageButton date_button4 = (ImageButton)findViewById(R.id.date_button4); 
+		ImageButton date_button5 = (ImageButton)findViewById(R.id.date_button5); 
+		ImageButton date_button6 = (ImageButton)findViewById(R.id.date_button6); 
+
+		date_button0.setOnClickListener(new channelListButtonClick()); 	
+		date_button1.setOnClickListener(new channelListButtonClick()); 	
+		date_button2.setOnClickListener(new channelListButtonClick()); 	
+		date_button3.setOnClickListener(new channelListButtonClick()); 
+		date_button4.setOnClickListener(new channelListButtonClick()); 	
+		date_button5.setOnClickListener(new channelListButtonClick()); 	
+		date_button6.setOnClickListener(new channelListButtonClick()); 
+		
 	}
 
 
@@ -388,9 +504,12 @@ public class DTVEpg extends DTVActivity{
 		//else
 			//HelpInfoTextView.setText(R.string.epg_no_epg_info);
 	}
-	
+
+	EitListDBAdapter mEitListDBAdapter =null;
 	private void refresh_Eitlistview(int date){
-        EitListView.setAdapter(new EitListDBAdapter(this,date)); 
+		mEitListDBAdapter = new EitListDBAdapter(this,date);
+        EitListView.setAdapter(mEitListDBAdapter); 
+		mEitListDBAdapter.notifyDataSetChanged();
 	}
 
 	private  void SetAlarm(long time){
@@ -574,13 +693,13 @@ public class DTVEpg extends DTVActivity{
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;	
 			if (convertView == null){    
-				convertView = mInflater.inflate(R.layout.dtvchannellist_item, null);
+				convertView = mInflater.inflate(R.layout.epg_eitlist_item, null);
 				
 				holder = new ViewHolder();
-				holder.time = (TextView)convertView.findViewById(R.id.prono);
-				holder.eit_name = (TextView) convertView.findViewById(R.id.ItemText);
-				holder.icon_book = (ImageView) convertView.findViewById(R.id.icon);
-				holder.icon_pvr = (ImageView)convertView.findViewById(R.id.icon_scrambled);
+				holder.time = (TextView)convertView.findViewById(R.id.time);
+				holder.eit_name = (TextView) convertView.findViewById(R.id.eit_name);
+				holder.icon_book = (ImageView) convertView.findViewById(R.id.icon_1);
+				holder.icon_pvr = (ImageView)convertView.findViewById(R.id.icon);
 				convertView.setTag(holder);
 			}
 			else {
@@ -594,6 +713,7 @@ public class DTVEpg extends DTVActivity{
 			
 			if(mTVEvent[date]!=null){
 				if (mTVEvent[date].length>0){	
+					/*
 					if (
 						(position == 0 ) && 
 						(
@@ -607,9 +727,17 @@ public class DTVEpg extends DTVActivity{
 
 					}
 					else
+					*/
 						holder.eit_name.setText(mTVEvent[date][position].getName());
 
-					holder.time.setText(""+mTVEvent[date][position].getStartTime());					
+					Date dt_start =  new Date(mTVEvent[date][position].getStartTime()*1000);
+		    		Date dt_end   =  new Date(mTVEvent[date][position].getEndTime()*1000);
+		    		
+		    		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
+		    		String str_start = sdf.format(dt_start); 
+		    		String str_end   = sdf.format(dt_end); 
+					
+					holder.time.setText(""+str_start + "--" + str_end);					
 					
 					switch(mTVEvent[date][position].getSubFlag()){
 						case 0:
@@ -618,32 +746,13 @@ public class DTVEpg extends DTVActivity{
 							
 						break;
 						case 1:
-							holder.icon_book.setBackgroundResource(R.drawable.dtvplayer_icon_lock); 
+							holder.icon_book.setBackgroundResource(R.drawable.epg_event_book_1); 
 						break;
 						case 2:
-							holder.icon_pvr.setBackgroundResource(R.drawable.dtvplayer_icon_fav); 
+							holder.icon_book.setBackgroundResource(R.drawable.epg_event_book_2); 
 						break;
 					}
 
-
-					/*	
-					final int pos = position;
-					final int item = i;
-					TempButton.setOnKeyListener(new OnKeyListener() { 
-					public boolean onKey(View v, int keyCode, KeyEvent event) {		
-				
-						switch(keyCode)
-						{
-							case KeyEvent.KEYCODE_TAB: //info
-								if (event.getAction() == KeyEvent.ACTION_DOWN) {
-									showInfoDia(v,pos,item);	
-																	}
-								return true;	
-						} 
-						return false;
-					}}); 
-					*/
-					
 				}
 			}
 		
@@ -653,12 +762,12 @@ public class DTVEpg extends DTVActivity{
 	} 
 
 	AlertDialog.Builder builder=null;
-    	private void showInfoDia(View v,int pos,int i){
-		/*
-		String message = mTVEvent[pos][i].getEventDescr()+"\n"+mTVEvent[pos][i].getEventExtDescr();
+    private void showInfoDia(View v,int date,int pos){
+		
+		String message = mTVEvent[date][pos].getEventDescr()+"\n"+mTVEvent[date][pos].getEventExtDescr();
 				
 		builder = new AlertDialog.Builder(DTVEpg.this) ;
-		builder.setTitle((((Button)v).getText().toString()!=null&&!(((Button)v).getText().toString().equals("")))?((Button)v).getText().toString():"--");
+		builder.setTitle(mTVEvent[date][pos].getName());
 		//builder.setMessage((mTVEvent[pos].getString(mTVEvent[pos].getColumnIndex("ext_descr"))!=null&&!(mTVEvent[pos].getString(mTVEvent[pos].getColumnIndex("ext_descr")).equals("")))?
 		builder.setMessage(message);
 		builder.setPositiveButton("ok", null);
@@ -670,7 +779,7 @@ public class DTVEpg extends DTVActivity{
 		lp.dimAmount=0.0f;
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-		*/
+		
 	}	
 	
     private class ChoiceOnClickListener implements DialogInterface.OnClickListener 
@@ -768,7 +877,7 @@ public class DTVEpg extends DTVActivity{
                 	setup_db();
                 }
                 catch (Exception e){
-                 	Log.d("update_new_eit Exception 1", e.getMessage());	
+                 	
                 }
 
                 try{
@@ -778,7 +887,7 @@ public class DTVEpg extends DTVActivity{
                 	Thread.sleep(1000);
                 }
                 catch (Exception e){
-                 	Log.d("update_new_eit Exception 2", e.getMessage());	
+                 		
                 } 
 
                 try{
@@ -788,7 +897,7 @@ public class DTVEpg extends DTVActivity{
                 	//Thread.sleep(1000);
                 }
                 catch (Exception e){
-                 	Log.d("update_new_eit Exception 3", e.getMessage());	
+                 	
 				} 
 			}
 		}.start(); 
@@ -796,6 +905,405 @@ public class DTVEpg extends DTVActivity{
 		eit_notify = 0;
 	}
 	
+	
+/****************************Channel List****************************/
+
+	ListView ListView_channel=null;
+	TextView Text_title=null;
+	private int class_total=0;
+	private int cur_class_no=-1;
+	private int cur_select_item=0;
+	private IconAdapter myAdapter=null;
+	private TVProgram[]  mTVProgramList=null;
+	private DTVSettings mDTVSettings=null;
+	private int list_status=-1;
+
+	int db_id=-1;
+	private int service_type=TVProgram.TYPE_TV;
+	private boolean favor=false;
+
+	private void getListData(int type){
+		if(type==0)
+			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,true);
+		else if(type==1)
+			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,true);
+	}
+
+	private void getListFavorite(){
+		mTVProgramList=TVProgram.selectByFavorite(this,true);	
+	}
+
+
+	TVGroup[] mTVGroup=null;
+	private int getListProgramClass(){
+		mTVGroup=DTVProgramManagerGetGroupList();
+		if(mTVGroup!=null)
+			return mTVGroup.length;
+		else
+			return 0;
+	}
+	
+	private void getClassData(int class_no){
+		mTVProgramList=DTVProgramManagerGetProByGroup(class_no);
+	}
+
+	private LinearLayout LinearLayoutListView=null;
+	private void DTVChannelList_UI_Init(){
+
+		Bundle bundle = this.getIntent().getExtras();
+		if(bundle!=null){
+	    	db_id = bundle.getInt("db_id");
+			service_type=getCurrentProgramType();
+		}	
+
+		ImageButton prolist_button = (ImageButton)findViewById(R.id.prolist_button);
+		prolist_button.setOnClickListener(new channelListButtonClick()); 	
+
+		Text_title=(TextView)findViewById(R.id.prolist);
+		Text_title.setTextColor(Color.YELLOW);
+		
+		class_total = getListProgramClass();
+		if(service_type == TVProgram.TYPE_RADIO){
+			getListData(1);
+			Text_title.setText(R.string.radio);
+		}	
+		else{
+			service_type = TVProgram.TYPE_TV;
+			getListData(0);
+			Text_title.setText(R.string.tv);
+		}
+		
+		ListView_channel = (ListView) findViewById(R.id.programListView);
+		myAdapter = new IconAdapter(this,null);
+		ListView_channel.setOnItemSelectedListener(mOnSelectedListener);
+		ListView_channel.setOnScrollListener(new listOnScroll()); 
+		ListView_channel.setOnItemClickListener(mOnItemClickListener);
+		ListView_channel.setAdapter(myAdapter);
+		setFocusPosition();
+	}
+
+	public void setFocusPosition(){
+		int i = 0;
+		if(mTVProgramList!=null){
+			for(i=0;i<mTVProgramList.length;i++){
+				if(db_id == mTVProgramList[i].getID()){
+					ListView_channel.setFocusableInTouchMode(true);
+	   			  	ListView_channel.requestFocus();
+	   			  	ListView_channel.requestFocusFromTouch();
+	        		ListView_channel.setSelection(i);
+					cur_select_item = i;
+					break;
+				}
+			}	
+		}
+	}
+	
+  	private AdapterView.OnItemSelectedListener mOnSelectedListener = new AdapterView.OnItemSelectedListener(){
+		public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
+			ListView_channel = (ListView) findViewById(R.id.programListView);
+			if(ListView_channel.hasFocus() == true){
+			}
+			cur_select_item = position;
+			list_status=0;
+		}
+		public void onNothingSelected(AdapterView<?> parent){
+		}
+	};
+
+	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
+		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
+			int db_id=mTVProgramList[position].getID();	
+			int serviceType = mTVProgramList[position].getType();
+			DTVPlayerPlayById(db_id);
+		}
+	};
+
+	private class IconAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+		private Context cont;
+		private List<String> listItems;
+		private int selectItem;
+		
+		class ViewHolder {
+			TextView prono;
+			TextView text;	
+			ImageView icon_scrambled;
+			ImageView icon_fav;
+			ImageView icon;
+		}
+		
+		public IconAdapter(Context context, List<String> list) {
+			super();
+			cont = context;
+			mInflater=LayoutInflater.from(context);			  
+		}
+
+		public int getCount() {
+			if(mTVProgramList==null)
+				return 0;
+			else
+				return mTVProgramList.length;
+		}
+
+		public Object getItem(int position) {
+			return position;
+		}
+		
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public void setSelectItem(int position){
+			this.selectItem = position;
+		}
+        
+        public int getSelectItem(){
+			return this.selectItem;
+        }
+		
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder;	
+			if (convertView == null){    
+				convertView = mInflater.inflate(R.layout.epg_channellist_item, null);
+				
+				holder = new ViewHolder();
+				holder.prono = (TextView)convertView.findViewById(R.id.prono);
+				holder.text = (TextView) convertView.findViewById(R.id.ItemText);
+				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+				holder.icon_scrambled = (ImageView)convertView.findViewById(R.id.icon_scrambled);
+				holder.icon_fav = (ImageView)convertView.findViewById(R.id.icon_fav);
+				convertView.setTag(holder);
+			}
+			else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+		
+			// Bind the data efficiently with the holder.
+
+			if(mDTVSettings.getScanRegion().contains("ATSC")==false){
+				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber()));
+			}
+			else{
+				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber())+"-"+Integer.toString(mTVProgramList[position].getNumber().getMinor()));
+			}
+			
+			holder.text.setText(mTVProgramList[position].getName());
+
+			if(db_id == mTVProgramList[position].getID()){  
+				//convertView.setBackgroundColor(Color.RED);  
+				holder.text.setTextColor(Color.YELLOW);
+			}	
+			else{
+				//convertView.setBackgroundColor(Color.TRANSPARENT); 
+				holder.text.setTextColor(Color.WHITE);
+			}	
+		
+			if(mTVProgramList[position].getLockFlag()){
+				holder.icon.setBackgroundResource(R.drawable.dtvplayer_icon_lock); 
+			}	
+			else{
+				holder.icon.setBackgroundResource(Color.TRANSPARENT);
+			}
+
+			if(mTVProgramList[position].getFavoriteFlag()){
+				holder.icon_fav.setBackgroundResource(R.drawable.dtvplayer_icon_fav); 
+			}	
+			else{
+				holder.icon_fav.setBackgroundResource(Color.TRANSPARENT);
+			}	
+
+			if(mTVProgramList[position].getScrambledFlag()){
+				holder.icon_scrambled.setBackgroundResource(R.drawable.dtvplayer_icon_scrambled); 
+			}	
+			else{
+				holder.icon_scrambled.setBackgroundResource(Color.TRANSPARENT);
+			}			  
+			return convertView;
+		}
+	}	
+		
+	class listOnScroll implements OnScrollListener{
+		public void onScroll(AbsListView view, int firstVisibleItem,int visibleItemCount, int totalItemCount) {
+			//reset_timer();	
+		}
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+			//reset_timer();
+		}
+    }	
+	
+	class MouseClick implements OnClickListener{    
+		public void onClick(View v) {
+			// TODO Auto-generated method stub	
+	    	//reset_timer();
+			switch (v.getId()) {
+				case R.id.arrow_left:
+					break;
+			}
+		}
+     }
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		//reset_timer();
+		switch (keyCode) {
+			/*
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+				DTVListDealLeftAndRightKey(0);
+				break;		
+			case KeyEvent.KEYCODE_DPAD_RIGHT:	
+				DTVListDealLeftAndRightKey(1);
+				break;
+			*/	
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+				if(list_status==0){
+					if(cur_select_item == ListView_channel.getCount()-1){
+				    	ListView_channel.setSelection(0); 	
+						return true;
+					}	
+				}
+				else if(list_status==1){
+					if(cur_select_item == EitListView.getCount()-1){
+				    	EitListView.setSelection(0); 	
+						return true;
+					}	
+				}
+				break;
+			case KeyEvent.KEYCODE_DPAD_UP:
+				if(list_status==1){
+					
+				}	
+				else if(list_status==0){
+					/*
+					if(cur_select_item == 0){
+						ListView_channel.setSelection(ListView_channel.getCount()-1); 
+						return true;
+					}	
+					*/
+				}
+				break;
+		}
+		return super.onKeyDown(keyCode, event);
+	}	  
+
+	
+	Rotate3D lQuest1Animation=null;		
+	Rotate3D lQuest2Animation =null;	
+ 	Rotate3D rQuest1Animation=null;	
+    Rotate3D rQuest2Animation=null;	
+	public void initAnimation() {
+		DisplayMetrics dm = new DisplayMetrics();
+		dm = getResources().getDisplayMetrics();
+		int mCenterX = dm.widthPixels / 2;
+		int mCenterY = dm.heightPixels / 2;
+		
+		int duration = 300;
+		lQuest1Animation = new Rotate3D(0, -90, mCenterX, mCenterY);	
+		lQuest1Animation.setFillAfter(true);
+		lQuest1Animation.setDuration(duration);
+
+		lQuest2Animation = new Rotate3D(90, 0, mCenterX, mCenterY);		
+		lQuest2Animation.setFillAfter(true);
+		lQuest2Animation.setDuration(duration);
+
+		rQuest1Animation = new Rotate3D(0, 90, mCenterX, mCenterY);		
+		rQuest1Animation.setFillAfter(true);
+		rQuest1Animation.setDuration(duration);
+
+		rQuest2Animation = new Rotate3D(-90, 0, mCenterX, mCenterY);	
+		rQuest2Animation.setFillAfter(true);
+		rQuest2Animation.setDuration(duration);
+	}
+
+	class channelListButtonClick  implements android.view.View.OnClickListener{	  
+		public void onClick(View v) {		
+			// TODO Auto-generated method stub		
+			switch (v.getId()) {			
+				case R.id.prolist_button:		
+					if((service_type == TVProgram.TYPE_RADIO)&&(favor!=true)){
+						getListData(0);
+						Text_title.setText(R.string.tv);
+						service_type = TVProgram.TYPE_TV;
+						myAdapter.notifyDataSetChanged();
+					}
+					else if((service_type == TVProgram.TYPE_TV)&&(favor!=true)){
+						Log.d(TAG,"##########"+class_total);
+						if(class_total>0){	
+							service_type = -1;
+						   	cur_class_no = class_total-1;
+							Text_title.setText(mTVGroup[cur_class_no].getName());
+							getClassData(mTVGroup[cur_class_no].getID());
+							myAdapter.notifyDataSetChanged();
+						}
+						else{					
+							Text_title.setText(R.string.favorite);
+							getListFavorite();
+							myAdapter.notifyDataSetChanged();
+							favor=true;
+						}	
+					}	
+					else if((favor!=true)&&(service_type != TVProgram.TYPE_TV)&&(service_type != TVProgram.TYPE_RADIO)){
+						if(cur_class_no>0&&class_total>0)
+						{
+							service_type = -1;
+							cur_class_no --;
+							Text_title.setText(mTVGroup[cur_class_no].getName());
+							getClassData(mTVGroup[cur_class_no].getID());
+							myAdapter.notifyDataSetChanged();
+							
+						}
+						else
+						{
+							Text_title.setText(R.string.favorite);
+							getListFavorite();
+							myAdapter.notifyDataSetChanged();
+							favor=true;
+						}
+					}
+					else if(favor==true)
+					{
+						getListData(1);
+						Text_title.setText(R.string.radio);
+						service_type = TVProgram.TYPE_RADIO;
+						myAdapter.notifyDataSetChanged();
+						favor=false;
+					}	
+					setFocusPosition();							
+					break;
+				case R.id.date_button0:
+					refresh_Eitlistview(0);
+					current_date_index = 0;
+					break;
+				case R.id.date_button1:
+					refresh_Eitlistview(1);
+					current_date_index = 1;
+					break;
+				case R.id.date_button2:
+					refresh_Eitlistview(2);
+					current_date_index = 2;
+					break;	
+				case R.id.date_button3:
+					refresh_Eitlistview(3);
+					current_date_index = 3;
+					break;
+				case R.id.date_button4:
+					refresh_Eitlistview(4);
+					current_date_index = 4;
+					break;
+				case R.id.date_button5:
+					refresh_Eitlistview(5);
+					current_date_index = 5;
+					break;
+				case R.id.date_button6:
+					refresh_Eitlistview(6);
+					current_date_index = 6;
+					break;
+			}		
+
+		}	
+	}
 
 }
 

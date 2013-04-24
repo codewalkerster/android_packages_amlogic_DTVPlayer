@@ -883,9 +883,10 @@ public class DTVPlayer extends DTVActivity{
 		mainmenu_show_flag = true;	
 
 		Intent intent = new Intent();
-		intent.setClass(DTVPlayer.this, DTVMainMenu.class);
+		//intent.setClass(DTVPlayer.this, DTVMainMenu.class);
+		intent.setClass(DTVPlayer.this, DTVSettingsMenu.class);
         startActivity(intent);
-		overridePendingTransition(R.anim.slide_left, R.anim.slide_right); 
+		//overridePendingTransition(R.anim.slide_left, R.anim.slide_right); 
 	}
 
 	private void HideMainMenu(){

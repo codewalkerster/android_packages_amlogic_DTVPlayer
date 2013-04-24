@@ -52,7 +52,8 @@ android:background ="@drawable/bg"
 					android:background="@drawable/dtvchannellist_button_arrow_left"	      
 					android:layout_width="wrap_content" 
 					android:layout_height="wrap_content"
-					android:layout_weight="1" 
+					android:layout_weight="1"
+					android:layout_marginLeft="10dp"
 					>
 					</LinearLayout>
 		  
@@ -67,6 +68,7 @@ android:background ="@drawable/bg"
 					android:layout_marginRight="5dp"
 					> 
 						<ImageButton 
+						android:id="@+id/prolist_button"
 						android:layout_width="fill_parent"
 						android:layout_height="51dp"
 						android:layout_centerInParent="true"
@@ -80,7 +82,7 @@ android:background ="@drawable/bg"
 						    android:layout_height="wrap_content"
 						    android:layout_centerInParent="true"
 						    android:textColor="#FFFFFFFF"
-						    android:textSize="20sp" />
+						    android:textSize="24sp" />
 
 					</RelativeLayout>
 				   
@@ -89,6 +91,7 @@ android:background ="@drawable/bg"
 					android:layout_width="wrap_content" 
 					android:layout_height="wrap_content" 
 					android:layout_weight="1"
+					android:layout_marginRight="10dp"
 					>
 						
 					</LinearLayout>
@@ -136,6 +139,7 @@ android:background ="@drawable/bg"
 					android:gravity="center"
 					> 
 						<ImageButton 
+						android:id="@+id/date_button0"
 						android:layout_width="103dp"
 						android:layout_height="51dp"
 						android:layout_centerInParent="true"
@@ -159,6 +163,7 @@ android:background ="@drawable/bg"
 					    android:layout_weight="1"
 					    android:gravity="center" >
 						<ImageButton 
+						android:id="@+id/date_button1"
 						android:layout_width="103dp"
 						android:layout_height="51dp"
 						android:layout_centerInParent="true"
@@ -183,6 +188,7 @@ android:background ="@drawable/bg"
 					android:layout_height="fill_parent"
 					> 
 						<ImageButton 
+						android:id="@+id/date_button2"
 						android:layout_width="103dp"
 						android:layout_height="51dp"
 						android:layout_centerInParent="true"
@@ -207,6 +213,7 @@ android:background ="@drawable/bg"
 					android:layout_height="fill_parent"
 					> 
 						<ImageButton 
+						android:id="@+id/date_button3"
 						android:layout_width="103dp"
 						android:layout_height="51dp"
 						android:layout_centerInParent="true"
@@ -230,6 +237,7 @@ android:background ="@drawable/bg"
 					android:layout_height="fill_parent"
 					> 
 						<ImageButton 
+						android:id="@+id/date_button4"
 						android:layout_width="103dp"
 						android:layout_height="51dp"
 						android:layout_centerInParent="true"
@@ -253,6 +261,7 @@ android:background ="@drawable/bg"
 					android:layout_height="fill_parent"
 					> 
 						<ImageButton 
+						android:id="@+id/date_button5"
 						android:layout_width="103dp"
 						android:layout_height="51dp"
 						android:layout_centerInParent="true"
@@ -276,6 +285,7 @@ android:background ="@drawable/bg"
 					android:layout_height="fill_parent"
 					> 
 					<ImageButton 
+					android:id="@+id/date_button6"
 					android:layout_width="103dp"
 					android:layout_height="51dp"
 					android:layout_centerInParent="true"
@@ -336,7 +346,7 @@ android:background ="@drawable/bg"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_gravity="center"
-			android:background="@drawable/epg_info_button"
+			android:background="@drawable/ok_icon"
 			android:contentDescription="@string/app"
 		    ></ImageView>
 		    <TextView
