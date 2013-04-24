@@ -3470,12 +3470,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 								if(dvb_sat_para.ts_list==null)
 									dvb_sat_para.ts_list = new ArrayList<TVChannelParams>();
 
-								TVChannelParams ts_node = new TVChannelParams(TVChannelParams.MODE_QPSK);
-
-								ts_node.frequency  = ts_temp_node.getFrequency();
-								ts_node.symbolRate = ts_temp_node.getSymbol();
-								ts_node.sat_id = ts_temp_node.getSatId();
-								ts_node.sat_polarisation = ts_temp_node.getPolarization();
+								TVChannelParams ts_node = TVChannelParams.dvbsParams(mContext, ts_temp_node.getFrequency(),
+																											ts_temp_node.getSymbol(), 
+																											ts_temp_node.getSatId(), 
+																											ts_temp_node.getPolarization());
 								
 				
 								dvb_sat_para.ts_list.add(ts_node);
@@ -3496,13 +3494,12 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 								//add ts info into default list
 								if(dvb_sat_para.ts_list==null)
 									dvb_sat_para.ts_list = new ArrayList<TVChannelParams>();
-
-								TVChannelParams ts_node_1 = new TVChannelParams(TVChannelParams.MODE_QPSK);
-
-								ts_node_1.frequency  = ts_temp_node_1.getFrequency();
-								ts_node_1.symbolRate = ts_temp_node_1.getSymbol();
-								ts_node_1.sat_id = ts_temp_node_1.getSatId();
-								ts_node_1.sat_polarisation = ts_temp_node_1.getPolarization();
+								
+								TVChannelParams ts_node_1 = TVChannelParams.dvbsParams(mContext, ts_temp_node_1.getFrequency(),
+																											ts_temp_node_1.getSymbol(), 
+																											ts_temp_node_1.getSatId(), 
+																											ts_temp_node_1.getPolarization());
+								
 								dvb_sat_para.ts_list.add(ts_node_1);
 								
 							}
@@ -3573,12 +3570,11 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 								if(dvb_sat_para.ts_list==null)
 									dvb_sat_para.ts_list = new ArrayList<TVChannelParams>();
 
-								TVChannelParams ts_node_2 = new TVChannelParams(TVChannelParams.MODE_QPSK);
-
-								ts_node_2.frequency  = ts_temp.getFrequency();
-								ts_node_2.symbolRate = ts_temp.getSymbol();
-								ts_node_2.sat_id = ts_temp.getSatId();
-								ts_node_2.sat_polarisation = ts_temp.getPolarization();
+								TVChannelParams ts_node_2 = TVChannelParams.dvbsParams(mContext, ts_temp.getFrequency(),
+																											ts_temp.getSymbol(), 
+																											ts_temp.getSatId(), 
+																											ts_temp.getPolarization());
+								
 								dvb_sat_para.ts_list.add(ts_node_2);
 							}
 						}
@@ -3648,12 +3644,11 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					if(dvb_sat_para.ts_list==null)
 						dvb_sat_para.ts_list = new ArrayList<TVChannelParams>();
 
-					TVChannelParams ts_node = new TVChannelParams(TVChannelParams.MODE_QPSK);
-
-					ts_node.frequency  = ts_node_temp.getFrequency();
-					ts_node.symbolRate = ts_node_temp.getSymbol();
-					ts_node.sat_id = ts_node_temp.getSatId();
-					ts_node.sat_polarisation = ts_node_temp.getPolarization();
+					TVChannelParams ts_node = TVChannelParams.dvbsParams(mContext, ts_node_temp.getFrequency(),
+																								ts_node_temp.getSymbol(), 
+																								ts_node_temp.getSatId(), 
+																								ts_node_temp.getPolarization());
+					
 					dvb_sat_para.ts_list.add(ts_node);
 				}
 			}
