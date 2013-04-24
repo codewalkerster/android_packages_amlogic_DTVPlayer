@@ -6,7 +6,7 @@ android:orientation="vertical"
 android:layout_width="1280dp"
 android:layout_height="720dp"
 android:id="@+id/epg_layout_parent"
-android:background ="@drawable/BG"
+android:background ="@drawable/bg"
 >
 
 	<LinearLayout
@@ -100,8 +100,7 @@ android:background ="@drawable/BG"
 				android:layout_width="fill_parent" 
 				android:layout_height="wrap_content" 
 				android:focusable = "false"
-				android:orientation="horizontal"
-				android:background ="@drawable/content_bg"  
+				android:orientation="horizontal" 
 				android:padding="10dp">
 				<ListView 
 				android:id="@+id/programListView"
@@ -144,6 +143,7 @@ android:background ="@drawable/BG"
 						android:contentDescription="@string/app"
 						></ImageButton>
 						<TextView
+						android:id="@+id/date0"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_centerInParent="true"
@@ -166,6 +166,7 @@ android:background ="@drawable/BG"
 						android:contentDescription="@string/app"
 						></ImageButton>
 						<TextView
+						android:id="@+id/date1"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_centerInParent="true"
@@ -190,6 +191,7 @@ android:background ="@drawable/BG"
 						></ImageButton>
 
 						<TextView
+							android:id="@+id/date2"
 						    android:layout_width="wrap_content"
 						    android:layout_height="wrap_content"
 						    android:layout_centerInParent="true"
@@ -212,7 +214,7 @@ android:background ="@drawable/BG"
 						android:contentDescription="@string/app"
 						></ImageButton>
 						<TextView
-						   
+						android:id="@+id/date3"   
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_centerInParent="true"
@@ -235,7 +237,7 @@ android:background ="@drawable/BG"
 						android:contentDescription="@string/app"
 						></ImageButton>
 						<TextView
-						
+						android:id="@+id/date4"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_centerInParent="true"
@@ -258,6 +260,7 @@ android:background ="@drawable/BG"
 						android:contentDescription="@string/app"
 						></ImageButton>
 						<TextView
+						android:id="@+id/date5"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_centerInParent="true"
@@ -280,7 +283,7 @@ android:background ="@drawable/BG"
 					android:contentDescription="@string/app"
 					></ImageButton>
 					<TextView
-					
+					android:id="@+id/date6"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_centerInParent="true"
@@ -301,7 +304,7 @@ android:background ="@drawable/BG"
 				android:orientation="horizontal"
 				android:padding="10dp">
 				<ListView 
-				android:id="@+id/eitListView"
+				android:id="@+id/EitListView"
 				android:layout_width="fill_parent" 
 				android:layout_height="440dp">
 				</ListView>

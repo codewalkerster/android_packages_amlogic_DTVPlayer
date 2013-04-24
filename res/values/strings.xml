@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">DTVPlayer</string>
-
+	<string name="app">DTVPlayer</string>
 	<!--gobal-->
 	<string name="sure">Are you sure?</string>
 	<string name="on">On</string>
@@ -122,12 +122,52 @@
 		<item>Set password</item>	
 		<item>Select storage device</item>
 		<item>Timeshifting setting</item>
+		<item>Parental rating age</item>
 		<item>V-Chip</item>
 		<item>TTX Region</item>
 		<item>Closed Caption</item>
 		<item>Antenna Source</item>
 	</array>
-	
+
+	<array name="av_settings_content" translatable="false">
+		<item>Picture Size</item>	
+		<item>Audio Track</item>
+	</array>
+
+	<array name="system_settings_content" translatable="false">
+		<item>Subtitle Switch</item>	    
+		<item>Factory data reset</item>	
+		<item>Set password</item>	
+		<item>Select storage device</item>
+		<item>Timeshifting setting</item>
+		<item>Parental rating age</item>
+		<item>TTX Region</item>
+	</array>
+
+	<array name="system_settings_content_atsc" translatable="false">	
+		<item>Subtitle Switch</item>	    
+		<item>Factory data reset</item>	
+		<item>Set password</item>	
+		<item>Select storage device</item>
+		<item>Timeshifting setting</item>
+		<item>V-Chip</item>
+		<item>TTX Region</item>
+		<item>Closed Caption</item>
+		<item>Antenna Source</item>
+	</array>
+
+	<array name="search_settings_content_dvbs" translatable="false">
+		<item>Dish Setup</item>	
+		<item>DB Management</item>
+		<item>Unicable Config</item>
+	</array>
+
+	<array name="Program_settings_content" translatable="false">
+		<item>Program Management</item>	
+		<item>EPG</item>
+		<item>Sort By</item>
+	</array>
+
 
 	<string name="invalid_input">Invalid Input</string>
 	<string name="invalid_password">Invalid password</string>
@@ -352,7 +392,7 @@
 
 	<!--menu DVBS/S2--> 
 	<string name="scan_program">Search Setup</string>
-	<string name="dvbs_dish_setup">Dish Setup</string>
+	<string name="dvbs_dish_setup">DISH SETUP</string>
 	<string name="dvbs_db_management">DB Management</string>
 	<string name="dvbs_unicable_config">Unicable Config</string>
 
@@ -510,5 +550,12 @@
 	<string name="progress">Progress</string>
 	<string name="satellites_info_list">Satellites Information</string>
 	
+	<!--menu settings-->
+	<string name="setting_menu_program">PROGRAM</string>  
+	<string name="setting_menu_search">SEARCH</string>   
+	<string name="setting_menu_system">SYSTEM</string>   
+	<string name="setting_menu_av">AV SETTING</string>   
 	
+	
+	<string name="epg_exit">EXIT</string>
 </resources>

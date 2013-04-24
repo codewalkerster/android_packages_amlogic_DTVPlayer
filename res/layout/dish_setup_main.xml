@@ -3,7 +3,8 @@
 	android:orientation="horizontal" 
 	android:layout_gravity="center"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:layout_height="fill_parent"
+	android:background="@drawable/bg">
     
 	<LinearLayout
 		android:orientation="vertical"  
@@ -11,15 +12,14 @@
 		android:layout_width="fill_parent">
     
 		<TextView  
-			android:background="@drawable/epg_title_bg"
 			android:layout_gravity="center|left"	
 			android:layout_width="fill_parent"	    
 			android:layout_height="90px"
 			android:textColor="@android:color/white"
-			android:gravity="left"
-			android:paddingLeft="50px"
-			android:paddingTop="35px"
-			android:textSize="24sp"
+			android:gravity="center"
+			android:paddingLeft="50dp"
+			android:paddingTop="18dp"
+			android:textSize="30sp"
 			android:text="@string/dvbs_dish_setup"
 			/>    	
     
@@ -28,17 +28,21 @@
 			android:layout_width="fill_parent"
 			android:layout_height="10px"
 			android:layout_weight="1"
-			android:background="#FF171717">
+			>
 			<LinearLayout
+			    android:background ="@drawable/epg_content_bg3" 
 				android:orientation="vertical"
-				android:layout_width="10px"
-				android:layout_marginLeft="30px"
+				android:layout_width="10dp"
+				android:layout_marginLeft="30dp"
+				android:layout_marginRight="15dp"
+				android:paddingBottom="10dp"
 				android:layout_height="fill_parent"
 				android:layout_weight="4">
 				
 				<RelativeLayout
-				    android:layout_height="60px"
-				    android:layout_width="fill_parent">
+				    android:layout_height="60dp"
+				    android:layout_width="fill_parent"
+				    android:gravity="center_vertical">
 						<LinearLayout    
 						    android:id="@+id/sat_info_title_layout"  
 						   android:layout_width="fill_parent"       
@@ -166,7 +170,9 @@
 
     						<RelativeLayout
 						    android:layout_height="fill_parent"
-						    android:layout_width="fill_parent">	
+						    android:layout_width="fill_parent"
+						    android:layout_marginLeft="30dp"
+						      >	
 								  <ListView
 								     	android:id="@+id/sat_list"
 								  	android:layout_width="fill_parent"
@@ -189,18 +195,20 @@
 			<LinearLayout
 						  android:orientation="vertical"
 					  	android:layout_width="10px"
-					  	android:background="#FF171717"
+					  	android:background ="@drawable/epg_content_bg3"   
 					  	android:layout_height="fill_parent"
 						  android:layout_weight="3"
-						  android:paddingLeft="30px"
-						   android:paddingRight="30px">
+						  android:paddingLeft="30dp"
+						   android:paddingRight="30dp"
+						   android:paddingBottom="10dp"
+						   android:layout_marginRight="30dp">
 
 						<TextView
 								android:id="@+id/sat_name"
 								android:layout_width="fill_parent"
-								android:layout_height="45px"
+								android:layout_height="60px"
 								android:textSize="22sp"
-								android:gravity="center"
+								android:gravity="center_vertical"
 								 android:singleLine="true"
 	  							android:layout_gravity="center_vertical"/>
 	  					 <ListView
@@ -213,208 +221,210 @@
 		</LinearLayout> 
 			  	
 		<LinearLayout
-			android:orientation="vertical"
-			android:background="@drawable/epg_eit_list_bg"
-			android:layout_width="fill_parent"
-			android:layout_height="125px"
-			android:paddingLeft="30px"
-			android:paddingBottom="35px">
-
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="85dp"
+	android:gravity="center_vertical"
+	android:id="@+id/epg_layout_bottom"
+	>
+		
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/epg_info_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/dish_setup_conf_button_des1_info"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/epg_info_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		      android:layout_marginLeft="20sp"    
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/dish_setup_conf_button_des5_info"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/red_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"     
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/dish_setup_conf_button_des2_info"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/yellow_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		     android:layout_marginLeft="20sp"  
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/dish_setup_conf_button_des3_info"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/blue_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/dish_setup_conf_button_des4_info"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/green_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/dish_setup_conf_button_des5_info"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
 			<LinearLayout
-				android:orientation="horizontal"
-				android:layout_width="fill_parent"
-				android:layout_height="45px"
-				android:layout_marginTop="5px">
-				
-				<LinearLayout
-					android:id="@+id/editProgramOpDes01"
-					android:orientation="horizontal"
-					android:layout_width="wrap_content"
-					android:layout_height="40px"
-					android:layout_weight="1">
-					<TextView
-						android:background="@drawable/btn_help_des"
-						android:text="@string/dish_setup_conf_button_des1"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="120px"
-						android:layout_height="35px"
-						android:gravity="center"/>
-					<TextView
-						android:text="@string/dish_setup_conf_button_des1_info"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="wrap_content"
-						android:layout_height="fill_parent"
-						android:layout_weight="1"/>		
-				</LinearLayout>	
-				<LinearLayout
-					android:id="@+id/editProgramOpDes02"
-					android:orientation="horizontal"
-					android:layout_width="wrap_content"
-					android:layout_height="40px"
-					android:layout_weight="1">
-					<TextView
-						android:background="@drawable/btn_help_des"
-						android:text="@string/dish_setup_conf_button_des2"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="120px"
-						android:layout_height="35px"
-						android:gravity="center"/>
-					<TextView
-						android:text="@string/dish_setup_conf_button_des2_info"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="wrap_content"
-						android:layout_height="fill_parent"
-						android:layout_weight="1"/>	
-				</LinearLayout>	
-				<LinearLayout
-					android:id="@+id/editProgramOpDes03"
-					android:orientation="horizontal"
-					android:layout_width="wrap_content"
-					android:layout_height="40px"
-					android:layout_weight="1">
-					<TextView
-						android:background="@drawable/btn_help_des"
-						android:text="@string/dish_setup_conf_button_des3"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="120px"
-						android:layout_height="35px"
-						android:gravity="center"/>	
-					<TextView
-						android:text="@string/dish_setup_conf_button_des3_info"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="wrap_content"
-						android:layout_height="fill_parent"
-						android:layout_weight="1"/>		
-				</LinearLayout>
-				<LinearLayout
-					android:id="@+id/editProgramOpDes04"
-					android:orientation="horizontal"
-					android:layout_width="wrap_content"
-					android:layout_height="40px"
-					android:layout_weight="1">
-					<TextView
-						android:background="@drawable/btn_help_des"
-						android:text="@string/dish_setup_conf_button_des4"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="120px"
-						android:layout_height="35px"
-						android:gravity="center"/>
-					<TextView
-						android:text="@string/dish_setup_conf_button_des4_info"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="wrap_content"
-						android:layout_height="fill_parent"
-						android:layout_weight="1"/>		
-				</LinearLayout>	
-			</LinearLayout> 	
-
+			android:id="@+id/editProgramOpDes07"	
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/green_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/dish_setup_conf_button_des5_info"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
 			<LinearLayout
-				android:orientation="horizontal"
-				android:layout_width="fill_parent"
-				android:layout_height="40px">
-				
-				<LinearLayout
-					android:id="@+id/editProgramOpDes05"
-					android:orientation="horizontal"
-					android:layout_width="wrap_content"
-					android:layout_height="45px"
-					android:layout_weight="1">
-					<TextView
-						android:background="@drawable/btn_help_des"
-						android:text="@string/dish_setup_conf_button_des5"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="120px"
-						android:layout_height="35px"
-						android:gravity="center"/>
-					<TextView
-						android:text="@string/dish_setup_conf_button_des5_info"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="wrap_content"
-						android:layout_height="fill_parent"
-						android:layout_weight="1"/>		
-				</LinearLayout>	
-				<LinearLayout
-					android:id="@+id/editProgramOpDes06"
-					android:orientation="horizontal"
-					android:layout_width="wrap_content"
-					android:layout_height="40px"
-					android:layout_weight="1">
-					<TextView
-						android:background="@drawable/btn_help_des"
-						android:text="@string/dish_setup_conf_button_des6"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="120px"
-						android:layout_height="35px"
-						android:gravity="center"/>
-					<TextView
-						android:text="@string/dish_setup_conf_button_des6_info"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="wrap_content"
-						android:layout_height="fill_parent"
-						android:layout_weight="1"/>	
-				</LinearLayout>	
-				<LinearLayout
-					android:id="@+id/editProgramOpDes07"
-					android:orientation="horizontal"
-					android:layout_width="wrap_content"
-					android:layout_height="40px"
-					android:layout_weight="1"
-					android:visibility="invisible">
-					<TextView
-						android:background="@drawable/btn_help_des"
-						android:text="@string/dish_setup_conf_button_des7"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="120px"
-						android:layout_height="35px"
-						android:gravity="center"/>	
-					<TextView
-						android:text="@string/dish_setup_conf_button_des7_info"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="wrap_content"
-						android:layout_height="fill_parent"
-						android:layout_weight="1"/>		
-				</LinearLayout>
-				<LinearLayout
-					android:id="@+id/editProgramOpDes08"
-					android:orientation="horizontal"
-					android:layout_width="wrap_content"
-					android:layout_height="40px"
-					android:layout_weight="1"
-					android:visibility="invisible">
-					<TextView
-						android:background="@drawable/btn_help_des"
-						android:text="@string/dish_setup_conf_button_des8"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="120px"
-						android:layout_height="35px"
-						android:gravity="center"/>
-					<TextView
-						android:text="@string/dish_setup_conf_button_des8_info"
-						android:layout_marginLeft="10px"
-						android:textSize="16sp"
-						android:layout_width="wrap_content"
-						android:layout_height="fill_parent"
-						android:layout_weight="1"/>		
-				</LinearLayout>	
-			</LinearLayout> 	
-			
-		</LinearLayout> 	
-
+				android:id="@+id/editProgramOpDes08"	
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/green_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/dish_setup_conf_button_des5_info"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+	</LinearLayout>
+		
 	</LinearLayout>
 
 </LinearLayout>

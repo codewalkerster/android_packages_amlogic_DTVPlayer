@@ -7,7 +7,7 @@ public class DbSat{
 
 	private int scan_id;
 	private int sat_no;
-	private int id;
+	private int sat_id;
 	private String name;
 	private int flags;
 
@@ -88,12 +88,12 @@ public class DbSat{
 	    this.sat_no = sat_no;
 	}
 		
-	public int getId() {
-	    return id;
+	public int getSatId() {
+	    return sat_id;
 	}
 
-	public void setId(int id) {
-	    this.id = id;
+	public void setSatId(int id) {
+	    this.sat_id = id;
 	}
 
 	public String getName() {

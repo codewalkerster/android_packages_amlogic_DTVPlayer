@@ -99,33 +99,35 @@
 	<RelativeLayout android:id="@+id/RelativeLayoutInforbar"
 		android:layout_alignParentBottom="true"
 		android:layout_width="fill_parent"
-		android:layout_marginLeft="30px"
-		android:layout_marginRight="30px"
-		android:layout_marginBottom="10px"
+		android:layout_marginLeft="30dp"
+		android:layout_marginRight="30dp"
+		android:layout_marginBottom="10dp"
 		android:background="@drawable/dtvplayer_bar_bg" 
-		android:layout_height="150px"
-		android:paddingBottom="15px"
-		android:visibility="invisible">
+		android:layout_height="150dp"
+		android:paddingBottom="0dp"
+		>
 
 		<RelativeLayout android:id="@+id/RelativeLayoutNextprogram" 
-			android:layout_height="26px" 
-			android:layout_marginRight="5px" 
+			android:layout_height="26dp" 
+			android:layout_marginRight="5dp" 
 			android:layout_width="fill_parent" 
-			android:layout_marginLeft="5px"
+			android:layout_marginLeft="5dp"
 			android:layout_alignParentBottom="true"
-			android:layout_marginBottom="6px">
+			android:layout_marginBottom="6dp">
+
 			<LinearLayout
-				android:orientation="horizontal"
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				> 
+			    android:layout_width="fill_parent"
+			    android:layout_height="fill_parent"
+			    android:layout_alignParentBottom="true"
+			    android:orientation="horizontal" >
+ 
 				<TextView 
 				      android:id="@+id/Text_nextevent"
 				      android:text="@string/dtvplayer_no_next_event"
 				      android:layout_width="fill_parent"
-				      android:layout_height="26px"
-				      android:textSize="20px"  
-				      android:paddingLeft="33px"
+				      android:layout_height="40dp"
+				      android:textSize="26sp"  
+				      android:paddingLeft="30dp"
 				      android:singleLine="true" 
 				      android:layout_weight="1"
 				      >
@@ -133,25 +135,16 @@
 				<TextView 
 				      android:id="@+id/Text_parent_rate"
 				      android:layout_width="fill_parent"
-				      android:layout_height="26px"
-				      android:textSize="20px"  
-				      android:paddingLeft="33px"
+				      android:layout_height="26dp"
+				      android:textSize="20sp"  
+				      android:paddingLeft="33dp"
 				      android:singleLine="true" 
 				      android:layout_weight="1"
 				      >
 				</TextView>
 			</LinearLayout>
 		</RelativeLayout>
-
-		<RelativeLayout android:layout_width="fill_parent" 
-			android:layout_height="wrap_content"
-			android:id="@+id/RelativeLayout_inforbar_line" 
-			android:background="@drawable/dtvplayer_line"
-			android:layout_marginRight="34px"
-			android:layout_marginLeft="17px"
-			android:layout_above="@+id/RelativeLayoutNextprogram">
-		</RelativeLayout>
-			
+	
 		<RelativeLayout 
 			android:id="@+id/RelativeLayoutNoAndName" 
 			android:layout_width="400px" 
@@ -171,20 +164,20 @@
 				   android:layout_width="wrap_content"    
 				   android:layout_height="wrap_content">
 				    <ImageView android:id="@+id/ImageView_icon_scrambled"
-						android:layout_width="26px"
-						android:layout_height="26px"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
 						android:layout_gravity="center"
 						android:background="@drawable/dtvplayer_icon_scrambled" 
 						android:visibility="invisible"/>
 				    <ImageView android:id="@+id/ImageView_icon_fav"
-						android:layout_width="26px"
-						android:layout_height="26px"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
 						android:layout_gravity="center"
 						android:background="@drawable/dtvplayer_icon_fav" 
 						android:visibility="invisible"/>
 				   <ImageView android:id="@+id/ImageView_icon_lock"
-						android:layout_width="26px"
-						android:layout_height="26px"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
 						android:layout_gravity="center"
 						android:background="@drawable/dtvplayer_icon_lock" 
 						android:visibility="invisible"/>
@@ -196,20 +189,20 @@
 					android:layout_marginLeft="30px"
 					>
 					<ImageView android:id="@+id/ImageView_icon_epg"
-						android:layout_width="50px"
-						android:layout_height="26px"
+						android:layout_width="56dp"
+						android:layout_height="31dp"
 						android:layout_gravity="center"
 						android:background="@drawable/dtvplayer_icon_epg" 
 						android:visibility="gone"/>
 					<ImageView android:id="@+id/ImageView_icon_sub"
-						android:layout_width="50px"
-						android:layout_height="26px"
+						android:layout_width="56dp"
+						android:layout_height="31dp"
 						android:layout_gravity="center"
 						android:background="@drawable/dtvplayer_icon_sub" 
 						android:visibility="gone"/>
 					<ImageView android:id="@+id/ImageView_icon_txt"
-						android:layout_width="50px"
-						android:layout_height="26px"
+						android:layout_width="56dp"
+						android:layout_height="31dp"
 						android:layout_gravity="center"
 						android:background="@drawable/dtvplayer_icon_txt" 
 						android:visibility="gone"/>
@@ -230,10 +223,10 @@
 			<TextView 
 				android:id="@+id/Text_proname"
 				android:layout_width="fill_parent"
-				android:layout_height="40px"
-				android:paddingLeft="30px"
-				android:paddingRight="30px"
-				android:textSize="32px"
+				android:layout_height="46dp"
+				android:paddingLeft="30dp"
+				android:paddingRight="30dp"
+				android:textSize="36sp"
 				android:layout_below="@+id/LinearLayoutNoAndName"
 				android:gravity="left"
 				android:singleLine="true" 
@@ -244,10 +237,10 @@
 			
 		<RelativeLayout android:id="@+id/RelativeLayoutCurrentEvent"
 			android:layout_toRightOf="@+id/RelativeLayoutNoAndName"
-			android:layout_width="594px" 
-			android:layout_height="100px" 
-			android:layout_marginRight="45px" 
-			android:layout_marginTop="8px"
+			android:layout_width="620dp" 
+			android:layout_height="100dp" 
+			android:layout_marginRight="45dp" 
+			android:layout_marginTop="8dp"
 			>
 			<ProgressBar android:id="@+id/progressBarHorizontal" 
 				 			 android:layout_height="0px" 
@@ -257,10 +250,10 @@
 			      android:id="@+id/Text_curevent"
 			      android:text="@string/dtvplayer_no_current_event"
 			      android:layout_width="fill_parent"
-			      android:layout_height="25px"
-			      android:textSize="20px" 
-			      android:layout_marginTop="8px"
-			      android:paddingLeft="35px"
+			      android:layout_height="30dp"
+			      android:textSize="26sp" 
+			      android:layout_marginTop="8dp"
+			      android:paddingLeft="35dp"
 			      android:shadowColor="@android:color/white"
 			      >
 			</TextView>
@@ -269,40 +262,40 @@
 			      android:id="@+id/Text_title_info"
 			      android:text="@string/dtvplayer_title_info"
 			      android:layout_width="fill_parent"
-			      android:layout_height="25px"
+			      android:layout_height="30dp"
 			      android:layout_below="@+id/Text_curevent"
-			      android:textSize="20px"
-			      android:paddingLeft="35px"
+			      android:textSize="26sp"
+			      android:paddingLeft="35dp"
 			      >
 			</TextView>
 			<TextView 
 			      android:id="@+id/Text_detail_info"
 			      android:text="@string/dtvplayer_detail_info"
 			      android:layout_width="fill_parent"
-			      android:layout_height="25px"
+			      android:layout_height="30dp"
 			      android:layout_below="@+id/Text_title_info"
-			      android:textSize="20px"
-			      android:paddingLeft="35px"
+			      android:textSize="26sp"
+			      android:paddingLeft="35dp"
 			      >
 			</TextView>			
 		</RelativeLayout>
 			
 		<RelativeLayout
 			android:layout_toRightOf="@+id/RelativeLayoutCurrentEvent"			
-			android:layout_height="100px"
-			android:layout_width="200px"
-			android:layout_marginRight="16.5px"
-			android:layout_marginTop="15px"
+			android:layout_height="100dp"
+			android:layout_width="200dp"
+			android:layout_marginRight="16dp"
+			android:layout_marginTop="10dp"
 			>
 			<TextView 
 				android:id="@+id/Text_MTS_info" 
 				android:background="@drawable/dtvplayer_infobar_text_bg"
 				android:layout_alignParentTop="true" 
-				android:layout_width="78px" 
-				android:layout_height="24px"
+				android:layout_width="96dp" 
+				android:layout_height="31dp"
 				android:layout_alignParentLeft="true"
 				android:textColor="@android:color/white"
-				android:textSize="18px"
+				android:textSize="26sp"
 				android:gravity="center"
 
 				>
@@ -310,11 +303,11 @@
 			<TextView
 				android:id="@+id/Text_screentype_info" 
 				android:background="@drawable/dtvplayer_infobar_text_bg"
-				android:layout_width="78px" 
-				android:layout_height="24px"
+				android:layout_width="96dp" 
+				android:layout_height="31dp"
 				android:layout_alignParentLeft="true"
 				android:textColor="@android:color/white"
-				android:textSize="18px"
+				android:textSize="26sp"
 				android:gravity="center"
 				android:layout_below="@+id/Text_MTS_info">
 			</TextView>
@@ -322,11 +315,11 @@
 			<TextView 
 					android:id="@+id/Text_parent_control_info_icon" 
 					android:background="@drawable/dtvplayer_infobar_text_bg"
-					android:layout_width="78px" 
-					android:layout_height="24px"
+					android:layout_width="96dp" 
+					android:layout_height="31dp"
 					android:layout_alignParentLeft="true"
 					android:textColor="@android:color/white"
-					android:textSize="18px"
+					android:textSize="24sp"
 					android:gravity="center"
 					android:layout_below="@+id/Text_screentype_info">
 			</TextView>

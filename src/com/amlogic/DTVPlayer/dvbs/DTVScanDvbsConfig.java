@@ -43,6 +43,9 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation.AnimationListener;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 
 public class DTVScanDvbsConfig  extends DTVActivity {
 	/** Called when the activity is first created. */
@@ -51,6 +54,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	private SatAdapter mySatAdapter=null;
 	private TsAdapter myTsAdapter=null;
 	private LnbSetAdapter myLnbSetAdapter=null; 
+	
 	private List<DbSat> satInfoList=null;
 	private List<DbTransponder> tsInfoList=null;
 
@@ -81,7 +85,16 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dish_setup_main);
 		mContext=this;
-		mTVSatellite = new TVSatellite();
+		Context otherAppsContext = null;
+		try{
+			otherAppsContext = createPackageContext(
+			"com.amlogic.DTVPlayer", Context.MODE_WORLD_WRITEABLE|Context.MODE_WORLD_READABLE);
+		}
+		catch (NameNotFoundException e){
+		}
+		mLast= PreferenceManager.getDefaultSharedPreferences(otherAppsContext);
+		mTVSatellite = new TVSatellite(this);
+		DTVScanDvbsConfig_UIInit();
 	}
 	
 	public void onConnected(){
@@ -455,7 +468,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 	protected void onStop(){
 		Log.d(TAG,"onStop");	
-		
 		super.onStop();
 	}
 
@@ -540,9 +552,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				DbSat satInfoNode = new DbSat();	
 				TVSatellite temp = list_sat[i];
 				
-				int  scan_id = temp.getSatelliteId();				
-				//Log.d(TAG,"scan_id"+scan_id);			
-				satInfoNode.setScanId(scan_id);
+				int  sat_id = temp.getSatelliteId();				
+				//Log.d(TAG,"sat_id"+sat_id);			
+				satInfoNode.setSatId(sat_id);
 							
 				double sat_longitude = temp.tv_satparams.getSatelliteLongitude();		
 				//Log.d(TAG,"sat_longitude"+sat_longitude);			
@@ -638,7 +650,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	static List<DbTransponder> getScanTsList(DbSat satInfoNode){
 		int n=0,numColumn=0;
 		if(satInfoNode.transponder==null){
-			int sat_id = satInfoNode.getScanId();
+			int sat_id = satInfoNode.getSatId();
 
 			list_ts = TVChannel.tvChannelList(mContext,sat_id);
 			if(list_ts!=null){
@@ -648,9 +660,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					DbTransponder tsInfoNode = new DbTransponder();
 					TVChannel temp = list_ts[i];
 
-					int  ts_scan_id = sat_id;
+					int  ts_sat_id = sat_id;
 					//Log.d(TAG,"ts_scan_id"+ts_scan_id);
-					tsInfoNode.setScanId(ts_scan_id);
+					tsInfoNode.setSatId(ts_sat_id);
 
 					int  db_id = temp.getID();
 					//Log.d(TAG,"db_id"+db_id);
@@ -674,6 +686,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					
 					tsInfoArrayList.add(tsInfoNode);	
 				}
+				satInfoNode.transponder=tsInfoArrayList;
 			}	
 		}
 		
@@ -999,9 +1012,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		return db_id;
 	}
 
-	private void editSatData(int scan_id,ContentValues values,String mode){
+	private void editSatData(int sat_id,ContentValues values,String mode){
 		
-		TVSatellite temp_TVSatellite = TVSatellite.tvSatelliteSelect(mContext,scan_id);
+		TVSatellite temp_TVSatellite = TVSatellite.tvSatelliteSelect(mContext,sat_id);
 
 		if(mode.equals("sat")){
 			String name = (String)(Object)values.get("sat_name");
@@ -1091,6 +1104,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		values.put("cmd_order",0);
 		*/
 
+		Log.d(TAG,"add sat sat_id==="+temp_TVSatellite.getSatelliteId());
+		sat_node.setSatId(temp_TVSatellite.getSatelliteId());
 		sat_node.setName(name);
 		sat_node.setLongitude(angle);	
 		sat_node.setPositionNumber(0);	
@@ -1136,9 +1151,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	private void addTsData(int cur_sat_pos, ContentValues values, DbTransponder ts){
 		
 		DbSat sat_node = getSatInfoByPostion(cur_sat_pos);
-		int scan_id = sat_node.getScanId();
+		int sat_id = sat_node.getSatId();
 		
-		values.put("db_sat_para_id",scan_id);
+		values.put("db_sat_para_id",sat_id);
 		values.put("ts_id",0xffff);
 
 		//values.put("src",DVBClient.SCAN_DVBS>>8);
@@ -1150,8 +1165,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		values.put("strength",0);
 		values.put("dvbt_flag",0);
 
-		TVChannelParams temp = new TVChannelParams(TVChannelParams.MODE_QPSK);
-		temp.dvbsParams(ts.getFrequency(), ts.getSymbol(), scan_id,ts.getPolarization());
+		Log.d(TAG,"fre="+ts.getFrequency()+"sym="+ts.getSymbol()+"sat id="+sat_id+"polar+"+ts.getPolarization());
+		//TVChannelParams temp = new TVChannelParams(TVChannelParams.MODE_QPSK);
+		TVChannelParams temp = TVChannelParams.dvbsParams(mContext,ts.getFrequency(), ts.getSymbol(), sat_id,ts.getPolarization());
 		TVChannel TVChannel_temp = new TVChannel(mContext,temp);
 		
 		if(tsInfoList!=null)
@@ -1252,8 +1268,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			ContentValues values = new ContentValues();
 			values.put("motor_num", LnbSettingItemSelected);
 			SatInfo.setMotoNo(LnbSettingItemSelected);
-			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values,"motor_num");		
+			int sat_id = SatInfo.getSatId();
+			editSatData(sat_id,values,"motor_num");		
 			myLnbSetAdapter.notifyDataSetChanged();
 		}
 		});
@@ -1536,8 +1552,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					}
 				}
 				
-				int scan_id = SatInfo.getScanId();
-				editSatData(scan_id,values,"lof");	
+				int sat_id = SatInfo.getSatId();
+				editSatData(sat_id,values,"lof");	
 				myLnbSetAdapter.notifyDataSetChanged();
 				dialog.dismiss();
                           }
@@ -1673,8 +1689,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			}
 
 			int scan_id = SatInfo.getScanId();
-			int sat_id  = SatInfo.getId();
-			editSatData(scan_id,values,"voltage");	
+			int sat_id  = SatInfo.getSatId();
+			editSatData(sat_id,values,"voltage");	
 			myLnbSetAdapter.notifyDataSetChanged();
 			dialog.dismiss();
 
@@ -1770,8 +1786,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						break;	
 			}
 				
-			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values,"signal_22khz");		
+			int sat_id  = SatInfo.getSatId();
+			editSatData(sat_id,values,"signal_22khz");		
 			myLnbSetAdapter.notifyDataSetChanged();
 			}
 		});	
@@ -1857,8 +1873,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						break;
 			}
 				
-			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values,"tone_burst");		
+			int sat_id  = SatInfo.getSatId();
+			editSatData(sat_id,values,"tone_burst");		
 			myLnbSetAdapter.notifyDataSetChanged();
 			}
 		});	
@@ -1963,8 +1979,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						SatInfo.setSwtPort(DbSat.LNB_DISEQC_13);	
 						break;
 			}
-			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values,"diseqc_mode");
+			int sat_id = SatInfo.getSatId();
+			editSatData(sat_id,values,"diseqc_mode");
 			
 			myLnbSetAdapter.notifyDataSetChanged();
 			
@@ -2040,8 +2056,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			values.put("committed_cmd", LnbSettingItemSelected);
 			SatInfo.setLnbConfig10(LnbSettingItemSelected);
 	
-			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values,"committed_cmd");		
+			int sat_id = SatInfo.getSatId();
+			editSatData(sat_id,values,"committed_cmd");		
 			myLnbSetAdapter.notifyDataSetChanged();
 			
 			}
@@ -2117,8 +2133,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				values.put("uncommitted_cmd", temp);
 				SatInfo.setLnbConfig11(temp);
 			}		
-			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values,"uncommitted_cmd");		
+			int sat_id = SatInfo.getSatId();
+			editSatData(sat_id,values,"uncommitted_cmd");		
 			myLnbSetAdapter.notifyDataSetChanged();
 		}
 		});
@@ -2250,8 +2266,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				SatInfo.setDiseqcSequence(value1);
 			}
 		
-			int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values,"cmd_order");		
+			int sat_id = SatInfo.getSatId();
+			editSatData(sat_id,values,"cmd_order");		
 			myLnbSetAdapter.notifyDataSetChanged();
 		}
 		});
@@ -2303,8 +2319,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		    	info_cur.setText(R.string.off);
 		}
 		
-		int scan_id = SatInfo.getScanId();
-		editSatData(scan_id,values,"sequence_repeat");		
+		int sat_id = SatInfo.getSatId();
+		editSatData(sat_id,values,"sequence_repeat");		
 		
 	}
 
@@ -2332,8 +2348,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		    	info_cur.setText(R.string.off);
 		}
 		
-		int scan_id = SatInfo.getScanId();
-			editSatData(scan_id,values,"fast_diseqc");		
+		int sat_id = SatInfo.getSatId();
+			editSatData(sat_id,values,"fast_diseqc");		
 		
 	}
 
@@ -3115,7 +3131,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		final DbTransponder TsInfo  = queryTsData(list_cur_pos);
 
 
-		TVSatellite sat_para = new TVSatellite();
+		TVSatellite sat_para = new TVSatellite(this);
 		/*	
 		//sat_para.lnb_num = SatInfo.getLnbNo();//lnb No.
 		sat_para.sat_name= SatInfo.getName(); //satellite name
@@ -3409,13 +3425,12 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		int sat_id;
 		//DVBSatelliteParameter sat;
 		//ArrayList<DVBFrontEndPara> ts_list=null;
-		//TVSatelliteParams sat;
+		TVSatellite sat;
 		ArrayList<TVChannelParams> ts_list=null;
 	}
 	
 	private static ArrayList<DefaultList> default_list=null;
 
-	/*
 	private static  ArrayList<DefaultList> getScanParaList(){
 		if(default_list==null)
 			default_list = new ArrayList<DefaultList>();
@@ -3453,14 +3468,16 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 							if(ts_temp_node.getSelectedFlag()){
 								//add ts info into default list
 								if(dvb_sat_para.ts_list==null)
-									dvb_sat_para.ts_list = new ArrayList<DVBFrontEndPara>();
-								DVBFrontEndPara ts_node = new DVBFrontEndPara();
+									dvb_sat_para.ts_list = new ArrayList<TVChannelParams>();
+
+								TVChannelParams ts_node = new TVChannelParams(TVChannelParams.MODE_QPSK);
+
+								ts_node.frequency  = ts_temp_node.getFrequency();
+								ts_node.symbolRate = ts_temp_node.getSymbol();
+								ts_node.sat_id = ts_temp_node.getSatId();
+								ts_node.sat_polarisation = ts_temp_node.getPolarization();
 								
-								ts_node.frequency = ts_temp_node.getFrequency(); //fre
-								ts_node.symbol_rate = ts_temp_node.getSymbol();//sym
-								ts_node.fec_inner = ts_temp_node.getFecInner(); //fecinner
-								ts_node.polarisation = ts_temp_node.getPolarization();//polarization
-								
+				
 								dvb_sat_para.ts_list.add(ts_node);
 							}
 						}
@@ -3478,69 +3495,72 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 								
 								//add ts info into default list
 								if(dvb_sat_para.ts_list==null)
-									dvb_sat_para.ts_list = new ArrayList<DVBFrontEndPara>();
-								DVBFrontEndPara ts_node_1 = new DVBFrontEndPara();
-								
-								Log.d(TAG,"ts node fre=="+ts_node_1.frequency);
-								ts_node_1.frequency = ts_temp_node_1.getFrequency(); //fre
-								ts_node_1.symbol_rate = ts_temp_node_1.getSymbol();//sym
-								ts_node_1.fec_inner = ts_temp_node_1.getFecInner(); //fecinner
-								ts_node_1.polarisation = ts_temp_node_1.getPolarization();//polarization
-								
+									dvb_sat_para.ts_list = new ArrayList<TVChannelParams>();
+
+								TVChannelParams ts_node_1 = new TVChannelParams(TVChannelParams.MODE_QPSK);
+
+								ts_node_1.frequency  = ts_temp_node_1.getFrequency();
+								ts_node_1.symbolRate = ts_temp_node_1.getSymbol();
+								ts_node_1.sat_id = ts_temp_node_1.getSatId();
+								ts_node_1.sat_polarisation = ts_temp_node_1.getPolarization();
 								dvb_sat_para.ts_list.add(ts_node_1);
 								
 							}
 						}	
 					}
 
-					dvb_sat_para.sat = new DVBSatelliteParameter();
-
+					dvb_sat_para.sat = new TVSatellite();
+					dvb_sat_para.sat.tv_satparams = new TVSatelliteParams();
 					//dvb_sat_para.sat.lnb_num = sat_temp.getLnbNo();//lnb No.
-					dvb_sat_para.sat.name = sat_temp.getName(); //satellite name
-					dvb_sat_para.sat.sat_longitude = sat_temp.getPosition();//satellite longitude
-					dvb_sat_para.sat.lof_lo = sat_temp.getLoLOF(); //lof_low
-					dvb_sat_para.sat.lof_hi = sat_temp.getHiLOF(); //lof_hi
-					dvb_sat_para.sat.lof_threshold = sat_temp.getLofThreshold(); //threshold
-					dvb_sat_para.sat.voltage_mode = sat_temp.getLNBPwrOnOff();//voltage
+					dvb_sat_para.sat.sat_name = sat_temp.getName(); //satellite name
 					
-					dvb_sat_para.sat.signal_22khz = sat_temp.get22KOnOff(); //22k
-					dvb_sat_para.sat.toneburst = sat_temp.getToneburstType();
+					dvb_sat_para.sat.tv_satparams.sat_longitude = (double)(sat_temp.getPosition());//satellite longitude
+					dvb_sat_para.sat.tv_satparams.lnb_lof_lo = sat_temp.getLoLOF(); //lof_low
+					dvb_sat_para.sat.tv_satparams.lnb_lof_hi = sat_temp.getHiLOF(); //lof_hi
+					dvb_sat_para.sat.tv_satparams.lnb_lof_threadhold = sat_temp.getLofThreshold(); //threshold
+					dvb_sat_para.sat.tv_satparams.sec_voltage_status = sat_temp.getLNBPwrOnOff();//voltage
 					
-					dvb_sat_para.sat.repeats = sat_temp.getDiseqcRepeat();
+					dvb_sat_para.sat.tv_satparams.sec_22k_status = sat_temp.get22KOnOff(); //22k
+					dvb_sat_para.sat.tv_satparams.sec_tone_burst = sat_temp.getToneburstType();
+					
+					dvb_sat_para.sat.tv_satparams.diseqc_sequence_repeat = sat_temp.getDiseqcRepeat();
 				
-					dvb_sat_para.sat.committed_cmd = sat_temp.getLnbConfig10();
-					dvb_sat_para.sat.uncommitted_cmd = sat_temp.getLnbConfig11();
-					dvb_sat_para.sat.cmd_order = sat_temp.getDiseqcSequence();
-					dvb_sat_para.sat.fast_diseqc = sat_temp.getFastDiseqc();
+					dvb_sat_para.sat.tv_satparams.diseqc_committed = sat_temp.getLnbConfig10();
+					dvb_sat_para.sat.tv_satparams.diseqc_uncommitted = sat_temp.getLnbConfig11();
+					dvb_sat_para.sat.tv_satparams.diseqc_order = sat_temp.getDiseqcSequence();
+					dvb_sat_para.sat.tv_satparams.diseqc_fast = sat_temp.getFastDiseqc();
 
 					if(sat_temp.getSwtPort()==DbSat.LNB_DISEQC_12){
-						dvb_sat_para.sat.diseqc_mode = DVBSatelliteParameter.DISEQC_MODE_V1_2;
-						dvb_sat_para.sat.position_number = sat_temp.getPositionNumber();
+						dvb_sat_para.sat.tv_satparams.diseqc_mode = TVSatelliteParams.DISEQC_MODE_V1_2;
+						dvb_sat_para.sat.tv_satparams.motor_position_num = sat_temp.getPositionNumber();
 					}
 					else if(sat_temp.getSwtPort()==DbSat.LNB_DISEQC_13){
-						dvb_sat_para.sat.diseqc_mode = DVBSatelliteParameter.DISEQC_MODE_V1_3;
-						dvb_sat_para.sat.position_number = sat_temp.getPositionNumber();
+						dvb_sat_para.sat.tv_satparams.diseqc_mode = TVSatelliteParams.DISEQC_MODE_V1_3;
+						dvb_sat_para.sat.tv_satparams.motor_position_num = sat_temp.getPositionNumber();
 					}
 					else{
-						dvb_sat_para.sat.diseqc_mode = sat_temp.getSwtPort();
+						dvb_sat_para.sat.tv_satparams.diseqc_mode = sat_temp.getSwtPort();
 					}
-					
+
+					/*
 					//!< longitude direction GO_EAST, GO_WEST
 					if(mLast.getString("longitude_direction","East").equals("East"))
-						dvb_sat_para.sat.lo_direction = DVBSatelliteParameter.GO_EAST;
+						dvb_sat_para.sat.lo_direction = TVSatelliteParams.GO_EAST;
 					else
-						dvb_sat_para.sat.lo_direction = DVBSatelliteParameter.GO_WEST;
+						dvb_sat_para.sat.lo_direction = TVSatelliteParams.GO_WEST;
 					
 					//!< latitude direction GO_NORTH, GO_SOUTH
 					if(mLast.getString("latitude_direction","North").equals("North"))
-						dvb_sat_para.sat.la_direction = DVBSatelliteParameter.GO_NORTH;
+						dvb_sat_para.sat.la_direction = TVSatelliteParams.GO_NORTH;
 					else
-						dvb_sat_para.sat.la_direction = DVBSatelliteParameter.GO_SOUTH;
+						dvb_sat_para.sat.la_direction = TVSatelliteParams.GO_SOUTH;
 
 					dvb_sat_para.sat.longitude = mLast.getInt("longitude_angle",0);
 					dvb_sat_para.sat.latitude = mLast.getInt("latitude_angle",0);
+					*/
 					dvb_sat_para.scan_id = sat_temp.getScanId();
-					dvb_sat_para.sat_id = sat_temp.getId();	
+					dvb_sat_para.sat_id = sat_temp.getSatId();	
+					
 					default_list.add(dvb_sat_para);
 				}
 				else{
@@ -3551,13 +3571,14 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 								ts_node_sel_flag = true;
 								//add ts info into default list
 								if(dvb_sat_para.ts_list==null)
-									dvb_sat_para.ts_list = new ArrayList<DVBFrontEndPara>();
-								DVBFrontEndPara ts_node_2 = new DVBFrontEndPara();
-								ts_node_2.frequency = ts_temp.getFrequency(); //fre
-								ts_node_2.symbol_rate = ts_temp.getSymbol();//sym
-								ts_node_2.fec_inner = ts_temp.getFecInner(); //fecinner
-								ts_node_2.polarisation = ts_temp.getPolarization();//polarization
-								
+									dvb_sat_para.ts_list = new ArrayList<TVChannelParams>();
+
+								TVChannelParams ts_node_2 = new TVChannelParams(TVChannelParams.MODE_QPSK);
+
+								ts_node_2.frequency  = ts_temp.getFrequency();
+								ts_node_2.symbolRate = ts_temp.getSymbol();
+								ts_node_2.sat_id = ts_temp.getSatId();
+								ts_node_2.sat_polarisation = ts_temp.getPolarization();
 								dvb_sat_para.ts_list.add(ts_node_2);
 							}
 						}
@@ -3565,50 +3586,41 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					
 
 					if(ts_node_sel_flag){
-						dvb_sat_para.sat = new DVBSatelliteParameter();	
-						
+
+						dvb_sat_para.sat = new TVSatellite();
+						dvb_sat_para.sat.tv_satparams = new TVSatelliteParams();
 						//dvb_sat_para.sat.lnb_num = sat_temp.getLnbNo();//lnb No.
-						dvb_sat_para.sat.name = sat_temp.getName(); //satellite name
-						dvb_sat_para.sat.sat_longitude = sat_temp.getPosition();//satellite longitude
-						dvb_sat_para.sat.lof_lo = sat_temp.getLoLOF(); //lof_low
-						dvb_sat_para.sat.lof_hi = sat_temp.getHiLOF(); //lof_hi
-						dvb_sat_para.sat.lof_threshold = sat_temp.getLofThreshold(); //threshold
-						dvb_sat_para.sat.voltage_mode = sat_temp.getLNBPwrOnOff();//voltage
-						dvb_sat_para.sat.signal_22khz = sat_temp.get22KOnOff();
-						dvb_sat_para.sat.toneburst = sat_temp.getToneburstType();
-						dvb_sat_para.sat.diseqc_mode = sat_temp.getSwtPort();
-						dvb_sat_para.sat.repeats = sat_temp.getDiseqcRepeat();
+						dvb_sat_para.sat.sat_name = sat_temp.getName(); //satellite name
+						
+						dvb_sat_para.sat.tv_satparams.sat_longitude = (double)(sat_temp.getPosition());//satellite longitude
+						dvb_sat_para.sat.tv_satparams.lnb_lof_lo = sat_temp.getLoLOF(); //lof_low
+						dvb_sat_para.sat.tv_satparams.lnb_lof_hi = sat_temp.getHiLOF(); //lof_hi
+						dvb_sat_para.sat.tv_satparams.lnb_lof_threadhold = sat_temp.getLofThreshold(); //threshold
+						dvb_sat_para.sat.tv_satparams.sec_voltage_status = sat_temp.getLNBPwrOnOff();//voltage
+						
+						dvb_sat_para.sat.tv_satparams.sec_22k_status = sat_temp.get22KOnOff(); //22k
+						dvb_sat_para.sat.tv_satparams.sec_tone_burst = sat_temp.getToneburstType();
+						
+						dvb_sat_para.sat.tv_satparams.diseqc_sequence_repeat = sat_temp.getDiseqcRepeat();
 					
-						dvb_sat_para.sat.committed_cmd = sat_temp.getLnbConfig10();
-						dvb_sat_para.sat.uncommitted_cmd = sat_temp.getLnbConfig11();
-						dvb_sat_para.sat.cmd_order = sat_temp.getDiseqcSequence();
-						dvb_sat_para.sat.fast_diseqc = sat_temp.getFastDiseqc();
+						dvb_sat_para.sat.tv_satparams.diseqc_committed = sat_temp.getLnbConfig10();
+						dvb_sat_para.sat.tv_satparams.diseqc_uncommitted = sat_temp.getLnbConfig11();
+						dvb_sat_para.sat.tv_satparams.diseqc_order = sat_temp.getDiseqcSequence();
+						dvb_sat_para.sat.tv_satparams.diseqc_fast = sat_temp.getFastDiseqc();
 
 						if(sat_temp.getSwtPort()==DbSat.LNB_DISEQC_12){
-							dvb_sat_para.sat.diseqc_mode = DVBSatelliteParameter.DISEQC_MODE_V1_2;
-							dvb_sat_para.sat.position_number = sat_temp.getPositionNumber();
+							dvb_sat_para.sat.tv_satparams.diseqc_mode = TVSatelliteParams.DISEQC_MODE_V1_2;
+							dvb_sat_para.sat.tv_satparams.motor_position_num = sat_temp.getPositionNumber();
 						}
 						else if(sat_temp.getSwtPort()==DbSat.LNB_DISEQC_13){
-							dvb_sat_para.sat.diseqc_mode = DVBSatelliteParameter.DISEQC_MODE_V1_3;
-							dvb_sat_para.sat.position_number = sat_temp.getPositionNumber();
+							dvb_sat_para.sat.tv_satparams.diseqc_mode = TVSatelliteParams.DISEQC_MODE_V1_3;
+							dvb_sat_para.sat.tv_satparams.motor_position_num = sat_temp.getPositionNumber();
 						}
-
-						//!< longitude direction GO_EAST, GO_WEST
-						if(mLast.getString("longitude_direction","East").equals("East"))
-							dvb_sat_para.sat.lo_direction = DVBSatelliteParameter.GO_EAST;
-						else
-							dvb_sat_para.sat.lo_direction = DVBSatelliteParameter.GO_WEST;
-						
-						//!< latitude direction GO_NORTH, GO_SOUTH
-						if(mLast.getString("latitude_direction","North").equals("North"))
-							dvb_sat_para.sat.la_direction = DVBSatelliteParameter.GO_NORTH;
-						else
-							dvb_sat_para.sat.la_direction = DVBSatelliteParameter.GO_SOUTH;
-
-						dvb_sat_para.sat.longitude = mLast.getInt("longitude_angle",0);
-						dvb_sat_para.sat.latitude = mLast.getInt("latitude_angle",0);
+						else{
+							dvb_sat_para.sat.tv_satparams.diseqc_mode = sat_temp.getSwtPort();
+						}
 						dvb_sat_para.scan_id = sat_temp.getScanId();
-						dvb_sat_para.sat_id = sat_temp.getId();	
+						dvb_sat_para.sat_id = sat_temp.getSatId();	
 						default_list.add(dvb_sat_para);
 					}
 				}
@@ -3634,71 +3646,59 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					
 					//add ts info into default list
 					if(dvb_sat_para.ts_list==null)
-						dvb_sat_para.ts_list = new ArrayList<DVBFrontEndPara>();
-					
-					DVBFrontEndPara ts_node= new DVBFrontEndPara();
-					ts_node.frequency = ts_node_temp.getFrequency(); //fre
-					Log.d(TAG,"ts ts_node_2 fre=="+ts_node.frequency);
-					ts_node.symbol_rate = ts_node_temp.getSymbol();//sym
-					ts_node.fec_inner = ts_node_temp.getFecInner(); //fecinner
-					ts_node.polarisation = ts_node_temp.getPolarization();//polarization
-					
+						dvb_sat_para.ts_list = new ArrayList<TVChannelParams>();
+
+					TVChannelParams ts_node = new TVChannelParams(TVChannelParams.MODE_QPSK);
+
+					ts_node.frequency  = ts_node_temp.getFrequency();
+					ts_node.symbolRate = ts_node_temp.getSymbol();
+					ts_node.sat_id = ts_node_temp.getSatId();
+					ts_node.sat_polarisation = ts_node_temp.getPolarization();
 					dvb_sat_para.ts_list.add(ts_node);
-					
 				}
 			}
 
-			dvb_sat_para.sat = new DVBSatelliteParameter();	
-						
-			//dvb_sat_para.sat.lnb_num = sat_node.getLnbNo();//lnb No.
-			dvb_sat_para.sat.name = sat_node.getName(); //satellite name
-			dvb_sat_para.sat.sat_longitude = sat_node.getPosition();//satellite longitude
-			dvb_sat_para.sat.lof_lo = sat_node.getLoLOF(); //lof_low
-			dvb_sat_para.sat.lof_hi = sat_node.getHiLOF(); //lof_hi
-			dvb_sat_para.sat.lof_threshold = sat_node.getLofThreshold(); //threshold
-			dvb_sat_para.sat.voltage_mode = sat_node.getLNBPwrOnOff();//voltage
-			dvb_sat_para.sat.signal_22khz = sat_node.get22KOnOff();
-			dvb_sat_para.sat.toneburst = sat_node.getToneburstType();
-			dvb_sat_para.sat.diseqc_mode = sat_node.getSwtPort();
-			dvb_sat_para.sat.repeats = sat_node.getDiseqcRepeat();
+			dvb_sat_para.sat = new TVSatellite();			
+			dvb_sat_para.sat.tv_satparams = new TVSatelliteParams();
+			//dvb_sat_para.sat.lnb_num = sat_temp.getLnbNo();//lnb No.
+			dvb_sat_para.sat.sat_name = sat_node.getName(); //satellite name
+			dvb_sat_para.sat.tv_satparams.sat_longitude =(double)(sat_node.getPosition());//satellite longitude
+			dvb_sat_para.sat.tv_satparams.lnb_lof_lo = sat_node.getLoLOF(); //lof_low
+			dvb_sat_para.sat.tv_satparams.lnb_lof_hi = sat_node.getHiLOF(); //lof_hi
+			dvb_sat_para.sat.tv_satparams.lnb_lof_threadhold = sat_node.getLofThreshold(); //threshold
+			dvb_sat_para.sat.tv_satparams.sec_voltage_status = sat_node.getLNBPwrOnOff();//voltage
+			
+			dvb_sat_para.sat.tv_satparams.sec_22k_status = sat_node.get22KOnOff(); //22k
+			dvb_sat_para.sat.tv_satparams.sec_tone_burst = sat_node.getToneburstType();
+			
+			dvb_sat_para.sat.tv_satparams.diseqc_sequence_repeat = sat_node.getDiseqcRepeat();
 		
-			dvb_sat_para.sat.committed_cmd = sat_node.getLnbConfig10();
-			dvb_sat_para.sat.uncommitted_cmd = sat_node.getLnbConfig11();
-			dvb_sat_para.sat.cmd_order = sat_node.getDiseqcSequence();
-			dvb_sat_para.sat.fast_diseqc = sat_node.getFastDiseqc();
+			dvb_sat_para.sat.tv_satparams.diseqc_committed = sat_node.getLnbConfig10();
+			dvb_sat_para.sat.tv_satparams.diseqc_uncommitted = sat_node.getLnbConfig11();
+			dvb_sat_para.sat.tv_satparams.diseqc_order = sat_node.getDiseqcSequence();
+			dvb_sat_para.sat.tv_satparams.diseqc_fast = sat_node.getFastDiseqc();
 
 			if(sat_node.getSwtPort()==DbSat.LNB_DISEQC_12){
-				dvb_sat_para.sat.diseqc_mode = DVBSatelliteParameter.DISEQC_MODE_V1_2;
-				dvb_sat_para.sat.position_number = sat_node.getPositionNumber();
+				dvb_sat_para.sat.tv_satparams.diseqc_mode = TVSatelliteParams.DISEQC_MODE_V1_2;
+				dvb_sat_para.sat.tv_satparams.motor_position_num = sat_node.getPositionNumber();
 			}
 			else if(sat_node.getSwtPort()==DbSat.LNB_DISEQC_13){
-				dvb_sat_para.sat.diseqc_mode = DVBSatelliteParameter.DISEQC_MODE_V1_3;
-				dvb_sat_para.sat.position_number = sat_node.getPositionNumber();
+				dvb_sat_para.sat.tv_satparams.diseqc_mode = TVSatelliteParams.DISEQC_MODE_V1_3;
+				dvb_sat_para.sat.tv_satparams.motor_position_num = sat_node.getPositionNumber();
 			}
-
-			//!< longitude direction GO_EAST, GO_WEST
-			if(mLast.getString("longitude_direction","East").equals("East"))
-				dvb_sat_para.sat.lo_direction = DVBSatelliteParameter.GO_EAST;
-			else
-				dvb_sat_para.sat.lo_direction = DVBSatelliteParameter.GO_WEST;
-			
-			//!< latitude direction GO_NORTH, GO_SOUTH
-			if(mLast.getString("latitude_direction","North").equals("North"))
-				dvb_sat_para.sat.la_direction = DVBSatelliteParameter.GO_NORTH;
-			else
-				dvb_sat_para.sat.la_direction = DVBSatelliteParameter.GO_SOUTH;
-
-			dvb_sat_para.sat.longitude = mLast.getInt("longitude_angle",0);
-			dvb_sat_para.sat.latitude = mLast.getInt("latitude_angle",0);
+			else{
+				dvb_sat_para.sat.tv_satparams.diseqc_mode = sat_node.getSwtPort();
+			}
 			
 			dvb_sat_para.scan_id = sat_node.getScanId();
-			dvb_sat_para.sat_id = sat_node.getId();		
+			dvb_sat_para.sat_id = sat_node.getSatId();		
 			default_list.add(dvb_sat_para);	
 		}
 		
 		return default_list;
 	}
-	*/
+	
+	
 
 	private boolean checkHasTpInfo(String mode){
 		int count = 0;
@@ -3724,7 +3724,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	private AlertDialog.Builder scanBuilder;
 	ScanModeAdapter mScanModeAdapter = null;
 	private void showScanConfigDia(){
-		/*
+		
 		ContentValues values=null;
 		scanBuilder = new AlertDialog.Builder(this);
 	        scanBuilder.setTitle(R.string.scan_mode);
@@ -3812,7 +3812,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				String crypted = mLast.getString("scan_mode_crypted","all");
 				String service_mode = mLast.getString("scan_service_mode","all");
 				Log.d(TAG,"@mode="+mode+"@crypted="+crypted+"@service_mode="+service_mode);
-				//getScanParaList();
+				getScanParaList();
 
 				if(checkHasTpInfo(mode)){
 				
@@ -3822,7 +3822,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					Bundle bundle_scan_dvbs = new Bundle();	
 					bundle_scan_dvbs.putString("scan_mode", mode);
 					intent_scan.putExtras(bundle_scan_dvbs);
-					
+
 					//startActivityForResult(intent_scan,1);	
 					startActivity(intent_scan);	
 					DTVScanDvbsConfig.this.finish();
@@ -3870,7 +3870,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		lp.dimAmount=0.00f;
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-		*/
+		
 	}
 
 
@@ -3952,7 +3952,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						return;
 				}
 
-				int scan_id = sat_node.getScanId();
+				int sat_id = sat_node.getSatId();
 
 				if(getConflictSat(sat_node.getScanId(),temp)){
 					
@@ -3964,7 +3964,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 									toast.show();
 					return;				
 				}
-				editSatData(scan_id,values,"sat");	
+				editSatData(sat_id,values,"sat");	
 				sat_node.setPosition(temp);
 				TextView sat_name = (TextView) findViewById(R.id.sat_name);
 				sat_name.setTextColor(Color.YELLOW);
@@ -4075,6 +4075,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					}
 					
 					addSatData(edittext_satname.getText().toString(),(double)angle);
+
+					mySatAdapter = new SatAdapter(DTVScanDvbsConfig.this,ScanSatAndtsInfoList);
+					sat_list.setAdapter(mySatAdapter);
+		
 					mySatAdapter.notifyDataSetChanged();
 					sat_list.setSelection(sat_list.getCount()-1);
 					dialog.dismiss();
@@ -4479,8 +4483,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					return;			
 				}
 				DbSat sat_node = getSatInfoByPostion(gobal_sat_cur_pos);
-				int scan_id = sat_node.getScanId();
-				if(getConflictTp(scan_id,TsInfo.getFrequency(),TsInfo.getSymbol(),TsInfo.getPolarization())){	
+				int sat_id = sat_node.getSatId();
+				if(getConflictTp(sat_id,TsInfo.getFrequency(),TsInfo.getSymbol(),TsInfo.getPolarization())){	
 					Toast toast = Toast.makeText(
 										DTVScanDvbsConfig.this, 
 										"Transponder angle is already exist",
@@ -4489,10 +4493,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 									toast.show();
 						return;			
 				}else{
-
+					TsInfo.setSatId(sat_id);
 					addTsData(gobal_sat_cur_pos,values,TsInfo);
-					
-					TsInfo.setDbId(getTsDbId(scan_id, freq, symb, polar));
+					TsInfo.setDbId(getTsDbId(sat_id, freq, symb, polar));
 					getTsData(gobal_sat_cur_pos);
 					myTsAdapter = new TsAdapter(DTVScanDvbsConfig.this,tsInfoList);
 					sat_list.setAdapter(myTsAdapter);

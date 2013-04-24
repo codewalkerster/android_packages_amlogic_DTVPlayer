@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+    
+	<LinearLayout
+		android:orientation="vertical"  
+		android:layout_height="fill_parent"
+		android:layout_width="fill_parent">
+    
+		<TextView  
+			android:background="@drawable/epg_title_bg"
+			android:layout_gravity="center|left"	
+			android:layout_width="fill_parent"	    
+			android:layout_height="80px"
+			android:textColor="@android:color/white"
+			android:gravity="left"
+			android:paddingLeft="50px"
+			android:paddingTop="30px"
+			android:textSize="24sp"
+			android:text="@string/scan_program"
+			/>    
+
+		<TextView
+			android:id="@+id/sat_info"
+			android:layout_gravity="center|left"	
+			android:layout_width="fill_parent"	    
+			android:layout_height="60px"
+			android:textColor="@android:color/white"
+			android:gravity="left"
+			android:paddingLeft="50px"
+			android:textSize="24sp"
+			android:background="#FF171717"
+			/>    		
+
+		
+		<LinearLayout
+			android:orientation="horizontal"  
+			android:layout_width="fill_parent"
+			android:layout_height="10px"
+			android:layout_weight="1">
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="10px"
+				android:background="#FF171717"
+				android:layout_height="fill_parent"
+				android:layout_weight="1">
+				<TextView
+					android:id="@+id/tv"
+					android:text="@string/tv"
+					android:layout_width="fill_parent"
+					android:layout_height="45px"
+					android:textSize="22sp"
+					android:gravity="center"
+					android:layout_gravity="center_vertical"/>
+				 <ListView
+				    android:id="@+id/tv_list"
+				  	android:layout_width="fill_parent"
+				  	android:layout_height="wrap_content"					     				     
+				  	android:scrollbars="vertical"/> 		
+					    						
+			</LinearLayout> 
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="10px"
+				android:background="#FF171717"
+				android:layout_height="fill_parent"
+				android:layout_weight="1"
+				android:paddingLeft="30px">
+
+				<TextView
+					android:id="@+id/radio"
+					android:text="@string/radio"
+					android:layout_width="fill_parent"
+					android:layout_height="45px"
+					android:textSize="22sp"
+					android:gravity="center"
+					android:layout_gravity="center_vertical"/>
+				 <ListView
+				 	android:id="@+id/radio_list"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"					     				     
+					android:scrollbars="vertical"/> 		
+
+			</LinearLayout> 
+		</LinearLayout> 
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="50px"
+			android:background="#FF171717">
+			 <TextView  
+			 	android:text="@string/progress"
+			 	android:textSize="20sp"
+				android:layout_width="70px" 
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:layout_marginLeft="30px"/>
+			<ProgressBar
+				android:id="@+id/ProgressBar" 
+				android:layout_gravity="center_vertical"
+				android:layout_width="wrap_content" 
+				android:layout_height="16px"
+				style="?android:attr/progressBarStyleHorizontal"
+				android:layout_weight="10"/>
+			<TextView  
+				android:id="@+id/progress_value"
+				android:textSize="20sp"
+				android:layout_width="70px" 
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="30px"
+				android:layout_weight="1"/>
+				
+		</LinearLayout> 	
+
+		
+    		<TextView
+    			android:id="@+id/ts_info"
+			android:layout_width="fill_parent"	    
+			android:layout_height="60px"
+			android:textColor="@android:color/white"
+			android:gravity="center"
+			android:textSize="24sp"
+			android:background="#FF171717"
+			/>
+		
+			  	
+		<LinearLayout
+			android:orientation="vertical"
+			android:background="@drawable/epg_eit_list_bg"
+			android:layout_width="fill_parent"
+			android:layout_height="70px"
+			android:paddingBottom="6px">
+
+			<TextView
+				android:id="@+id/helpinfo"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:textStyle="bold"   
+				android:textColor="#FFFFFF"   
+				android:shadowColor="#ff000000"  
+				android:shadowDx="2"  
+				android:textSize="16sp"
+				android:gravity="center"
+				android:singleLine="true"
+				android:paddingBottom="35px"
+				>
+			</TextView>
+
+			
+		</LinearLayout> 	
+
+	</LinearLayout>
+
+	 <RelativeLayout 
+		android:id="@+id/information"
+		android:layout_centerInParent="true"  
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:visibility="gone"	
+		 >    
+ 
+           	<TextView 
+		      android:id="@+id/information_text"
+		      android:layout_width="wrap_content"
+		      android:layout_height="wrap_content"
+		      android:gravity="center"
+		      android:textSize="24sp"
+		      android:background="#FF171717">
+		    </TextView>
+           </RelativeLayout>   	
+</RelativeLayout>
+

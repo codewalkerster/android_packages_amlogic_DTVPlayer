@@ -659,7 +659,8 @@ public class DTVPlayer extends DTVActivity{
 				else if(region.contains("DVBS"))
 				{
 					Log.d(TAG, "goto DTVScanDVBS");
-					Intent_scan.setClass(DTVPlayer.this, DTVScanDVBS.class);
+					//Intent_scan.setClass(DTVPlayer.this, DTVScanDVBS.class);
+					Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
 				}	
 				else if(region.contains("DVB-C"))
 				{
