@@ -900,10 +900,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	
 	private void deleteSatData(int cur_pos){
 		DbSat sat_node = getSatInfoByPostion(cur_pos);
-		int scan_id = sat_node.getScanId();
-		Log.d(TAG,"scan_id"+scan_id);
-		mTVSatellite.tvSatelliteDel(this,scan_id);
-		list_sat[cur_pos].tvSatelliteDel(this,scan_id);
+		int sat_id = sat_node.getSatId();
+		Log.d(TAG,"sat_id"+sat_id);
+		mTVSatellite.tvSatelliteDel(this,sat_id);
+		list_sat[cur_pos].tvSatelliteDel(this,sat_id);
 		list_sat = removeSatFromList(list_sat,cur_pos);
 		/*
 		Log.d(TAG, "Current is recording , stop recording now ...");
@@ -936,10 +936,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	private void  deleteTsData(int cur_sat_pos, int cur_pos){
 		DbTransponder ts_node = getTsInfoByPostion(cur_pos);
 		int db_id = ts_node.getDbId();
-		int scan_id = ts_node.getScanId();
-
+		
 		DbSat sat_node = getSatInfoByPostion(cur_sat_pos);
-		int sat_id  = sat_node.getScanId();
+		int sat_id  = sat_node.getSatId();
 
 		list_ts[cur_pos].tvChannelDel(mContext);
 		list_ts = removeTsFromList(list_ts,cur_pos);
@@ -1110,9 +1109,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		sat_node.setLongitude(angle);	
 		sat_node.setPositionNumber(0);	
 		sat_node.setLnbNo(0);
-		sat_node.setLoLOF(9750);	
-		sat_node.setHiLOF(10600);
-		sat_node.setLofThreshold(11700);
+		sat_node.setLoLOF(9750*1000);	
+		sat_node.setHiLOF(10600*1000);
+		sat_node.setLofThreshold(11700*1000);
 		sat_node.setLNBPwrOnOff(3);	
 		sat_node.set22KOnOff(2);	
 		sat_node.setToneburstType(0);	
@@ -1132,20 +1131,21 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	
 
 	private void editTsData(int cur_sat_pos, int cur_pos,ContentValues values){
-		/*
+		
 		DbTransponder ts_node = getTsInfoByPostion(cur_pos);
 		int db_id  = ts_node.getDbId();
 		Log.d(TAG,"db_id"+db_id);
 
 		DbSat sat_node = getSatInfoByPostion(cur_sat_pos);
-		int scan_id = sat_node.getScanId();
+		int sat_id = sat_node.getSatId();
 
-		this.getContentResolver().update(DVBClient.TABLE_TS, values,"db_sat_para_id="+scan_id+"  and db_id="+db_id, null);
-		if(mLockDvb!=null)
-			mLockDvb.syncDatabase(DVBClient.TABLE_TS, db_id);
-		else
-			Log.d(TAG,">>>>>>>>>>>>>>>>DVBPlayer.getConnect().syncDatabase fail<<<<<<<<<<<<<<<");
-		*/
+		int fre = (int)values.getAsInteger("freq");
+		int sym = (int)values.getAsInteger("symb");
+		int polar = (int)values.getAsInteger("polar");
+
+		TVChannel.selectByID(this, db_id).setFrequency(fre);
+		TVChannel.selectByID(this, db_id).setSymbolRate(sym);
+		TVChannel.selectByID(this, db_id).setPolarisation(polar);
 	}
 
 	private void addTsData(int cur_sat_pos, ContentValues values, DbTransponder ts){
@@ -1402,28 +1402,28 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			}
 			//lof_mode.setText("5150");
 
-			if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==5150)){
+			if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==5150*1000)){
 					lof_mode.setText("5150");
 				}
-				else if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==5750)){
+				else if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==5750*1000)){
 					lof_mode.setText("5750");
 				}
-				else if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==9750)){
+				else if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==9750*1000)){
 					lof_mode.setText("9750");
 				}
-				else if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==10050)){
+				else if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==10050*1000)){
 					lof_mode.setText("10050");
 				}
-				else if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==11300)){
+				else if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==11300*1000)){
 					lof_mode.setText("11300");
 				}
 				//else if((SatInfo.getLoLOF()!=SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==5150)&&(SatInfo.getHiLOF()==5750)){
 					//lof_mode.setText("5150-5750");
 				//}
-				else if((SatInfo.getLoLOF()!=SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==9750)&&(SatInfo.getHiLOF()==10600)){
+				else if((SatInfo.getLoLOF()!=SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==9750*1000)&&(SatInfo.getHiLOF()==10600*1000)){
 					lof_mode.setText("9750-10600");
 				}
-				else if((SatInfo.getLoLOF()!=SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==9750)&&(SatInfo.getHiLOF()==10750)){
+				else if((SatInfo.getLoLOF()!=SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==9750*1000)&&(SatInfo.getHiLOF()==10750*1000)){
 					lof_mode.setText("9750-10750");
 				}
 				else{
@@ -1458,8 +1458,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 					if(((edittext_low.getText().toString()) == null)
 						|| ((edittext_low.getText().toString()).equals(""))){
-						SatInfo.setLoLOF(5150);
-						values.put("lof_lo",5150);
+						SatInfo.setLoLOF(5150*1000);
+						values.put("lof_lo",5150*1000);
 					}else{
 						SatInfo.setLoLOF(Integer.parseInt(edittext_low.getText().toString()));
 						values.put("lof_lo",Integer.parseInt(edittext_low.getText().toString()));						
@@ -1467,8 +1467,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 					if(((edittext_high.getText().toString()) == null)
 						|| ((edittext_high.getText().toString()).equals(""))){
-						SatInfo.setHiLOF(5150);
-						values.put("lof_hi",5150);
+						SatInfo.setHiLOF(5150*1000);
+						values.put("lof_hi",5150*1000);
 					}else{
 						SatInfo.setHiLOF(Integer.parseInt(edittext_high.getText().toString()));
 						values.put("lof_hi",Integer.parseInt(edittext_high.getText().toString()));
@@ -1476,8 +1476,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					
 					if(((edittext_threshold.getText().toString()) == null)
 						|| ((edittext_threshold.getText().toString()).equals(""))){
-						SatInfo.setLofThreshold(5150);
-						values.put("lof_threshold",5150);
+						SatInfo.setLofThreshold(5150*1000);
+						values.put("lof_threshold",5150*1000);
 					}else{
 						SatInfo.setLofThreshold(Integer.parseInt(edittext_threshold.getText().toString()));
 						values.put("lof_threshold",Integer.parseInt(edittext_threshold.getText().toString()));
@@ -1490,39 +1490,39 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					int threshold = 0;
 					
 					if(lof_mode.getText().equals("5150")){
-						SatInfo.setLoLOF(5150);
-						SatInfo.setHiLOF(5150);
-						values.put("lof_lo",5150);
-						values.put("lof_hi",5150);
-						threshold = 5150;
+						SatInfo.setLoLOF(5150*1000);
+						SatInfo.setHiLOF(5150*1000);
+						values.put("lof_lo",5150*1000);
+						values.put("lof_hi",5150*1000);
+						threshold = 5150*1000;
 					}
 					else if(lof_mode.getText().equals("5750")){
-						SatInfo.setLoLOF(5750);
-						SatInfo.setHiLOF(5750);
-						values.put("lof_lo",5750);
-						values.put("lof_hi",5750);
-						threshold = 5150;
+						SatInfo.setLoLOF(5750*1000);
+						SatInfo.setHiLOF(5750*1000);
+						values.put("lof_lo",5750*1000);
+						values.put("lof_hi",5750*1000);
+						threshold = 5150*1000;
 					}
 					else if(lof_mode.getText().equals("9750")){
-						SatInfo.setLoLOF(9750);
-						SatInfo.setHiLOF(9750);
-						values.put("lof_lo",9750);
-						values.put("lof_hi",9750);
-						threshold = 11700;
+						SatInfo.setLoLOF(9750*1000);
+						SatInfo.setHiLOF(9750*1000);
+						values.put("lof_lo",9750*1000);
+						values.put("lof_hi",9750*1000);
+						threshold = 11700*1000;
 					}
 					else if(lof_mode.getText().equals("10050")){
-						SatInfo.setLoLOF(10050);
-						SatInfo.setHiLOF(10050);
-						values.put("lof_lo",10050);
-						values.put("lof_hi",10050);
-						threshold = 11700;
+						SatInfo.setLoLOF(10050*1000);
+						SatInfo.setHiLOF(10050*1000);
+						values.put("lof_lo",10050*1000);
+						values.put("lof_hi",10050*1000);
+						threshold = 11700*1000;
 					}
 					else if(lof_mode.getText().equals("11300")){
-						SatInfo.setLoLOF(11300);
-						SatInfo.setHiLOF(11300);
-						values.put("lof_lo",11300);
-						values.put("lof_hi",11300);
-						threshold = 11700;
+						SatInfo.setLoLOF(11300*1000);
+						SatInfo.setHiLOF(11300*1000);
+						values.put("lof_lo",11300*1000);
+						values.put("lof_hi",11300*1000);
+						threshold = 11700*1000;
 					}
 					//else if(lof_mode.getText().equals("5150-5750")){
 						//SatInfo.setLoLOF(5150);
@@ -1532,18 +1532,18 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						//threshold = 5150;
 					//}
 					else if(lof_mode.getText().equals("9750-10600")){
-						SatInfo.setLoLOF(9750);
-						SatInfo.setHiLOF(10600);
-						values.put("lof_lo",9750);
-						values.put("lof_hi",10600);
-						threshold = 11700;
+						SatInfo.setLoLOF(9750*1000);
+						SatInfo.setHiLOF(10600*1000);
+						values.put("lof_lo",9750*1000);
+						values.put("lof_hi",10600*1000);
+						threshold = 11700*1000;
 					}
 					else if(lof_mode.getText().equals("9750-10750")){
-						SatInfo.setLoLOF(9750);
-						SatInfo.setHiLOF(10750);
-						values.put("lof_lo",9750);
-						values.put("lof_hi",10750);
-						threshold = 11700;
+						SatInfo.setLoLOF(9750*1000);
+						SatInfo.setHiLOF(10750*1000);
+						values.put("lof_lo",9750*1000);
+						values.put("lof_hi",10750*1000);
+						threshold = 11700*1000;
 					}
 
 					if (threshold != 0)  {
@@ -1688,7 +1688,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					
 			}
 
-			int scan_id = SatInfo.getScanId();
 			int sat_id  = SatInfo.getSatId();
 			editSatData(sat_id,values,"voltage");	
 			myLnbSetAdapter.notifyDataSetChanged();
@@ -2723,7 +2722,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 	private void storePosition(){
 		DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
-		int scan_id = SatInfo.getScanId();
+		int sat_id = SatInfo.getSatId();
 		int moto_no = SatInfo.getMotoNo();
 		int position_no = 1;
 		
@@ -3555,7 +3554,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					dvb_sat_para.sat.longitude = mLast.getInt("longitude_angle",0);
 					dvb_sat_para.sat.latitude = mLast.getInt("latitude_angle",0);
 					*/
-					dvb_sat_para.scan_id = sat_temp.getScanId();
 					dvb_sat_para.sat_id = sat_temp.getSatId();	
 					
 					default_list.add(dvb_sat_para);
@@ -3615,7 +3613,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						else{
 							dvb_sat_para.sat.tv_satparams.diseqc_mode = sat_temp.getSwtPort();
 						}
-						dvb_sat_para.scan_id = sat_temp.getScanId();
 						dvb_sat_para.sat_id = sat_temp.getSatId();	
 						default_list.add(dvb_sat_para);
 					}
@@ -3685,7 +3682,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				dvb_sat_para.sat.tv_satparams.diseqc_mode = sat_node.getSwtPort();
 			}
 			
-			dvb_sat_para.scan_id = sat_node.getScanId();
 			dvb_sat_para.sat_id = sat_node.getSatId();		
 			default_list.add(dvb_sat_para);	
 		}
@@ -3890,7 +3886,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		edittext_angle0.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(3)});
 		final EditText edittext_angle1 = (EditText) dvbs_sat_edit.findViewById(R.id.angle1);
 		edittext_angle1.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(1)});
-		final int direction = SatInfo.getPosition();
+		final double direction = SatInfo.getSatLongitude();
 
 		final TextView sat_no = (TextView)dvbs_sat_edit.findViewById(R.id.sat_number);
 		sat_no.setText(String.valueOf(gobal_sat_cur_pos+1));
@@ -3917,8 +3913,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			}
 		});
 		
-		edittext_angle0.setText(String.valueOf(Math.abs((int)SatInfo.getPosition())/10));
-		edittext_angle1.setText(String.valueOf((Math.abs(SatInfo.getPosition()))%10));
+		edittext_angle0.setText(String.valueOf(Math.abs((int)SatInfo.getSatLongitude())/10));
+		edittext_angle1.setText(String.valueOf((Math.abs(SatInfo.getSatLongitude()))%10));
 		
 		satEditBuilder.setView(dvbs_sat_edit);
 
@@ -3949,7 +3945,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 				int sat_id = sat_node.getSatId();
 
-				if(getConflictSat(sat_node.getScanId(),temp)){
+				if(getConflictSat(sat_node.getSatId(),temp)){
 					
 					Toast toast = Toast.makeText(
 										DTVScanDvbsConfig.this, 
@@ -3960,7 +3956,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					return;				
 				}
 				editSatData(sat_id,values,"sat");	
-				sat_node.setPosition(temp);
+				sat_node.setLongitude((double)temp);
 				TextView sat_name = (TextView) findViewById(R.id.sat_name);
 				sat_name.setTextColor(Color.YELLOW);
 				sat_name.setText(edittext_satname.getText().toString());
@@ -4185,7 +4181,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					return ;
 				}
 
-				if(getConflictTp(TsInfo.getScanId(),(Integer.parseInt(edittext_frequency.getText().toString())*1000),(Integer.parseInt(edittext_symbol.getText().toString())*1000),(polarization.getText().toString().equals("H"))==true?0:1)){
+				if(getConflictTp(TsInfo.getSatId(),(Integer.parseInt(edittext_frequency.getText().toString())*1000),(Integer.parseInt(edittext_symbol.getText().toString())*1000),(polarization.getText().toString().equals("H"))==true?0:1)){
 					
 					Toast toast = Toast.makeText(
 										DTVScanDvbsConfig.this, 
@@ -4775,7 +4771,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					else{
 						mv.direction.setText("West");
 					}
-					float angle_float = Math.abs(satinfo.getPosition());	
+					float angle_float = Math.abs((float)satinfo.getSatLongitude());	
 					//Log.d(TAG,"angle"+angle);
 					
 					angle_float=angle_float/10;
@@ -5192,9 +5188,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			   	Log.d(TAG,"DISHSETUP_LNB_TYPE low:"+SatLnbInfo.getLoLOF()+"high:"+SatLnbInfo.getHiLOF());
 
 				if((SatLnbInfo.getLoLOF()==SatLnbInfo.getHiLOF())&&(SatLnbInfo.getLoLOF()!=0))			
-	    		 		holder.info.setText(String.valueOf(SatLnbInfo.getLoLOF()));
+	    		 		holder.info.setText(String.valueOf(SatLnbInfo.getLoLOF()/1000));
 				 else
-					holder.info.setText(String.valueOf(SatLnbInfo.getLoLOF())+"/"+String.valueOf(SatLnbInfo.getHiLOF()));	 
+					holder.info.setText(String.valueOf(SatLnbInfo.getLoLOF()/1000)+"/"+String.valueOf(SatLnbInfo.getHiLOF()/1000));	 
 
 			}
 			 

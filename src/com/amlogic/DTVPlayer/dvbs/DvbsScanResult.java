@@ -277,13 +277,6 @@ public class DvbsScanResult extends DTVActivity{
 
 	
 	private void playProgram(int type,int pos){
-		/*
-		mScanDvb.stopScan(true);
-		if(sync_flag==false){
-			mScanDvb.syncProgram(); 
-			sync_flag=true;
-		}	 
-		*/
 		serviceInfo serviceinfo=null;	
 		if(type==1)	
 			serviceinfo = (serviceInfo)tv_list.get(pos);
@@ -295,18 +288,16 @@ public class DvbsScanResult extends DTVActivity{
 		System.out.println("enter playProgram!!!!!!!");
 		if(serviceinfo!=null)
 			db_id = service_get_dbId(serviceinfo.getName(), serviceinfo.getServiceId(),serviceinfo.getServiceType());
-		if (db_id == -1 
-		||((serviceinfo.getServiceType() != 2) && (serviceinfo.getServiceType() != 1)))
-		{
-			System.out.println("enter playProgram error!");
-			//return;
+
+		if (db_id == -1||((serviceinfo.getServiceType() != 2) && (serviceinfo.getServiceType() != 1))){
+			Log.d(TAG,"enter playProgram error!");
 		}
 
 		Bundle bundle1 = new Bundle();  
 		bundle1.putInt("service_type", serviceinfo.getServiceType());	            	      
 		
 		bundle1.putInt("db_id", db_id);
-		bundle1.putString("activity_tag","prolist");
+		bundle1.putString("activity_tag","DTVChannelList");
 
 		Intent in = new Intent(Intent.ACTION_MAIN);  
 		in.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -881,7 +872,6 @@ public class DvbsScanResult extends DTVActivity{
 		int service_id = 0;
 
 		Log.d(TAG,"name="+name+"service_type="+service_type+"service_id"+service_id);
-		Log.d(TAG,"sat name"+DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).sat.sat_name);
 
 		if (service_type != 0x01 && service_type != 0x02){
 			return ;
@@ -891,7 +881,6 @@ public class DvbsScanResult extends DTVActivity{
 		serviceinfo.setName(name);	
 		serviceinfo.setServiceType(service_type);
 		serviceinfo.setServiceId(service_id);
-		//serviceinfo.setSatName(DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).sat.name);
 
 		if(service_type==1){			
 			tv_list.add(serviceinfo);
