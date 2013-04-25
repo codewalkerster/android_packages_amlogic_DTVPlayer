@@ -836,7 +836,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 	private void returnSettings(){
 		Intent intent = new Intent();
-		intent.setClass(DTVScanDvbsConfig.this, DTVScanDVBS.class);
+		intent.setClass(DTVScanDvbsConfig.this, DTVSettingsMenu.class);
 		startActivity(intent);
 	}
 

@@ -126,7 +126,38 @@ public class DTVEpg extends DTVActivity{
 				break;	
 			case TVMessage.TYPE_PROGRAM_START:	
 				Log.d(TAG,"New program start!");
-				update_new_eit();
+				new Thread(){     
+		            public void run(){   
+		         		Message msg;
+		                try{
+		                	Thread.sleep(1000);
+		                	setup_db();
+		                }
+		                catch (Exception e){
+		                 	
+		                }
+
+		                try{
+		                    msg = waiting_handler.obtainMessage();
+		                    msg.arg1 = 2;
+		                	waiting_handler.sendMessage(msg);
+		                	Thread.sleep(1000);
+		                }
+		                catch (Exception e){
+		                 		
+		                } 
+
+		                try{
+		                    msg = waiting_handler.obtainMessage();
+		                    msg.arg1 = 3;
+		                	waiting_handler.sendMessage(msg);
+		                	//Thread.sleep(1000);
+		                }
+		                catch (Exception e){
+		                 	
+						} 
+					}
+				}.start(); 
 				break;
 			default:
 				break;
@@ -281,6 +312,9 @@ public class DTVEpg extends DTVActivity{
 							moveto_currentevent();
 						}
 	            	break;
+					case 4:
+						update_new_eit();
+						break;
             	}
             }
         };  
@@ -1183,6 +1217,9 @@ public class DTVEpg extends DTVActivity{
 					}	
 					*/
 				}
+				break;
+			case KeyEvent.KEYCODE_BACK:	
+				DTVEpg.this.finish();
 				break;
 		}
 		return super.onKeyDown(keyCode, event);

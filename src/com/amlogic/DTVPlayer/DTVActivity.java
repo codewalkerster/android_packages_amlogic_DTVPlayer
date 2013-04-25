@@ -529,6 +529,7 @@ abstract public class DTVActivity extends TVActivity{
 	}
 
 	/*********settings************/
+	
 	public boolean DTVGetSubtitleStatus(){
 		return getBooleanConfig("tv:subtitle:enable");
 	}

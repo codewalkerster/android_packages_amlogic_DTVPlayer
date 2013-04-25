@@ -9,6 +9,7 @@ import com.amlogic.tvutil.TVProgramNumber;
 import com.amlogic.tvactivity.TVActivity;
 import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
+import com.amlogic.tvutil.TVSatellite;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVGroup;
 
@@ -122,14 +123,20 @@ public class DTVChannelList extends DTVActivity{
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dtvchannellist); 
-		mDTVSettings = new DTVSettings(this);
-		DTVChannelListUIInit();
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
+		mDTVSettings = new DTVSettings(this);
+		if(mDTVSettings.getScanRegion().contains("DVBS")==true){
+			Log.d(TAG,"DVBS");
+			setContentView(R.layout.dtvchannellist_dvbs); 
+		}
+		else{
+			setContentView(R.layout.dtvchannellist); 
+		}
+		DTVChannelListUIInit();
 		myAdapter.notifyDataSetChanged();
 	}
 
@@ -161,6 +168,20 @@ public class DTVChannelList extends DTVActivity{
 		public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
 			ListView_channel = (ListView) findViewById(R.id.ListView_channel);
 			if(ListView_channel.hasFocus() == true){
+				if(mDTVSettings.getScanRegion().contains("DVBS")==true){
+					TextView info= (TextView) findViewById(R.id.channel_info);
+					int fre = mTVProgramList[position].getChannel().getParams().getFrequency();
+					int sym = mTVProgramList[position].getChannel().getParams().getSymbolRate();
+					String pol="";
+					if(mTVProgramList[position].getChannel().getParams().getPolarisation()==0)
+						pol="V";
+					else
+						pol="H";
+					int sat_id = mTVProgramList[position].getChannel().getParams().getSatId();
+					String sat_name = TVSatellite.tvSatelliteSelect(DTVChannelList.this,sat_id).getSatelliteName();
+					
+					info.setText(String.valueOf(fre/1000)+" "+pol+" "+String.valueOf(sym/1000)+"  "+sat_name);
+				}
 			}
 			cur_select_item = position;
 		}

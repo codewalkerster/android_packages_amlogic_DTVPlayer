@@ -369,7 +369,10 @@ public class DTVPlayer extends DTVActivity{
 					ShowControlBar();
 				}
 				else //if(mainmenu_show_flag==false)
-					ShowMainMenu();
+				{
+					HideControlBar();
+					ShowChannelList();
+				}	
 				return true;
 			case KeyEvent.KEYCODE_ENTER:
 				Log.d(TAG,"KEYCODE_ENTER");
@@ -683,17 +686,13 @@ public class DTVPlayer extends DTVActivity{
 						ShowControlBar();
 					}
 					else if(mainmenu_show_flag==false){
-						ShowMainMenu();
+						HideControlBar();
+						ShowChannelList();
 					}
 					break;
 				case R.id.Button_mainmenu_list:
 					HideMainMenu();
-					Intent pickerIntent = new Intent();
-					Bundle bundle_list = new Bundle();
-					bundle_list.putInt("db_id", DTVPlayerGetCurrentProgramID());
-					pickerIntent.putExtras(bundle_list);
-					pickerIntent.setClass(DTVPlayer.this, DTVChannelList.class);
- 		           	startActivity(pickerIntent);
+					ShowChannelList();
  		            break;
 				case R.id.Button_mainmenu_epg:
 					HideMainMenu();
@@ -899,6 +898,15 @@ public class DTVPlayer extends DTVActivity{
 		}
 		*/
 		mainmenu_show_flag = false;
+	}
+
+	private void ShowChannelList(){
+		Intent pickerIntent = new Intent();
+		Bundle bundle_list = new Bundle();
+		bundle_list.putInt("db_id", DTVPlayerGetCurrentProgramID());
+		pickerIntent.putExtras(bundle_list);
+		pickerIntent.setClass(DTVPlayer.this, DTVChannelList.class);
+		startActivity(pickerIntent);
 	}
 	
 	private boolean inforbar_show_flag=false;

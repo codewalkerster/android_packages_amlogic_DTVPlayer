@@ -506,11 +506,12 @@ public class DTVSettingsMenu extends DTVActivity {
 			final TextView info_cur = (TextView)v.findViewById(R.id.info);
 			switch(position){
 				case 0:
-					DTVStartEPG();
+					DTVStartProgramManager();
 					DTVSettingsMenu.this.finish();
 					break;
 				case 1:
-					DTVStartProgramManager();
+					DTVStartEPG();
+					DTVSettingsMenu.this.finish();
 					break;
 				case 2:
 					break;
@@ -612,12 +613,26 @@ public class DTVSettingsMenu extends DTVActivity {
 			final TextView info_cur = (TextView)v.findViewById(R.id.info);
 			switch(position){
 				case 0:
-					DTVSetting_GotoDTVScan();
-					DTVSettingsMenu.this.finish();
+					{	
+						Intent intent_dish_setup = new Intent();
+						intent_dish_setup.setClass(DTVSettingsMenu.this, DTVScanDvbsConfig.class);
+							startActivity(intent_dish_setup);
+						DTVSettingsMenu.this.finish();
+					}	
 					break;
-				case 1:
+				case 1:     //DB management
+					{
+						Intent intent_db_management = new Intent();
+						intent_db_management.setClass(DTVSettingsMenu.this, DTVScanDvbsDBManagement.class);
+						startActivityForResult(intent_db_management,2);
+					}
 					break;
 				case 2:
+					{
+						Intent intent_unicable_config = new Intent();
+						intent_unicable_config.setClass(DTVSettingsMenu.this,DTVScanDvbsUnicableConfig.class);
+						startActivityForResult(intent_unicable_config,3);
+					}
 					break;
 			}
 		}
