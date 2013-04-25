@@ -119,10 +119,6 @@ public class DvbsScanResult extends DTVActivity{
   	public void onCreate(Bundle savedInstanceState) {
 	  		super.onCreate(savedInstanceState);
 			setContentView(R.layout.dvbs_scan_result_main);
-
-			TextView help_info = (TextView)this.findViewById(R.id.helpinfo);
-			help_info.setText(getString(R.string.scan_result_help));
-			help_info.setVisibility(View.INVISIBLE);
 			
 			Context otherAppsContext = null;
 			try
@@ -484,7 +480,6 @@ public class DvbsScanResult extends DTVActivity{
 				Log.d(TAG, "Scan End");
 				Log.d(TAG, "stopScan");
 				stopScan(true);
-				TextView help_info = (TextView)this.findViewById(R.id.helpinfo);
 				mSatScanCount++;
 				if(mSatScanCount <DTVScanDvbsConfig.getDefaultList().size()){
 					
@@ -510,7 +505,6 @@ public class DvbsScanResult extends DTVActivity{
 						mTvListAdapter = new ScanResultAdapter(this,tv_list_temp);
 						tvlistview.setAdapter(mTvListAdapter);
 						mTvListAdapter.notifyDataSetChanged();
-						help_info.setVisibility(View.INVISIBLE);
 						tv_title.setText(R.string.scan_ts);	
 						tv_title.setVisibility(View.VISIBLE);
 						radio_title.setVisibility(View.INVISIBLE);
@@ -571,8 +565,6 @@ public class DvbsScanResult extends DTVActivity{
 				scan_ok_flag = true;
 				canplay_flag = true;
 				
-				help_info.setText(getString(R.string.scan_result_help));
-				help_info.setVisibility(View.VISIBLE);		
 				break;
 			default:
 				break;
@@ -613,7 +605,6 @@ public class DvbsScanResult extends DTVActivity{
 			case DVBEvent.EVENT_SCAN_OK:
 				
            			mScanDvb.stopScan(true);
-				TextView help_info = (TextView)this.findViewById(R.id.helpinfo);
 				mSatScanCount++;
 				if(mSatScanCount <DTVScanDvbsConfig.getDefaultList().size()){
 					
@@ -636,7 +627,6 @@ public class DvbsScanResult extends DTVActivity{
 							mTvListAdapter = new ScanResultAdapter(this,tv_list_temp);
 							tvlistview.setAdapter(mTvListAdapter);
 							mTvListAdapter.notifyDataSetChanged();
-							help_info.setVisibility(View.INVISIBLE);
 							tv_title.setText(R.string.scan_ts);	
 							tv_title.setVisibility(View.VISIBLE);
 							radio_title.setVisibility(View.INVISIBLE);
@@ -698,8 +688,6 @@ public class DvbsScanResult extends DTVActivity{
 				scan_ok_flag = true;
 				canplay_flag = true;
 				
-				help_info.setText(getString(R.string.scan_result_help));
-				help_info.setVisibility(View.VISIBLE);
 				break;
 			case DVBEvent.EVENT_SCAN_BS_END:
 				tv_list_temp=tv_list;
