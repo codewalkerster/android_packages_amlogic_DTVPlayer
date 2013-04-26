@@ -76,6 +76,14 @@ public class DTVEpg extends DTVActivity{
 	private long tickcount  = 1;
 	private int  TempFlag   = 0;	
 	private int  current_date_index=0;
+
+	ImageButton date_button0 = null;
+	ImageButton date_button1 = null;
+	ImageButton date_button2 = null;
+	ImageButton date_button3 = null;
+	ImageButton date_button4 = null;
+	ImageButton date_button5 = null;
+	ImageButton date_button6 = null;
 	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
@@ -83,11 +91,7 @@ public class DTVEpg extends DTVActivity{
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.dtvepg);
-		DTVEpgUIInit();
-
-		//channel list
-		mDTVSettings = new DTVSettings(this);
-		DTVChannelList_UI_Init();
+		
 	}
 
 	public void onStart(){
@@ -97,6 +101,11 @@ public class DTVEpg extends DTVActivity{
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
+		DTVEpgUIInit();
+
+		//channel list
+		mDTVSettings = new DTVSettings(this);
+		DTVChannelList_UI_Init();
 		myAdapter.notifyDataSetChanged();
 	}
 
@@ -170,6 +179,7 @@ public class DTVEpg extends DTVActivity{
 	private void DTVEpgUIInit(){	
 		cur_service_id = DTVEpgGetID();
         db_id = cur_service_id;
+		Log.d(TAG,"db_id="+db_id);
 		/*setup view*/
         
         EitListView  = (ListView)findViewById(R.id.EitListView);
@@ -369,13 +379,13 @@ public class DTVEpg extends DTVActivity{
          }.start(); 
 
 
-		ImageButton date_button0 = (ImageButton)findViewById(R.id.date_button0);
-		ImageButton date_button1 = (ImageButton)findViewById(R.id.date_button1); 
-		ImageButton date_button2 = (ImageButton)findViewById(R.id.date_button2);
-		ImageButton date_button3 = (ImageButton)findViewById(R.id.date_button3); 
-		ImageButton date_button4 = (ImageButton)findViewById(R.id.date_button4); 
-		ImageButton date_button5 = (ImageButton)findViewById(R.id.date_button5); 
-		ImageButton date_button6 = (ImageButton)findViewById(R.id.date_button6); 
+		date_button0 = (ImageButton)findViewById(R.id.date_button0);
+		date_button1 = (ImageButton)findViewById(R.id.date_button1); 
+		date_button2 = (ImageButton)findViewById(R.id.date_button2);
+		date_button3 = (ImageButton)findViewById(R.id.date_button3); 
+		date_button4 = (ImageButton)findViewById(R.id.date_button4); 
+		date_button5 = (ImageButton)findViewById(R.id.date_button5); 
+		date_button6 = (ImageButton)findViewById(R.id.date_button6); 
 
 		date_button0.setOnClickListener(new channelListButtonClick()); 	
 		date_button1.setOnClickListener(new channelListButtonClick()); 	
@@ -1049,8 +1059,51 @@ public class DTVEpg extends DTVActivity{
 			int db_id=mTVProgramList[position].getID();	
 			int serviceType = mTVProgramList[position].getType();
 			DTVPlayerPlayById(db_id);
+			current_date_index=0;
+			date_button0.setBackgroundResource(R.drawable.epg_date_button_press);	
+			date_button1.setBackgroundResource(R.drawable.epg_date_button);
+			date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+			date_button3.setBackgroundResource(R.drawable.epg_date_button);
+			date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+			date_button5.setBackgroundResource(R.drawable.epg_date_button);
+			date_button6.setBackgroundResource(R.drawable.epg_date_button);
 		}
 	};
+
+	private Button.OnFocusChangeListener mOnFocusChangeListener = new Button.OnFocusChangeListener(){
+        public void onFocusChange(View v, boolean hasFocus) {
+           // TODO Auto-generated method stub
+			if(hasFocus == true){
+				v.setBackgroundResource(R.drawable.epg_date_button);
+			}
+			else{
+				switch(current_date_index){
+						case 0:
+							date_button0.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;
+						case 1:
+							date_button1.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;
+						case 2:
+							date_button2.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;
+						case 3:
+							date_button3.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;
+						case 4:
+							date_button4.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;
+						case 5:
+							date_button5.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;	
+						case 6:
+							date_button6.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;	
+					}
+			}	
+           
+        }
+    };
 
 	private class IconAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
@@ -1199,7 +1252,7 @@ public class DTVEpg extends DTVActivity{
 					}	
 				}
 				else if(list_status==1){
-					if(cur_select_item == EitListView.getCount()-1){
+					if(eit_list_cur_pos == EitListView.getCount()-1){
 				    	EitListView.setSelection(0); 	
 						return true;
 					}	
@@ -1207,7 +1260,29 @@ public class DTVEpg extends DTVActivity{
 				break;
 			case KeyEvent.KEYCODE_DPAD_UP:
 				if(list_status==1){
-					
+					switch(current_date_index){
+						case 0:
+							date_button0.requestFocus();
+							break;
+						case 1:
+							date_button1.requestFocus();
+							break;
+						case 2:
+							date_button2.requestFocus();
+							break;
+						case 3:
+							date_button3.requestFocus();
+							break;
+						case 4:
+							date_button4.requestFocus();
+							break;
+						case 5:
+							date_button5.requestFocus();
+							break;	
+						case 6:
+							date_button6.requestFocus();
+							break;	
+					}
 				}	
 				else if(list_status==0){
 					/*
@@ -1310,30 +1385,80 @@ public class DTVEpg extends DTVActivity{
 					setFocusPosition();							
 					break;
 				case R.id.date_button0:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button_press);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button);
+					
 					refresh_Eitlistview(0);
 					current_date_index = 0;
 					break;
 				case R.id.date_button1:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button_press);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button);
 					refresh_Eitlistview(1);
 					current_date_index = 1;
 					break;
 				case R.id.date_button2:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button_press);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button);
 					refresh_Eitlistview(2);
 					current_date_index = 2;
 					break;	
 				case R.id.date_button3:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button_press);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button);
 					refresh_Eitlistview(3);
 					current_date_index = 3;
 					break;
 				case R.id.date_button4:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button_press);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button);
 					refresh_Eitlistview(4);
 					current_date_index = 4;
 					break;
 				case R.id.date_button5:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button_press);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button);
 					refresh_Eitlistview(5);
 					current_date_index = 5;
 					break;
 				case R.id.date_button6:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button_press);
 					refresh_Eitlistview(6);
 					current_date_index = 6;
 					break;
@@ -1341,6 +1466,9 @@ public class DTVEpg extends DTVActivity{
 
 		}	
 	}
+
+
+	
 
 }
 

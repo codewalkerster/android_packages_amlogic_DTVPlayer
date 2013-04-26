@@ -666,6 +666,41 @@ public class DvbsScanResult extends DTVActivity{
 				scan_ok_flag = true;
 				canplay_flag = true;
 				break;
+			case TVMessage.TYPE_BLINDSCAN_PROGRESS:
+				Log.d(TAG, "Blind Scan Progress:" + msg.getScanProgress() + " Blind freq polar lof:" + msg.getScanMsg());
+				progressBar.setProgress(msg.getScanProgress());
+				Log.d(TAG,""+msg.getScanProgress());
+				progress_value.setText(String.valueOf(msg.getScanProgress())+"%");
+				ts_info.setText(msg.getScanMsg());
+				break;				
+			case TVMessage.TYPE_BLINDSCAN_NEWCHANNEL:
+				Log.d(TAG, "Blind Scan New Channel: frequency " + msg.getScanCurChanParams().getFrequency() + " symb " + 
+				msg.getScanCurChanParams().getSymbolRate() + " polar " + msg.getScanCurChanParams().getPolarisation());
+
+				
+				String strMsg = "" + msg.getScanCurChanParams().getFrequency()/1000 + "MHz    ";
+				strMsg += "" + msg.getScanCurChanParams().getSymbolRate()/1000 + "kS/s    ";
+				strMsg += msg.getScanCurChanParams().getPolarisation()==0 ? "H" : "V";
+
+				serviceInfo serviceinfo = new serviceInfo();
+				serviceinfo.setName(strMsg);	
+				tp_list.add(serviceinfo);
+				tvlistview.setSelection(tp_list.size() -1);							
+				mTvListAdapter.notifyDataSetChanged();
+
+				break;
+			case TVMessage.TYPE_BLINDSCAN_END:
+				Log.d(TAG, "Blind Scan End");
+				tv_list_temp=tv_list;
+				mTvListAdapter = new ScanResultAdapter(DvbsScanResult.this,tv_list);
+				tvlistview.setAdapter(mTvListAdapter);
+				mTvListAdapter.notifyDataSetChanged();
+				radiolistview.setVisibility(View.VISIBLE);
+				mRadioListAdapter.notifyDataSetChanged();
+				tv_title.setText(R.string.tv);
+				tv_title.setVisibility(View.VISIBLE);
+				radio_title.setVisibility(View.VISIBLE);
+				break;			
 			default:
 				break;
 	
