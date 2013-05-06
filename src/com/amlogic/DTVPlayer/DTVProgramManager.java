@@ -357,7 +357,7 @@ public class DTVProgramManager extends DTVActivity{
 			if (arg2.getAction() == KeyEvent.ACTION_UP){
 				switch(arg1)
 				{
-					case KeyEvent.KEYCODE_PAGE_UP:
+					case KeyEvent.KEYCODE_ZOOM_IN:
 						if (getMoveMode()){
 							for (int i = getMoveItemPos(); i > myAdapter.getSelectItem(); i--){
 								exchageItem(i, i - 1);
@@ -368,7 +368,7 @@ public class DTVProgramManager extends DTVActivity{
 							Log.d(TAG, "press page up");
 						}
 						break;
-					case KeyEvent.KEYCODE_PAGE_DOWN:
+					case KeyEvent.KEYCODE_ZOOM_OUT:
 						if (getMoveMode())
 						{
 							for (int i = getMoveItemPos(); i < myAdapter.getSelectItem(); i++)

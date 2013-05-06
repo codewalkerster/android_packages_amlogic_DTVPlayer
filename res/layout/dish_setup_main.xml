@@ -42,7 +42,9 @@
 				<RelativeLayout
 				    android:layout_height="60dp"
 				    android:layout_width="fill_parent"
-				    android:gravity="center_vertical">
+				    android:gravity="center_vertical"
+				    android:layout_marginLeft="15dp"
+					android:layout_marginRight="15dp">
 						<LinearLayout    
 						    android:id="@+id/sat_info_title_layout"  
 						   android:layout_width="fill_parent"       
@@ -171,22 +173,23 @@
     						<RelativeLayout
 						    android:layout_height="fill_parent"
 						    android:layout_width="fill_parent"
-						    android:layout_marginLeft="30dp"
+						    android:layout_marginLeft="15dp"
+						    android:layout_marginRight="15dp"
 						      >	
 								  <ListView
-								     	android:id="@+id/sat_list"
+								    android:id="@+id/sat_list"
 								  	android:layout_width="fill_parent"
 								  	android:layout_height="fill_parent"					     				     
 								  	android:scrollbars="vertical"/>
 								<TextView
 									  	android:id="@+id/no_data_info"
-									  	android:padding="60px"
+									  	android:padding="45dp"
 									  	android:text="@string/no_scan_list"	
 									  	android:layout_width="wrap_content"
-									  	android:textSize="20sp"
+									  	android:textSize="22sp"
 									  	android:layout_height="wrap_content"
 									  	android:gravity="center"
-									  	android:layout_gravity="center_vertical"
+									  	android:layout_gravity="center"
 									  	android:visibility="gone"
 									  	android:background="#FF171717"
 									  	/> 		
@@ -198,8 +201,8 @@
 					  	android:background ="@drawable/epg_content_bg3"   
 					  	android:layout_height="fill_parent"
 						  android:layout_weight="3"
-						  android:paddingLeft="30dp"
-						   android:paddingRight="30dp"
+						  android:paddingLeft="15dp"
+						   android:paddingRight="15dp"
 						   android:paddingBottom="10dp"
 						   android:layout_marginRight="30dp">
 
@@ -208,7 +211,7 @@
 								android:layout_width="fill_parent"
 								android:layout_height="60px"
 								android:textSize="22sp"
-								android:gravity="center_vertical"
+								android:gravity="center"
 								 android:singleLine="true"
 	  							android:layout_gravity="center_vertical"/>
 	  					 <ListView
@@ -262,7 +265,7 @@
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_gravity="center"
-			android:background="@drawable/epg_info_button"
+			android:background="@drawable/ok_icon"
 			android:contentDescription="@string/app"
 		    ></ImageView>
 		    <TextView
@@ -384,7 +387,7 @@
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_gravity="center"
-			android:background="@drawable/green_button"
+			android:background="@drawable/ok_icon"
 			android:contentDescription="@string/app"
 		    ></ImageView>
 		    <TextView
@@ -392,7 +395,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 		    android:layout_gravity="center"
-			android:text="@string/dish_setup_conf_button_des5_info"
+			android:text="@string/dish_setup_conf_button_des7_info"
 			android:textColor="#FFFFFFFF"
 			android:textSize="20sp"
 			android:layout_marginRight="30dp"
@@ -409,7 +412,7 @@
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_gravity="center"
-			android:background="@drawable/green_button"
+			android:background="@drawable/ok_icon"
 			android:contentDescription="@string/app"
 		    ></ImageView>
 		    <TextView
@@ -417,7 +420,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 		    android:layout_gravity="center"
-			android:text="@string/dish_setup_conf_button_des5_info"
+			android:text="@string/dish_setup_conf_button_des8_info"
 			android:textColor="#FFFFFFFF"
 			android:textSize="20sp"
 			android:layout_marginRight="30dp"

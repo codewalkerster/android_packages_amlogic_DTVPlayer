@@ -135,6 +135,9 @@ public class DTVEpg extends DTVActivity{
 				break;	
 			case TVMessage.TYPE_PROGRAM_START:	
 				Log.d(TAG,"New program start!");
+				cur_service_id = DTVEpgGetID();
+		        db_id = cur_service_id;
+				Log.d(TAG,"db_id="+db_id);
 				new Thread(){     
 		            public void run(){   
 		         		Message msg;
@@ -167,6 +170,7 @@ public class DTVEpg extends DTVActivity{
 						} 
 					}
 				}.start(); 
+				myAdapter.notifyDataSetChanged();
 				break;
 			default:
 				break;
@@ -177,9 +181,6 @@ public class DTVEpg extends DTVActivity{
 	private int eit_list_cur_pos=0;
 	
 	private void DTVEpgUIInit(){	
-		cur_service_id = DTVEpgGetID();
-        db_id = cur_service_id;
-		Log.d(TAG,"db_id="+db_id);
 		/*setup view*/
         
         EitListView  = (ListView)findViewById(R.id.EitListView);
@@ -257,8 +258,10 @@ public class DTVEpg extends DTVActivity{
 								update_bookstatus(mTVEvent[current_date_index][item].getID(),2);
 								mTVEvent[current_date_index][item].setSubFlag(2);
 								icon.setBackgroundResource(R.drawable.epg_event_book_2);
-								if((long)(mTVEvent[current_date_index][item].getStartTime())>System.currentTimeMillis()/1000)
-									SetAlarm(mTVEvent[current_date_index][item].getStartTime()-100);
+								//if((long)(mTVEvent[current_date_index][item].getStartTime())>System.currentTimeMillis()/1000)
+									//SetAlarm(mTVEvent[current_date_index][item].getStartTime()-100);
+								Calendar cal = Calendar.getInstance();
+								SetAlarm(cal.getTimeInMillis()/1000+60);	
 							break;
 						}
 					}
@@ -557,12 +560,14 @@ public class DTVEpg extends DTVActivity{
 	}
 
 	private  void SetAlarm(long time){
-		/*		
+			
+		//Intent intent = new Intent(this, AlarmReceiver.class);
 		Intent intent = new Intent(this, AlarmReceiver.class);
-		PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent,0);
+		PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent ,Intent.FLAG_ACTIVITY_NEW_TASK);
 		AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
 		am.set(AlarmManager.RTC_WAKEUP, time*1000, pi);	
-		*/						
+		
+		//am.set(AlarmManager.POWER_OFF_WAKEUP, time*1000, pi);		
 	}
 
 	private void update_bookstatus(int eventid, int bookflag){
@@ -1177,7 +1182,9 @@ public class DTVEpg extends DTVActivity{
 			}
 			
 			holder.text.setText(mTVProgramList[position].getName());
-
+			
+			Log.d(TAG,"db_id="+db_id);
+			Log.d(TAG,"mTVProgramList[position].getID()="+mTVProgramList[position].getID());
 			if(db_id == mTVProgramList[position].getID()){  
 				//convertView.setBackgroundColor(Color.RED);  
 				holder.text.setTextColor(Color.YELLOW);
@@ -1296,6 +1303,47 @@ public class DTVEpg extends DTVActivity{
 			case KeyEvent.KEYCODE_BACK:	
 				DTVEpg.this.finish();
 				break;
+			case KeyEvent.KEYCODE_ZOOM_IN:
+				if(list_status==1){
+					if(EitListView.getChildCount()>eit_list_cur_pos)
+						EitListView.setSelection(0);
+					else{
+						EitListView.setSelection(eit_list_cur_pos-EitListView.getChildCount());
+					}
+					mEitListDBAdapter.notifyDataSetChanged();
+				}
+				else if(list_status==0){
+					if(ListView_channel.getChildCount()>cur_select_item)
+						ListView_channel.setSelection(0);
+					else{
+						ListView_channel.setSelection(cur_select_item-EitListView.getChildCount());
+					}
+					myAdapter.notifyDataSetChanged();
+				}
+				break;
+			case KeyEvent.KEYCODE_ZOOM_OUT:
+				int p=0;
+				if(list_status==1){
+					p = eit_list_cur_pos+EitListView.getChildCount();
+					if(p<EitListView.getCount())
+						EitListView.setSelection(p-1);
+					else{
+						EitListView.setSelection(EitListView.getCount()-1);
+					}
+					mEitListDBAdapter.notifyDataSetChanged();
+				}
+				else if(list_status==0){
+					p = cur_select_item+ListView_channel.getChildCount();
+					if(p<EitListView.getCount())
+						ListView_channel.setSelection(p-1);
+					else{
+						ListView_channel.setSelection(ListView_channel.getCount()-1);
+					}
+					myAdapter.notifyDataSetChanged();
+				}
+				
+					
+				break;	
 		}
 		return super.onKeyDown(keyCode, event);
 	}	  

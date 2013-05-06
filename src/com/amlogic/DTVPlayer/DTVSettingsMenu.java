@@ -265,7 +265,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		ListView_settings.setOnItemClickListener(mSystemOnItemClickListener);
 		ListView_settings.setAdapter(mySystemAdapter);
 		mySystemAdapter.notifyDataSetChanged();
-		ListView_settings.requestFocus();
+		//ListView_settings.requestFocus();
 		
 	}
 
@@ -281,7 +281,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		ListView_settings.setOnKeyListener(new listOnKeyListener());
 		ListView_settings.setOnItemClickListener(mProgramOnItemClickListener);
 		ListView_settings.setAdapter(myProgramAdapter);
-		ListView_settings.requestFocus();
+		//ListView_settings.requestFocus();
 
 		/*
 		//title		
@@ -304,7 +304,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		ListView_settings.setOnKeyListener(new listOnKeyListener());
 		ListView_settings.setOnItemClickListener(mSearchOnItemClickListener);
 		ListView_settings.setAdapter(mySearchAdapter);
-		ListView_settings.requestFocus();
+		//ListView_settings.requestFocus();
 	}
 	private void AVItem_Init(){
 		Log.d(TAG,"scan region="+mDTVSettings.getScanRegion());
@@ -318,7 +318,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		ListView_settings.setOnKeyListener(new listOnKeyListener());
 		ListView_settings.setOnItemClickListener(mAvOnItemClickListener);
 		ListView_settings.setAdapter(myAvAdapter);
-		ListView_settings.requestFocus();
+		//ListView_settings.requestFocus();
 
 	}
 
