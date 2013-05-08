@@ -78,6 +78,7 @@ abstract public class DTVActivity extends TVActivity{
 		String outputmode = SystemProperties.get("ubootenv.var.outputmode");
 		int x = 0, y = 0, w = 0, h = 0;
 		String x_s = null, y_s = null, w_s = null, h_s = null;
+		String not_set = "";
 		
 		Log.d(TAG, "setContentView " + outputmode);
 		
@@ -122,13 +123,17 @@ abstract public class DTVActivity extends TVActivity{
 			y_s = SystemProperties.get("ubootenv.var.480ioutputy");
 			w_s = SystemProperties.get("ubootenv.var.480ioutputwidth");
 			h_s = SystemProperties.get("ubootenv.var.480ioutputheight");				
-		}	
+		}
 
 		if((x_s != null) && (y_s != null) && (w_s != null) && (h_s != null)){
-			x = Integer.parseInt(x_s);
-			y = Integer.parseInt(y_s);
-			w = Integer.parseInt(w_s);
-			h = Integer.parseInt(h_s);
+			if((x_s.equals("")) || (y_s.equals("")) || (w_s.equals("")) ||(h_s.equals(""))){
+				Log.e(TAG, "not set reproduction");
+			} else {
+				x = Integer.parseInt(x_s);
+				y = Integer.parseInt(y_s);
+				w = Integer.parseInt(w_s);
+				h = Integer.parseInt(h_s);
+			}
 		}
 		
 /*
