@@ -55,12 +55,11 @@ public class DTVPlayer extends DTVActivity{
 		super.onConnected();
 		//set input source on DTV
 		//setInputSource(TVConst.SourceInput.SOURCE_DTV);
+		
+		mDTVSettings = new DTVSettings(this);
 		if(isHavePragram()==false){ 
 			showNoProgramDia(); 
 		}
-		
-		
-		mDTVSettings = new DTVSettings(this);
 		mDTVSettings.setTeltextBound();
 		
 		if(bundle!=null){	
@@ -670,6 +669,12 @@ public class DTVPlayer extends DTVActivity{
 					Log.d(TAG, "goto DTVScanDVBC");
 					Intent_scan.setClass(DTVPlayer.this, DTVScanDVBC.class);				
 				}
+				else
+				{
+					Log.d(TAG, "goto DTVScanDVBS");
+					//Intent_scan.setClass(DTVPlayer.this, DTVScanDVBS.class);
+					Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
+				}		
 				
 				startActivity(Intent_scan);
 			}
