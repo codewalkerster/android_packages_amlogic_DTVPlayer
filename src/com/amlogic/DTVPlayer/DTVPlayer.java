@@ -165,7 +165,7 @@ public class DTVPlayer extends DTVActivity{
 				}
 				break;
 			case TVMessage.TYPE_RECORD_END:	
-				switch(msg.getRecordErrorCode()){
+				switch(msg.getErrorCode()){
 					case  TVMessage.REC_ERR_OPEN_FILE:
 						
 						toast = Toast.makeText(
@@ -966,6 +966,8 @@ public class DTVPlayer extends DTVActivity{
 	}
 
 	private void updateInforbar(){
+		if (mDTVSettings == null)
+			return;
 		dtvplayer_atsc_antenna_source = mDTVSettings.getAtscAntennaSource();
 		Text_screentype_info = (TextView) findViewById(R.id.Text_screentype_info);
 		Text_parent_control_info_icon = (TextView) findViewById(R.id.Text_parent_control_info_icon);

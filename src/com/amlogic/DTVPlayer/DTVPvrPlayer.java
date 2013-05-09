@@ -97,7 +97,7 @@ public class DTVPvrPlayer extends DTVActivity{
 				Log.d(TAG, "Scan End");
 				break;
 			case TVMessage.TYPE_RECORD_END:	
-				switch(msg.getRecordErrorCode()){
+				switch(msg.getErrorCode()){
 					case  TVMessage.REC_ERR_OPEN_FILE:
 						DTVTimeShiftingStop();
 						toast = Toast.makeText(
