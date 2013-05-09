@@ -1526,23 +1526,33 @@ public class DTVPlayer extends DTVActivity{
 
 	private boolean isHavePragram(){
 		TVProgram[]  mTVProgramList=null;
-		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,false);
+		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,0);
 		if(mTVProgramList!=null){
-			if(mTVProgramList.length!=0)
+			if(mTVProgramList.length!=0){
+				Log.d(TAG,"0000000");
 				return true;
+			}	
 			else{
-				mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,false);
-				if(mTVProgramList==null)
+				mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
+				if(mTVProgramList==null){
+					Log.d(TAG,"11111");
 					return false;
-				else if(mTVProgramList.length!=0)
+				}	
+				else if(mTVProgramList.length!=0){
+					Log.d(TAG,"222222");
 					return true;
+				}
 			}
+			Log.d(TAG,"33333");
 		}
 		else{
-			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,false);
-			if(mTVProgramList==null)
+			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
+			if(mTVProgramList==null){
+				Log.d(TAG,"444444");
 				return false;
+			}	
 		}
+		Log.d(TAG,"5555555");
 		return false;
 	}
 
