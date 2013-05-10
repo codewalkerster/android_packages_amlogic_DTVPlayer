@@ -114,13 +114,18 @@ public class DTVSettingsMenu extends DTVActivity {
 		      {
 		        if (isFocused==true){
 					button_program.setBackgroundResource(R.drawable.button_program);
+					ProgramItem_Init();
 		        }
+				/*
 		        else {
 		        	if(button_status == BUTTON_PROGRAM)
 						button_program.setBackgroundResource(R.drawable.program3);
 		        }
+		        */
 		      }
 		});
+
+		button_program.setOnKeyListener(new buttonOnKeyListener());
 
 		button_search.setOnFocusChangeListener(new OnFocusChangeListener()
 		    {
@@ -128,41 +133,52 @@ public class DTVSettingsMenu extends DTVActivity {
 		      {
 		        if (isFocused==true){
 					button_search.setBackgroundResource(R.drawable.button_search);
+					SearchItem_Init();
 		        }
+				/*
 		        else {
 		        	if(button_status == BUTTON_SEARCH)
 						button_search.setBackgroundResource(R.drawable.search3);
 		        }
+		        */
 		      }
 		});
+		button_search.setOnKeyListener(new buttonOnKeyListener());
 		button_system.setOnFocusChangeListener(new OnFocusChangeListener()
 		    {
 		      public void onFocusChange(View v, boolean isFocused)
 		      {
 		        if (isFocused==true){
 					button_system.setBackgroundResource(R.drawable.button_system);
+					SystemItem_Init();
 		        }
+				/*
 		        else {
 		        	if(button_status == BUTTON_SYSTEM)
 						button_system.setBackgroundResource(R.drawable.system3);
 		        }
+		        */
 		      }
 		});
+		button_system.setOnKeyListener(new buttonOnKeyListener());
 		button_av_setting.setOnFocusChangeListener(new OnFocusChangeListener()
 		    {
 		      public void onFocusChange(View v, boolean isFocused)
 		      {
 		        if (isFocused==true){
 					button_av_setting.setBackgroundResource(R.drawable.button_av);
+					AVItem_Init();
 		        }
+				/*
 		        else {
 		        	if(button_status == BUTTON_AV_SETTING)
 						button_av_setting.setBackgroundResource(R.drawable.av3);
 		        }
+		        */
 		      }
 		});
-		
-		button_search.setBackgroundResource(R.drawable.search2);	
+		button_av_setting.setOnKeyListener(new buttonOnKeyListener());
+		//button_search.setBackgroundResource(R.drawable.search2);	
 		button_search.requestFocus();
 		SearchItem_Init();
 		
@@ -176,39 +192,46 @@ public class DTVSettingsMenu extends DTVActivity {
 			// TODO Auto-generated method stub		
 			switch (v.getId()) {			
 				case R.id.button_program:		
-								
+					/*			
 					button_program.setBackgroundResource(R.drawable.program3);		
 					button_search.setBackgroundResource(R.drawable.button_search);		
 					button_system.setBackgroundResource(R.drawable.button_system);
 					button_av_setting.setBackgroundResource(R.drawable.button_av);	
-					button_status = BUTTON_PROGRAM; 
+					*/
+					
 					//get data	
 					ProgramItem_Init();
 					break;
 				case R.id.button_search:	
+					/*
 					button_program.setBackgroundResource(R.drawable.button_program);		
 					button_search.setBackgroundResource(R.drawable.search3);		
 					button_system.setBackgroundResource(R.drawable.button_system);
 					button_av_setting.setBackgroundResource(R.drawable.button_av);	
-					button_status = BUTTON_SEARCH;  
+					*/
+					
 					//get data	
 					SearchItem_Init();
 					break;
 				case R.id.button_system:	
+					/*
 					button_program.setBackgroundResource(R.drawable.button_program);		
 					button_search.setBackgroundResource(R.drawable.button_search);		
 					button_system.setBackgroundResource(R.drawable.system3);
 					button_av_setting.setBackgroundResource(R.drawable.button_av);	
-					button_status = BUTTON_SYSTEM;   
+					*/
+					 
 					//get data	
 					SystemItem_Init();
 					break; 	
 				case R.id.button_av:
+					/*
 					button_program.setBackgroundResource(R.drawable.button_program);		
 					button_search.setBackgroundResource(R.drawable.button_search);		
 					button_system.setBackgroundResource(R.drawable.button_system);
 					button_av_setting.setBackgroundResource(R.drawable.av3);	
-					button_status = BUTTON_AV_SETTING;   
+					*/
+					 
 					//get data
 					AVItem_Init();
 					break;	
@@ -248,6 +271,7 @@ public class DTVSettingsMenu extends DTVActivity {
 
 	private void SystemItem_Init(){
 		Log.d(TAG,"scan region="+mDTVSettings.getScanRegion());
+		button_status = BUTTON_SYSTEM;  
 		if(mDTVSettings.getScanRegion().contains("ATSC"))	
 			DATA = getResources().getStringArray(R.array.system_settings_content_atsc);
 		else
@@ -270,6 +294,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	}
 
 	private void ProgramItem_Init(){
+		button_status = BUTTON_PROGRAM; 
 		Log.d(TAG,"scan region="+mDTVSettings.getScanRegion());
 		
 		DATA = getResources().getStringArray(R.array.Program_settings_content);
@@ -294,7 +319,7 @@ public class DTVSettingsMenu extends DTVActivity {
 
 	private void SearchItem_Init(){
 		Log.d(TAG,"scan region="+mDTVSettings.getScanRegion());
-		
+		button_status = BUTTON_SEARCH;  
 		DATA = getResources().getStringArray(R.array.search_settings_content_dvbs);
 
 		//listview
@@ -308,7 +333,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	}
 	private void AVItem_Init(){
 		Log.d(TAG,"scan region="+mDTVSettings.getScanRegion());
-		
+		button_status = BUTTON_AV_SETTING;  
 		DATA = getResources().getStringArray(R.array.av_settings_content);
 
 		//listview
@@ -361,6 +386,38 @@ public class DTVSettingsMenu extends DTVActivity {
 					}
 					break;
 			} 
+			return false;
+		}
+	}
+
+	class buttonOnKeyListener implements OnKeyListener{
+		public boolean onKey(View v, int keyCode, KeyEvent event) {					
+			switch (v.getId()) {			
+				case R.id.button_program:		
+				case R.id.button_search:	
+				case R.id.button_system:					
+				case R.id.button_av:
+					{
+						switch(keyCode){
+							case KeyEvent.KEYCODE_DPAD_DOWN:
+
+								if (event.getAction() == KeyEvent.ACTION_DOWN) {
+									if(button_status == BUTTON_PROGRAM)
+										button_program.setBackgroundResource(R.drawable.program3);
+						        	else if(button_status == BUTTON_SEARCH)
+										button_search.setBackgroundResource(R.drawable.search3);
+						        	else if(button_status == BUTTON_SYSTEM)
+										button_system.setBackgroundResource(R.drawable.system3);
+						        	else if(button_status == BUTTON_AV_SETTING)
+										button_av_setting.setBackgroundResource(R.drawable.av3);
+		    
+								}
+								break;
+							} 
+					}
+					break;	
+			}	
+			
 			return false;
 		}
 	}

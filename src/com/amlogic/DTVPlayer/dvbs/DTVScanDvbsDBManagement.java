@@ -156,7 +156,8 @@ public class DTVScanDvbsDBManagement extends DTVActivity {
 		satXmlBuilder.setTitle(R.string.dvbs_dbm_load);
 
 		ListView mListView =(ListView)dvbs_satxml.findViewById(R.id.settings_list);
-		mListView.setAdapter(new DvbsDBXmlAdapter(this,filelist));
+		DvbsDBXmlAdapter mDvbsDBXmlAdapter = new DvbsDBXmlAdapter(this,filelist);
+		mListView.setAdapter(mDvbsDBXmlAdapter);
 		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
 			public void onItemClick(AdapterView<?> arg0, View arg1,
@@ -168,10 +169,7 @@ public class DTVScanDvbsDBManagement extends DTVActivity {
 				System.out.println("onItemSelected arg3 " + arg3);
 
 				final String path = filelist.get(arg2);
-				/*
-				getContentResolver().query(DVBClient.IMPORT_DB,
-					null, path, null, null);
-				*/
+				importDatabase(path);
 				toast = Toast.makeText(
 						DTVScanDvbsDBManagement.this,
 						R.string.xml_load_success,
@@ -184,7 +182,7 @@ public class DTVScanDvbsDBManagement extends DTVActivity {
         });
 			
 		mListView.requestFocus();
-		
+		mDvbsDBXmlAdapter.notifyDataSetChanged();
 		satXmlBuilder.setView(dvbs_satxml);
 
 		AlertDialog alert = satXmlBuilder.create();
@@ -265,7 +263,9 @@ public class DTVScanDvbsDBManagement extends DTVActivity {
 
 			//this.getContentResolver().query(DVBClient.EXPORT_DB,
 							//null, satellites_db+"/"+"satellites_"+today+".amdb", null, null);
-							
+
+			exportDatabase(satellites_db+"/"+"satellites_"+today+".xml");
+			
 			toast = Toast.makeText(
 				DTVScanDvbsDBManagement.this,
 				R.string.xml_generator_success,

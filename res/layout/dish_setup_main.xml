@@ -245,7 +245,7 @@
 			android:contentDescription="@string/app"
 		    ></ImageView>
 		    <TextView
-		    android:layout_marginLeft="20sp"
+		    android:layout_marginLeft="3dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 		    android:layout_gravity="center"
@@ -269,14 +269,14 @@
 			android:contentDescription="@string/app"
 		    ></ImageView>
 		    <TextView
-		      android:layout_marginLeft="20sp"    
+		      android:layout_marginLeft="3dp"    
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 		    android:layout_gravity="center"
 			android:text="@string/dish_setup_conf_button_des5_info"
 			android:textColor="#FFFFFFFF"
 			android:textSize="20sp"
-			android:layout_marginRight="30dp"
+			android:layout_marginRight="20dp"
 			/>
 		</LinearLayout>
 		<LinearLayout
@@ -293,14 +293,14 @@
 			android:contentDescription="@string/app"
 		    ></ImageView>
 		    <TextView
-		    android:layout_marginLeft="20sp"     
+		    android:layout_marginLeft="3dp"     
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 		    android:layout_gravity="center"
 			android:text="@string/dish_setup_conf_button_des2_info"
 			android:textColor="#FFFFFFFF"
 			android:textSize="20sp"
-			android:layout_marginRight="30dp"
+			android:layout_marginRight="20dp"
 			/>
 		</LinearLayout>
 		<LinearLayout
@@ -317,14 +317,14 @@
 			android:contentDescription="@string/app"
 		    ></ImageView>
 		    <TextView
-		     android:layout_marginLeft="20sp"  
+		     android:layout_marginLeft="3dp"  
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 		    android:layout_gravity="center"
 			android:text="@string/dish_setup_conf_button_des3_info"
 			android:textColor="#FFFFFFFF"
 			android:textSize="20sp"
-			android:layout_marginRight="30dp"
+			android:layout_marginRight="20dp"
 			/>
 		</LinearLayout>
 		<LinearLayout
@@ -341,14 +341,14 @@
 			android:contentDescription="@string/app"
 		    ></ImageView>
 		    <TextView
-		    android:layout_marginLeft="20sp"
+		    android:layout_marginLeft="3dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 		    android:layout_gravity="center"
 			android:text="@string/dish_setup_conf_button_des4_info"
 			android:textColor="#FFFFFFFF"
 			android:textSize="20sp"
-			android:layout_marginRight="30dp"
+			android:layout_marginRight="20dp"
 			/>
 		</LinearLayout>
 		
@@ -366,14 +366,14 @@
 			android:contentDescription="@string/app"
 		    ></ImageView>
 		    <TextView
-		    android:layout_marginLeft="20sp"
+		    android:layout_marginLeft="3dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 		    android:layout_gravity="center"
 			android:text="@string/dish_setup_conf_button_des5_info"
 			android:textColor="#FFFFFFFF"
 			android:textSize="20sp"
-			android:layout_marginRight="30dp"
+			android:layout_marginRight="20dp"
 			/>
 		</LinearLayout>
 			<LinearLayout
@@ -382,7 +382,7 @@
 		android:gravity="center_horizontal"
 		android:layout_width="wrap_content"
 		android:layout_height="fill_parent"
-		> 
+		android:visibility="gone"> 
 			<ImageView 
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
@@ -391,14 +391,14 @@
 			android:contentDescription="@string/app"
 		    ></ImageView>
 		    <TextView
-		    android:layout_marginLeft="20sp"
+		    android:layout_marginLeft="3dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 		    android:layout_gravity="center"
 			android:text="@string/dish_setup_conf_button_des7_info"
 			android:textColor="#FFFFFFFF"
 			android:textSize="20sp"
-			android:layout_marginRight="30dp"
+			android:layout_marginRight="20dp"
 			/>
 		</LinearLayout>
 			<LinearLayout
@@ -407,7 +407,7 @@
 		android:gravity="center_horizontal"
 		android:layout_width="wrap_content"
 		android:layout_height="fill_parent"
-		> 
+		android:visibility="gone"> 
 			<ImageView 
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
@@ -416,14 +416,14 @@
 			android:contentDescription="@string/app"
 		    ></ImageView>
 		    <TextView
-		    android:layout_marginLeft="20sp"
+		    android:layout_marginLeft="3dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 		    android:layout_gravity="center"
 			android:text="@string/dish_setup_conf_button_des8_info"
 			android:textColor="#FFFFFFFF"
 			android:textSize="20sp"
-			android:layout_marginRight="30dp"
+			android:layout_marginRight="20dp"
 			/>
 		</LinearLayout>
 	</LinearLayout>

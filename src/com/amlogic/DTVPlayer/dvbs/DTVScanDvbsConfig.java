@@ -538,13 +538,13 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	private void hide_bottom_set_limit(){
 		set_limit = (LinearLayout)findViewById(R.id.editProgramOpDes07);
 		set_limit.setVisibility(View.INVISIBLE);
-		//set_limit.setVisibility(View.GONE);
+		set_limit.setVisibility(View.GONE);
 	}
 
 	private void hide_bottom_set_location(){
 		set_location = (LinearLayout)findViewById(R.id.editProgramOpDes08);
 		set_location.setVisibility(View.INVISIBLE);
-		//set_location.setVisibility(View.GONE);
+		set_location.setVisibility(View.GONE);
 	}
 
 	private TVSatellite mTVSatellite=null;
@@ -1078,6 +1078,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		else if(mode.equals("fast_diseqc")){
 			int uncommitted_cmd = (int)values.getAsInteger("fast_diseqc");
 			temp_TVSatellite.setDiseqcFast(uncommitted_cmd);
+		}
+		else if(mode.equals("pos_num")){
+			int pos_num =  (int)values.getAsInteger("pos_num");
+			temp_TVSatellite.setMotorPositionNum(pos_num);
 		}
 		
 	}
@@ -2725,7 +2729,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		return pos;
 	}
 
-	private void storePosition(){
+	private void storePosition(Object cmd){
 		DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
 		int sat_id = SatInfo.getSatId();
 		int moto_no = SatInfo.getMotoNo();
@@ -2743,27 +2747,21 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		ContentValues values = new ContentValues();
 		values.put("pos_num", SatInfo.getPositionNumber());
 
-		/*
-		this.getContentResolver().update(DVBClient.TABLE_SAT_PARA, values,"db_id="+scan_id, null);
-
-		if(mLockDvb!=null){
-			mLockDvb.syncDatabase(DVBClient.TABLE_SAT_PARA, -1);
-		}
-		*/
+		editSatData(sat_id, values,"pos_num");
 		//client storeposition function
-		t.onSetupCmd(t.ROTOR_CMD_STORE_POSITION,(Object)String.valueOf(position_no));
+		//t.onSetupCmd(t.ROTOR_CMD_STORE_POSITION,(Object)String.valueOf(position_no));
+		t.onSetupCmd(t.ROTOR_CMD_STORE_POSITION,cmd);
 
 		return;
 	}
 
-	private void gotoPosition(){
-		DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+	private void gotoPosition(Object cmd){
 		//client storeposition function
-		t.onSetupCmd(t.ROTOR_CMD_GOTO_POSITION,(Object)String.valueOf(SatInfo.getPositionNumber()));
+		t.onSetupCmd(t.ROTOR_CMD_GOTO_POSITION,(Object)cmd);
 		return;
 	}
 
-	private void gotoX(){
+	private void gotoX(Object cmd){
 		//public static final int ROTOR_CMD_GOTOX= 8;	//!< para: "local_longitude local_latitude satellite_longitude"
 		int longitude=0;
 		int latitude=0;
@@ -2786,21 +2784,20 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		}
 
 		Log.d(TAG,"Para String="+String.valueOf(longitude)+" "+String.valueOf(latitude)+" "+String.valueOf(sat_position));	
-		t.onSetupCmd(t.ROTOR_CMD_GOTOX,(Object)new String(String.valueOf(longitude)+" "+String.valueOf(latitude)+" "+String.valueOf(sat_position)));
-
+		//t.onSetupCmd(t.ROTOR_CMD_GOTOX,(Object)new String(String.valueOf(longitude)+" "+String.valueOf(latitude)+" "+String.valueOf(sat_position)));
+		t.onSetupCmd(t.ROTOR_CMD_GOTOX,cmd);
 		return;
 	}
 
 
-	private void showSureDia(){
-		
-		
+	private void showSureDia(Object cmd){
+		final Object tcmd=cmd;
 		builder = new AlertDialog.Builder(DTVScanDvbsConfig.this);
 		builder.setMessage(R.string.sure)
 		    .setCancelable(true)
 		    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 	        public void onClick(DialogInterface dialog, int id) {
-		    	storePosition();	
+		    	storePosition(tcmd);	
 	            dialog.dismiss();
 	        }
 	    })
@@ -2834,8 +2831,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	}
 
 
-	void showMoveIcon(ImageView v)
-	{
+	void showMoveIcon(ImageView v){
 		final Animation animation = new AlphaAnimation(0, 1); // Change alpha from fully visible to invisible
 		animation.setDuration(500); // duration - half a second
 		animation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
@@ -2844,8 +2840,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		v.setAnimation(animation);
 	}
 
-	void showMoveIcon1(ImageView v,TextView text)
-	{
+	void showMoveIcon1(ImageView v,TextView text){
 		final TextView t=text;
 		final Animation animation = new AlphaAnimation(0, 1); // Change alpha from fully visible to invisible
 		animation.setDuration(500); // duration - half a second
@@ -2868,8 +2863,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		});
 	}
 
-	void hideMoveIcon(ImageView v)
-	{
+	void hideMoveIcon(ImageView v){
 		v.setAnimation(null);
 	}
 
@@ -2903,6 +2897,11 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				}  
 		}
 	}  
+
+	class cmdParams{
+		TVChannelParams channel;
+		int				unit;
+	} 
   
 	class getFrontEndInfoThread extends Thread {
 		private Handler mHandler = null;
@@ -2935,34 +2934,36 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					Log.d(TAG,"------------------------getFrontEndInfoThread---------------");
 					switch (msg.what) { 
 						case ROTOR_CMD_STOP_MOVING: {													
-								//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STOP_MOVING,null);						
+								diseqcPositionerStopMoving();
 							}
 							break;
 						case ROTOR_CMD_DISABLE_LIMIT:
 							{							
-								//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_DISABLE_LIMIT,null);
+								diseqcPositionerDisableLimit();
 							}
 							break;
 						case ROTOR_CMD_SET_ELIMIT:	//!< para: None
 							{	Log.d(TAG,">>>>>>>ROTOR_CMD_SET_ELIMIT<<<<<<");						
-								//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_SET_ELIMIT,null);
+								diseqcPositionerSetEastLimit();
 							}
 							break;
 						case ROTOR_CMD_SET_WLIMIT:	//!< para: None
 							{							
 								
 								//Log.d(TAG,">>>>>>>ROTOR_CMD_SET_WLIMIT<<<<<<");
-								//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_SET_WLIMIT,null);
+								diseqcPositionerSetWestLimit();
 							}
 							break;
 						case ROTOR_CMD_MOVE_EAST:	//!< para: "move_unit"
-							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_MOVE_EAST,(String)msg.obj);
+							diseqcPositionerMoveEast(((cmdParams)msg.obj).channel,((cmdParams)msg.obj).unit);
 							break;
 						case ROTOR_CMD_MOVE_WEST:	//!< para: "move_unit"
 							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_MOVE_WEST,(String)msg.obj);
+							diseqcPositionerMoveWest(((cmdParams)msg.obj).channel,((cmdParams)msg.obj).unit);
 							break;
 						case ROTOR_CMD_STORE_POSITION:	//!< para: "position_number"
 							{							
+								diseqcPositionerStorePosition(((cmdParams)msg.obj).channel);
 								//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STORE_POSITION,(String)msg.obj);
 							}
 							break;
@@ -2970,11 +2971,13 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						case ROTOR_CMD_GOTO_POSITION	://!< para: "position_number"
 							{							
 								//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_GOTO_POSITION,(String)msg.obj);
+								diseqcPositionerGotoPosition(((cmdParams)msg.obj).channel);
 							}
 							break;
 						case ROTOR_CMD_GOTOX	://!< para: "position_number"
 							{							
 								//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_GOTOX,(String)msg.obj);
+								diseqcPositionerGotoX(((cmdParams)msg.obj).channel);
 							}
 							break;	
 						case 50:
@@ -3134,57 +3137,15 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 		final DbTransponder TsInfo  = queryTsData(list_cur_pos);
 
-
-		TVSatellite sat_para = new TVSatellite(this);
-		/*	
-		//sat_para.lnb_num = SatInfo.getLnbNo();//lnb No.
-		sat_para.sat_name= SatInfo.getName(); //satellite name
-		sat_para.sat_longitude = SatInfo.getPosition();
-		sat_para.lof_lo = SatInfo.getLoLOF(); //lof_low
-		sat_para.lof_hi = SatInfo.getHiLOF(); //lof_hi
-		sat_para.lof_threshold = SatInfo.getLofThreshold(); //threshold
-		sat_para.voltage_mode = SatInfo.getLNBPwrOnOff();//voltage
-		sat_para.signal_22khz = SatInfo.get22KOnOff();
-		sat_para.toneburst = SatInfo.getToneburstType();
-		sat_para.diseqc_mode = SatInfo.getSwtPort();
-		sat_para.repeats = SatInfo.getDiseqcRepeat();
-	
-		sat_para.committed_cmd = SatInfo.getLnbConfig10();
-		sat_para.uncommitted_cmd = SatInfo.getLnbConfig11();
-		sat_para.cmd_order = SatInfo.getDiseqcSequence();
-		sat_para.fast_diseqc = SatInfo.getFastDiseqc();
-
-
-		if(SatInfo.getSwtPort()==DbSat.LNB_DISEQC_12){
-			sat_para.diseqc_mode = TVSatelliteParams.DISEQC_MODE_V1_2;
-			sat_para.position_number = SatInfo.getPositionNumber();
-		}
-		else if(SatInfo.getSwtPort()==DbSat.LNB_DISEQC_13){
-			sat_para.diseqc_mode = TVSatelliteParams.DISEQC_MODE_V1_3;
-			sat_para.position_number = SatInfo.getPositionNumber();
-		}
+		TVChannel mTVChannel = TVChannel.selectByID(this,TsInfo.getDbId());
 		
-		//!< longitude direction GO_EAST, GO_WEST
-		if(mLast.getString("longitude_direction","East").equals("East"))
-			sat_para.lo_direction = TVSatelliteParams.GO_EAST;
-		else
-			sat_para.lo_direction = TVSatelliteParams.GO_WEST;
-		
-		//!< latitude direction GO_NORTH, GO_SOUTH
-		if(mLast.getString("latitude_direction","North").equals("North"))
-			sat_para.la_direction = TVSatelliteParams.GO_NORTH;
-		else
-			sat_para.la_direction = TVSatelliteParams.GO_SOUTH;
+		TVChannelParams mTVChannelParams = mTVChannel.getParams();
 
-		sat_para.longitude = mLast.getInt("longitude_angle",0);
-		sat_para.latitude = mLast.getInt("latitude_angle",0);
+		final cmdParams my_cmdParams = new cmdParams();
+
+		my_cmdParams.channel = mTVChannelParams;
 		
 		
-		DVBFrontEndPara para = new DVBFrontEndPara();
-		para.frequency = TsInfo.getFrequency();
-		para.symbol_rate = TsInfo.getSymbol();
-		para.polarisation = TsInfo.getPolarization();
-		*/
 		//mLockDvb.setFrontendPara(mLockDvb.SCAN_DVBS>>8, sat_para, para);
 	
 		final TextView edittext_frequency= (TextView) dvbs_set_limit_list.findViewById(R.id.edittext_frequency);
@@ -3286,14 +3247,14 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 							t.onSetupCmd(t.ROTOR_CMD_DISABLE_LIMIT,null);
 							break;
 						case 5: //store position
-							showSureDia();
+							showSureDia(my_cmdParams);
 							break;
 						case 6 ://goto position
-							gotoPosition();
+							gotoPosition(my_cmdParams);
 							resetrotorstatuscache = true;
 							break;
 						case 7: //gotoX
-							gotoX();
+							gotoX(my_cmdParams);
 							resetrotorstatuscache = true;
 							break;
 					}
@@ -3330,7 +3291,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						case KeyEvent.KEYCODE_DPAD_RIGHT:
 							if(SetLimitItemSelected==0){
 								Log.d(TAG,"KEYCODE_DPAD_RIGHT"+SetLimitItemSelected);
-								//t.onSetupCmd(mLockDvb.ROTOR_CMD_MOVE_EAST,(Object)new String("0"));
+								my_cmdParams.unit=0;
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_EAST,(Object)my_cmdParams);
 								text.setText("East");
 								hideMoveIcon(icon);
 								showMoveIcon(icon1);
@@ -3339,7 +3301,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 							}
 							else if(SetLimitItemSelected==1) {
 								Log.d(TAG,"KEYCODE_DPAD_RIGHT"+SetLimitItemSelected);
-								//t.onSetupCmd(mLockDvb.ROTOR_CMD_MOVE_EAST,(Object)new String("1"));
+								my_cmdParams.unit=1;	
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_EAST,(Object)my_cmdParams);
 								text.setText("East");
 								showMoveIcon1(icon1,text);	
 								adapter.notifyDataSetChanged();
@@ -3349,7 +3312,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						case KeyEvent.KEYCODE_DPAD_LEFT:
 							if(SetLimitItemSelected==0){
 								Log.d(TAG,"KEYCODE_DPAD_LEFT"+SetLimitItemSelected);
-								//t.onSetupCmd(mLockDvb.ROTOR_CMD_MOVE_WEST,(Object)new String("0"));
+								my_cmdParams.unit=0;	
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_WEST,(Object)my_cmdParams);
 								text.setText("West");
 								hideMoveIcon(icon1);
 								showMoveIcon(icon);
@@ -3358,7 +3322,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 							}
 							else if(SetLimitItemSelected==1) {
 								Log.d(TAG,"KEYCODE_DPAD_LEFT"+SetLimitItemSelected);
-								//t.onSetupCmd(mLockDvb.ROTOR_CMD_MOVE_WEST,(Object)new String("1"));
+								my_cmdParams.unit=1;	
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_WEST,(Object)my_cmdParams);
 								text.setText("West");
 								showMoveIcon1(icon,text);
 								adapter.notifyDataSetChanged();
@@ -3378,8 +3343,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 								hideMoveIcon(icon);
 								hideMoveIcon(icon1);
 								text.setText("Stop");
-								//t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
-								
+								t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);						
 							}
 							break;
 					}	
