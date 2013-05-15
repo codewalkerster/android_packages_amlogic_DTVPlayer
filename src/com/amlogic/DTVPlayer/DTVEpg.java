@@ -76,7 +76,7 @@ public class DTVEpg extends DTVActivity{
 	private long tickcount  = 1;
 	private int  TempFlag   = 0;	
 	private int  current_date_index=0;
-
+ 
 	ImageButton date_button0 = null;
 	ImageButton date_button1 = null;
 	ImageButton date_button2 = null;
@@ -1316,7 +1316,7 @@ public class DTVEpg extends DTVActivity{
 					if(ListView_channel.getChildCount()>cur_select_item)
 						ListView_channel.setSelection(0);
 					else{
-						ListView_channel.setSelection(cur_select_item-EitListView.getChildCount());
+						ListView_channel.setSelection(cur_select_item-ListView_channel.getChildCount());
 					}
 					myAdapter.notifyDataSetChanged();
 				}
@@ -1334,15 +1334,14 @@ public class DTVEpg extends DTVActivity{
 				}
 				else if(list_status==0){
 					p = cur_select_item+ListView_channel.getChildCount();
-					if(p<EitListView.getCount())
+					if(p<ListView_channel.getCount())
 						ListView_channel.setSelection(p-1);
 					else{
 						ListView_channel.setSelection(ListView_channel.getCount()-1);
 					}
 					myAdapter.notifyDataSetChanged();
 				}
-				
-					
+									
 				break;	
 		}
 		return super.onKeyDown(keyCode, event);

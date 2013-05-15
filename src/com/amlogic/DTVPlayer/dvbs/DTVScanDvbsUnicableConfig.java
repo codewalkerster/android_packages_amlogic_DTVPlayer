@@ -129,36 +129,62 @@ public class DTVScanDvbsUnicableConfig extends DTVActivity{
 		super.onStop();
 	}
 
+
+	private void setUnicableUserDefinedData(int index,int fre){
+		usfs[index]=fre;
+		setConfig("tv:dtv:unicableusebandfreq",usfs[index]);
+			
+		setConfig("tv:dtv:unicableuseband0freq",usfs[0]);
+		setConfig("tv:dtv:unicableuseband1freq",usfs[1]);
+		setConfig("tv:dtv:unicableuseband2freq",usfs[2]);
+		setConfig("tv:dtv:unicableuseband3freq",usfs[3]);
+		setConfig("tv:dtv:unicableuseband4freq",usfs[4]);
+		setConfig("tv:dtv:unicableuseband5freq",usfs[5]);;
+		setConfig("tv:dtv:unicableuseband6freq",usfs[6]);
+		setConfig("tv:dtv:unicableuseband7freq",usfs[7]);
+	}
+
 	private List<String> getUnicableUserDefinedData(){
 
 		List<String> dataList = new ArrayList<String>();
-		/*
-		int[] ubf = setting.getUbFreqs();
-		usfs = setting.getUbFreqs();
-		for (int i = 0; i<ubf.length; i++) {
-			dataList.add(""+ubf[i]);
+		
+		usfs= new int[8];
+
+		usfs[0] = getIntConfig("tv:dtv:unicableuseband0freq");
+		usfs[1] = getIntConfig("tv:dtv:unicableuseband1freq");
+		usfs[2] = getIntConfig("tv:dtv:unicableuseband2freq");
+		usfs[3] = getIntConfig("tv:dtv:unicableuseband3freq");
+		usfs[4] = getIntConfig("tv:dtv:unicableuseband4freq");
+		usfs[5] = getIntConfig("tv:dtv:unicableuseband5freq");
+		usfs[6] = getIntConfig("tv:dtv:unicableuseband6freq");
+		usfs[7] = getIntConfig("tv:dtv:unicableuseband7freq");
+
+		for (int i = 0; i<8; i++) {
+			dataList.add(""+usfs[i]);
 		}
-		*/
+		
 		return dataList;
 	}
 
 	private boolean getUnicableSwitchStatus(){
-		return true;
+		return getBooleanConfig("tv:dtv:unicable_switch");
 	}
 
 	private void setUnicableSwitchStatus(boolean b){
-		
+		setConfig("tv:dtv:unicable_switch", b);
 	}
 
 	private int getUserBand(){
 		int band = 0;
+		band = getIntConfig("tv:dtv:unicableuseband");
 		return band;
 	}
 
 	private void setUserBand(int band){
-	
+		setConfig("tv:dtv:unicableuseband",band);
 	}
 
+	
 	private AlertDialog.Builder builder;
 	public void showEditUnicableFreDialog(View v,int pos){
 		final View view = v;
@@ -206,8 +232,8 @@ public class DTVScanDvbsUnicableConfig extends DTVActivity{
 								TextView des = (TextView)view.findViewById(R.id.edit_fre);
 								des.setText(editText.getText().toString());
 								Log.d(TAG,"Old usf"+usfs[position]);
-								//usfs[position]= Integer.parseInt(editText.getText().toString());
-								//Log.d(TAG,"New usf"+usfs[position]);
+								usfs[position]= Integer.parseInt(editText.getText().toString());
+								Log.d(TAG,"New usf"+usfs[position]);
 								dialog.cancel();
 							}	
 						}
@@ -277,7 +303,8 @@ public class DTVScanDvbsUnicableConfig extends DTVActivity{
 		diaBuilder.setView(dvbs_unicable_user_list);
 		diaBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
               public void onClick(DialogInterface dialog, int id) {
-			  	/*
+				//setUnicableUserDefinedData(int index, int fre)
+				/*
 				unicable_setting.setUbFreqs(usfs);
 				mDvb.setUnicableSetting(unicable_setting);
 				*/
@@ -305,18 +332,6 @@ public class DTVScanDvbsUnicableConfig extends DTVActivity{
 		alert.show();	
 		
 	}
-
-	/*
-	private DVBUnicableSetting getUnicableSetting() {
-		DVBUnicableSetting set = null;
-		
-		if (mDvb != null) {
-			set = new DVBUnicableSetting();
-			mDvb.getUnicableSetting(set);
-		}
-		return set;
-	}
-	*/
 
 	public void refreshListData(){
 		((DvbsUnicableAdapter)mListView.getAdapter()).notifyDataSetChanged();

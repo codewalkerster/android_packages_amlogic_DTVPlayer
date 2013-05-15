@@ -1657,6 +1657,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			public void onClick(DialogInterface dialog, int arg1) {
 				// TODO Auto-generated method stub
 				ContentValues values = new ContentValues();
+				
 				switch(LnbSettingItemSelected){
 					/*
 					SEC_VOLTAGE_13,0
@@ -1666,45 +1667,52 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					case 0:
 						values.put("voltage", 0);
 						SatInfo.setLNBPwrOnOff(0);
-						t.onSetupCmd(t.LNB_CONTROL_CMD_13V,null);
+						//t.onSetupCmd(t.LNB_CONTROL_CMD_13V,null);
 						break;
 					case 1:
 						values.put("voltage",1);
 						SatInfo.setLNBPwrOnOff(1);
-						t.onSetupCmd(t.LNB_CONTROL_CMD_18V,null);
+						//t.onSetupCmd(t.LNB_CONTROL_CMD_18V,null);
 						break;	
 					case 2:
 						values.put("voltage", 2);
 						SatInfo.setLNBPwrOnOff(2);
-						t.onSetupCmd(t.LNB_CONTROL_CMD_POWER_OFF,null);
+						//t.onSetupCmd(t.LNB_CONTROL_CMD_POWER_OFF,null);
 						break;
 					case 3:
 						values.put("voltage",3);
-						SatInfo.setLNBPwrOnOff(3);	
-						getTsData(gobal_sat_cur_pos);
-						if(tsInfoList!=null){
-							int size=tsInfoList.size();
-							if(size>0){
-								DbTransponder temp  = (DbTransponder)tsInfoList.get(0);
-								int polarization = temp.getPolarization();
-								if(polarization>0){
-									t.onSetupCmd(t.LNB_CONTROL_CMD_13V,null);
-								}
-								else{
-									t.onSetupCmd(t.LNB_CONTROL_CMD_18V,null);
-								}
-							}
-						}
-						else{
-							t.onSetupCmd(t.LNB_CONTROL_CMD_POWER_AUTO,null);
-						}
-						
+						SatInfo.setLNBPwrOnOff(3);
 						break;
 					
 			}
 
 			int sat_id  = SatInfo.getSatId();
 			editSatData(sat_id,values,"voltage");	
+
+			getTsData(gobal_sat_cur_pos);
+			if(tsInfoList!=null){
+				int size=tsInfoList.size();
+				final cmdParams my_cmdParams = new cmdParams();
+				if(size>0){
+					final DbTransponder TsInfo  = (DbTransponder)tsInfoList.get(0);
+					//final DbTransponder TsInfo  = queryTsData(list_cur_pos);
+
+					TVChannel mTVChannel = TVChannel.selectByID(DTVScanDvbsConfig.this,TsInfo.getDbId());
+					
+					TVChannelParams mTVChannelParams = mTVChannel.getParams();
+
+					
+
+					my_cmdParams.channel = mTVChannelParams;
+					t.onSetupCmd(t.LNB_CONTROL_CMD_POWER_AUTO,(Object)my_cmdParams);
+				}
+			}
+			else{
+				TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
+				t.onSetupCmd(t.LNB_CONTROL_CMD_POWER_AUTO,null);
+			}
+
+			
 			myLnbSetAdapter.notifyDataSetChanged();
 			dialog.dismiss();
 
@@ -1783,25 +1791,44 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			public void onClick(DialogInterface arg0, int arg1) {
 			// TODO Auto-generated method stub
 			ContentValues values = new ContentValues();
+			
 				switch(LnbSettingItemSelected){
 					case 0:
 						values.put("signal_22khz", DbSat.LNB_22K_ON);
 						SatInfo.set22KOnOff(DbSat.LNB_22K_ON);
-						t.onSetupCmd(t.LNB_CONTROL_CMD_22K_ON,null);				
 						break;
 					case 1:
 						values.put("signal_22khz",DbSat.LNB_22K_OFF);
 						SatInfo.set22KOnOff(DbSat.LNB_22K_OFF);
-						t.onSetupCmd(t.LNB_CONTROL_CMD_22K_OFF,null);					
 						break;
 					case 2:
 						values.put("signal_22khz", DbSat.LNB_22K_LOHI);
-						SatInfo.set22KOnOff(DbSat.LNB_22K_LOHI);
+						SatInfo.set22KOnOff(DbSat.LNB_22K_LOHI);		
 						break;	
-			}
-				
+			}		
 			int sat_id  = SatInfo.getSatId();
-			editSatData(sat_id,values,"signal_22khz");		
+			editSatData(sat_id,values,"signal_22khz");	
+			getTsData(gobal_sat_cur_pos);
+			final cmdParams my_cmdParams = new cmdParams();
+			if(tsInfoList!=null){
+				int size=tsInfoList.size();
+				
+				if(size>0){
+					final DbTransponder TsInfo  = (DbTransponder)tsInfoList.get(0);
+					//final DbTransponder TsInfo  = queryTsData(list_cur_pos);
+
+					TVChannel mTVChannel = TVChannel.selectByID(DTVScanDvbsConfig.this,TsInfo.getDbId());					
+					TVChannelParams mTVChannelParams = mTVChannel.getParams();
+
+					my_cmdParams.channel = mTVChannelParams;
+					t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+				}
+			}
+			else{
+				TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
+				t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,null);
+			}
+
 			myLnbSetAdapter.notifyDataSetChanged();
 			}
 		});	
@@ -1872,6 +1899,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			public void onClick(DialogInterface arg0, int arg1) {
 			// TODO Auto-generated method stub
 			ContentValues values = new ContentValues();
+		
 				switch(LnbSettingItemSelected){
 					case 0:
 						values.put("tone_burst", DbSat.LNB_TONEBURST_NONE);
@@ -1884,11 +1912,31 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					case 2:
 						values.put("tone_burst",DbSat.LNB_TONEBURST_B);
 						SatInfo.setToneburstType(DbSat.LNB_TONEBURST_B);
+						
 						break;
 			}
-				
 			int sat_id  = SatInfo.getSatId();
-			editSatData(sat_id,values,"tone_burst");		
+			editSatData(sat_id,values,"tone_burst");	
+			getTsData(gobal_sat_cur_pos);
+			final cmdParams my_cmdParams = new cmdParams();
+			if(tsInfoList!=null){
+				int size=tsInfoList.size();
+				
+				if(size>0){
+					final DbTransponder TsInfo  = (DbTransponder)tsInfoList.get(0);
+					//final DbTransponder TsInfo  = queryTsData(list_cur_pos);
+
+					TVChannel mTVChannel = TVChannel.selectByID(DTVScanDvbsConfig.this,TsInfo.getDbId());					
+					TVChannelParams mTVChannelParams = mTVChannel.getParams();
+
+					my_cmdParams.channel = mTVChannelParams;
+					t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+				}
+			}
+			else{
+				TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
+				t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,null);
+			}		
 			myLnbSetAdapter.notifyDataSetChanged();
 			}
 		});	
@@ -2063,9 +2111,31 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			ContentValues values = new ContentValues();
 			values.put("committed_cmd", LnbSettingItemSelected);
 			SatInfo.setLnbConfig10(LnbSettingItemSelected);
-	
 			int sat_id = SatInfo.getSatId();
-			editSatData(sat_id,values,"committed_cmd");		
+			editSatData(sat_id,values,"committed_cmd");	
+			getTsData(gobal_sat_cur_pos);
+			if(tsInfoList!=null){
+				int size=tsInfoList.size();
+				final cmdParams my_cmdParams = new cmdParams();
+				if(size>0){
+					final DbTransponder TsInfo  = (DbTransponder)tsInfoList.get(0);
+					//final DbTransponder TsInfo  = queryTsData(list_cur_pos);
+
+					TVChannel mTVChannel = TVChannel.selectByID(DTVScanDvbsConfig.this,TsInfo.getDbId());
+					
+					TVChannelParams mTVChannelParams = mTVChannel.getParams();
+
+					
+
+					my_cmdParams.channel = mTVChannelParams;
+					t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+				}
+			}
+			else{
+				TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
+				t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,null);
+			}
+			
 			myLnbSetAdapter.notifyDataSetChanged();
 			
 			}
@@ -2142,7 +2212,30 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				SatInfo.setLnbConfig11(temp);
 			}		
 			int sat_id = SatInfo.getSatId();
-			editSatData(sat_id,values,"uncommitted_cmd");		
+			editSatData(sat_id,values,"uncommitted_cmd");	
+			getTsData(gobal_sat_cur_pos);
+			if(tsInfoList!=null){
+				int size=tsInfoList.size();
+				final cmdParams my_cmdParams = new cmdParams();
+				if(size>0){
+					final DbTransponder TsInfo  = (DbTransponder)tsInfoList.get(0);
+					//final DbTransponder TsInfo  = queryTsData(list_cur_pos);
+
+					TVChannel mTVChannel = TVChannel.selectByID(DTVScanDvbsConfig.this,TsInfo.getDbId());
+					
+					TVChannelParams mTVChannelParams = mTVChannel.getParams();
+
+					
+
+					my_cmdParams.channel = mTVChannelParams;
+					t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+				}
+			}
+			else{
+				TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
+				t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,null);
+			}
+		
 			myLnbSetAdapter.notifyDataSetChanged();
 		}
 		});
@@ -2924,6 +3017,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 		private static final int LNB_CONTROL_CMD_22K_ON = 13;
 		private static final int LNB_CONTROL_CMD_22K_OFF = 14;
+		private static final int LNB_CONTROL_CMD_22K_AUTO = 15;
 		
 		public void run() {
 			Looper.prepare();
@@ -3000,28 +3094,23 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 							}
 							break;
 						case LNB_CONTROL_CMD_13V:
-							//if(mLockDvb!=null)
-								//mLockDvb.setvoltage(0);
-							break;
 						case LNB_CONTROL_CMD_18V:
-							//if(mLockDvb!=null)
-								//mLockDvb.setvoltage(1);
+							sec_setLnbsSwitchCfgValid(((cmdParams)msg.obj).channel);		
 							break;
 						case  LNB_CONTROL_CMD_POWER_OFF:
-							//if(mLockDvb!=null)
-								//mLockDvb.setvoltage(2);
+							
+							sec_setLnbsSwitchCfgValid(((cmdParams)msg.obj).channel);		
 							break;
 						case LNB_CONTROL_CMD_POWER_AUTO:
-							//if(mLockDvb!=null)
-								//mLockDvb.setvoltage(3);
+							
+							sec_setLnbsSwitchCfgValid(((cmdParams)msg.obj).channel);		
 							break;
 						case  LNB_CONTROL_CMD_22K_ON:
-							//if(mLockDvb!=null)
-								//mLockDvb.set22k(0);
+							sec_setLnbsSwitchCfgValid(((cmdParams)msg.obj).channel);		
 							break;
 						case LNB_CONTROL_CMD_22K_OFF:
-							//if(mLockDvb!=null)
-								//mLockDvb.set22k(1);
+						case LNB_CONTROL_CMD_22K_AUTO:	
+							sec_setLnbsSwitchCfgValid(((cmdParams)msg.obj).channel);		
 							break;
 							
 						default:
@@ -3108,12 +3197,11 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	private void showSetLimitAndPositionDia(){
 		ContentValues values=null;
 
-	        t =new getFrontEndInfoThread();  
-  
-                t.start();  
+		t =new getFrontEndInfoThread();  
+		t.start();  
 
 		diaBuilder = new AlertDialog.Builder(this);
-	        LayoutInflater layoutInflater = LayoutInflater.from(this);  
+	    LayoutInflater layoutInflater = LayoutInflater.from(this);  
 		
  	 	dvbs_set_limit_list = layoutInflater.inflate(R.layout.dvbs_set_limit_dia, null); 
 		diaBuilder.setTitle(R.string.dish_setup_conf_button_des7_info);

@@ -107,11 +107,11 @@ public class DTVChannelList extends DTVActivity{
 	public void setFocusPosition(){
 		int i = 0;
 		if(mTVProgramList!=null){
+			ListView_channel.setFocusableInTouchMode(true);
+		  	ListView_channel.requestFocus();
+		  	ListView_channel.requestFocusFromTouch();
 			for(i=0;i<mTVProgramList.length;i++){
-				if(db_id == mTVProgramList[i].getID()){
-					ListView_channel.setFocusableInTouchMode(true);
-	   			  	ListView_channel.requestFocus();
-	   			  	ListView_channel.requestFocusFromTouch();
+				if(db_id == mTVProgramList[i].getID()){	
 	        		ListView_channel.setSelection(i);
 					cur_select_item = i;
 					break;
