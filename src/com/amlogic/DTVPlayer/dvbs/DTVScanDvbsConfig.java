@@ -1690,9 +1690,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			editSatData(sat_id,values,"voltage");	
 
 			getTsData(gobal_sat_cur_pos);
+			final cmdParams my_cmdParams = new cmdParams();
 			if(tsInfoList!=null){
 				int size=tsInfoList.size();
-				final cmdParams my_cmdParams = new cmdParams();
+				
 				if(size>0){
 					final DbTransponder TsInfo  = (DbTransponder)tsInfoList.get(0);
 					//final DbTransponder TsInfo  = queryTsData(list_cur_pos);
@@ -1700,16 +1701,14 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					TVChannel mTVChannel = TVChannel.selectByID(DTVScanDvbsConfig.this,TsInfo.getDbId());
 					
 					TVChannelParams mTVChannelParams = mTVChannel.getParams();
-
-					
-
 					my_cmdParams.channel = mTVChannelParams;
 					t.onSetupCmd(t.LNB_CONTROL_CMD_POWER_AUTO,(Object)my_cmdParams);
 				}
 			}
 			else{
 				TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
-				t.onSetupCmd(t.LNB_CONTROL_CMD_POWER_AUTO,null);
+				my_cmdParams.channel = mTVChannelParams;
+				t.onSetupCmd(t.LNB_CONTROL_CMD_POWER_AUTO,(Object)my_cmdParams);
 			}
 
 			
@@ -1826,7 +1825,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			}
 			else{
 				TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
-				t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,null);
+				my_cmdParams.channel = mTVChannelParams;
+				t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
 			}
 
 			myLnbSetAdapter.notifyDataSetChanged();
@@ -1935,7 +1935,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			}
 			else{
 				TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
-				t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,null);
+				my_cmdParams.channel = mTVChannelParams;
+				t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
 			}		
 			myLnbSetAdapter.notifyDataSetChanged();
 			}
@@ -2066,6 +2067,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		final DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
 		if(SatInfo==null)
 			return;
+		
+		t =new getFrontEndInfoThread();  
+		t.start(); 
 
 		final int diseqc_mode = SatInfo.getSwtPort();
 		//if(diseqc_mode == DbSat.LNB_DISEQC_NONE)
@@ -2114,26 +2118,22 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			int sat_id = SatInfo.getSatId();
 			editSatData(sat_id,values,"committed_cmd");	
 			getTsData(gobal_sat_cur_pos);
+			final cmdParams my_cmdParams = new cmdParams();
 			if(tsInfoList!=null){
 				int size=tsInfoList.size();
-				final cmdParams my_cmdParams = new cmdParams();
 				if(size>0){
 					final DbTransponder TsInfo  = (DbTransponder)tsInfoList.get(0);
 					//final DbTransponder TsInfo  = queryTsData(list_cur_pos);
-
 					TVChannel mTVChannel = TVChannel.selectByID(DTVScanDvbsConfig.this,TsInfo.getDbId());
-					
 					TVChannelParams mTVChannelParams = mTVChannel.getParams();
-
-					
-
 					my_cmdParams.channel = mTVChannelParams;
 					t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
 				}
 			}
 			else{
 				TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
-				t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,null);
+				my_cmdParams.channel = mTVChannelParams;
+				t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
 			}
 			
 			myLnbSetAdapter.notifyDataSetChanged();
@@ -2149,9 +2149,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 		dialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
 			public void onDismiss(DialogInterface dialog) {
+				t.quitLoop();	
 			}         
 		});	
-		
+
 		dialog.show();
 		WindowManager m = getWindowManager();   
 		Display d = m.getDefaultDisplay();  	
@@ -2170,6 +2171,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		final DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
 		if(SatInfo==null)
 			return;
+
+		t =new getFrontEndInfoThread();  
+		t.start(); 
+
 
 		final int diseqc_mode = SatInfo.getSwtPort();
 		//if(diseqc_mode == DbSat.LNB_DISEQC_NONE)
@@ -2214,26 +2219,23 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			int sat_id = SatInfo.getSatId();
 			editSatData(sat_id,values,"uncommitted_cmd");	
 			getTsData(gobal_sat_cur_pos);
+			final cmdParams my_cmdParams = new cmdParams();
 			if(tsInfoList!=null){
 				int size=tsInfoList.size();
-				final cmdParams my_cmdParams = new cmdParams();
+				
 				if(size>0){
 					final DbTransponder TsInfo  = (DbTransponder)tsInfoList.get(0);
 					//final DbTransponder TsInfo  = queryTsData(list_cur_pos);
-
 					TVChannel mTVChannel = TVChannel.selectByID(DTVScanDvbsConfig.this,TsInfo.getDbId());
-					
 					TVChannelParams mTVChannelParams = mTVChannel.getParams();
-
-					
-
 					my_cmdParams.channel = mTVChannelParams;
 					t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
 				}
 			}
 			else{
 				TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
-				t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,null);
+				my_cmdParams.channel = mTVChannelParams;
+				t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
 			}
 		
 			myLnbSetAdapter.notifyDataSetChanged();
@@ -2280,6 +2282,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 		dialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
 			public void onDismiss(DialogInterface dialog) {
+				t.quitLoop();	
 			}         
 		});	
 		
@@ -2298,8 +2301,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		final DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
 		if(SatInfo==null)
 			return;
-		
-
 
 		final int diseqc_mode = SatInfo.getSwtPort();
 		if(diseqc_mode == DbSat.LNB_DISEQC_NONE)
@@ -2315,7 +2316,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			4) uncommitted, committed, toneburst
 			5) toneburst, uncommitted, committed 
 		*/
-
 		
 		String[] ItemData=null;
 
@@ -2342,9 +2342,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			}
 			else
 				pos=0;
-		}
-
-		
+		}	
 
 		builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.dish_setup_diseqc_sequence);
