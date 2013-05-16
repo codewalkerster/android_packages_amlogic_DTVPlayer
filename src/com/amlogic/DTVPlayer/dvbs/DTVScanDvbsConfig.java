@@ -1091,6 +1091,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		//ContentValues values;
 
 		TVSatellite temp_TVSatellite = new TVSatellite(mContext,name,(double)angle);
+		temp_TVSatellite.setDiseqcMode(DbSat.LNB_DISEQC_11);
 		/*
 		values.put("sat_name", name);
 		values.put("sat_longitude",angle);
@@ -2489,9 +2490,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		final EditText edittext_latitude_angle1 = (EditText) dvbs_set_location.findViewById(R.id.latitude_angle1);
 		edittext_latitude_angle0.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(3)});
 		edittext_latitude_angle1.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(1)});
-
-
-				
+			
 		if(longitude_direction.equals("East")){
 			edit_longitude_direction.setText("East");
 		}
