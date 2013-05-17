@@ -1122,7 +1122,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		Log.d(TAG,"add sat sat_id==="+temp_TVSatellite.getSatelliteId());
 		sat_node.setSatId(temp_TVSatellite.getSatelliteId());
 		sat_node.setName(name);
-		sat_node.setLongitude(angle);	
+		sat_node.setSatLongitude(angle);	
 		sat_node.setPositionNumber(0);	
 		sat_node.setLnbNo(0);
 		sat_node.setLoLOF(9750*1000);	
@@ -1132,7 +1132,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		sat_node.set22KOnOff(2);	
 		sat_node.setToneburstType(0);	
 		sat_node.setSwtPort(DbSat.LNB_DISEQC_11);
-		sat_node.setLnbConfig10(0);	
+		sat_node.setLnbConfig10(4);	//None
 		sat_node.setLnbConfig11(0);	
 		sat_node.setMotoNo(0);
 		sat_node.setFastDiseqc(0);
@@ -1185,6 +1185,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		//TVChannelParams temp = new TVChannelParams(TVChannelParams.MODE_QPSK);
 		TVChannelParams temp = TVChannelParams.dvbsParams(mContext,ts.getFrequency(), ts.getSymbol(), sat_id,ts.getPolarization());
 		TVChannel TVChannel_temp = new TVChannel(mContext,temp);
+
+		Log.d(TAG,"tp id="+TVChannel_temp.getID());
+		ts.setDbId(TVChannel_temp.getID());
 		
 		if(tsInfoList!=null)
 			tsInfoList.add(ts);
@@ -3109,8 +3112,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			return;
 		}
 
+		Log.d(TAG,"list_cur_pos="+list_cur_pos);
 		final DbTransponder TsInfo  = queryTsData(list_cur_pos);
-
+		Log.d(TAG,"ts db-id="+TsInfo.getDbId());
+		Log.d(TAG,"fre="+TsInfo.getFrequency()+"symbol="+TsInfo.getSymbol());
 		TVChannel mTVChannel = TVChannel.selectByID(this,TsInfo.getDbId());
 		
 		TVChannelParams mTVChannelParams = mTVChannel.getParams();
@@ -4429,7 +4434,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				}else{
 					TsInfo.setSatId(sat_id);
 					addTsData(gobal_sat_cur_pos,values,TsInfo);
-					TsInfo.setDbId(getTsDbId(sat_id, freq, symb, polar));
+					//TsInfo.setDbId(getTsDbId(sat_id, freq, symb, polar));
 					getTsData(gobal_sat_cur_pos);
 					myTsAdapter = new TsAdapter(DTVScanDvbsConfig.this,tsInfoList);
 					sat_list.setAdapter(myTsAdapter);
