@@ -2701,121 +2701,11 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
 
-	/*	
-	private int getPositionNumber(int moto_no){
-	        int pos=0;
-
-		//query from satellites table
-		
-		int n=0;
-		Cursor cur;
-
-		cur = this.getContentResolver().query(DVBClient.TABLE_SAT_PARA ,
-				new String[]{"db_id", "sat_name","lnb_num","moto_no","position_no"}, 
-				"moto_no="+moto_no, null, "pos_num ASC");	   
-		   
-		if(cur==null){
-			cur.close();
-			return 1;
-		}	
-		n = cur.getCount();
-		if(n>0){	  
-			cur.moveToLast();
-			Log.d("List Test","pos_num:"+ cur.getInt(4));
-			if(cur.getInt(4)<255)
-				pos = cur.getInt(4)+1;
-			else
-				pos = 255;
-		}
-		else{
-		  pos=1;
-		}	  
-		cur.close();
-			    
-		return pos;
-	}
-	*/
 	
-
-	private int getPositionNumberFromScanList(int moto_no,int cur_pos){
-	        int pos=1;
-
-		//query from satellites table
-		//Log.d(TAG,"moto_no:"+ moto_no+"cur_pos:"+cur_pos);
-		int n=0;
-
-		/*
-		Cursor cur;
-
-		if(cur_pos==0||cur_pos==-1){
-			cur =this.getContentResolver().query(DVBClient.TABLE_SAT_PARA ,
-					new String[]{"sat_name","pos_num"}, 
-					"motor_num="+moto_no,null, "pos_num ASC");	   
-			   
-			if(cur==null){
-				cur.close();
-				pos = 1;
-				return pos;
-			}	
-			n = cur.getCount();
-			if(n>0&&n<255){	  
-				cur.moveToLast();
-				Log.d(TAG,"pos_num:"+ cur.getInt(1));
-				if(cur.getInt(1)<255&&cur.getInt(1)>=0)
-					pos = cur.getInt(1)+1;
-				else{
-					//query a position number dont use
-					//cur.moveToFirst();
-					//for(int i=0;i<n;i++){
-						pos = 1;
-					//}
-					
-				}
-			}
-			else{
-			  pos=(n%255)+1;
-			}	 
-		}
-		else{
-			cur =this.getContentResolver().query(DVBClient.TABLE_SAT_PARA ,
-					new String[]{"sat_name","pos_num"}, 
-					"motor_num="+moto_no+" and pos_num="+cur_pos, null, "pos_num ASC");	   
-			   
-			if(cur==null){
-				cur.close();
-				pos = cur_pos;
-				return pos;
-			}	
-			n = cur.getCount();
-			//Log.d(TAG,"count=="+n);
-			if(n>0&&n<255){
-				if(n==1){
-					cur.close();
-					pos=cur_pos;
-					return pos;
-				}
-					
-				cur.moveToLast();
-				Log.d("List Test","pos_num:"+ cur.getInt(1));
-				if(cur.getInt(1)<255)
-					pos = cur.getInt(1)+1;
-				else{
-					//query a position number dont use
-					cur.moveToFirst();
-					for(int i=0;i<n;i++){
-						pos = 1;
-					}
-					
-				}
-			}
-			else{
-				//Log.d(TAG,"pos=="+cur_pos);
-				pos = cur_pos;
-			}
-			
-		}
-		cur.close();
-		*/	    
+	private int getPositionNumberFromScanList(int sat_id,int moto_no,int cur_pos){
+	    int pos=1;
+		TVSatellite temp_TVSatellite = TVSatellite.tvSatelliteSelect(mContext,sat_id);
+		pos=temp_TVSatellite.getValidMotorPositionNum(0,cur_pos);
 		return pos;
 	}
 
@@ -2826,9 +2716,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		int position_no = 1;
 		
 		//Log.d(TAG,"scan_id--"+scan_id+"sat_id---"+sat_id+"moto_no--"+moto_no+"pos="+SatInfo.getPositionNumber());
-		
+
 		//alloc a valide position number on this moto_no
-		position_no = getPositionNumberFromScanList(SatInfo.getMotoNo(),SatInfo.getPositionNumber());
+		position_no = getPositionNumberFromScanList(sat_id,SatInfo.getMotoNo(),SatInfo.getPositionNumber());
 			
 		Log.d(TAG,"getPositionNumber=="+position_no);
 
@@ -2839,7 +2729,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 		editSatData(sat_id, values,"pos_num");
 		//client storeposition function
-		//t.onSetupCmd(t.ROTOR_CMD_STORE_POSITION,(Object)String.valueOf(position_no));
 		t.onSetupCmd(t.ROTOR_CMD_STORE_POSITION,cmd);
 
 		return;
@@ -3230,8 +3119,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 		my_cmdParams.channel = mTVChannelParams;
 		
-		
-		//mLockDvb.setFrontendPara(mLockDvb.SCAN_DVBS>>8, sat_para, para);
+		if(mTVChannelParams!=null)
+			lock(mTVChannelParams);
 	
 		final TextView edittext_frequency= (TextView) dvbs_set_limit_list.findViewById(R.id.edittext_frequency);
 		final TextView edittext_symbol = (TextView) dvbs_set_limit_list.findViewById(R.id.edittext_symbol);
