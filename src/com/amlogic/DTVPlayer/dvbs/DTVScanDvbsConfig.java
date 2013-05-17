@@ -914,12 +914,12 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		int sat_id = sat_node.getSatId();
 		Log.d(TAG,"sat_id"+sat_id);
 		mTVSatellite.tvSatelliteDel(this,sat_id);
-		list_sat[cur_pos].tvSatelliteDel(this,sat_id);
-		list_sat = removeSatFromList(list_sat,cur_pos);
-		/*
-		Log.d(TAG, "Current is recording , stop recording now ...");
-				mLockDvb.stopRecording();
-		*/		
+
+		list_sat = mTVSatellite.tvSatelliteList(mContext);
+		if(cur_pos<list_sat.length){
+			list_sat[cur_pos].tvSatelliteDel(this,sat_id);
+			list_sat = removeSatFromList(list_sat,cur_pos);
+		}
 	}
 
 	private boolean deleteSelectedTsData(int cur_sat_pos){
@@ -951,8 +951,11 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		DbSat sat_node = getSatInfoByPostion(cur_sat_pos);
 		int sat_id  = sat_node.getSatId();
 
-		list_ts[cur_pos].tvChannelDel(mContext);
-		list_ts = removeTsFromList(list_ts,cur_pos);
+		list_ts = TVChannel.tvChannelList(mContext,ts_node.getSatId());
+		if(cur_pos<list_ts.length){
+			list_ts[cur_pos].tvChannelDel(mContext);
+			list_ts = removeTsFromList(list_ts,cur_pos);
+		}	
 	}
 
 	private boolean getConflictTp(int scan_id, int fre, int sym, int polarization){
@@ -1082,6 +1085,11 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		else if(mode.equals("pos_num")){
 			int pos_num =  (int)values.getAsInteger("pos_num");
 			temp_TVSatellite.setMotorPositionNum(pos_num);
+		}
+		else if(mode.equals("local_longitude_latitude")){
+			int longitude =  (int)values.getAsInteger("longitude");			
+			int latitude =  (int)values.getAsInteger("latitude");
+			temp_TVSatellite.setSatelliteRecLocal((double)longitude,(double)latitude);
 		}
 		
 	}
@@ -2467,12 +2475,15 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		if(SatInfo==null||SatInfo.getSwtPort()!=DbSat.LNB_DISEQC_13){
 			return;
 		}
+		
+		final int sat_id = SatInfo.getSatId();
 			
 		String longitude_direction = mLast.getString("longitude_direction","East");
 		String latitude_direction = mLast.getString("latitude_direction","North");
 
 		final int longitude_angle = mLast.getInt("longitude_angle",0);
 		final int latitude_angle = mLast.getInt("latitude_angle",0);
+		
 			
 		ContentValues values=null;
 		setLocationBuilder = new AlertDialog.Builder(this);
@@ -2650,6 +2661,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				else
 					Log.d(TAG,">>>>>>>>>>>>>>>>DVBPlayer.getConnect().syncDatabase fail<<<<<<<<<<<<<<<");
 				*/
+				editSatData(sat_id, values, "local_longitude_latitude");
 				
 				try{
 					    Field field = dialog.getClass()
@@ -3904,7 +3916,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					return;				
 				}
 				editSatData(sat_id,values,"sat");	
-				sat_node.setLongitude((double)temp);
+				sat_node.setSatLongitude((double)temp);
 				TextView sat_name = (TextView) findViewById(R.id.sat_name);
 				sat_name.setTextColor(Color.YELLOW);
 				sat_name.setText(edittext_satname.getText().toString());
