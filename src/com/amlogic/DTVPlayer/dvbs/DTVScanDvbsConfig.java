@@ -2636,7 +2636,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				mLast.edit().putInt ("longitude_angle",temp).commit();
 				
 				double longitude_direction = (double)temp;
-				longitude_direction = longitude_direction/10;	
+				//longitude_direction = longitude_direction/10;	
 				if(mLast.getString ("longitude_direction","East").equals("East")){
 					values.put("longitude",longitude_direction);
 				}	
@@ -2647,7 +2647,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				mLast.edit().putInt("latitude_angle",temp).commit();
 
 				double latitude_direction = (double)temp;
-				latitude_direction = latitude_direction/10;	
+				//latitude_direction = latitude_direction/10;	
 				if(mLast.getString ("latitude_direction","North").equals("North")){				
 					values.put("latitude",latitude_direction);
 				}	
@@ -4725,7 +4725,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					mv.name.setText(satinfo.getName()); 
 					//mv.sat_id.setText(String.valueOf(satinfo.getSatNo()+1));  
 					mv.sat_id.setText(String.valueOf(position+1));
-					if(satinfo.getPosition()>0){
+					if(satinfo.getSatLongitude()>0){
 						mv.direction.setText("East");
 					}
 					else{
