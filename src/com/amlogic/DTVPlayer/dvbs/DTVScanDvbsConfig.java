@@ -1087,8 +1087,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			temp_TVSatellite.setMotorPositionNum(pos_num);
 		}
 		else if(mode.equals("local_longitude_latitude")){
-			int longitude =  (int)values.getAsInteger("longitude");			
-			int latitude =  (int)values.getAsInteger("latitude");
+			double longitude =  (double)values.getAsDouble("longitude");			
+			double latitude =  (double)values.getAsDouble("latitude");
 			temp_TVSatellite.setSatelliteRecLocal((double)longitude,(double)latitude);
 		}
 		
@@ -2636,7 +2636,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				mLast.edit().putInt ("longitude_angle",temp).commit();
 				
 				double longitude_direction = (double)temp;
-				//longitude_direction = longitude_direction/10;	
+				longitude_direction = longitude_direction/10;	
 				if(mLast.getString ("longitude_direction","East").equals("East")){
 					values.put("longitude",longitude_direction);
 				}	
@@ -2647,7 +2647,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				mLast.edit().putInt("latitude_angle",temp).commit();
 
 				double latitude_direction = (double)temp;
-				//latitude_direction = latitude_direction/10;	
+				latitude_direction = latitude_direction/10;	
 				if(mLast.getString ("latitude_direction","North").equals("North")){				
 					values.put("latitude",latitude_direction);
 				}	
