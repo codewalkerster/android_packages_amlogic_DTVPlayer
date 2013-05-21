@@ -170,17 +170,19 @@ public class DTVChannelList extends DTVActivity{
 			if(ListView_channel.hasFocus() == true){
 				if(mDTVSettings.getScanRegion().contains("DVBS")==true){
 					TextView info= (TextView) findViewById(R.id.channel_info);
-					int fre = mTVProgramList[position].getChannel().getParams().getFrequency();
-					int sym = mTVProgramList[position].getChannel().getParams().getSymbolRate();
-					String pol="";
-					if(mTVProgramList[position].getChannel().getParams().getPolarisation()==0)
-						pol="V";
-					else
-						pol="H";
-					int sat_id = mTVProgramList[position].getChannel().getParams().getSatId();
-					String sat_name = TVSatellite.tvSatelliteSelect(DTVChannelList.this,sat_id).getSatelliteName();
-					
-					info.setText(String.valueOf(fre/1000)+" "+pol+" "+String.valueOf(sym/1000)+"  "+sat_name);
+					if(mTVProgramList[position].getChannel()!=null){
+						int fre = mTVProgramList[position].getChannel().getParams().getFrequency();
+						int sym = mTVProgramList[position].getChannel().getParams().getSymbolRate();
+						String pol="";
+						if(mTVProgramList[position].getChannel().getParams().getPolarisation()==0)
+							pol="V";
+						else
+							pol="H";
+						int sat_id = mTVProgramList[position].getChannel().getParams().getSatId();
+						String sat_name = TVSatellite.tvSatelliteSelect(DTVChannelList.this,sat_id).getSatelliteName();
+						
+						info.setText(String.valueOf(fre/1000)+" "+pol+" "+String.valueOf(sym/1000)+"  "+sat_name);
+					}
 				}
 			}
 			cur_select_item = position;
@@ -401,8 +403,6 @@ public class DTVChannelList extends DTVActivity{
 		rQuest2Animation.setDuration(duration);
 	}
 
-
-
 	private void DTVListDealLeftAndRightKey(int mode){
 		switch(mode){
 			case 0:  //left
@@ -519,7 +519,7 @@ public class DTVChannelList extends DTVActivity{
 				break;
 		}
 	}
-
+	
 
 	private int mYear;
 	private int mMonth;

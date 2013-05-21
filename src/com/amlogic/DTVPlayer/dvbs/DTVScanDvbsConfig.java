@@ -916,9 +916,11 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		mTVSatellite.tvSatelliteDel(this,sat_id);
 
 		list_sat = mTVSatellite.tvSatelliteList(mContext);
-		if(cur_pos<list_sat.length){
-			list_sat[cur_pos].tvSatelliteDel(this,sat_id);
-			list_sat = removeSatFromList(list_sat,cur_pos);
+		if(list_sat!=null){
+			if(cur_pos<list_sat.length){
+				list_sat[cur_pos].tvSatelliteDel(this,sat_id);
+				list_sat = removeSatFromList(list_sat,cur_pos);
+			}
 		}
 	}
 
