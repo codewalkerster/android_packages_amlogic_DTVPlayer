@@ -143,6 +143,20 @@ abstract public class SingleChoiseDialog {
 		return false;
 	}
 
+	public void updateDialog(String[] item,int pos){
+		Window window = mDialog.getWindow();
+		this.item_string=item;
+		list_item = (ListView)window.findViewById(R.id.list_item);
+		list_item.setItemsCanFocus(false);
+		list_item.setChoiceMode(ListView.CHOICE_MODE_SINGLE);		
+		SimpleAdapter adapter = new SimpleAdapter(mContext, platform(),
+				R.layout.list_menu_check_item, new String[] { "myMenuItemId" },
+				new int[] { R.id.myMenuItemId });
+		
+		list_item.setAdapter(adapter);	
+	}
+
+	
 	abstract public void onSetMessage(View v);
 	abstract public void onSetNegativeButton();
 	abstract public void onSetPositiveButton(int which);

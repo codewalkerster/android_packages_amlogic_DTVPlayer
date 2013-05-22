@@ -33,7 +33,7 @@
   
    <TextView android:id="@+id/info"
 		android:gravity="center_vertical"
-		android:layout_width="100dp"
+		android:layout_width="350dp"
 		android:layout_height="45dp" 
 		android:textSize="24sp"
 		android:singleLine="true" 

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/layout_parent"
+	android:layout_width="1280dp"
+	android:layout_height="720dp"
+	android:background ="@drawable/bg"
+	android:orientation="vertical"
+	>
+
+	<LinearLayout	android:id="@+id/layout_top"	
+		android:layout_width="fill_parent"	
+		android:layout_height="wrap_content" 
+		android:layout_weight="1"	
+		android:gravity="center"	>	
+	 <TextView android:id="@+id/device_select_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:layout_gravity="center"
+            android:text="@string/title_record_device"
+            android:layout_marginLeft = "80dp"
+            android:textSize="40sp"/>
+	</LinearLayout>	
+
+
+	<LinearLayout 
+		android:layout_width="fill_parent"
+		android:layout_height="60dp"
+		android:background ="@drawable/epg_content_bg3"  
+		android:layout_marginLeft="20dp"
+		android:layout_marginRight="20dp"
+		android:layout_weight="3"
+		android:orientation="vertical">
+		
+		<ListView 
+				android:id="@+id/itemListView"
+				android:layout_width="fill_parent" 
+				android:layout_height="fill_parent">
+				</ListView>
+		
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="6"
+		android:orientation="vertical">
+		
+		<TextView android:id="@+id/type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:gravity="center"
+            android:layout_marginLeft = "80dp"
+            android:textSize="36sp"/>
+		<TextView android:id="@+id/total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:gravity="center"
+            android:layout_marginLeft = "80dp"
+            android:textSize="36sp"/>
+		<TextView android:id="@+id/space"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:gravity="center"
+            android:layout_marginLeft = "80dp"
+            android:textSize="36sp"/>
+	</LinearLayout>	
+	
+	<LinearLayout 
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="2"
+		android:orientation="horizontal">
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/ok_icon"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_ok"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/epg_info_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		      android:layout_marginLeft="20sp"    
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_exit"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		
+	</LinearLayout>
+</LinearLayout>

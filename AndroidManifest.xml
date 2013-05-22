@@ -54,6 +54,7 @@
 		<activity android:name=".DTVScanATSC" android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVVChip"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVDeviceBrowser"	android:theme="@style/Transparent"/>
+		<activity android:name=".DTVRecordDevice"	android:theme="@style/Transparent"/>
 		<activity android:name=".DTVCloseCaption"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVCaptionOptions"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVBookingManager" android:theme="@style/Transparent" />

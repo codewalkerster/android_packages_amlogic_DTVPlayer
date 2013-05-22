@@ -91,6 +91,7 @@
 	<string name="pls_insert_usb">Please insert USB device</string>	
 	<string name="volume_total">Total space:</string>
 	<string name="volume_available">Available space:</string>	
+	<string name="no_usb_device">Not Find Any USB Device</string>	
 
     <!--settings help--> 
     <string name="help_info_move">Move</string>
@@ -168,6 +169,10 @@
 		<item>Sort By</item>
 	</array>
 
+	<array name="record_device_content" translatable="false">
+		<item>Disk</item>	
+		<item>Timeshift Size</item>
+	</array>
 
 	<string name="invalid_input">Invalid Input</string>
 	<string name="invalid_password">Invalid password</string>
@@ -555,7 +560,7 @@
 	<string name="setting_menu_search">SEARCH</string>   
 	<string name="setting_menu_system">SYSTEM</string>   
 	<string name="setting_menu_av">AV SETTING</string>   
-	
+	<string name="title_record_device">Record Device</string>
 	
 	<string name="epg_exit">EXIT</string>
 </resources>

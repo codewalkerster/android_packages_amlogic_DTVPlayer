@@ -814,7 +814,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					break;
 				case SETTINGS_SELECT_STORAGE:
 					Intent Intent_path_select = new Intent();
-	        		Intent_path_select.setClass(DTVSettingsMenu.this, DTVDeviceBrowser.class);
+	        		Intent_path_select.setClass(DTVSettingsMenu.this, DTVRecordDevice.class);
 	        		startActivity(Intent_path_select);
 					DTVSettingsMenu.this.finish();
 					break;
