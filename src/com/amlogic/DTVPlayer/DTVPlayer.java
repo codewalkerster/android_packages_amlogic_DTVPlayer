@@ -19,6 +19,7 @@ import android.view.View.*;
 import android.view.animation.*;
 import android.widget.*;
 import android.app.*;
+import android.graphics.*;
 import android.content.*;
 import android.os.*;
 import android.text.*;
@@ -425,6 +426,7 @@ public class DTVPlayer extends DTVActivity{
 					//HideMainMenu();
 				//else
 					ShowMainMenu();
+					//setVideoWindow(new Rect(200,100,500,400));
 				return true;
 		}
 		

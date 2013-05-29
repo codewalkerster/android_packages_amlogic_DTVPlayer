@@ -12,6 +12,7 @@ import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
 
 import java.util.*;
+import java.text.*;
 import android.view.*;
 import android.view.View.*;
 import android.view.animation.*;
@@ -29,6 +30,7 @@ import com.amlogic.widget.SureDialog;
 import com.amlogic.widget.SingleChoiseDialog;
 import com.amlogic.widget.MutipleChoiseDialog;
 import com.amlogic.widget.PasswordSettingDialog;
+import com.amlogic.widget.CheckUsbdevice;
 
 public class DTVSettingsMenu extends DTVActivity {
 	private static final String TAG="DTVSettingsMenu";
@@ -242,15 +244,19 @@ public class DTVSettingsMenu extends DTVActivity {
 
 	private static String[] DATA = null;
 	private Toast toast=null;
-	public static final int SETTINGS_SUBTILE_SWITCH = 0;
-	public static final int SETTINGS_DEFAULT = 1;
-	public static final int SETTINGS_SET_PASSWORD = 2;
-	public static final int SETTINGS_SELECT_STORAGE=3;
-	public static final int SETTINGS_TIMESHIFT_TIME_SET=4;
-	public static final int SETTINGS_PARENTAL_RATING_SET=5; //and vchip
-	public static final int SETTINGS_TTX_REGION=6;
-	public static final int SETTINGS_CC=7;
-	public static final int SETTINGS_ANTENNA_SOURCE=8;
+	public static final int SETTINGS_RECALL_LIST=0;
+	public static final int SETTINGS_SUBTILE_SWITCH = 1;
+	public static final int SETTINGS_DEFAULT = 2;
+	public static final int SETTINGS_SET_PASSWORD = 3;
+
+	/*
+	public static final int SETTINGS_SELECT_STORAGE=4;
+	public static final int SETTINGS_TIMESHIFT_TIME_SET=5;
+	*/
+	public static final int SETTINGS_PARENTAL_RATING_SET=4; //and vchip
+	public static final int SETTINGS_TTX_REGION=5;
+	public static final int SETTINGS_CC=6;
+	public static final int SETTINGS_ANTENNA_SOURCE=7;
 		
 	private String ttx_region_str=null;
 	private static String[] ttx_region_str_arry=null;
@@ -457,8 +463,13 @@ public class DTVSettingsMenu extends DTVActivity {
 				case 0:
 					showScreenTypeDialog(info_cur);		
 					break;
-					
-				case 1:
+				case 1: //audio language
+					showScreenTypeDialog(info_cur);	
+					break;
+				case 2:  //audio language	
+					showAudioTrackDialog(info_cur);
+					break;
+				case 3:
 					showAudioTrackDialog(info_cur);	
 					break;
 			}
@@ -536,7 +547,13 @@ public class DTVSettingsMenu extends DTVActivity {
 					holder.info.setText(R.string.type_16_9);
 				 }	
 		    	 break;
-		     case 1://SETTINGS_AUDIO_TRACK:
+			case 1: //audio language
+
+				break;
+			case 2:  //audio language
+
+				break;
+			case 3://SETTINGS_AUDIO_TRACK:
 			 	 holder.info.setVisibility(View.VISIBLE);
 				 holder.icon1.setVisibility(View.INVISIBLE);
 		    	 holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
@@ -571,6 +588,25 @@ public class DTVSettingsMenu extends DTVActivity {
 					DTVSettingsMenu.this.finish();
 					break;
 				case 2:
+					showSortByDialog(info_cur);
+					break;
+				case 3:
+					Intent Intent_record_device = new Intent();
+	        		Intent_record_device.setClass(DTVSettingsMenu.this, DTVRecordDevice.class);
+	        		startActivityForResult(Intent_record_device,12);
+					//DTVSettingsMenu.this.finish();
+					break;
+				case 4:
+					Intent Intent_pvr_manager = new Intent();
+					Intent_pvr_manager.setClass(DTVSettingsMenu.this,DTVPvrManager.class);
+					startActivity(Intent_pvr_manager);
+					DTVSettingsMenu.this.finish();
+					break;
+				case 5:
+					Intent Intent_timeshifting = new Intent();
+					Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
+					startActivity(Intent_timeshifting);
+					DTVSettingsMenu.this.finish();
 					break;
 			}
 		}
@@ -629,36 +665,26 @@ public class DTVSettingsMenu extends DTVActivity {
 			holder.text.setText(listItems[position]);
 			holder.icon.setVisibility(View.INVISIBLE);
 			holder.info.setTextColor(Color.YELLOW);
+			holder.info.setVisibility(View.INVISIBLE);
+			holder.icon1.setVisibility(View.INVISIBLE);
 			switch(position){
-			
-		     
-			 case 0:
-			 	 holder.info.setVisibility(View.INVISIBLE);
-				 holder.icon1.setVisibility(View.INVISIBLE);
-		    	 
-		    	 break;	 
-		     case 1:
-			 	holder.info.setVisibility(View.INVISIBLE);
-				 holder.icon1.setVisibility(View.INVISIBLE);
-		    
-		    	 break;
-			 case 2: 
-			 	 holder.info.setVisibility(View.VISIBLE);
-				 holder.icon1.setVisibility(View.INVISIBLE);
-		    	 /*
-		    	 holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
-				
-				 int tmp= mDTVSettings.getAudioTrack();
-			
-				 if(tmp == 2)
-				 	holder.info.setText(R.string.stereo);
-				 else if(tmp == 1)
+				case 2: 
+					holder.info.setVisibility(View.VISIBLE);
+					holder.icon1.setVisibility(View.INVISIBLE);
+					/*
+					holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
+
+					int tmp= mDTVSettings.getAudioTrack();
+
+					if(tmp == 2)
+					holder.info.setText(R.string.stereo);
+					else if(tmp == 1)
 					holder.info.setText(R.string.right);
-				 else if(tmp == 0)
-				 	holder.info.setText(R.string.left);
-				 */	
-		    	 break;	 
-		  }
+					else if(tmp == 0)
+					holder.info.setText(R.string.left);
+					*/	
+				 	break;	
+			}
 
 		  return convertView;
 		}
@@ -679,16 +705,22 @@ public class DTVSettingsMenu extends DTVActivity {
 					break;
 				case 1:     //DB management
 					{
+						/*
 						Intent intent_db_management = new Intent();
 						intent_db_management.setClass(DTVSettingsMenu.this, DTVScanDvbsDBManagement.class);
 						startActivityForResult(intent_db_management,2);
+						*/
+						DBMInit();
 					}
 					break;
 				case 2:
 					{
+						/*
 						Intent intent_unicable_config = new Intent();
-						intent_unicable_config.setClass(DTVSettingsMenu.this,DTVScanDvbsUnicableConfig.class);
+						intent_unicable_config.setClass(DTVSettingsMenu.this,DTVSettingsMenu.class);
 						startActivityForResult(intent_unicable_config,3);
+						*/
+						DTVDvbsUnicableConfig_UIInit();
 					}
 					break;
 			}
@@ -790,6 +822,9 @@ public class DTVSettingsMenu extends DTVActivity {
 			final TextView info_cur = (TextView)v.findViewById(R.id.info);
 			
 			switch(position){
+				case SETTINGS_RECALL_LIST:
+
+					break;
 			    case SETTINGS_SUBTILE_SWITCH:{	
 			    	if(mDTVSettings.getSubtitleStatus()==false)
 			    	{
@@ -812,15 +847,14 @@ public class DTVSettingsMenu extends DTVActivity {
 				case SETTINGS_SET_PASSWORD:
 					showEnterPasswordSettingDialog();
 					break;
+				/*	
 				case SETTINGS_SELECT_STORAGE:
-					Intent Intent_path_select = new Intent();
-	        		Intent_path_select.setClass(DTVSettingsMenu.this, DTVRecordDevice.class);
-	        		startActivity(Intent_path_select);
-					DTVSettingsMenu.this.finish();
+					
 					break;
 				 case SETTINGS_TIMESHIFT_TIME_SET:
-				 	showTimeshiftingTimeSettingDialog(info_cur);
+				 	//showTimeshiftingTimeSettingDialog(info_cur);
 					break;
+				*/	
 				 case SETTINGS_PARENTAL_RATING_SET:
 				 	if(mDTVSettings.getScanRegion().contains("ATSC")){
 						//DTVVChip
@@ -924,6 +958,9 @@ public class DTVSettingsMenu extends DTVActivity {
 			holder.icon.setVisibility(View.INVISIBLE);
 			holder.info.setTextColor(Color.YELLOW);
 			switch(position){
+			case SETTINGS_RECALL_LIST:
+				
+				break;
 			case SETTINGS_SUBTILE_SWITCH:
 				{
 					holder.icon.setImageBitmap(mIcon1);
@@ -950,6 +987,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				 holder.icon1.setVisibility(View.INVISIBLE);
 		    	 holder.icon.setImageBitmap(mIcon6);
 		    	 break;	
+			 /*  	 
 		     case SETTINGS_SELECT_STORAGE:
 			 	 holder.info.setVisibility(View.INVISIBLE);
 				 holder.icon1.setVisibility(View.INVISIBLE);
@@ -974,6 +1012,7 @@ public class DTVSettingsMenu extends DTVActivity {
 						break;	
 				}
 				break;
+			*/	
 		     case SETTINGS_PARENTAL_RATING_SET:
 			 	if(mDTVSettings.getScanRegion().contains("ATSC")){
 					 holder.info.setVisibility(View.INVISIBLE);
@@ -1033,6 +1072,783 @@ public class DTVSettingsMenu extends DTVActivity {
 		  return convertView;
 		}
 	}	
+
+
+	private AlertDialog.Builder satXmlBuilder;
+	private View dvbs_satxml;
+	private void showSatellitesDB(List<String> list){
+		final List<String> filelist = list;	
+	
+		satXmlBuilder = new AlertDialog.Builder(this);
+		LayoutInflater layoutInflater = LayoutInflater.from(this);  
+
+		dvbs_satxml = layoutInflater.inflate(R.layout.dtvsettings, null); 
+		satXmlBuilder.setTitle(R.string.dvbs_dbm_load);
+
+		ListView mListView =(ListView)dvbs_satxml.findViewById(R.id.settings_list);
+		DvbsDBXmlAdapter mDvbsDBXmlAdapter = new DvbsDBXmlAdapter(this,filelist);
+		mListView.setAdapter(mDvbsDBXmlAdapter);
+		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				System.out.println("onItemSelected arg1 " + arg1);
+				System.out.println("onItemSelected arg2 " + arg2);
+				System.out.println("onItemSelected arg3 " + arg3);
+
+				final String path = filelist.get(arg2);
+				importDatabase(path);
+				toast = Toast.makeText(
+						DTVSettingsMenu.this,
+						R.string.xml_load_success,
+						Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+				
+			}
+        	    
+        });
+			
+		mListView.requestFocus();
+		mDvbsDBXmlAdapter.notifyDataSetChanged();
+		satXmlBuilder.setView(dvbs_satxml);
+
+		AlertDialog alert = satXmlBuilder.create();
+
+		alert.setOnShowListener(new DialogInterface.OnShowListener(){
+							public void onShow(DialogInterface dialog) {
+								
+								}         
+								}); 	
+
+		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
+							public void onDismiss(DialogInterface dialog) {
+							
+							}         
+							});	
+
+		alert.show();	
+		
+		WindowManager m = getWindowManager();   
+		Display d = m.getDefaultDisplay();  	
+		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+		lp.dimAmount=0.0f; 
+		lp.width = (int) (d.getWidth() * 0.50);
+		alert.getWindow().setAttributes(lp);
+		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		
+	}
+
+	private void dealLoadSatelliteXML(){
+		
+		CheckUsbdevice Usbdevice = new CheckUsbdevice(this);
+
+		if(Usbdevice.getDevice()==null)
+		{
+			toast = Toast.makeText(
+			DTVSettingsMenu.this,
+			R.string.check_usb_device,
+			Toast.LENGTH_SHORT);
+			toast.setGravity(Gravity.CENTER, 0, 0);
+			toast.show();
+			return;
+		}
+		else
+		{
+			//read satellite.amdb 
+
+			List<String> filenameList = Usbdevice.getSatellitesDBFileList();
+			if(filenameList == null){
+			}
+				
+			showSatellitesDB(filenameList);	
+			
+		}	
+
+	}
+
+	private void dealBackupSatelliteXML(){
+		
+		CheckUsbdevice Usbdevice = new CheckUsbdevice(this);
+		String satellites_db = null;
+
+		satellites_db = Usbdevice.getDevice();
+		
+		if(satellites_db==null){
+			toast = Toast.makeText(
+			DTVSettingsMenu.this,
+			R.string.check_usb_device,
+			Toast.LENGTH_SHORT);
+			toast.setGravity(Gravity.CENTER, 0, 0);
+			toast.show();
+
+			return;
+		}
+		else{
+			Date date = new Date(getUTCTime()*1000 ); 
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss"); 
+			String today = sdf.format(date); 
+
+			//this.getContentResolver().query(DVBClient.EXPORT_DB,
+							//null, satellites_db+"/"+"satellites_"+today+".amdb", null, null);
+
+			exportDatabase(satellites_db+"/"+"satellites_"+today+".xml");
+			
+			toast = Toast.makeText(
+				DTVSettingsMenu.this,
+				R.string.xml_generator_success,
+				Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+		}	
+
+	}
+
+
+	private AdapterView.OnItemClickListener mDBMOnItemClickListener =new AdapterView.OnItemClickListener(){
+		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
+			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
+			final TextView info_cur = (TextView)v.findViewById(R.id.info);
+			switch(position){
+				case 0:
+					dealLoadSatelliteXML();	
+					break;
+				case 1:     //DB management
+					dealBackupSatelliteXML();
+					break;
+			}
+		}
+	};
+
+	private static class DvbsDBMAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+		private Bitmap mIcon1;
+		private Bitmap mIcon2;
+		
+		private Context cont;
+		private String[] listItems;
+
+	 	static class ViewHolder {
+			ImageView icon;
+			TextView text;
+		}
+	
+		public DvbsDBMAdapter(Context context, String[] list) {
+			super();
+			cont = context;
+			listItems = list;
+			mInflater=LayoutInflater.from(context);
+			mIcon1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_channel_search);
+			mIcon2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_picture_size);
+		}
+
+		public int getCount() {
+			//return listItems.length;
+			return 2;
+		}
+
+		public Object getItem(int position) {
+
+			return position;
+		}
+	
+		public long getItemId(int position) {
+			return position;
+		}
+	
+	
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder=null;
+
+			if (convertView == null) {
+			   convertView = mInflater.inflate(R.layout.dtvsettings_list_item, null);
+
+			   holder = new ViewHolder();
+			   
+			   holder.text = (TextView) convertView.findViewById(R.id.text);
+			   holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+			 
+			   convertView.setTag(holder);
+			}else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			switch(position){
+				case 0:
+					//holder.icon.setImageBitmap(mIcon1);
+					holder.icon.setVisibility(View.INVISIBLE);
+					holder.text.setText(R.string.dvbs_dbm_load);
+					break;
+				case 1:
+					// holder.icon.setImageBitmap(mIcon2);
+					holder.icon.setVisibility(View.INVISIBLE);
+					holder.text.setText(R.string.dvbs_dbm_backup);
+					break;	
+			}
+			  
+			return convertView;
+		}
+	}
+
+	private  class DvbsDBXmlAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;		
+		private Context cont;
+		private List<String> listItems;
+
+		class ViewHolder {
+			ImageView icon;
+			TextView text;
+		}
+
+		public DvbsDBXmlAdapter(Context context, List<String> list) {
+			super();
+			cont = context;
+			listItems = list;
+			mInflater=LayoutInflater.from(context);
+		}
+
+		public int getCount() {
+
+			if(listItems!=null)
+				return listItems.size();
+			else
+				return 0;
+		}
+
+		public Object getItem(int position) {
+
+			return position;
+		}
+	
+		public long getItemId(int position) {
+			return position;
+		}
+	
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder=null;
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.dtvsettings_list_item, null);		   
+				holder = new ViewHolder();
+				holder.text = (TextView) convertView.findViewById(R.id.text);
+				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+				convertView.setTag(holder);
+			}else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			holder.text.setText(listItems.get(position));
+			return convertView;
+		}
+	}
+
+	private DvbsDBMAdapter myDBMAdapter=null;
+	private void DBMInit(){
+		ListView_settings = (ListView)findViewById(R.id.settings_list);
+		myDBMAdapter = new DvbsDBMAdapter(this,null);
+	
+		ListView_settings.setOnItemSelectedListener(mOnSelectedListener);
+		ListView_settings.setOnKeyListener(new OnKeyListener(){
+			public boolean onKey(View v, int keyCode, KeyEvent event) {					
+				switch(keyCode){
+					case KeyEvent.KEYCODE_BACK:
+						SearchItem_Init();
+						return true;
+				} 
+				return false;
+			}
+		});
+		ListView_settings.setOnItemClickListener(mDBMOnItemClickListener);
+		ListView_settings.setAdapter(myDBMAdapter);
+		ListView_settings.requestFocus();
+		
+	}
+
+
+	private void DTVDvbsUnicableConfig_UIInit(){
+		ListView_settings = (ListView)findViewById(R.id.settings_list);
+		
+		ListView_settings.setAdapter(new DvbsUnicableAdapter(this));
+		ListView_settings.setOnKeyListener(new OnKeyListener(){
+			public boolean onKey(View v, int keyCode, KeyEvent event) {					
+				switch(keyCode){
+					case KeyEvent.KEYCODE_BACK:
+						SearchItem_Init();
+						return true;
+				} 
+				return false;
+			}
+		});
+		ListView_settings.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				TextView info = (TextView)arg1.findViewById(R.id.info);
+
+				System.out.println("onItemSelected arg3 " + arg3);
+
+				/*
+				DVBUnicableSetting setting = getUnicableSetting();
+				if (setting == null) {
+					Log.d(TAG, "Cannot get unicable setting from service");
+					return;
+				}
+				*/
+				switch(arg2){
+					case 0:
+						setUnicableSwitchStatus(!getUnicableSwitchStatus());
+						refreshListData();
+						break;
+					case 1: 					
+						int band = getUserBand();
+						if(band>=0&&band<7){
+							info.setText("LNB"+String.valueOf(band+2));
+							setUserBand(band + 1);
+						}
+						else{
+							info.setText("LNB1");
+							setUserBand(0);
+						}
+						
+						break;
+					case 2:
+						showUnicableConfigEditDia();
+						break;
+				}
+			}	
+		});	
+	}
+	 
+	private void setUnicableUserDefinedData(){
+		//usfs[index]=fre;
+		//setConfig("tv:dtv:unicableusebandfreq",usfs[index]);
+			
+		setConfig("tv:dtv:unicableuseband0freq",usfs[0]);
+		setConfig("tv:dtv:unicableuseband1freq",usfs[1]);
+		setConfig("tv:dtv:unicableuseband2freq",usfs[2]);
+		setConfig("tv:dtv:unicableuseband3freq",usfs[3]);
+		setConfig("tv:dtv:unicableuseband4freq",usfs[4]);
+		setConfig("tv:dtv:unicableuseband5freq",usfs[5]);;
+		setConfig("tv:dtv:unicableuseband6freq",usfs[6]);
+		setConfig("tv:dtv:unicableuseband7freq",usfs[7]);
+	}
+
+	private List<String> getUnicableUserDefinedData(){
+
+		List<String> dataList = new ArrayList<String>();
+		
+		usfs= new int[8];
+
+		usfs[0] = getIntConfig("tv:dtv:unicableuseband0freq");
+		usfs[1] = getIntConfig("tv:dtv:unicableuseband1freq");
+		usfs[2] = getIntConfig("tv:dtv:unicableuseband2freq");
+		usfs[3] = getIntConfig("tv:dtv:unicableuseband3freq");
+		usfs[4] = getIntConfig("tv:dtv:unicableuseband4freq");
+		usfs[5] = getIntConfig("tv:dtv:unicableuseband5freq");
+		usfs[6] = getIntConfig("tv:dtv:unicableuseband6freq");
+		usfs[7] = getIntConfig("tv:dtv:unicableuseband7freq");
+
+		for (int i = 0; i<8; i++) {
+			dataList.add(""+usfs[i]);
+		}
+		
+		return dataList;
+	}
+
+	private boolean getUnicableSwitchStatus(){
+		return getBooleanConfig("tv:dtv:unicable_switch");
+	}
+
+	private void setUnicableSwitchStatus(boolean b){
+		setConfig("tv:dtv:unicable_switch", b);
+	}
+
+	private int getUserBand(){
+		int band = 0;
+		band = getIntConfig("tv:dtv:unicableuseband");
+
+		return band;
+	}
+
+	private void setUserBand(int band){
+		setConfig("tv:dtv:unicableuseband",band);
+	}
+	
+	private AlertDialog.Builder builder;
+	public void showEditUnicableFreDialog(View v,int pos){
+		final View view = v;
+		final int position = pos;
+		builder = new AlertDialog.Builder(this);	
+		final EditText editText = new EditText(this);
+		editText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(4)});
+		//editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+		builder.setTitle(R.string.edit_title);
+		TextView desFreText =(TextView) view.findViewById(R.id.edit_fre);
+		editText.setText(desFreText.getText().toString());
+		builder.setView(editText); 
+
+		AlertDialog alert = builder.create();
+
+		alert.setOnKeyListener( new DialogInterface.OnKeyListener(){
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				// TODO Auto-generated method stub
+				switch(keyCode)
+				{	
+					case KeyEvent.KEYCODE_DPAD_CENTER:
+					case KeyEvent.KEYCODE_ENTER:
+						String fre = editText.getText().toString();
+						if(fre==null||fre.equals("")){
+							editText.setText(null);
+							toast = Toast.makeText(
+							DTVSettingsMenu.this, 
+						    	R.string.invalid_input,
+						    	Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						}
+						else{
+							if(Integer.parseInt(fre)==0){
+								editText.setText(null);
+								toast = Toast.makeText(
+								DTVSettingsMenu.this, 
+							    	R.string.invalid_input,
+							    	Toast.LENGTH_SHORT);
+								toast.setGravity(Gravity.CENTER, 0, 0);
+								toast.show();
+							}
+							else{
+								TextView des = (TextView)view.findViewById(R.id.edit_fre);
+								des.setText(editText.getText().toString());
+								Log.d(TAG,"Old usf"+usfs[position]);
+								usfs[position]= Integer.parseInt(editText.getText().toString());
+								Log.d(TAG,"New usf"+usfs[position]);
+								dialog.cancel();
+							}	
+						}
+						return true;
+					case  KeyEvent.KEYCODE_BACK:
+						dialog.cancel();
+						return true;
+				}
+				
+				return false;
+			}
+		});	
+
+		
+		alert.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+			
+							}         
+							}); 	
+
+		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {	
+						}         
+						});	
+		alert.show();	
+		alert.getWindow().setLayout(500, -200);
+		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+		lp.dimAmount=0.5f;
+		alert.getWindow().setAttributes(lp);
+		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+	}
+
+
+	private AlertDialog.Builder diaBuilder;
+	private View dvbs_unicable_user_list;
+	int[] usfs = null;
+	private void showUnicableConfigEditDia(){
+		//final DVBUnicableSetting unicable_setting = setting;
+		ContentValues values=null;
+		diaBuilder = new AlertDialog.Builder(this);
+		LayoutInflater layoutInflater = LayoutInflater.from(this);  
+		
+ 	 	dvbs_unicable_user_list = layoutInflater.inflate(R.layout.dvbs_unicable_list_dia, null); 
+		diaBuilder.setTitle(R.string.dvbs_unicable_user_define);
+		usfs = new int[8];
+		List<String> dataList = getUnicableUserDefinedData();
+		ListView UnicableListView = (ListView)dvbs_unicable_user_list.findViewById(R.id.dvbs_sub_list); 
+		
+		UnicableListView.setAdapter(new DvbsUnicableUserDefineAdapter(this,dataList));
+
+		UnicableListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				System.out.println("onItemSelected arg1 " + arg1);
+				System.out.println("onItemSelected arg2 " + arg2);
+				System.out.println("onItemSelected arg3 " + arg3);
+
+				showEditUnicableFreDialog(arg1,arg2);
+			}
+        	    
+        });
+		
+		diaBuilder.setView(dvbs_unicable_user_list);
+		diaBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+              public void onClick(DialogInterface dialog, int id) {
+				setUnicableUserDefinedData();
+				/*
+				unicable_setting.setUbFreqs(usfs);
+				mDvb.setUnicableSetting(unicable_setting);
+				*/
+				dialog.dismiss();
+              }
+          });
+       diaBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                  public void onClick(DialogInterface dialog, int id) {
+					dialog.dismiss();
+                  }
+              });
+
+		AlertDialog alert = diaBuilder.create();
+		alert.setOnShowListener(new DialogInterface.OnShowListener(){
+							public void onShow(DialogInterface dialog) {
+								
+								}         
+								}); 	
+
+		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
+							public void onDismiss(DialogInterface dialog) {
+							}         
+							});	
+
+		alert.show();	
+		
+	}
+
+	public void refreshListData(){
+		((DvbsUnicableAdapter)ListView_settings.getAdapter()).notifyDataSetChanged();
+	}
+
+	private class DvbsUnicableAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+		private Bitmap mIcon1;
+		private Bitmap mIcon2;
+		private Bitmap mIcon3;
+		
+		private Context cont;
+		private String[] listItems;
+
+	 	class ViewHolder {
+			
+			ImageView icon;
+			TextView text;
+			ImageButton  iboolean;
+			ImageView icon1;
+			TextView   info; 
+		}
+	
+		public DvbsUnicableAdapter(Context context) {
+			super();
+			cont = context;
+			mInflater=LayoutInflater.from(context);
+			mIcon1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_channel_search);
+			mIcon2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_picture_size);
+			mIcon3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_channel_search);
+		}
+
+		public int getCount() {
+			//return listItems.length;
+			return 3;
+		}
+
+		public Object getItem(int position) {
+
+			return position;
+		}
+	
+		public long getItemId(int position) {
+			return position;
+		}
+		
+		public boolean isEnabled(int position) {
+			if (!getUnicableSwitchStatus()){
+				if (position>=1) {
+					return false;
+				}
+			}	
+			return super.isEnabled(position);
+		}
+	
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder=null;
+
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.dtvsettings_list_item, null);
+				holder = new ViewHolder();
+				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+				holder.text = (TextView) convertView.findViewById(R.id.text);
+				holder.icon1 = (ImageView)convertView.findViewById(R.id.icon1);
+				holder.info = (TextView)convertView.findViewById(R.id.info);
+				convertView.setTag(holder);
+			}else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			holder.info.setTextColor(Color.YELLOW);
+			/*
+			DVBUnicableSetting setting = getUnicableSetting();
+			if (setting == null) {
+				Log.d(TAG, "Cannot get unicable setting from service");
+				return convertView;
+			}
+			*/
+			boolean unicable_on = getUnicableSwitchStatus();
+			
+			if(unicable_on==false){  
+				if (position>=1){
+					holder.text.setTextColor(Color.DKGRAY);
+					holder.icon1.setVisibility(View.INVISIBLE); 
+				}	
+			}	
+			else{
+				holder.text.setTextColor(Color.WHITE);
+			}		
+
+			switch(position){
+				 case 0:
+				 	holder.icon.setImageBitmap(mIcon1);
+					holder.icon.setVisibility(View.INVISIBLE);
+					holder.info.setVisibility(View.VISIBLE);
+					holder.icon1.setVisibility(View.INVISIBLE);
+					holder.text.setText(R.string.dvbs_unicable_switch);
+					if (unicable_on==true){			   
+						//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+						holder.info.setText(R.string.on);
+					}
+					else
+					{
+						//holder.icon1.setBackgroundResource(R.drawable.select_round_1); 
+						holder.info.setText(R.string.off);
+					}	  
+					
+					break;
+				case 1:
+					holder.icon.setImageBitmap(mIcon2);				
+					holder.info.setVisibility(View.INVISIBLE);	
+					if (unicable_on==true){	
+						holder.icon.setVisibility(View.INVISIBLE);
+						holder.icon1.setVisibility(View.INVISIBLE);
+						holder.info.setVisibility(View.VISIBLE);	
+						//holder.icon1.setBackgroundResource(R.drawable.pull_right_1); 
+						
+						int band = getUserBand();
+						if(band>=0&&band<=7){
+							holder.info.setText("LNB"+String.valueOf(band+1));
+						}
+						else
+							holder.info.setText("LNB1");
+					}
+					else{
+						holder.icon.setVisibility(View.INVISIBLE);
+						holder.icon1.setVisibility(View.INVISIBLE);
+					}
+					
+					holder.text.setText(R.string.dvbs_unicable_user_band);
+					break;
+				case 2:
+					holder.icon.setImageBitmap(mIcon3);				
+					holder.info.setVisibility(View.INVISIBLE);	
+					if (unicable_on==true){	
+						holder.icon.setVisibility(View.INVISIBLE);
+						holder.icon1.setVisibility(View.INVISIBLE);
+						//holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
+					}
+					else{
+						holder.icon.setVisibility(View.INVISIBLE);
+						holder.icon1.setVisibility(View.INVISIBLE);
+					}
+					holder.text.setText(R.string.dvbs_unicable_user_define);
+					break;
+			}
+			  
+			return convertView;
+		}
+	}
+
+
+	private static class DvbsUnicableUserDefineAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+
+		private Context cont;
+		private List<String> listItems;
+		private String[] DATA;
+
+	 	static class ViewHolder {			
+			TextView text;
+			TextView  fre;
+		}
+	
+		public DvbsUnicableUserDefineAdapter(Context context,List<String> list) {
+			super();
+			cont = context;
+			listItems = list;
+			mInflater=LayoutInflater.from(context);
+
+			DATA = new String[8];
+			DATA[0]= cont.getResources().getString(R.string.dish_setup_conf_lnb_1);			
+			DATA[1]= cont.getResources().getString(R.string.dish_setup_conf_lnb_2);
+			DATA[2]= cont.getResources().getString(R.string.dish_setup_conf_lnb_3);
+			DATA[3]= cont.getResources().getString(R.string.dish_setup_conf_lnb_4);
+			DATA[4]= cont.getResources().getString(R.string.dish_setup_conf_lnb_5);
+			DATA[5]= cont.getResources().getString(R.string.dish_setup_conf_lnb_6);
+			DATA[6]= cont.getResources().getString(R.string.dish_setup_conf_lnb_7);
+			DATA[7]= cont.getResources().getString(R.string.dish_setup_conf_lnb_8);
+			
+		}
+
+		public int getCount() {
+			if(listItems!=null)
+				return listItems.size();
+			else
+				return 0;
+		}
+
+		public Object getItem(int position) {
+
+			return position;
+		}
+	
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder=null;
+
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.dvbs_unicable_list_item, null);
+				holder = new ViewHolder();
+				holder.text = (TextView) convertView.findViewById(R.id.text);
+				holder.fre = (TextView)convertView.findViewById(R.id.edit_fre);
+				convertView.setTag(holder);
+			}else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			
+			holder.text.setText(DATA[position]);
+			holder.fre.setTextColor(Color.YELLOW);
+			holder.fre.setText(listItems.get(position));
+			  
+			return convertView;
+		}
+	}
+
 
 	public void showTTXRegionDialog(TextView v){
 		final TextView info_cur = v;
@@ -1347,6 +2163,53 @@ public class DTVSettingsMenu extends DTVActivity {
 		};				
 	}
 
+	public void showSortByDialog(TextView v){
+		final TextView info_cur = v;
+		
+		int mode = 0;// mDTVSettings.getScreenMode();
+		int pos = 0;
+		if(mode==0){
+			pos = 2;
+		}
+		else  if(mode==2){
+			pos = 0;
+		}
+		else  if(mode==3){
+			pos = 1;
+		}
+
+		final String DATA[] = getResources().getStringArray(R.array.sort_by_content);
+		
+		new SingleChoiseDialog(DTVSettingsMenu.this,DATA,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.screen_type));
+			}
+			
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				switch(which){
+					case 0:
+						info_cur.setText(DATA[0]);						
+						//mDTVSettings.setScreenMode(2);
+						break;
+					case 1:
+						info_cur.setText(DATA[1]);
+						//mDTVSettings.setScreenMode(3);
+						break;
+					case 2:
+						info_cur.setText(DATA[2]);
+						//mDTVSettings.setScreenMode(0);
+						break;	
+					case 3:
+						info_cur.setText(DATA[4]);
+						break;
+				}
+			}
+		};		
+	}
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
@@ -1435,7 +2298,7 @@ public class DTVSettingsMenu extends DTVActivity {
 
 	private void DTVStartProgramManager(){
 		Intent intent = new Intent();
-		intent.setClass(this, DTVProgramManager.class);
+		intent.setClass(this, DTVProgramEdit.class);
 		startActivityForResult(intent, 11);	
 		onHide();	
 	}

@@ -132,15 +132,16 @@
 
 	<array name="av_settings_content" translatable="false">
 		<item>Picture Size</item>	
+		<item>Subtitle Language</item>
+		<item>Audio Language</item>
 		<item>Audio Track</item>
 	</array>
 
 	<array name="system_settings_content" translatable="false">
+		<item>Recall List</item>	
 		<item>Subtitle Switch</item>	    
 		<item>Factory data reset</item>	
 		<item>Set password</item>	
-		<item>Select storage device</item>
-		<item>Timeshifting setting</item>
 		<item>Parental rating age</item>
 		<item>TTX Region</item>
 	</array>
@@ -160,18 +161,28 @@
 	<array name="search_settings_content_dvbs" translatable="false">
 		<item>Dish Setup</item>	
 		<item>DB Management</item>
-		<item>Unicable Config</item>
+		<item>Unicable Configure</item>
 	</array>
 
 	<array name="Program_settings_content" translatable="false">
-		<item>Program Management</item>	
+		<item>Program Edit</item>	
 		<item>EPG</item>
 		<item>Sort By</item>
+		<item>PVR Configure</item>
+		<item>PVR Manager</item>
+		<item>TimeShifting</item>
 	</array>
 
 	<array name="record_device_content" translatable="false">
 		<item>Disk</item>	
 		<item>Timeshift Size</item>
+	</array>
+
+	<array name="sort_by_content" translatable="false">
+		<item>Default</item>	
+		<item>By Encrypt</item>
+		<item>By Freq</item>
+		<item>By Service Name</item>
 	</array>
 
 	<string name="invalid_input">Invalid Input</string>
@@ -559,8 +570,10 @@
 	<string name="setting_menu_program">PROGRAM</string>  
 	<string name="setting_menu_search">SEARCH</string>   
 	<string name="setting_menu_system">SYSTEM</string>   
-	<string name="setting_menu_av">AV SETTING</string>   
+	<string name="setting_menu_av">OPTION</string>   
 	<string name="title_record_device">Record Device</string>
+	<string name="title_program_edit">Program Edit</string>
+	<string name="title_pvr_manager">PVR Manager</string>
 	
 	<string name="epg_exit">EXIT</string>
 </resources>
