@@ -39,6 +39,24 @@ import java.lang.reflect.Field;
  */
 abstract public class DTVActivity extends TVActivity{
     private static final String TAG="DTVActivity";
+
+	final public static int KEYCODE_RED_BUTTON=KeyEvent.KEYCODE_ZOOM_IN;
+	final public static int KEYCODE_YELLOW_BUTTON=KeyEvent.KEYCODE_ZOOM_OUT;
+	final public static int KEYCODE_BLUE_BUTTON=KeyEvent.KEYCODE_TV_REPEAT;
+	final public static int KEYCODE_GREEN_BUTTON=KeyEvent.KEYCODE_TAB;
+	
+	final public static int KEYCODE_GOTO_BUTTON=KeyEvent.KEYCODE_MEDIA_REWIND;
+	final public static int KEYCODE_REC=KeyEvent.KEYCODE_MEDIA_FAST_FORWARD;
+	
+	final public static int KEYCODE_TIMESHIFTING=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
+	final public static int KEYCODE_AUDIO=KeyEvent.KEYCODE_MEDIA_NEXT;
+	
+	final public static int KEYCODE_EPG=KeyEvent.KEYCODE_TV_SWITCH;
+	final public static int KEYCODE_TTX=KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE;	
+	final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_TV_SUBTITLE;
+	final public static int KEYCODE_INFO=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
+
+
 	private TVProgram TVProgram=null;
 	private static int dtvactivity_actived_num = 0;
 	//private static int dtvlayout_gravity = Gravity.CENTER;
@@ -229,6 +247,54 @@ abstract public class DTVActivity extends TVActivity{
         Log.d(TAG, "onDestroy");
         super.onDestroy();
     }
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event){
+		// TODO Auto-generated method stub
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_ZOOM_IN:	
+				Log.d(TAG,"KEYCODE_ZOOM_IN");
+				break;	
+			case KeyEvent.KEYCODE_ZOOM_OUT:
+				Log.d(TAG,"KEYCODE_ZOOM_OUT");
+				break;	
+			case KeyEvent.KEYCODE_TV_REPEAT:
+				Log.d(TAG,"KEYCODE_TV_REPEAT");
+				break;	
+			case KeyEvent.KEYCODE_MEDIA_REWIND:
+				Log.d(TAG,"KEYCODE_MEDIA_REWIND");
+				break;	
+			case KeyEvent.KEYCODE_TAB: //info
+				Log.d(TAG,"KEYCODE_TAB");	
+				break;	
+			case KeyEvent.KEYCODE_TV_SWITCH: //tv/radio
+				Log.d(TAG,"KEYCODE_TV_SWITCH");	
+				break;	
+			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE: //16:9/4:3
+				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_DISPAYMODE");
+				break;	
+			case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
+				Log.d(TAG,"KEYCODE_MEDIA_PREVIOUS");	
+				break;	
+			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: //epg
+				Log.d(TAG,"KEYCODE_MEDIA_FAST_FORWARD");
+				break;	
+			case KeyEvent.KEYCODE_MEDIA_NEXT: //pvr manager
+				Log.d(TAG,"KEYCODE_MEDIA_NEXT");
+				break;	
+			case KeyEvent.KEYCODE_TV_SUBTITLE:
+				Log.d(TAG,"KEYCODE_TV_SUBTITLE");
+				break;	
+			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
+				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_VOICEMODE");			
+				break;	
+			case KeyEvent.KEYCODE_MENU:				
+				break;	
+		}
+		
+		return super.onKeyDown(keyCode, event);
+	}
+
 
 	private void DTVActivity_ActivedStateManage(boolean actived){
 		Log.d(TAG, "DTVActivity_ActivedStateManage actived " + actived + " dtvactivity_actived_num " + dtvactivity_actived_num);

@@ -118,7 +118,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:layout_gravity="center"
-	                android:layout_marginRight="30px"
+	                android:layout_marginRight="20dp"
 	                android:text="@string/help_info_select"
 	                android:textColor="#FFFFFFFF"
 	                android:textSize="20sp" />
@@ -133,6 +133,35 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:layout_gravity="center"
+	                android:layout_marginRight="20dp"
+	                android:text="@string/help_info_return"
+	                android:textColor="#FFFFFFFF"
+	                android:textSize="20sp" />
+	            <ImageView
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/return_icon" >
+	            </ImageView>
+
+	            <TextView
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_gravity="center"
+	                android:layout_marginRight="20dp"
+	                android:text="@string/help_info_return"
+	                android:textColor="#FFFFFFFF"
+	                android:textSize="20sp" />
+	            <ImageView
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/red_button" >
+	            </ImageView>
+
+	            <TextView
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_gravity="center"
+	                android:layout_marginRight="20dp"
 	                android:text="@string/help_info_return"
 	                android:textColor="#FFFFFFFF"
 	                android:textSize="20sp" />
@@ -142,3 +171,4 @@
 
 </RelativeLayout>
  
+

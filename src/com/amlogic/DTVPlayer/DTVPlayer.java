@@ -377,11 +377,11 @@ public class DTVPlayer extends DTVActivity{
 			case KeyEvent.KEYCODE_ENTER:
 				Log.d(TAG,"KEYCODE_ENTER");
 				break;		 
-			case KeyEvent.KEYCODE_ZOOM_IN:	
+			case DTVActivity.KEYCODE_RED_BUTTON:	
 				Log.d(TAG,"KEYCODE_ZOOM_IN");
 				showTeltext(DTVPlayer.this);
 				return true;
-			case KeyEvent.KEYCODE_ZOOM_OUT:
+			case DTVActivity.KEYCODE_YELLOW_BUTTON:
 				Log.d(TAG,"KEYCODE_ZOOM_OUT");
 				showPvrDurationTimeSetDialog(DTVPlayer.this);
 				return true;

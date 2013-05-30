@@ -29,6 +29,7 @@ import android.graphics.Color;
 import com.amlogic.widget.Rotate3D;
 import com.amlogic.widget.CustomDialog;
 import com.amlogic.widget.CustomDialog.ICustomDialog;
+import com.amlogic.DTVPlayer.R;
 
 public class DTVChannelList extends DTVActivity{
 	private static final String TAG="DTVChannelList";
@@ -370,6 +371,13 @@ public class DTVChannelList extends DTVActivity{
 			case KeyEvent.KEYCODE_ZOOM_IN:
 				showPvrTimeSetDialog(DTVChannelList.this);
 				return true;
+			case KeyEvent.KEYCODE_ZOOM_OUT:
+				showSatellitesList();
+				return true;
+			case KeyEvent.KEYCODE_TAB: //info
+				Log.d(TAG,"KEYCODE_TAB");	
+				showProgramSearchDialog();
+				return true;	
 		}
 		return super.onKeyDown(keyCode, event);
 	}	  
@@ -614,6 +622,228 @@ public class DTVChannelList extends DTVActivity{
 				}
 			}	
 		);		
+	}
+
+	private static class mySatListAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+		private Context cont;
+		private List<String> listItems;
+		private int selectItem;
+		
+		static class ViewHolder {
+			TextView text;	
+			ImageView icon;
+		}
+		
+		public mySatListAdapter(Context context, List<String> list) {
+			super();
+			cont = context;
+			listItems = list;
+			mInflater=LayoutInflater.from(context);			  
+		}
+
+		public int getCount() {
+			if(list_sat==null)
+				return 0;
+			else	
+				return list_sat.length;
+		}
+
+		public Object getItem(int position) {
+		
+			return position;
+		}
+		
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public void setSelectItem(int position)
+		{
+			this.selectItem = position;
+		}
+
+	        public int getSelectItem()
+	        {
+	       	 return this.selectItem;
+	        }
+		
+		
+		public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder holder;	
+		if (convertView == null) {
+		   
+		   convertView = mInflater.inflate(R.layout.listitem, null);
+			
+		   holder = new ViewHolder();
+		   holder.text = (TextView) convertView.findViewById(R.id.ItemText);
+		   holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+		   convertView.setTag(holder);
+		}else {
+		  // Get the ViewHolder back to get fast access to the TextView
+		  // and the ImageView.
+		  holder = (ViewHolder) convertView.getTag();
+		  }
+		
+		  // Bind the data efficiently with the holder.
+		  if(list_sat!=null)
+		  	holder.text.setText(list_sat[position].getSatelliteName());
+		  
+		  return convertView;
+		}
+	  }
+	
+	private AlertDialog.Builder diaBuilder;
+	private void showSatellitesList(){
+		diaBuilder = new AlertDialog.Builder(this);
+		diaBuilder.setTitle(R.string.sat_name);
+
+		getSatellitesListData();
+		ListView LimitListView = new ListView(this);
+		
+		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				System.out.println("onItemSelected arg1 " + arg1);
+				System.out.println("onItemSelected arg2 " + arg2);
+				System.out.println("onItemSelected arg3 " + arg3);
+				Log.d(TAG,"id=="+list_sat[arg2].getSatelliteId());
+				getProgBySatellites(list_sat[arg2].getSatelliteId());
+				//Title.setText(SAT_NAME[arg2]);
+				myAdapter.notifyDataSetChanged();
+			}
+        	    
+        });
+		LimitListView.setAdapter(new mySatListAdapter(this,null));		
+		diaBuilder.setView(LimitListView);
+		AlertDialog alert = diaBuilder.create();
+		/*
+		alert.setOnKeyListener( new DialogInterface.OnKeyListener(){
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				// TODO Auto-generated method stub
+				switch(keyCode){	
+					case KeyEvent.KEYCODE_DPAD_CENTER:
+		  			case KeyEvent.KEYCODE_ENTER:
+						dialog.cancel();
+						break;
+				}
+				return false;
+			}
+		});
+		*/
+		alert.setOnShowListener(new DialogInterface.OnShowListener(){
+							public void onShow(DialogInterface dialog) {
+								
+								}         
+								}); 	
+
+		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
+							public void onDismiss(DialogInterface dialog) {
+							}         
+							});	
+
+		alert.show();	
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+		lp.x=800;	
+		lp.y=450;
+		alert.getWindow().setAttributes(lp);
+		//alert.getWindow().setLayout(displayMetrics.widthPixels / 3, -1);	
+	}
+
+
+	private static TVSatellite[] list_sat=null;
+	private  void  getSatellitesListData(){
+	 	list_sat = TVSatellite.tvSatelliteList(this);
+	}
+	
+	private void getProgBySatellites(int sat_id){
+		mTVProgramList=TVProgram.selectBySatID(this,sat_id);
+	}
+
+	EditText editText;
+	private void showProgramSearchDialog(){
+		AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+		LinearLayout layout = (LinearLayout)getLayoutInflater().inflate(
+               R.layout.program_search_dialog, null);
+      
+      	editText = (EditText)layout.findViewById(R.id.edittext_name);
+
+		editText.addTextChangedListener(new TextWatcher() {
+		   @Override
+		   public void onTextChanged(CharSequence s, int start, int before, int count) {
+				// TODO Auto-generated method stub	
+				//items.clear();
+				getListDataByStringKey(s);
+				//Title.setText(R.string.search_program);
+		 		myAdapter.notifyDataSetChanged();
+		   }
+		   
+		   @Override
+		   public void beforeTextChanged(CharSequence s, int start, int count,int after) {
+				// TODO Auto-generated method stub
+		    
+		   }
+		   
+		   @Override
+		   public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+		    
+		   }
+		});
+		
+		//mBuilder.setTitle(R.string.search_program);
+		mBuilder.setView(layout);
+		mBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				//myAdapter.notifyDataSetChanged();
+			}
+		});
+		mBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				System.out.println("negative dialog " + dialog);
+
+			}
+		});
+
+		  
+		AlertDialog alert = mBuilder.create();
+		alert.setOnShowListener(new DialogInterface.OnShowListener(){
+							public void onShow(DialogInterface dialog) {
+
+								}         
+								}); 	
+
+		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
+							public void onDismiss(DialogInterface dialog) {
+
+							}         
+							}); 			
+
+		alert.show();
+		WindowManager m = getWindowManager();   
+		Display d = m.getDefaultDisplay();  	
+		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+		lp.dimAmount=0.0f;
+		lp.width = (int) (d.getWidth() * 0.50);
+		lp.y=-250;
+		alert.getWindow().setAttributes(lp);
+		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+    }
+
+	private void getListDataByStringKey(CharSequence key){
+		String pro_name = key.toString();
+		Log.d(TAG,"program="+pro_name);
+		
+		mTVProgramList=TVProgram.selectByName(this,pro_name);
 	}
 
 }
