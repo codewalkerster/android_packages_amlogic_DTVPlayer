@@ -28,6 +28,7 @@
 		android:background ="@drawable/epg_content_bg3"  
 		android:layout_marginLeft="20dp"
 		android:layout_marginRight="20dp"
+		android:padding="5dp"
 		android:layout_weight="3"
 		android:orientation="vertical">
 		
@@ -43,25 +44,29 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="6"
+		android:paddingTop="40dp"
 		android:orientation="vertical">
 		
 		<TextView android:id="@+id/type"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content" 
             android:gravity="center"
             android:layout_marginLeft = "80dp"
+            android:layout_marginRight = "80dp"
             android:textSize="36sp"/>
 		<TextView android:id="@+id/total"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content" 
             android:gravity="center"
             android:layout_marginLeft = "80dp"
+            android:layout_marginRight = "80dp"
             android:textSize="36sp"/>
 		<TextView android:id="@+id/space"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content" 
             android:gravity="center"
             android:layout_marginLeft = "80dp"
+            android:layout_marginRight = "80dp"
             android:textSize="36sp"/>
 	</LinearLayout>	
 	

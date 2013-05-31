@@ -379,6 +379,13 @@ public class DTVPvrManager extends DTVActivity{
 				if(record_db_id!=-1)
 					startPlayback(record_db_id);
 				return true;
+			case KeyEvent.KEYCODE_BACK:
+				DTVPvrPlayerStop();
+				Intent intent = new Intent();
+				intent.setClass(DTVPvrManager.this, DTVPlayer.class);
+				startActivity(intent);
+				DTVPvrManager.this.finish();
+				break;
 		}
 		
 		return super.onKeyDown(keyCode, event);

@@ -62,11 +62,11 @@ public class DTVPlayer extends DTVActivity{
 			showNoProgramDia(); 
 		}
 		mDTVSettings.setTeltextBound();
-		
+		playValid();
 		if(bundle!=null){	
 			//int db_id = DTVPlayerGetCurrentProgramID();
 			//DTVPlayerPlayById(db_id);	
-			playValid();
+			//playValid();
 			ShowControlBar();
 			updateInforbar();
 			ShowProgramNo(pronumber);
@@ -352,6 +352,7 @@ public class DTVPlayer extends DTVActivity{
 					HideControlBar();
 				}
 				else if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){	
+					Log.d(TAG,"dtvplyaer_b_txt="+dtvplyaer_b_txt+"--DTVPlayerInTeletextStatus="+DTVPlayerInTeletextStatus);
 					DTVTTHide();
 					DTVPlayerInTeletextStatus=false;
 				}	

@@ -162,7 +162,7 @@ public class DTVRecordDevice extends DTVActivity {
 
 		t =new getDiskInfoThread();  
 		t.start();  
-		refreshDevice();	
+		//refreshDevice();	
 	}
 
 	private ItemAdapter mDeviceItemAdapter=null;
@@ -224,29 +224,29 @@ public class DTVRecordDevice extends DTVActivity {
 		     case 0://device select:
 				holder.info.setVisibility(View.VISIBLE);
 				holder.icon1.setVisibility(View.INVISIBLE);
-
+				if(deviceList==null)
+					Log.d(TAG,"-----deviceList is null");
+				else
+					Log.d(TAG,"deviceList.isEmpty="+deviceList.isEmpty()+"----deviceList.size()="+deviceList.size());
+				
 				if(deviceList!=null&&!deviceList.isEmpty()&&deviceList.size()>0){
 					DeviceItem item = deviceList.get(dev_list_sel);  
 					Log.d(TAG,"path="+item.Path);
 					mDTVSettings.setRecordStoragePath(item.Path);
+					holder.info.setText(item.Path);
+
+					disk_type.setText(item.format);
+					disk_total.setText(item.total);
+					disk_space.setText(item.spare);
 				}
 				else{			
 					holder.info.setText(R.string.no_usb_device);
+					disk_type.setText(null);
+					disk_total.setText(null);
+					disk_space.setText(null);
 				}
 				
-				/*	
-				 int mode= mDTVSettings.getScreenMode();		 
-				 if(mode==0){
-				 	 holder.info.setText(R.string.auto);
-				 }
-				 else  if(mode==2){
-					holder.info.setText(R.string.type_4_3);
-				 }
-				 else  if(mode==3){
-					holder.info.setText(R.string.type_16_9);
-				 }	
-				 */
-		    	 break;
+		    	break;
 		     case 1://timeshifting settings:
 				holder.info.setVisibility(View.VISIBLE);
 				holder.icon1.setVisibility(View.INVISIBLE);
@@ -261,7 +261,10 @@ public class DTVRecordDevice extends DTVActivity {
 						break;
 					case 60*60:
 						holder.info.setText("60 Min");
-						break;	
+						break;
+					default:
+						holder.info.setText("10 Min");
+						break;
 				}
 				break;
 		  }
@@ -271,7 +274,8 @@ public class DTVRecordDevice extends DTVActivity {
 	}	
 	
 	void refreshDevice(){
-		getDevice();
+		if(t!=null)
+			t.onGetDiskInfo();
 		mDeviceItemAdapter.notifyDataSetChanged();
 	}
 
@@ -411,20 +415,7 @@ public class DTVRecordDevice extends DTVActivity {
 	private void showUsbDeviceListDialog(TextView v){
 		final TextView info_cur = v;
 		int pos = 0;
-		/*
-		int time = mDTVSettings.getTimeShiftingDuration();
-		switch(time){
-			case 600:
-				pos=0;
-				break;
-			case 30*60:
-				pos=1;
-				break;
-			case 60*60:
-				pos=2;
-				break;	
-		}
-		*/
+		
 		String[] list_content=null;
 		if(deviceList!=null){
 			list_content=new String[deviceList.size()];
@@ -447,8 +438,8 @@ public class DTVRecordDevice extends DTVActivity {
 				info_cur.setText(item.Path);
 				mDTVSettings.setRecordStoragePath(item.Path);
 				disk_type.setText(item.format);
-				disk_type.setText(item.total);
-				disk_type.setText(item.spare);
+				disk_total.setText(item.total);
+				disk_space.setText(item.spare);
 			}
 		};				
 	}
@@ -481,6 +472,9 @@ public class DTVRecordDevice extends DTVActivity {
 			case 60*60:
 				pos=2;
 				break;	
+			default:
+				pos=0;
+				break;
 		}
 
 		new SingleChoiseDialog(DTVRecordDevice.this,new String[]{ "10 Min","30 Min","60 Min"},pos){
@@ -568,7 +562,7 @@ public class DTVRecordDevice extends DTVActivity {
 					DeviceItem item = getDeviceName(myfile.getName());								
 					if((item!= null)&&(item.format!=null)){
 						item.Path = myfile.getPath();
-						//readUsbDevice(item.Path,item,0);
+						readUsbDevice(item.Path,item,0);
 						item.VolumeName = item.VolumeName+" ["+myfile.getName()+"]";
 						Log.d(TAG,"device path: "+item.Path+" device format: "+item.format+" name: "+item.VolumeName);
 						deviceList.add(item);
@@ -579,8 +573,8 @@ public class DTVRecordDevice extends DTVActivity {
 
 		sdcard_deal(sd_path);
 
-		if(t!=null)
-			t.onGetDiskInfo();
+		//if(t!=null)
+			//t.onGetDiskInfo();
 	}
 
 	private void getDeviceOnBack() {
@@ -907,8 +901,8 @@ public class DTVRecordDevice extends DTVActivity {
 		public void handleMessage(Message msg) {  
 			   switch (msg.what) { 
 					case 1: 
-			   		 //mDeviceItemAdapter.notifyDataSetChanged();
 			   		 updateUsbDeviceList();
+					 mDeviceItemAdapter.notifyDataSetChanged();
 					break;
 				}  
 		}

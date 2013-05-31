@@ -226,46 +226,8 @@ public class DTVEpg extends DTVActivity{
 		EitListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 				// TODO Auto-generated method stub				
-				final int item = position;
-				final View TempView = v;
-				int pos = 0;
-				String items[] = new String[]{"Cancel Book", "BookPlay", "BookRecord"};
-				
-				new SingleChoiseDialog(DTVEpg.this,items,pos){
-					public void onSetMessage(View v){
-						((TextView)v).setText("   ");
-					}
-
-					public void onSetNegativeButton(){
-						
-					}
-					public void onSetPositiveButton(int which){
-						Log.d(TAG,"dialog choise="+which);
-						//refresh_bookstatus(TempItemView, which);
-						final ImageView icon = (ImageView)TempView.findViewById(R.id.icon_1);
-						switch(which){
-							case 0:
-								update_bookstatus(mTVEvent[current_date_index][item].getID(),0);
-								mTVEvent[current_date_index][item].setSubFlag(0);
-								icon.setBackgroundResource(0);
-							break;
-							case 1:
-								update_bookstatus(mTVEvent[current_date_index][item].getID(),1);
-								mTVEvent[current_date_index][item].setSubFlag(1);
-								icon.setBackgroundResource(R.drawable.epg_event_book_1);
-							break;
-							case 2:
-								update_bookstatus(mTVEvent[current_date_index][item].getID(),2);
-								mTVEvent[current_date_index][item].setSubFlag(2);
-								icon.setBackgroundResource(R.drawable.epg_event_book_2);
-								//if((long)(mTVEvent[current_date_index][item].getStartTime())>System.currentTimeMillis()/1000)
-									//SetAlarm(mTVEvent[current_date_index][item].getStartTime()-100);
-								Calendar cal = Calendar.getInstance();
-								SetAlarm(cal.getTimeInMillis()/1000+60);	
-							break;
-						}
-					}
-				};			
+				showEventBookDialog(v, position);
+				//showEventBookDialog(v, position);
 			}
 		});
 		
@@ -830,6 +792,287 @@ public class DTVEpg extends DTVActivity{
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		
 	}	
+
+	private void showEventBookDialog(View v,int position){
+		final int item = position;
+		final View TempView = v;
+		int pos = 0;
+		String items[] = new String[]{"Cancel Book", "BookPlay", "BookRecord"};
+		
+		new SingleChoiseDialog(DTVEpg.this,items,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText("   ");
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				Log.d(TAG,"dialog choise="+which);
+				//refresh_bookstatus(TempItemView, which);
+				final ImageView icon = (ImageView)TempView.findViewById(R.id.icon_1);
+				switch(which){
+					case 0:
+						update_bookstatus(mTVEvent[current_date_index][item].getID(),0);
+						mTVEvent[current_date_index][item].setSubFlag(0);
+						icon.setBackgroundResource(0);
+					break;
+					case 1:
+						update_bookstatus(mTVEvent[current_date_index][item].getID(),1);
+						mTVEvent[current_date_index][item].setSubFlag(1);
+						icon.setBackgroundResource(R.drawable.epg_event_book_1);
+					break;
+					case 2:
+						update_bookstatus(mTVEvent[current_date_index][item].getID(),2);
+						mTVEvent[current_date_index][item].setSubFlag(2);
+						icon.setBackgroundResource(R.drawable.epg_event_book_2);
+						//if((long)(mTVEvent[current_date_index][item].getStartTime())>System.currentTimeMillis()/1000)
+							//SetAlarm(mTVEvent[current_date_index][item].getStartTime()-100);
+						Calendar cal = Calendar.getInstance();
+						SetAlarm(cal.getTimeInMillis()/1000+60);	
+					break;
+				}
+			}
+		};
+	}
+
+	private void showEventAddDialog(View v,int position){
+		final int item = position;
+		final View TempView = v;
+		int pos = 0;
+		String items[] = new String[]{"Cancel Book", "BookPlay", "BookRecord"};
+		
+		new SingleChoiseDialog(DTVEpg.this,items,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText("   ");
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				Log.d(TAG,"dialog choise="+which);
+				//refresh_bookstatus(TempItemView, which);
+				final ImageView icon = (ImageView)TempView.findViewById(R.id.icon_1);
+				switch(which){
+					case 0:
+						update_bookstatus(mTVEvent[current_date_index][item].getID(),0);
+						mTVEvent[current_date_index][item].setSubFlag(0);
+						icon.setBackgroundResource(0);
+					break;
+					case 1:
+						update_bookstatus(mTVEvent[current_date_index][item].getID(),1);
+						mTVEvent[current_date_index][item].setSubFlag(1);
+						icon.setBackgroundResource(R.drawable.epg_event_book_1);
+					break;
+					case 2:
+						update_bookstatus(mTVEvent[current_date_index][item].getID(),2);
+						mTVEvent[current_date_index][item].setSubFlag(2);
+						icon.setBackgroundResource(R.drawable.epg_event_book_2);
+						//if((long)(mTVEvent[current_date_index][item].getStartTime())>System.currentTimeMillis()/1000)
+							//SetAlarm(mTVEvent[current_date_index][item].getStartTime()-100);
+						Calendar cal = Calendar.getInstance();
+						SetAlarm(cal.getTimeInMillis()/1000+60);	
+					break;
+				}
+			}
+		};
+	}
+	
+
+	/*
+	private AlertDialog.Builder diaBuilder;
+	private AlertDialog alert; 
+	private int SetLimitItemSelected = 0;
+	private View dvbs_set_limit_list;
+	private void showBookAddDia(){
+
+		diaBuilder = new AlertDialog.Builder(this);
+	    LayoutInflater layoutInflater = LayoutInflater.from(this);  
+		
+ 	 	dvbs_set_limit_list = layoutInflater.inflate(R.layout.dvbs_set_limit_dia, null); 
+		//diaBuilder.setTitle(R.string.dish_setup_conf_button_des7_info);
+
+		final ListView LimitListView = (ListView)dvbs_set_limit_list.findViewById(R.id.set_limit_list); 
+
+	
+		final TextView edittext_frequency= (TextView) dvbs_set_limit_list.findViewById(R.id.edittext_frequency);
+		final TextView edittext_symbol = (TextView) dvbs_set_limit_list.findViewById(R.id.edittext_symbol);
+		final TextView polarization = (TextView) dvbs_set_limit_list.findViewById(R.id.polarization);
+		
+		LimitListView.setOnItemSelectedListener(new OnItemSelectedListener() {
+			public void onItemSelected(AdapterView<?> parent, View view,
+				int position, long id) {
+					Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
+
+					SetLimitItemSelected = position;
+					
+				}
+
+				public void onNothingSelected(AdapterView<?> parent) {
+					Log.d(TAG,"<<sat_list onNothingSelected>> ");
+				}
+			}
+		);
+		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+	        {
+
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+					final TextView text =(TextView) arg1.findViewById(R.id.info);
+					final ImageView icon=(ImageView)arg1.findViewById(R.id.icon);	
+					final ImageView icon1=(ImageView)arg1.findViewById(R.id.icon1);
+					
+					
+					// TODO Auto-generated method stub
+					System.out.println("onItemSelected arg0 " + arg0);
+					System.out.println("onItemSelected arg1 " + arg1);
+					System.out.println("onItemSelected arg2 " + arg2);
+					System.out.println("onItemSelected arg3 " + arg3);
+
+					
+					switch(arg2){
+						case 0:  //move continue
+							text.setText("Stop");	
+							hideMoveIcon(icon);
+							hideMoveIcon(icon1);
+							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STOP_MOVING,null);
+							 t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
+							break;
+						
+					}
+				}
+	        	    
+	        });
+
+		LimitListView.setOnKeyListener( new OnKeyListener(){
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+				int pos=0;	
+					TextView text=null;	
+					ImageView icon =null;
+					ImageView icon1=null;
+					ListView listView = (ListView) v;
+					DvbsSetLimitAdapter adapter = null;
+					if (listView.getSelectedView() != null) {
+					        // (cast if necessary) and use selected view
+						//pos = listView.getSelected();
+						View view = listView.getChildAt(SetLimitItemSelected);
+						text =(TextView) view.findViewById(R.id.info);
+						icon = (ImageView)  view.findViewById(R.id.icon);
+						icon1 = (ImageView)  view.findViewById(R.id.icon1);
+						adapter = (DvbsSetLimitAdapter)listView.getAdapter();
+				}
+				
+ 				if (event.getAction() == KeyEvent.ACTION_UP) {
+ 	
+	        			
+		
+					// TODO Auto-generated method stub
+					switch(keyCode)
+					{	
+						case KeyEvent.KEYCODE_DPAD_RIGHT:
+							if(SetLimitItemSelected==0){
+								Log.d(TAG,"KEYCODE_DPAD_RIGHT"+SetLimitItemSelected);
+								my_cmdParams.unit=0;
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_EAST,(Object)my_cmdParams);
+								text.setText("East");
+								hideMoveIcon(icon);
+								showMoveIcon(icon1);
+								adapter.notifyDataSetChanged();
+								resetrotorstatuscache = true;
+							}
+							else if(SetLimitItemSelected==1) {
+								Log.d(TAG,"KEYCODE_DPAD_RIGHT"+SetLimitItemSelected);
+								my_cmdParams.unit=1;	
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_EAST,(Object)my_cmdParams);
+								text.setText("East");
+								showMoveIcon1(icon1,text);	
+								adapter.notifyDataSetChanged();
+								resetrotorstatuscache = true;
+							}
+							return true;
+						case KeyEvent.KEYCODE_DPAD_LEFT:
+							if(SetLimitItemSelected==0){
+								Log.d(TAG,"KEYCODE_DPAD_LEFT"+SetLimitItemSelected);
+								my_cmdParams.unit=0;	
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_WEST,(Object)my_cmdParams);
+								text.setText("West");
+								hideMoveIcon(icon1);
+								showMoveIcon(icon);
+								adapter.notifyDataSetChanged();
+								resetrotorstatuscache = true;
+							}
+							else if(SetLimitItemSelected==1) {
+								Log.d(TAG,"KEYCODE_DPAD_LEFT"+SetLimitItemSelected);
+								my_cmdParams.unit=1;	
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_WEST,(Object)my_cmdParams);
+								text.setText("West");
+								showMoveIcon1(icon,text);
+								adapter.notifyDataSetChanged();
+								resetrotorstatuscache = true;
+								
+							}
+							return true;
+					}
+ 				}	
+				else if(event.getAction() == KeyEvent.ACTION_DOWN){
+					switch(keyCode)
+					{
+						case KeyEvent.KEYCODE_DPAD_DOWN:
+							Log.d(TAG,"----continue is stop-----"+SetLimitItemSelected);
+							if(SetLimitItemSelected==0)
+							{
+								hideMoveIcon(icon);
+								hideMoveIcon(icon1);
+								text.setText("Stop");
+								t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);						
+							}
+							break;
+					}	
+				}	
+				return false;
+	            }
+			
+		});	
+		
+				
+		diaBuilder.setView(dvbs_set_limit_list);
+	
+		alert = diaBuilder.create();
+
+		alert.setOnShowListener(new DialogInterface.OnShowListener(){
+							public void onShow(DialogInterface dialog) {
+									t.onSetupCmd(50,null);
+								}         
+								}); 	
+
+		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
+							public void onDismiss(DialogInterface dialog) {
+							t.quitLoop();	
+							timer_position_adjust_ts_signal_info_handler.removeCallbacks(timer_position_adjust_ts_signal_info_runnable);  
+							if(resetrotorstatuscache){
+								resetrotorstatuscache = false;
+								//mLockDvb.resetrotorstatuscache();
+							}
+							}         
+							});	
+
+		alert.show();	
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		//alert.getWindow().setLayout(displayMetrics.widthPixels / 2, -1);
+
+		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+		lp.dimAmount=0.00f;
+		alert.getWindow().setAttributes(lp);
+		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		
+		timer_position_adjust_ts_signal_info_handler.postDelayed(timer_position_adjust_ts_signal_info_runnable, 500);
+	}
+	*/
+	
 	
     private class ChoiceOnClickListener implements DialogInterface.OnClickListener 
     {  
@@ -1303,7 +1546,7 @@ public class DTVEpg extends DTVActivity{
 			case KeyEvent.KEYCODE_BACK:	
 				DTVEpg.this.finish();
 				break;
-			case KeyEvent.KEYCODE_ZOOM_IN:
+			case DTVActivity.KEYCODE_YELLOW_BUTTON:
 				if(list_status==1){
 					if(EitListView.getChildCount()>eit_list_cur_pos)
 						EitListView.setSelection(0);
@@ -1321,7 +1564,7 @@ public class DTVEpg extends DTVActivity{
 					myAdapter.notifyDataSetChanged();
 				}
 				break;
-			case KeyEvent.KEYCODE_ZOOM_OUT:
+			case DTVActivity.KEYCODE_BLUE_BUTTON:
 				int p=0;
 				if(list_status==1){
 					p = eit_list_cur_pos+EitListView.getChildCount();
@@ -1343,6 +1586,11 @@ public class DTVEpg extends DTVActivity{
 				}
 									
 				break;	
+			case DTVActivity.KEYCODE_RED_BUTTON:	
+				Intent Intent_booklist = new Intent();
+				Intent_booklist.setClass(DTVEpg.this, DTVBookList.class);
+				startActivityForResult(Intent_booklist,22);
+				break;
 		}
 		return super.onKeyDown(keyCode, event);
 	}	  

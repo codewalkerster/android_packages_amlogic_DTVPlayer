@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="1280dp"
+android:layout_height="720dp"
+android:id="@+id/epg_layout_parent"
+android:background ="@drawable/bg" 
+>
+
+	<LinearLayout
+	android:layout_width="fill_parent"
+	android:layout_height="110dp"
+	android:id="@+id/epg_layout_top"> 
+		<TextView
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:gravity="center"
+		android:text="@string/title_pvr_manager"
+		android:textColor="#FFFFFFFF"
+		android:textSize="40sp"
+		android:layout_marginRight="30dp"
+		/>
+	</LinearLayout>
+
+	<LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="525dp"
+	android:id="@+id/epg_layout_mid"
+	android:baselineAligned="false"
+	>
+		<LinearLayout
+		android:id="@+id/epg_pro"
+		android:background ="@drawable/epg_content_bg3"   
+		android:layout_weight="9"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:layout_marginLeft="20dp"
+		android:layout_marginRight="20dp" >
+			<ListView 
+				android:id="@+id/list_content"
+				android:layout_width="fill_parent" 
+				android:layout_height="fill_parent">
+			</ListView>	
+		    
+		</LinearLayout>
+
+		
+			
+	</LinearLayout>
+
+	
+	<LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="85dp"
+	android:gravity="center_vertical"
+	android:id="@+id/epg_layout_bottom"
+	>
+		
+		
+		
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/red_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"     
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_booklist"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/yellow_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		     android:layout_marginLeft="20sp"  
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_page_up"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/blue_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_page_down"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		
+	</LinearLayout>
+</LinearLayout>	

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:descendantFocusability="blocksDescendants"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"   
+    >
+    
+      <TextView
+	  	android:id="@+id/bookorderText"
+	  	android:layout_width="36px"
+	  	android:textSize="20sp"
+	  	android:layout_height="wrap_content"
+	  	android:gravity="center"
+	  	android:singleLine="true"
+	  	android:layout_weight="1"/>
+	  	
+	  <TextView
+	  	android:id="@+id/bookProgramName"
+	  	android:textSize="20sp"
+	  	android:layout_width="80px"
+	  	android:layout_height="wrap_content"
+	  	android:gravity="center"
+	  	android:singleLine="true"
+	  	android:layout_weight="3"/>  
+	  	
+	  <TextView
+	  	android:id="@+id/bookEventName"
+	  	android:textSize="20sp"
+	  	android:layout_width="80px"
+	  	android:layout_height="wrap_content"
+	  	android:gravity="center"
+	  	android:singleLine="true"
+	  	android:layout_weight="2"/>  
+	  	
+	   <TextView
+	  	android:id="@+id/booktime"
+	  	android:textSize="20sp"
+	  	android:layout_width="80px"
+	  	android:layout_height="wrap_content"
+	  	android:gravity="center"
+	  	android:singleLine="true"
+	  	android:layout_weight="2"/>  
+	  	
+	    <TextView
+	  	android:id="@+id/mode"
+	  	android:textSize="20sp"
+	  	android:layout_width="80px"
+	  	android:layout_height="wrap_content"
+	  	android:gravity="center"
+	  	android:singleLine="true"
+	  	android:layout_weight="2"/>  	 
+
+			<TextView
+	  	android:id="@+id/repeat"
+	  	android:textSize="20sp"
+	  	android:layout_width="80px"
+	  	android:layout_height="wrap_content"
+	  	android:gravity="center"
+	  	android:singleLine="true"
+	  	android:layout_weight="2"/>  	 
+	  	
+	  	<TextView
+	  	android:id="@+id/status"
+	  	android:textSize="20sp"
+	  	android:layout_width="80px"
+	  	android:layout_height="wrap_content"
+	  	android:gravity="center"
+	  	android:singleLine="true"
+	  	android:layout_weight="2"/>  	 
+</LinearLayout>
