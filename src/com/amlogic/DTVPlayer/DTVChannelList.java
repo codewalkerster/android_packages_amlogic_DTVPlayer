@@ -708,12 +708,8 @@ public class DTVChannelList extends DTVActivity{
 	
 	private AlertDialog.Builder diaBuilder;
 	private void showSatellitesList(){
-		diaBuilder = new AlertDialog.Builder(this);
-		diaBuilder.setTitle(R.string.sat_name);
 
 		getSatellitesListData();
-
-
 
 		final Dialog mDialog = new AlertDialog(this){
 			@Override
@@ -736,17 +732,21 @@ public class DTVChannelList extends DTVActivity{
 		}
 
 		mDialog.show();
-		mDialog.setContentView(R.layout.dtv_list_dialog);
+		mDialog.setContentView(R.layout.dvbs_show_sat_dia);
 
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		lp.dimAmount=0.5f;
-		lp.x=800;	
-		lp.y=450;
+		lp.x=600;	
+		//lp.y=450;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.satellites_info_list));
 		
-		ListView LimitListView =(ListView)window.findViewById(R.id.settings_list);
+		ListView LimitListView =(ListView)window.findViewById(R.id.set_list);
 		
 		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
@@ -816,13 +816,55 @@ public class DTVChannelList extends DTVActivity{
 		mTVProgramList=TVProgram.selectBySatID(this,sat_id);
 	}
 
-	EditText editText;
+	
 	private void showProgramSearchDialog(){
-		AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-		LinearLayout layout = (LinearLayout)getLayoutInflater().inflate(
-               R.layout.program_search_dialog, null);
-      
-      	editText = (EditText)layout.findViewById(R.id.edittext_name);
+		final Dialog mDialog = new AlertDialog(this){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						dismiss();
+						
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.program_search_dialog);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.0f;
+		//lp.width = (int) (mDialog.getWidth() * 0.50);
+		lp.x=600;
+		lp.y=-250;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.find));
+
+      	EditText editText = (EditText)window.findViewById(R.id.edittext_name);
 
 		editText.addTextChangedListener(new TextWatcher() {
 		   @Override
@@ -847,47 +889,38 @@ public class DTVChannelList extends DTVActivity{
 		   }
 		});
 		
-		//mBuilder.setTitle(R.string.search_program);
-		mBuilder.setView(layout);
-		mBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-			
-			public void onClick(DialogInterface dialog, int which) {
-				//myAdapter.notifyDataSetChanged();
-			}
-		});
-		mBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-			
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				System.out.println("negative dialog " + dialog);
-
-			}
-		});
-
-		  
-		AlertDialog alert = mBuilder.create();
-		alert.setOnShowListener(new DialogInterface.OnShowListener(){
-							public void onShow(DialogInterface dialog) {
-
-								}         
-								}); 	
-
-		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
-							public void onDismiss(DialogInterface dialog) {
-
+		no.setFocusable(true);   
+     	//no.requestFocus();   
+     	no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+					//onSetNegativeButton();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+					//myAdapter.notifyDataSetChanged();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+			}});
+		
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+							
 							}         
-							}); 			
+							}); 	
 
-		alert.show();
-		WindowManager m = getWindowManager();   
-		Display d = m.getDefaultDisplay();  	
-		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-		lp.dimAmount=0.0f;
-		lp.width = (int) (d.getWidth() * 0.50);
-		lp.y=-250;
-		alert.getWindow().setAttributes(lp);
-		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-    }
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							
+						}         
+						});	
+
+
+	}
 
 	private void getListDataByStringKey(CharSequence key){
 		String pro_name = key.toString();

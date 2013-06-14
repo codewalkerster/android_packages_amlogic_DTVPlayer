@@ -69,16 +69,7 @@
 			      >
 			</TextView>
 		</RelativeLayout>
-
-		<RelativeLayout android:layout_width="fill_parent" 
-			android:layout_height="wrap_content"
-			android:id="@+id/RelativeLayout_inforbar_line" 
-			android:background="@drawable/dtvplayer_line"
-			android:layout_marginRight="34px"
-			android:layout_marginLeft="17px"
-			android:layout_above="@+id/RelativeLayoutNextprogram">
-		</RelativeLayout>
-			
+	
 		<RelativeLayout 
 			android:id="@+id/RelativeLayoutNoAndName" 
 			android:layout_width="400px" 
