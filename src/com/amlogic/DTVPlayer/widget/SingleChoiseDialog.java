@@ -27,7 +27,7 @@ import com.amlogic.DTVPlayer.DTVActivity;
 
 abstract public class SingleChoiseDialog {
 	private static final String TAG="SingleChoiseDialog";
-	Dialog mDialog = null;
+	public Dialog mDialog = null;
 	private Context mContext = null;
 
 	TextView title;
@@ -60,15 +60,22 @@ abstract public class SingleChoiseDialog {
 			return;
 		}
 
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
 		mDialog.show();
 		mDialog.setContentView(R.layout.single_choise_dialog);
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+	
 		lp.dimAmount=0.5f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		dialogInit(window,item,pos);
-
+		
 	}
 
 	private void dialogInit(Window window,String[] item,int pos){
@@ -107,7 +114,8 @@ abstract public class SingleChoiseDialog {
 		          public void onClick(View v) {
 					 onSetPositiveButton(cur_choise_index);
 					 dismissDialog();
-		          }});	    
+		          }});
+				  
 	}
 
 	private List<Map<String, Object>> platform() {

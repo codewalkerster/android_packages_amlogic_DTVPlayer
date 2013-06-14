@@ -295,7 +295,7 @@
 				android:layout_height="31dp"
 				android:layout_alignParentLeft="true"
 				android:textColor="@android:color/white"
-				android:textSize="26sp"
+				android:textSize="22sp"
 				android:gravity="center"
 
 				>
@@ -307,7 +307,7 @@
 				android:layout_height="31dp"
 				android:layout_alignParentLeft="true"
 				android:textColor="@android:color/white"
-				android:textSize="26sp"
+				android:textSize="22sp"
 				android:gravity="center"
 				android:layout_below="@+id/Text_MTS_info">
 			</TextView>
@@ -319,7 +319,7 @@
 					android:layout_height="31dp"
 					android:layout_alignParentLeft="true"
 					android:textColor="@android:color/white"
-					android:textSize="24sp"
+					android:textSize="22sp"
 					android:gravity="center"
 					android:layout_below="@+id/Text_screentype_info">
 			</TextView>

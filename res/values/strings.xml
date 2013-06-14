@@ -576,4 +576,17 @@
 	<string name="title_pvr_manager">PVR Manager</string>
 	
 	<string name="epg_exit">EXIT</string>
+	
+	<string name="confirm">Confirm</string>
+	<string name="exit">Exit</string>
+	<string name="rec">REC</string>
+
+	<string name="goto_s">Satellite</string>
+	<string name="goto_t">Transponder</string>
+	<string name="find">Find</string>
+	<string name="fav">FAV</string>
+	<string name="rename">Rename</string>
+	<string name="skip">Skip</string>
+	<string name="lock">Lock</string>
+	
 </resources>

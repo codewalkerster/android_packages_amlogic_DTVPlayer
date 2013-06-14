@@ -406,7 +406,6 @@ public class DTVSettingsMenu extends DTVActivity {
 					{
 						switch(keyCode){
 							case KeyEvent.KEYCODE_DPAD_DOWN:
-
 								if (event.getAction() == KeyEvent.ACTION_DOWN) {
 									if(button_status == BUTTON_PROGRAM)
 										button_program.setBackgroundResource(R.drawable.program3);
@@ -1078,11 +1077,72 @@ public class DTVSettingsMenu extends DTVActivity {
 	private View dvbs_satxml;
 	private void showSatellitesDB(List<String> list){
 		final List<String> filelist = list;	
-	
+
+		final Dialog mDialog = new AlertDialog(this){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						dismiss();
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.show();
+		mDialog.setContentView(R.layout.dtv_list_dialog);
+
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		
+		ListView mListView =(ListView)window.findViewById(R.id.settings_list);
+		DvbsDBXmlAdapter mDvbsDBXmlAdapter = new DvbsDBXmlAdapter(this,filelist);
+		mListView.setAdapter(mDvbsDBXmlAdapter);
+		
+		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				System.out.println("onItemSelected arg1 " + arg1);
+				System.out.println("onItemSelected arg2 " + arg2);
+				System.out.println("onItemSelected arg3 " + arg3);
+
+				final String path = filelist.get(arg2);
+				importDatabase(path);
+				toast = Toast.makeText(
+						DTVSettingsMenu.this,
+						R.string.xml_load_success,
+						Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+				
+			}
+        	    
+        });
+			
+		mListView.requestFocus();
+		mDvbsDBXmlAdapter.notifyDataSetChanged();
+		
+
+		/*
 		satXmlBuilder = new AlertDialog.Builder(this);
 		LayoutInflater layoutInflater = LayoutInflater.from(this);  
 
-		dvbs_satxml = layoutInflater.inflate(R.layout.dtvsettings, null); 
+		dvbs_satxml = layoutInflater.inflate(R.layout.dtv_list_dialog, null); 
 		satXmlBuilder.setTitle(R.string.dvbs_dbm_load);
 
 		ListView mListView =(ListView)dvbs_satxml.findViewById(R.id.settings_list);
@@ -1138,7 +1198,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		lp.width = (int) (d.getWidth() * 0.50);
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-		
+		*/
 	}
 
 	private void dealLoadSatelliteXML(){
@@ -1563,6 +1623,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	private AlertDialog.Builder diaBuilder;
 	private View dvbs_unicable_user_list;
 	int[] usfs = null;
+	/*
 	private void showUnicableConfigEditDia(){
 		//final DVBUnicableSetting unicable_setting = setting;
 		ContentValues values=null;
@@ -1601,6 +1662,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				unicable_setting.setUbFreqs(usfs);
 				mDvb.setUnicableSetting(unicable_setting);
 				*/
+				/*
 				dialog.dismiss();
               }
           });
@@ -1625,6 +1687,113 @@ public class DTVSettingsMenu extends DTVActivity {
 		alert.show();	
 		
 	}
+	*/
+
+	private Dialog mDialog=null;
+	private void showUnicableConfigEditDia(){
+		ContentValues values=null;
+	  	mDialog = new AlertDialog(this){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						if(mDialog!=null&& mDialog.isShowing()){
+							mDialog.dismiss();
+						}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.dvbs_unicable_list_dia);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.dvbs_unicable_user_define));
+
+		usfs = new int[8];
+		List<String> dataList = getUnicableUserDefinedData();
+		ListView UnicableListView = (ListView)window.findViewById(R.id.dvbs_sub_list); 
+		
+		UnicableListView.setAdapter(new DvbsUnicableUserDefineAdapter(this,dataList));
+
+		UnicableListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				System.out.println("onItemSelected arg1 " + arg1);
+				System.out.println("onItemSelected arg2 " + arg2);
+				System.out.println("onItemSelected arg3 " + arg3);
+
+				showEditUnicableFreDialog(arg1,arg2);
+			}
+        	    
+        });
+		
+		no.setFocusable(true);     
+     	no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+		        	 //onSetNegativeButton();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+					setUnicableUserDefinedData();
+					/*
+					unicable_setting.setUbFreqs(usfs);
+					mDvb.setUnicableSetting(unicable_setting);
+					*/
+				
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+			}});
+		
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+							
+							}         
+							}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							
+						}         
+						});	
+
+	}
+
 
 	public void refreshListData(){
 		((DvbsUnicableAdapter)ListView_settings.getAdapter()).notifyDataSetChanged();
@@ -2291,6 +2460,9 @@ public class DTVSettingsMenu extends DTVActivity {
 
 	private void DTVStartEPG(){
 		Intent intent = new Intent();
+		Bundle bundle = new Bundle();
+		bundle.putInt("db_id", DTVPlayerGetCurrentProgramID());
+		intent.putExtras(bundle);
 		intent.setClass(this, DTVEpg.class);
 		startActivityForResult(intent, 11);	
 		onHide();	
@@ -2298,6 +2470,9 @@ public class DTVSettingsMenu extends DTVActivity {
 
 	private void DTVStartProgramManager(){
 		Intent intent = new Intent();
+		Bundle bundle = new Bundle();
+		bundle.putInt("db_id", DTVPlayerGetCurrentProgramID());
+		intent.putExtras(bundle);
 		intent.setClass(this, DTVProgramEdit.class);
 		startActivityForResult(intent, 11);	
 		onHide();	

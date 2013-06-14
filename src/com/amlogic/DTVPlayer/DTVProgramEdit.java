@@ -18,6 +18,7 @@ import java.text.*;
 import android.view.*;
 import android.view.View.*;
 import android.view.animation.*;
+import android.util.DisplayMetrics;
 import android.widget.*;
 import android.app.*;
 import android.app.AlertDialog.*;
@@ -515,8 +516,30 @@ public class DTVProgramEdit extends DTVActivity{
 						mButton.requestFocus();
 				}
 				break;
-			case KeyEvent.KEYCODE_ZOOM_IN:
-				return true;
+			case DTVActivity.KEYCODE_YELLOW_BUTTON:
+				
+				if(ListView_channel.getChildCount()>cur_select_item)
+					ListView_channel.setSelection(0);
+				else{
+					ListView_channel.setSelection(cur_select_item-ListView_channel.getChildCount());
+				}
+				myAdapter.notifyDataSetChanged();
+				
+				break;
+			case DTVActivity.KEYCODE_BLUE_BUTTON:
+				int p=0;			
+				p = cur_select_item+ListView_channel.getChildCount();
+				if(p<ListView_channel.getCount())
+					ListView_channel.setSelection(p-1);
+				else{
+					ListView_channel.setSelection(ListView_channel.getCount()-1);
+				}
+				myAdapter.notifyDataSetChanged();
+						
+				break;
+			case DTVActivity.KEYCODE_RED_BUTTON:
+				showSatellitesList();
+				break;
 			case KeyEvent.KEYCODE_BACK:
 				if(move_mode)
 					move_mode=false;
@@ -1223,7 +1246,147 @@ public class DTVProgramEdit extends DTVActivity{
 			return convertView;
 		}
 	}	
+
+	private static class mySatListAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+		private Context cont;
+		private List<String> listItems;
+		private int selectItem;
 		
+		static class ViewHolder {
+			TextView text;	
+			ImageView icon;
+		}
+		
+		public mySatListAdapter(Context context, List<String> list) {
+			super();
+			cont = context;
+			listItems = list;
+			mInflater=LayoutInflater.from(context);			  
+		}
+
+		public int getCount() {
+			if(list_sat==null)
+				return 0;
+			else	
+				return list_sat.length;
+		}
+
+		public Object getItem(int position) {
+		
+			return position;
+		}
+		
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public void setSelectItem(int position)
+		{
+			this.selectItem = position;
+		}
+
+	        public int getSelectItem()
+	        {
+	       	 return this.selectItem;
+	        }
+		
+		
+		public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder holder;	
+		if (convertView == null) {
+		   
+		   convertView = mInflater.inflate(R.layout.listitem, null);
+			
+		   holder = new ViewHolder();
+		   holder.text = (TextView) convertView.findViewById(R.id.ItemText);
+		   holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+		   convertView.setTag(holder);
+		}else {
+		  // Get the ViewHolder back to get fast access to the TextView
+		  // and the ImageView.
+		  holder = (ViewHolder) convertView.getTag();
+		  }
+		
+		  // Bind the data efficiently with the holder.
+		  if(list_sat!=null)
+		  	holder.text.setText(list_sat[position].getSatelliteName());
+		  
+		  return convertView;
+		}
+	  }
+		
+	private AlertDialog.Builder diaBuilder;
+	private void showSatellitesList(){
+		diaBuilder = new AlertDialog.Builder(this);
+		diaBuilder.setTitle(R.string.sat_name);
+
+		getSatellitesListData();
+		ListView LimitListView = new ListView(this);
+		
+		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				System.out.println("onItemSelected arg1 " + arg1);
+				System.out.println("onItemSelected arg2 " + arg2);
+				System.out.println("onItemSelected arg3 " + arg3);
+				Log.d(TAG,"id=="+list_sat[arg2].getSatelliteId());
+				getProgBySatellites(list_sat[arg2].getSatelliteId());
+				//Title.setText(SAT_NAME[arg2]);
+				myAdapter.notifyDataSetChanged();
+			}
+        	    
+        });
+		LimitListView.setAdapter(new mySatListAdapter(this,null));		
+		diaBuilder.setView(LimitListView);
+		AlertDialog alert = diaBuilder.create();
+		/*
+		alert.setOnKeyListener( new DialogInterface.OnKeyListener(){
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				// TODO Auto-generated method stub
+				switch(keyCode){	
+					case KeyEvent.KEYCODE_DPAD_CENTER:
+		  			case KeyEvent.KEYCODE_ENTER:
+						dialog.cancel();
+						break;
+				}
+				return false;
+			}
+		});
+		*/
+		alert.setOnShowListener(new DialogInterface.OnShowListener(){
+							public void onShow(DialogInterface dialog) {
+								
+								}         
+								}); 	
+
+		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
+							public void onDismiss(DialogInterface dialog) {
+							}         
+							});	
+
+		alert.show();	
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+		lp.x=800;	
+		lp.y=450;
+		alert.getWindow().setAttributes(lp);
+		//alert.getWindow().setLayout(displayMetrics.widthPixels / 3, -1);	
+	}
+
+
+	private static TVSatellite[] list_sat=null;
+	private  void  getSatellitesListData(){
+	 	list_sat = TVSatellite.tvSatelliteList(this);
+	}
 	
+	private void getProgBySatellites(int sat_id){
+		mTVProgramList=TVProgram.selectBySatID(this,sat_id);
+	}
 }
 

@@ -20,6 +20,10 @@ import com.amlogic.tvutil.DTVRecordParams;
 import com.amlogic.tvutil.TVSatellite;
 import com.amlogic.tvutil.TVSatelliteParams;
 
+import com.amlogic.widget.SureDialog;
+import com.amlogic.widget.SingleChoiseDialog;
+import com.amlogic.widget.MutipleChoiseDialog;
+
 import android.text.*;
 import android.text.method.*;
 import android.view.*;
@@ -168,12 +172,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				// TODO Auto-generated method stub
 				System.out.println("onItemSelected arg0 " + arg0);
 				ImageView image_cur = (ImageView)arg1.findViewById(R.id.icon);
-				if(ListStatus ==0){
-					
+				if(ListStatus ==0){					
 					if(((DbSat)ScanSatAndtsInfoList.get(arg2)).getSelectedFlag()==false){
 						((DbSat)ScanSatAndtsInfoList.get(arg2)).setSelectedFlag(true);
-						image_cur.setBackgroundResource(R.drawable.set_channel_search);
-				
+						image_cur.setBackgroundResource(R.drawable.selected);
 					}	
 					else{
 						((DbSat)ScanSatAndtsInfoList.get(arg2)).setSelectedFlag(false);
@@ -184,7 +186,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 					if(((DbTransponder)tsInfoList.get(arg2)).getSelectedFlag()==false){
 						((DbTransponder)tsInfoList.get(arg2)).setSelectedFlag(true);
-						image_cur.setBackgroundResource(R.drawable.set_channel_search);
+						image_cur.setBackgroundResource(R.drawable.selected);
 					}	
 					else{
 						((DbTransponder)tsInfoList.get(arg2)).setSelectedFlag(false);
@@ -207,13 +209,13 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						showSatLnbTypeDia();
 						break;
 				       case DISHSETUP_LNB_POWER:
-					 	showLnbPowerDia();	
+					 	showLnbPowerDia(info_cur);	
 				    		break;
 					case DISHSETUP_LNB_22K:
-						showLnb22kDia();
+						showLnb22kDia(info_cur);	
 						break; 
 			     	case DISHSETUP_LNB_TONEBURST:
-						showLnbToneBurstDia();
+						showLnbToneBurstDia(info_cur);
 						break;
 					/*		 
 					case DISHSETUP_LNB_DISEQC:
@@ -240,13 +242,13 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						break;	
 					*/
 					case DISHSETUP_DISEQC1_0:
-						showLnbDiseqcCommittedDia();
+						showLnbDiseqcCommittedDia(info_cur);
 						break;
 					case DISHSETUP_DISEQC1_1:
-						showLnbDiseqcUncommittedDia();
+						showLnbDiseqcUncommittedDia(info_cur);
 						break;
 					case DISHSETUP_DISEQC_MOTOR:
-						showLnbDiseqcModeDia();
+						showLnbDiseqcModeDia(info_cur);
 						break;
 				}
 			}	        	   
@@ -1209,6 +1211,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		
 	}
 
+	/*
 	private void showDeleteDia(){
 		if(ScanSatAndtsInfoList==null||ScanSatAndtsInfoList.size()==0)
 			return;
@@ -1273,7 +1276,48 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 				
 	}
+	*/
 
+	private void showDeleteDia(){
+		if(ScanSatAndtsInfoList==null||ScanSatAndtsInfoList.size()==0)
+			return;
+		else{
+			if((ListStatus==1)&&(tsInfoList==null)){
+				return;
+			}
+		}
+	
+		new SureDialog(DTVScanDvbsConfig.this,true){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.sure_delete));
+			}
+
+			public void onSetNegativeButton(){
+	  
+			}
+			public void onSetPositiveButton(){
+				if(ListStatus==0){
+					Log.d(TAG,"list_cur_pos = " + list_cur_pos);
+					if(deleteSelectedSatData()==false){
+				    		deleteSatData(gobal_sat_cur_pos);
+						ScanSatAndtsInfoList.remove(gobal_sat_cur_pos);
+					}
+					mySatAdapter.notifyDataSetChanged();
+				}
+				else{
+					if(deleteSelectedTsData(gobal_sat_cur_pos)==false){	
+						deleteTsData(gobal_sat_cur_pos,list_cur_pos);
+						tsInfoList.remove(list_cur_pos);
+					}
+					myTsAdapter.notifyDataSetChanged();
+					
+				}
+				show_no_satellites_info();
+			}
+		};
+	}
+
+	
 	public void showMotoNoDia(){
 		int pos = 0;
 		final DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
@@ -1326,6 +1370,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	
 	private AlertDialog.Builder lnbTypeBuilder;
 	private View dvbs_lnb_type;
+	/*
 	private void showSatLnbTypeDia(){
 		if(ScanSatAndtsInfoList==null)
 			return;
@@ -1622,9 +1667,340 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		
 	}
+	*/
+
+	private void showSatLnbTypeDia(){
+		if(ScanSatAndtsInfoList==null)
+			return;
+		
+		ContentValues values=null;
+		
+		mDialog = new AlertDialog(mContext){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						if(mDialog!=null&& mDialog.isShowing()){
+							mDialog.dismiss();
+						}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.dvbs_lnb_type_dia);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.edit_title));
+
+		final DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+		if(SatInfo==null)
+			return;
+		
+		final EditText edittext_low = (EditText) window.findViewById(R.id.edittext_lnb_low);
+		final EditText edittext_high = (EditText) window.findViewById(R.id.edittext_lnb_high); 
+		final EditText edittext_threshold = (EditText)window.findViewById(R.id.edittext_lnb_threshold);
+		edittext_low.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(6)});
+		edittext_high.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(6)});
+		edittext_threshold.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(6)});
+
+		final CheckBox checkboxSwitch = (CheckBox)window.findViewById(R.id.checkSwitch);
+		final LinearLayout user_mode_layout = (LinearLayout)window.findViewById(R.id.user_mode_layout);
+		final LinearLayout lof_layout = (LinearLayout)window.findViewById(R.id.lof_layout);
+
+		final Button lof_mode = (Button)window.findViewById(R.id.lnb_lof_fre); 
+		final TextView text_info = (TextView)window.findViewById(R.id.text_info);
+
+		lof_mode.setTextSize(22);
+
+		
+		text_info.setTextColor(Color.YELLOW);
+		
+		lof_mode.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+
+				if(lof_mode.getText().equals("5150")){
+					lof_mode.setText("5750");
+				}
+				else if(lof_mode.getText().equals("5750")){
+					lof_mode.setText("9750");
+				}
+				else if(lof_mode.getText().equals("9750")){
+					lof_mode.setText("10050");
+				}
+				else if(lof_mode.getText().equals("10050")){
+					lof_mode.setText("11300");
+				}
+				else if(lof_mode.getText().equals("11300")){
+					//lof_mode.setText("5150-5750");
+				//}
+				//else if(lof_mode.getText().equals("5150-5750")){
+					lof_mode.setText("9750-10600");
+				}
+				else if(lof_mode.getText().equals("9750-10600")){
+					lof_mode.setText("9750-10750");
+				}
+				else if(lof_mode.getText().equals("9750-10750")){
+					lof_mode.setText("5150");
+				}
+				
+			}
+		});
+
+		checkboxSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            
+			@Override
+			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+			// TODO Auto-generated method stub
+				if(arg1){
+					user_mode_layout.setVisibility(View.VISIBLE);	
+					lof_layout.setVisibility(View.INVISIBLE);
+					lof_layout.setVisibility(View.GONE);
+					
+				}
+				else{
+					user_mode_layout.setVisibility(View.INVISIBLE);
+					user_mode_layout.setVisibility(View.GONE);
+					lof_layout.setVisibility(View.VISIBLE);
+				}
+			}
+		});
+
+		if(SatInfo.getLNBType()!=0){
+			checkboxSwitch.setChecked(true);	
+		}
+		else{
+			checkboxSwitch.setChecked(false);	
+			lof_layout.setVisibility(View.VISIBLE);
+		}
+			if(SatInfo.getLoLOF()==0&&SatInfo.getHiLOF()==0){
+				
+				text_info.setText("0"+" MHz");
+			}	
+			else if(SatInfo.getLoLOF()!=SatInfo.getHiLOF()){
+				text_info.setText(String.valueOf(SatInfo.getLoLOF())+"-"+String.valueOf(SatInfo.getHiLOF())+" MHz");
+			}
+			else if(SatInfo.getLoLOF()==SatInfo.getHiLOF()){
+				text_info.setText(String.valueOf(SatInfo.getLoLOF())+" MHz");
+			}
+			//lof_mode.setText("5150");
+
+			if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==5150*1000)){
+					lof_mode.setText("5150");
+				}
+				else if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==5750*1000)){
+					lof_mode.setText("5750");
+				}
+				else if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==9750*1000)){
+					lof_mode.setText("9750");
+				}
+				else if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==10050*1000)){
+					lof_mode.setText("10050");
+				}
+				else if((SatInfo.getLoLOF()==SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==11300*1000)){
+					lof_mode.setText("11300");
+				}
+				//else if((SatInfo.getLoLOF()!=SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==5150)&&(SatInfo.getHiLOF()==5750)){
+					//lof_mode.setText("5150-5750");
+				//}
+				else if((SatInfo.getLoLOF()!=SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==9750*1000)&&(SatInfo.getHiLOF()==10600*1000)){
+					lof_mode.setText("9750-10600");
+				}
+				else if((SatInfo.getLoLOF()!=SatInfo.getHiLOF())&&(SatInfo.getLoLOF()==9750*1000)&&(SatInfo.getHiLOF()==10750*1000)){
+					lof_mode.setText("9750-10750");
+				}
+				else{
+					lof_mode.setText("5150");
+				}
+		
+		
+		if(SatInfo.getLoLOF()==0)
+			edittext_low.setText("0");
+		else
+			edittext_low.setText(String.valueOf(SatInfo.getLoLOF()));
+
+		if(SatInfo.getLoLOF()==0)
+			edittext_high.setText("0");
+		else
+			edittext_high.setText(String.valueOf(SatInfo.getHiLOF()));
+
+		if(SatInfo.getLofThreshold()==0)
+			edittext_threshold.setText("11700");
+		else
+			edittext_threshold.setText(String.valueOf(SatInfo.getLofThreshold()));
+		
+
+		no.setFocusable(true);   
+     	//no.requestFocus();   
+     	no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+		        	 //onSetNegativeButton();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+				ContentValues values = new ContentValues();
+
+				if(checkboxSwitch.isChecked()){
+					//values.put("lnb_type",1);
+					SatInfo.setLNBType(1);
+
+					if(((edittext_low.getText().toString()) == null)
+						|| ((edittext_low.getText().toString()).equals(""))){
+						SatInfo.setLoLOF(5150*1000);
+						values.put("lof_lo",5150*1000);
+					}else{
+						SatInfo.setLoLOF(Integer.parseInt(edittext_low.getText().toString()));
+						values.put("lof_lo",Integer.parseInt(edittext_low.getText().toString()));						
+					}
+
+					if(((edittext_high.getText().toString()) == null)
+						|| ((edittext_high.getText().toString()).equals(""))){
+						SatInfo.setHiLOF(5150*1000);
+						values.put("lof_hi",5150*1000);
+					}else{
+						SatInfo.setHiLOF(Integer.parseInt(edittext_high.getText().toString()));
+						values.put("lof_hi",Integer.parseInt(edittext_high.getText().toString()));
+					}					
+					
+					if(((edittext_threshold.getText().toString()) == null)
+						|| ((edittext_threshold.getText().toString()).equals(""))){
+						SatInfo.setLofThreshold(5150*1000);
+						values.put("lof_threshold",5150*1000);
+					}else{
+						SatInfo.setLofThreshold(Integer.parseInt(edittext_threshold.getText().toString()));
+						values.put("lof_threshold",Integer.parseInt(edittext_threshold.getText().toString()));
+					}
+
+				}	
+				else{	
+					//values.put("lnb_type",0);
+					SatInfo.setLNBType(0);
+					int threshold = 0;
+					
+					if(lof_mode.getText().equals("5150")){
+						SatInfo.setLoLOF(5150*1000);
+						SatInfo.setHiLOF(5150*1000);
+						values.put("lof_lo",5150*1000);
+						values.put("lof_hi",5150*1000);
+						threshold = 5150*1000;
+					}
+					else if(lof_mode.getText().equals("5750")){
+						SatInfo.setLoLOF(5750*1000);
+						SatInfo.setHiLOF(5750*1000);
+						values.put("lof_lo",5750*1000);
+						values.put("lof_hi",5750*1000);
+						threshold = 5150*1000;
+					}
+					else if(lof_mode.getText().equals("9750")){
+						SatInfo.setLoLOF(9750*1000);
+						SatInfo.setHiLOF(9750*1000);
+						values.put("lof_lo",9750*1000);
+						values.put("lof_hi",9750*1000);
+						threshold = 11700*1000;
+					}
+					else if(lof_mode.getText().equals("10050")){
+						SatInfo.setLoLOF(10050*1000);
+						SatInfo.setHiLOF(10050*1000);
+						values.put("lof_lo",10050*1000);
+						values.put("lof_hi",10050*1000);
+						threshold = 11700*1000;
+					}
+					else if(lof_mode.getText().equals("11300")){
+						SatInfo.setLoLOF(11300*1000);
+						SatInfo.setHiLOF(11300*1000);
+						values.put("lof_lo",11300*1000);
+						values.put("lof_hi",11300*1000);
+						threshold = 11700*1000;
+					}
+					//else if(lof_mode.getText().equals("5150-5750")){
+						//SatInfo.setLoLOF(5150);
+						//SatInfo.setHiLOF(5750);
+						//values.put("lof_lo",5150);
+						//values.put("lof_hi",5750);
+						//threshold = 5150;
+					//}
+					else if(lof_mode.getText().equals("9750-10600")){
+						SatInfo.setLoLOF(9750*1000);
+						SatInfo.setHiLOF(10600*1000);
+						values.put("lof_lo",9750*1000);
+						values.put("lof_hi",10600*1000);
+						threshold = 11700*1000;
+					}
+					else if(lof_mode.getText().equals("9750-10750")){
+						SatInfo.setLoLOF(9750*1000);
+						SatInfo.setHiLOF(10750*1000);
+						values.put("lof_lo",9750*1000);
+						values.put("lof_hi",10750*1000);
+						threshold = 11700*1000;
+					}
+
+					if (threshold != 0)  {
+						SatInfo.setLofThreshold(threshold);
+						values.put("lof_threshold",threshold);
+					}
+				}
+				
+				int sat_id = SatInfo.getSatId();
+				editSatData(sat_id,values,"lof");	
+				myLnbSetAdapter.notifyDataSetChanged();
+					
+					
+
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+			}});
+		
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+							
+							}         
+							}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							
+						}         
+						});	
+	
+		
+	}
 
 
 	private int LnbSettingItemSelected=0;
+	/*
 	public void showLnbPowerDia(){
 		 
 		int pos = 0;
@@ -1673,11 +2049,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				ContentValues values = new ContentValues();
 				
 				switch(LnbSettingItemSelected){
-					/*
-					SEC_VOLTAGE_13,0
-					SEC_VOLTAGE_18, 1
-					SEC_VOLTAGE_OFF 2
-					*/
+					
 					case 0:
 						values.put("voltage", 0);
 						SatInfo.setLNBPwrOnOff(0);
@@ -1754,7 +2126,100 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		dialog.getWindow().setAttributes(lp);
 		dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
+	*/
+	
+	public void showLnbPowerDia(TextView v){
+		final TextView info_cur = v;
+		int pos = 0;
 
+		t =new getFrontEndInfoThread();  
+                t.start(); 
+				
+		final DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+		if(SatInfo==null)
+			return;
+		switch(SatInfo.getLNBPwrOnOff()){
+			case 0:
+				pos=0;
+				break;
+			case 1:
+				pos=1;
+				break;
+			case 2 :
+				pos=2;
+				break;
+			case 3:
+				pos=3;
+				break;
+		}
+			
+		SingleChoiseDialog mSingleChoiseDialog = new SingleChoiseDialog(DTVScanDvbsConfig.this,new String[]{ "13V", "18V","Off","13v/18v"},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.dish_setup_lnb_power));
+			}
+			
+			public void onSetNegativeButton(){
+			}
+			public void onSetPositiveButton(int which){
+				ContentValues values = new ContentValues();
+				
+				switch(which){				
+					case 0:
+						values.put("voltage", 0);
+						SatInfo.setLNBPwrOnOff(0);
+						break;
+					case 1:
+						values.put("voltage",1);
+						SatInfo.setLNBPwrOnOff(1);
+						break;	
+					case 2:
+						values.put("voltage", 2);
+						SatInfo.setLNBPwrOnOff(2);
+						break;
+					case 3:
+						values.put("voltage",3);
+						SatInfo.setLNBPwrOnOff(3);
+						break;
+					
+				}
+
+				int sat_id  = SatInfo.getSatId();
+				editSatData(sat_id,values,"voltage");	
+
+				getTsData(gobal_sat_cur_pos);
+				final cmdParams my_cmdParams = new cmdParams();
+				if(tsInfoList!=null){
+					int size=tsInfoList.size();
+					
+					if(size>0){
+						final DbTransponder TsInfo  = (DbTransponder)tsInfoList.get(0);
+						//final DbTransponder TsInfo  = queryTsData(list_cur_pos);
+
+						TVChannel mTVChannel = TVChannel.selectByID(DTVScanDvbsConfig.this,TsInfo.getDbId());
+						
+						TVChannelParams mTVChannelParams = mTVChannel.getParams();
+						my_cmdParams.channel = mTVChannelParams;
+						t.onSetupCmd(t.LNB_CONTROL_CMD_POWER_AUTO,(Object)my_cmdParams);
+					}
+				}
+				else{
+					TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
+					my_cmdParams.channel = mTVChannelParams;
+					t.onSetupCmd(t.LNB_CONTROL_CMD_POWER_AUTO,(Object)my_cmdParams);
+				}
+				myLnbSetAdapter.notifyDataSetChanged();
+			}
+		};	
+
+		mSingleChoiseDialog.mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+				public void onDismiss(DialogInterface dialog) {
+					t.quitLoop();		
+				}         
+		});	
+		
+	}
+
+	/*
 	public void showLnb22kDia(){
 		int pos = 0;
 
@@ -1868,7 +2333,100 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		dialog.getWindow().setAttributes(lp);
 		dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
+	*/
 
+	public void showLnb22kDia(TextView v){
+		final TextView info_cur = v;
+		int pos = 0;
+
+		t =new getFrontEndInfoThread();  
+                t.start(); 
+		
+		final DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+		if(SatInfo==null)
+			return;
+		switch(SatInfo.get22KOnOff()){
+			case DbSat.LNB_22K_ON:
+				pos=0;
+				break;
+			case DbSat.LNB_22K_OFF:
+				pos=1;
+				break;
+			case DbSat.LNB_22K_LOHI:
+				pos=2;
+				break;	
+		}
+
+		String[] ItemData = new String[3];
+		
+		ItemData[0] = this.getResources().getString(R.string.dish_setup_conf_on);
+		ItemData[1] =this.getResources().getString(R.string.dish_setup_conf_off);
+		ItemData[2] = this.getResources().getString(R.string.dish_setup_conf_auto);
+
+			
+		SingleChoiseDialog mSingleChoiseDialog = new SingleChoiseDialog(DTVScanDvbsConfig.this,ItemData,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.dish_setup_22K));
+			}
+			
+			public void onSetNegativeButton(){
+			}
+			public void onSetPositiveButton(int which){
+				// TODO Auto-generated method stub
+				LnbSettingItemSelected= which;
+				ContentValues values = new ContentValues();
+				
+					switch(LnbSettingItemSelected){
+						case 0:
+							values.put("signal_22khz", DbSat.LNB_22K_ON);
+							SatInfo.set22KOnOff(DbSat.LNB_22K_ON);
+							break;
+						case 1:
+							values.put("signal_22khz",DbSat.LNB_22K_OFF);
+							SatInfo.set22KOnOff(DbSat.LNB_22K_OFF);
+							break;
+						case 2:
+							values.put("signal_22khz", DbSat.LNB_22K_LOHI);
+							SatInfo.set22KOnOff(DbSat.LNB_22K_LOHI);		
+							break;	
+				}		
+				int sat_id  = SatInfo.getSatId();
+				editSatData(sat_id,values,"signal_22khz");	
+				getTsData(gobal_sat_cur_pos);
+				final cmdParams my_cmdParams = new cmdParams();
+				if(tsInfoList!=null){
+					int size=tsInfoList.size();
+					
+					if(size>0){
+						final DbTransponder TsInfo  = (DbTransponder)tsInfoList.get(0);
+						//final DbTransponder TsInfo  = queryTsData(list_cur_pos);
+
+						TVChannel mTVChannel = TVChannel.selectByID(DTVScanDvbsConfig.this,TsInfo.getDbId());					
+						TVChannelParams mTVChannelParams = mTVChannel.getParams();
+
+						my_cmdParams.channel = mTVChannelParams;
+						t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+					}
+				}
+				else{
+					TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
+					my_cmdParams.channel = mTVChannelParams;
+					t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+				}
+
+				myLnbSetAdapter.notifyDataSetChanged();
+			}
+		};	
+
+		mSingleChoiseDialog.mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+				public void onDismiss(DialogInterface dialog) {
+					t.quitLoop();		
+				}         
+		});	
+		
+	}
+
+	/*
 	public void showLnbToneBurstDia(){
 		int pos = 0;
 		final DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
@@ -1976,7 +2534,94 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		dialog.getWindow().setAttributes(lp);
 		dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}	
+	*/
 
+	public void showLnbToneBurstDia(TextView v){
+		final TextView info_cur = v;
+		
+		int pos = 0;
+		final DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+		if(SatInfo==null)
+			return;
+		switch(SatInfo.getToneburstType()){
+			case DbSat.LNB_TONEBURST_NONE:
+				pos=0;
+				break;
+			case DbSat.LNB_TONEBURST_A:
+				pos=1;
+				break;
+			case DbSat.LNB_TONEBURST_B: 
+				pos=2;
+				break;
+		}
+
+		String[] ItemData = new String[3];
+		ItemData[0] = this.getResources().getString(R.string.dish_setup_conf_none);
+		ItemData[1] = "A";
+		ItemData[2] ="B";
+		
+		SingleChoiseDialog mSingleChoiseDialog = new SingleChoiseDialog(DTVScanDvbsConfig.this,ItemData,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.dish_setup_lnb_toneburst));
+			}
+			
+			public void onSetNegativeButton(){
+			}
+			public void onSetPositiveButton(int which){
+				// TODO Auto-generated method stub
+				LnbSettingItemSelected= which;
+				ContentValues values = new ContentValues();
+		
+				switch(LnbSettingItemSelected){
+					case 0:
+						values.put("tone_burst", DbSat.LNB_TONEBURST_NONE);
+						SatInfo.setToneburstType(DbSat.LNB_TONEBURST_NONE);
+						break;
+					case 1:
+						values.put("tone_burst", DbSat.LNB_TONEBURST_A);
+						SatInfo.setToneburstType(DbSat.LNB_TONEBURST_A);
+						break;
+					case 2:
+						values.put("tone_burst",DbSat.LNB_TONEBURST_B);
+						SatInfo.setToneburstType(DbSat.LNB_TONEBURST_B);
+						
+						break;
+				}
+				int sat_id  = SatInfo.getSatId();
+				editSatData(sat_id,values,"tone_burst");	
+				getTsData(gobal_sat_cur_pos);
+				final cmdParams my_cmdParams = new cmdParams();
+				if(tsInfoList!=null){
+					int size=tsInfoList.size();
+					
+					if(size>0){
+						final DbTransponder TsInfo  = (DbTransponder)tsInfoList.get(0);
+						//final DbTransponder TsInfo  = queryTsData(list_cur_pos);
+
+						TVChannel mTVChannel = TVChannel.selectByID(DTVScanDvbsConfig.this,TsInfo.getDbId());					
+						TVChannelParams mTVChannelParams = mTVChannel.getParams();
+
+						my_cmdParams.channel = mTVChannelParams;
+						t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+					}
+				}
+				else{
+					TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
+					my_cmdParams.channel = mTVChannelParams;
+					t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+				}		
+				myLnbSetAdapter.notifyDataSetChanged();
+			}
+		};	
+
+		mSingleChoiseDialog.mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+				public void onDismiss(DialogInterface dialog) {
+				}         
+		});	
+		
+	}
+	
+	/*
 	public void showLnbDiseqcModeDia(){
 
 		int pos = 0;
@@ -2072,8 +2717,81 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		dialog.getWindow().setAttributes(lp);
 		dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
+	*/
+
+	public void showLnbDiseqcModeDia(TextView v){
+		final TextView info_cur = v;
+		
+		int pos = 0;
+		final DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+		if(SatInfo==null)
+			return;
+		switch(SatInfo.getSwtPort()){
+			case DbSat.LNB_DISEQC_NONE:
+			case DbSat.LNB_DISEQC_10:	
+			case DbSat.LNB_DISEQC_11: 	
+				pos=0;
+				break;
+			case DbSat.LNB_DISEQC_12: 
+				pos=1;
+				break;	
+			case DbSat.LNB_DISEQC_13: 
+				pos=2;
+				break;		
+			default:
+				pos=0;
+				break;
+		}
+		LnbSettingItemSelected=pos;
+
+		String[] ItemData = new String[3];
+		ItemData[0] = this.getResources().getString(R.string.dish_setup_conf_none);
+		//ItemData[1] = this.getResources().getString(R.string.dish_setup_diseqc0);
+		//ItemData[2] = this.getResources().getString(R.string.dish_setup_diseqc1);
+		ItemData[1] = this.getResources().getString(R.string.dish_setup_diseqc2);
+		ItemData[2] = this.getResources().getString(R.string.dish_setup_diseqc3);
+		
+		SingleChoiseDialog mSingleChoiseDialog = new SingleChoiseDialog(DTVScanDvbsConfig.this,ItemData,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.dish_setup_diseqc));
+			}
+			
+			public void onSetNegativeButton(){
+			}
+			public void onSetPositiveButton(int which){
+				// TODO Auto-generated method stub
+				LnbSettingItemSelected= which;
+				ContentValues values = new ContentValues();
+				switch(LnbSettingItemSelected){
+					case 0:
+						values.put("diseqc_mode", DbSat.LNB_DISEQC_NONE);
+						SatInfo.setSwtPort(DbSat.LNB_DISEQC_11);
+						break;
+					case 1:
+						values.put("diseqc_mode",DbSat.LNB_DISEQC_12);
+						SatInfo.setSwtPort(DbSat.LNB_DISEQC_12);
+						break;
+					case 2:
+						values.put("diseqc_mode",DbSat.LNB_DISEQC_13);
+						SatInfo.setSwtPort(DbSat.LNB_DISEQC_13);	
+							break;
+				}
+				int sat_id = SatInfo.getSatId();
+				editSatData(sat_id,values,"diseqc_mode");
+				
+				myLnbSetAdapter.notifyDataSetChanged();
+			}
+		};	
+
+		mSingleChoiseDialog.mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+				public void onDismiss(DialogInterface dialog) {
+				}         
+		});	
+		
+	}
 
 
+	/*
 	public void showLnbDiseqcCommittedDia(){
 
 		String[] ItemData=null;
@@ -2097,6 +2815,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		ItemData[2]="BA";
 		ItemData[3]="BB";
 		*/
+		/*
 		ItemData[0]="LNB1";
 		ItemData[1]="LNB2";
 		ItemData[2]="LNB3";
@@ -2176,8 +2895,89 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		dialog.getWindow().setAttributes(lp);
 		dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
+	*/
+		
+	public void showLnbDiseqcCommittedDia(TextView v){
+		final TextView info_cur = v;
+		String[] ItemData=null;
+		int pos = 0;
+		final DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+		if(SatInfo==null)
+			return;
+		
+		t =new getFrontEndInfoThread();  
+		t.start(); 
+
+		final int diseqc_mode = SatInfo.getSwtPort();
+		//if(diseqc_mode == DbSat.LNB_DISEQC_NONE)
+			//return;
+		
+		ItemData = new String[5];
+
+		/*
+		ItemData[0]="AA";
+		ItemData[1]="AB";
+		ItemData[2]="BA";
+		ItemData[3]="BB";
+		*/
+		
+		ItemData[0]="LNB1";
+		ItemData[1]="LNB2";
+		ItemData[2]="LNB3";
+		ItemData[3]="LNB4";
+		ItemData[4] = this.getResources().getString(R.string.dish_setup_conf_none);
+		
+		pos = SatInfo.getLnbConfig10();
+		LnbSettingItemSelected=pos;
+			
+		SingleChoiseDialog mSingleChoiseDialog = new SingleChoiseDialog(DTVScanDvbsConfig.this,ItemData,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.dish_setup_uncommitted_command));
+			}
+			
+			public void onSetNegativeButton(){
+			}
+			public void onSetPositiveButton(int which){
+				// TODO Auto-generated method stub
+				LnbSettingItemSelected= which;
+				ContentValues values = new ContentValues();
+				values.put("committed_cmd", LnbSettingItemSelected);
+				SatInfo.setLnbConfig10(LnbSettingItemSelected);
+				int sat_id = SatInfo.getSatId();
+				editSatData(sat_id,values,"committed_cmd");	
+				getTsData(gobal_sat_cur_pos);
+				final cmdParams my_cmdParams = new cmdParams();
+				if(tsInfoList!=null){
+					int size=tsInfoList.size();
+					if(size>0){
+						final DbTransponder TsInfo  = (DbTransponder)tsInfoList.get(0);
+						//final DbTransponder TsInfo  = queryTsData(list_cur_pos);
+						TVChannel mTVChannel = TVChannel.selectByID(DTVScanDvbsConfig.this,TsInfo.getDbId());
+						TVChannelParams mTVChannelParams = mTVChannel.getParams();
+						my_cmdParams.channel = mTVChannelParams;
+						t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+					}
+				}
+				else{
+					TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
+					my_cmdParams.channel = mTVChannelParams;
+					t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+				}
+				
+				myLnbSetAdapter.notifyDataSetChanged();
+			}
+		};	
+
+		mSingleChoiseDialog.mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+				public void onDismiss(DialogInterface dialog) {
+					t.quitLoop();		
+				}         
+		});	
+		
+	}
 
 
+	/*
 	public void showLnbDiseqcUncommittedDia(){
 		
 		String[] ItemData=null;
@@ -2287,7 +3087,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			}
 		});	
 		*/
-		
+		/*
 		AlertDialog dialog = builder.create();
 		dialog.setOnShowListener(new DialogInterface.OnShowListener(){
 			public void onShow(DialogInterface dialog) {
@@ -2308,6 +3108,94 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		lp.width = (int) (d.getWidth() * 0.50);
 		dialog.getWindow().setAttributes(lp);
 		dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+	}
+	*/
+
+	public void showLnbDiseqcUncommittedDia(TextView v){
+		final TextView info_cur = v;
+		String[] ItemData=null;
+		int pos = 0;
+		final DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+		if(SatInfo==null)
+			return;
+
+		t =new getFrontEndInfoThread();  
+		t.start(); 
+
+
+		final int diseqc_mode = SatInfo.getSwtPort();
+
+		ItemData = new String[17];
+		ItemData[0] = this.getResources().getString(R.string.dish_setup_conf_none);
+		for(int j=1;j<17;j++){
+			ItemData[j]="LNB"+String.valueOf(j);
+		}
+		
+		if(SatInfo.getLnbConfig11()==0||SatInfo.getLnbConfig11()==4){
+			pos = 0;	
+		}
+		else if(SatInfo.getLnbConfig11()>=0xf0){
+			pos = SatInfo.getLnbConfig11()-0xf0+1;
+		}
+		
+		LnbSettingItemSelected=pos;	
+			
+		SingleChoiseDialog mSingleChoiseDialog = new SingleChoiseDialog(DTVScanDvbsConfig.this,ItemData,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.dish_setup_uncommitted_command));
+			}
+			
+			public void onSetNegativeButton(){
+			}
+			public void onSetPositiveButton(int which){
+				// TODO Auto-generated method stub
+				LnbSettingItemSelected= which;
+				ContentValues values = new ContentValues();
+				if(diseqc_mode >= DbSat.LNB_DISEQC_11){
+
+					int temp=4;
+					if(LnbSettingItemSelected==0){
+						temp=4;
+					}
+					else if(LnbSettingItemSelected>=1){
+						temp = 0xf0+LnbSettingItemSelected-1;
+					}
+			
+					values.put("uncommitted_cmd", temp);
+					SatInfo.setLnbConfig11(temp);
+				}		
+				int sat_id = SatInfo.getSatId();
+				editSatData(sat_id,values,"uncommitted_cmd");	
+				getTsData(gobal_sat_cur_pos);
+				final cmdParams my_cmdParams = new cmdParams();
+				if(tsInfoList!=null){
+					int size=tsInfoList.size();
+					
+					if(size>0){
+						final DbTransponder TsInfo  = (DbTransponder)tsInfoList.get(0);
+						//final DbTransponder TsInfo  = queryTsData(list_cur_pos);
+						TVChannel mTVChannel = TVChannel.selectByID(DTVScanDvbsConfig.this,TsInfo.getDbId());
+						TVChannelParams mTVChannelParams = mTVChannel.getParams();
+						my_cmdParams.channel = mTVChannelParams;
+						t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+					}
+				}
+				else{
+					TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
+					my_cmdParams.channel = mTVChannelParams;
+					t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+				}
+			
+				myLnbSetAdapter.notifyDataSetChanged();
+			}
+		};	
+
+		mSingleChoiseDialog.mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+				public void onDismiss(DialogInterface dialog) {
+					t.quitLoop();		
+				}         
+		});	
+		
 	}
 
 	public void showLnbDiseqcSequence(){
@@ -2470,6 +3358,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	
 	private AlertDialog.Builder setLocationBuilder;
 	private View dvbs_set_location;
+	/*
 	private void showSetLocationDia(){
 
 		 DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
@@ -2663,6 +3552,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				else
 					Log.d(TAG,">>>>>>>>>>>>>>>>DVBPlayer.getConnect().syncDatabase fail<<<<<<<<<<<<<<<");
 				*/
+				/*
 				editSatData(sat_id, values, "local_longitude_latitude");
 				
 				try{
@@ -2718,6 +3608,244 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
 
+	*/
+
+	private void showSetLocationDia(){
+		DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+
+		if(SatInfo==null||SatInfo.getSwtPort()!=DbSat.LNB_DISEQC_13){
+			return;
+		}
+
+		final int sat_id = SatInfo.getSatId();
+
+		String longitude_direction = mLast.getString("longitude_direction","East");
+		String latitude_direction = mLast.getString("latitude_direction","North");
+
+		final int longitude_angle = mLast.getInt("longitude_angle",0);
+		final int latitude_angle = mLast.getInt("latitude_angle",0);
+
+		ContentValues values=null;
+	  	mDialog = new AlertDialog(mContext){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						if(mDialog!=null&& mDialog.isShowing()){
+							mDialog.dismiss();
+						}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.dvbs_set_location_dia);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.dish_setup_conf_button_des8_info));
+
+
+		final Button edit_longitude_direction = (Button)window.findViewById(R.id.edit_longitude_direction); 
+		final EditText edittext_angle0 = (EditText) window.findViewById(R.id.angle0); 
+		final EditText edittext_angle1 = (EditText) window.findViewById(R.id.angle1);
+
+		edittext_angle0.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(3)});
+		edittext_angle1.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(1)});
+		
+		final Button edit_latitude_direction = (Button)window.findViewById(R.id.edit_latitude_direction); 
+		final EditText edittext_latitude_angle0 = (EditText) window.findViewById(R.id.latitude_angle0); 
+		final EditText edittext_latitude_angle1 = (EditText) window.findViewById(R.id.latitude_angle1);
+		edittext_latitude_angle0.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(3)});
+		edittext_latitude_angle1.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(1)});
+			
+		if(longitude_direction.equals("East")){
+			edit_longitude_direction.setText("East");
+		}
+		else{
+			edit_longitude_direction.setText("West");
+		}	
+		edit_longitude_direction.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+
+				if(edit_longitude_direction.getText().equals("East")){
+					edit_longitude_direction.setText("West");
+				}
+				else{
+					edit_longitude_direction.setText("East");
+				}
+			}
+		});
+		edittext_angle0.setText(String.valueOf(Math.abs(longitude_angle)/10));
+		edittext_angle1.setText(String.valueOf(Math.abs(longitude_angle%10)));
+
+		
+		if(latitude_direction.equals("North")){
+			edit_latitude_direction.setText("North");
+		}
+		else{
+			edit_latitude_direction.setText("South");
+		}
+		edit_latitude_direction.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+				if(edit_latitude_direction.getText().equals("North")){
+					edit_latitude_direction.setText("South");				
+				}
+				else{
+					edit_latitude_direction.setText("North");
+				}
+			}
+		});
+		edittext_latitude_angle0.setText(String.valueOf(Math.abs(latitude_angle)/10));
+		edittext_latitude_angle1.setText(String.valueOf(Math.abs(latitude_angle%10)));
+
+
+		no.setFocusable(true);   
+     	//no.requestFocus();   
+     	no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+		        	 //onSetNegativeButton();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+					ContentValues values= new ContentValues();
+				
+					if(edittext_angle0.getText().toString().equals("")||edittext_angle1.getText().toString().equals("")||edittext_latitude_angle0.getText().toString().equals("")||edittext_angle1.getText().toString().equals("")){
+						
+						Toast toast = Toast.makeText(
+						DTVScanDvbsConfig.this, 
+						R.string.lo_la_input_invalid,
+						Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show(); 
+						
+						return;	
+					}
+					
+
+					int temp=Integer.parseInt(edittext_angle0.getText().toString())*10+Integer.parseInt(edittext_angle1.getText().toString());
+					if(temp>1800){
+						Toast toast = Toast.makeText(
+						DTVScanDvbsConfig.this, 
+						R.string.lo_la_input_invalid,
+						Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show(); 
+						
+						return;	
+					}
+					
+					temp=Integer.parseInt(edittext_latitude_angle0.getText().toString())*10+Integer.parseInt(edittext_latitude_angle1.getText().toString());
+					if(temp>900){
+						Toast toast = Toast.makeText(
+						DTVScanDvbsConfig.this, 
+						R.string.lo_la_input_invalid,
+						Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show(); 	
+
+						
+						return;	
+					}
+				
+					String tmp = edit_longitude_direction.getText().toString();
+					mLast.edit().putString ("longitude_direction",tmp).commit();
+					if(tmp.equals("North"))
+						values.put("la_direction",0);
+					else 
+						values.put("la_direction",0);
+					
+					tmp = edit_latitude_direction.getText().toString();
+					mLast.edit().putString ("latitude_direction",tmp).commit();	
+					if(tmp.equals("East"))
+						values.put("lo_direction",0);
+					else 
+						values.put("lo_direction",0);
+					
+					temp=Integer.parseInt(edittext_angle0.getText().toString())*10+Integer.parseInt(edittext_angle1.getText().toString());
+					mLast.edit().putInt ("longitude_angle",temp).commit();
+					
+					double longitude_direction = (double)temp;
+					longitude_direction = longitude_direction/10;	
+					if(mLast.getString ("longitude_direction","East").equals("East")){
+						values.put("longitude",longitude_direction);
+					}	
+					else 
+						values.put("longitude",0-longitude_direction);
+					
+					temp=Integer.parseInt(edittext_latitude_angle0.getText().toString())*10+Integer.parseInt(edittext_latitude_angle1.getText().toString());
+					mLast.edit().putInt("latitude_angle",temp).commit();
+
+					double latitude_direction = (double)temp;
+					latitude_direction = latitude_direction/10;	
+					if(mLast.getString ("latitude_direction","North").equals("North")){				
+						values.put("latitude",latitude_direction);
+					}	
+					else 
+						values.put("latitude",0-latitude_direction);
+					/*
+					DTVScanDvbsConfig.this.getContentResolver().update(DVBClient.TABLE_SAT_PARA, values,null, null);
+
+					if(mLockDvb!=null)
+						mLockDvb.syncDatabase(DVBClient.TABLE_SAT_PARA, -1);
+					else
+						Log.d(TAG,">>>>>>>>>>>>>>>>DVBPlayer.getConnect().syncDatabase fail<<<<<<<<<<<<<<<");
+					*/
+					editSatData(sat_id, values, "local_longitude_latitude");
+					
+					
+
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+			}});
+		
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+							
+							}         
+							}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							
+						}         
+						});	
+		
+	}
 	
 	private int getPositionNumberFromScanList(int sat_id,int moto_no,int cur_pos){
 	    int pos=1;
@@ -3097,6 +4225,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	View dvbs_set_limit_list;
 	private getFrontEndInfoThread t = null;
 	private boolean resetrotorstatuscache = false;
+
+	/*
 	private void showSetLimitAndPositionDia(){
 		ContentValues values=null;
 
@@ -3213,7 +4343,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					//public static final int ROTOR_CMD_MOVE_WEST		= 5;	//!< para: "move_unit"
 					//public static final int ROTOR_CMD_STORE_POSITION	= 6;	//!< para: "position_number"
 					//public static final int ROTOR_CMD_GOTO_POSITION	= 7;	//!< para: "position_number"
-
+	/*
 					switch(arg2){
 						case 0:  //move continue
 							text.setText("Stop");	
@@ -3379,6 +4509,315 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		
 		timer_position_adjust_ts_signal_info_handler.postDelayed(timer_position_adjust_ts_signal_info_runnable, 500);
+	}
+
+	*/
+	
+	private void showSetLimitAndPositionDia(){
+		ContentValues values=null;
+
+		t =new getFrontEndInfoThread();  
+		t.start(); 
+
+		mDialog = new AlertDialog(mContext){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						if(mDialog!=null&& mDialog.isShowing()){
+							mDialog.dismiss();
+						}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.dvbs_set_limit_dia);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+	
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.dish_setup_conf_button_des7_info));
+
+		//List<String> dataList = getUnicableUserDefinedData();
+		final ListView LimitListView = (ListView)window.findViewById(R.id.set_limit_list); 
+
+		DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+		
+		if(SatInfo.getSwtPort()==DbSat.LNB_DISEQC_13){
+			LimitListView.setAdapter(new DvbsSetLimitAdapter(this,1));
+		}
+		else if(SatInfo.getSwtPort()==DbSat.LNB_DISEQC_12){
+			LimitListView.setAdapter(new DvbsSetLimitAdapter(this,0));		
+		}
+
+
+		if(tsInfoList==null||tsInfoList.size()==0){
+			return;
+		}
+
+		Log.d(TAG,"list_cur_pos="+list_cur_pos);
+		final DbTransponder TsInfo  = queryTsData(list_cur_pos);
+		Log.d(TAG,"ts db-id="+TsInfo.getDbId());
+		Log.d(TAG,"fre="+TsInfo.getFrequency()+"symbol="+TsInfo.getSymbol());
+		TVChannel mTVChannel = TVChannel.selectByID(this,TsInfo.getDbId());
+		
+		TVChannelParams mTVChannelParams = mTVChannel.getParams();
+
+		final cmdParams my_cmdParams = new cmdParams();
+
+		my_cmdParams.channel = mTVChannelParams;
+		
+		if(mTVChannelParams!=null)
+			lock(mTVChannelParams);
+	
+		final TextView edittext_frequency= (TextView) window.findViewById(R.id.edittext_frequency);
+		final TextView edittext_symbol = (TextView) window.findViewById(R.id.edittext_symbol);
+		final TextView polarization = (TextView) window.findViewById(R.id.polarization);
+
+    		final ProgressBar ProgressBarSNR = (ProgressBar)window.findViewById(R.id.ProgressBarSNR);
+    		ProgressBarSNR.setMax(100);
+    		
+		final ProgressBar ProgressBarAGC = (ProgressBar)window.findViewById(R.id.ProgressBarAGC);
+    		ProgressBarAGC.setMax(100);
+
+		//final ProgressBar ProgressBarBER = (ProgressBar)dvbs_set_limit_list.findViewById(R.id.ProgressBarBER);
+    		//ProgressBarBER.setMax(100);
+
+		final TextView snr_value = (TextView) window.findViewById(R.id.snr_value);
+		final TextView agc_value = (TextView) window.findViewById(R.id.agc_value);
+		//final TextView ber_value = (TextView) dvbs_set_limit_list.findViewById(R.id.ber_value);	
+		final CheckBox checkboxStatus = (CheckBox)window.findViewById(R.id.checkStatus);
+
+		checkboxStatus.setFocusable(false);   
+			
+		if(TsInfo!=null){
+			edittext_frequency.setText(String.valueOf(TsInfo.getFrequency()));
+			edittext_symbol.setText(String.valueOf(TsInfo.getSymbol()));
+
+			if(TsInfo.getPolarization()==1)
+				polarization.setText("V");
+			else
+				polarization.setText("H");
+
+			snr_value.setText("0%");
+			agc_value.setText("0%");
+			//ber_value.setText("0%");
+		}
+		
+		LimitListView.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+		public void onItemSelected(AdapterView<?> parent, View view,
+			int position, long id) {
+				Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
+
+				SetLimitItemSelected = position;
+				
+			}
+
+			public void onNothingSelected(AdapterView<?> parent) {
+				Log.d(TAG,"<<sat_list onNothingSelected>> ");
+			}
+		});
+		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+	        {
+
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+					final TextView text =(TextView) arg1.findViewById(R.id.info);
+					final ImageView icon=(ImageView)arg1.findViewById(R.id.icon);	
+					final ImageView icon1=(ImageView)arg1.findViewById(R.id.icon1);
+					
+					
+					// TODO Auto-generated method stub
+					System.out.println("onItemSelected arg0 " + arg0);
+					System.out.println("onItemSelected arg1 " + arg1);
+					System.out.println("onItemSelected arg2 " + arg2);
+					System.out.println("onItemSelected arg3 " + arg3);
+
+					/** Rotor commands for Satellite source, para: para string format in sendRotorCmd */
+					//public static final int ROTOR_CMD_STOP_MOVING		= 0;	//!< para: None
+					//public static final int ROTOR_CMD_DISABLE_LIMIT	= 1;	//!< para: None
+					//public static final int ROTOR_CMD_SET_ELIMIT		= 2;	//!< para: None
+					//public static final int ROTOR_CMD_SET_WLIMIT		= 3;	//!< para: None
+					//public static final int ROTOR_CMD_MOVE_EAST		= 4;	//!< para: "move_unit"
+					//public static final int ROTOR_CMD_MOVE_WEST		= 5;	//!< para: "move_unit"
+					//public static final int ROTOR_CMD_STORE_POSITION	= 6;	//!< para: "position_number"
+					//public static final int ROTOR_CMD_GOTO_POSITION	= 7;	//!< para: "position_number"
+	
+					switch(arg2){
+						case 0:  //move continue
+							text.setText("Stop");	
+							hideMoveIcon(icon);
+							hideMoveIcon(icon1);
+							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STOP_MOVING,null);
+							 t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
+							break;
+						case 1:  //move one step
+							text.setText("Stop");
+							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STOP_MOVING,null);
+							 t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
+							break;
+						case 2://set east limit
+							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_SET_ELIMIT,null);
+							 t.onSetupCmd(t.ROTOR_CMD_SET_ELIMIT,null);
+							break;
+						case 3: //set west limit
+							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_SET_WLIMIT,null);
+							 t.onSetupCmd(t.ROTOR_CMD_SET_WLIMIT,null);
+							break;
+						case 4://disable limit
+							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_DISABLE_LIMIT,null);
+							t.onSetupCmd(t.ROTOR_CMD_DISABLE_LIMIT,null);
+							break;
+						case 5: //store position
+							showSureDia(my_cmdParams);
+							break;
+						case 6 ://goto position
+							gotoPosition(my_cmdParams);
+							resetrotorstatuscache = true;
+							break;
+						case 7: //gotoX
+							gotoX(my_cmdParams);
+							resetrotorstatuscache = true;
+							break;
+					}
+				}
+	        	    
+	        });
+
+		LimitListView.setOnKeyListener( new OnKeyListener(){
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+				int pos=0;	
+					TextView text=null;	
+					ImageView icon =null;
+					ImageView icon1=null;
+					ListView listView = (ListView) v;
+					DvbsSetLimitAdapter adapter = null;
+					if (listView.getSelectedView() != null) {
+					        // (cast if necessary) and use selected view
+						//pos = listView.getSelected();
+						View view = listView.getChildAt(SetLimitItemSelected);
+						text =(TextView) view.findViewById(R.id.info);
+						icon = (ImageView)  view.findViewById(R.id.icon);
+						icon1 = (ImageView)  view.findViewById(R.id.icon1);
+						adapter = (DvbsSetLimitAdapter)listView.getAdapter();
+				}
+				
+ 				if (event.getAction() == KeyEvent.ACTION_UP) {
+ 	
+	        			
+		
+					// TODO Auto-generated method stub
+					switch(keyCode)
+					{	
+						case KeyEvent.KEYCODE_DPAD_RIGHT:
+							if(SetLimitItemSelected==0){
+								Log.d(TAG,"KEYCODE_DPAD_RIGHT"+SetLimitItemSelected);
+								my_cmdParams.unit=0;
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_EAST,(Object)my_cmdParams);
+								text.setText("East");
+								hideMoveIcon(icon);
+								showMoveIcon(icon1);
+								adapter.notifyDataSetChanged();
+								resetrotorstatuscache = true;
+							}
+							else if(SetLimitItemSelected==1) {
+								Log.d(TAG,"KEYCODE_DPAD_RIGHT"+SetLimitItemSelected);
+								my_cmdParams.unit=1;	
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_EAST,(Object)my_cmdParams);
+								text.setText("East");
+								showMoveIcon1(icon1,text);	
+								adapter.notifyDataSetChanged();
+								resetrotorstatuscache = true;
+							}
+							return true;
+						case KeyEvent.KEYCODE_DPAD_LEFT:
+							if(SetLimitItemSelected==0){
+								Log.d(TAG,"KEYCODE_DPAD_LEFT"+SetLimitItemSelected);
+								my_cmdParams.unit=0;	
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_WEST,(Object)my_cmdParams);
+								text.setText("West");
+								hideMoveIcon(icon1);
+								showMoveIcon(icon);
+								adapter.notifyDataSetChanged();
+								resetrotorstatuscache = true;
+							}
+							else if(SetLimitItemSelected==1) {
+								Log.d(TAG,"KEYCODE_DPAD_LEFT"+SetLimitItemSelected);
+								my_cmdParams.unit=1;	
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_WEST,(Object)my_cmdParams);
+								text.setText("West");
+								showMoveIcon1(icon,text);
+								adapter.notifyDataSetChanged();
+								resetrotorstatuscache = true;
+								
+							}
+							return true;
+					}
+ 				}	
+				else if(event.getAction() == KeyEvent.ACTION_DOWN){
+					switch(keyCode)
+					{
+						case KeyEvent.KEYCODE_DPAD_DOWN:
+							Log.d(TAG,"----continue is stop-----"+SetLimitItemSelected);
+							if(SetLimitItemSelected==0)
+							{
+								hideMoveIcon(icon);
+								hideMoveIcon(icon1);
+								text.setText("Stop");
+								t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);						
+							}
+							break;
+					}	
+				}	
+				return false;
+	            }
+			
+		});	
+		
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+								t.onSetupCmd(50,null);
+							}         
+							}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							t.quitLoop();	
+							timer_position_adjust_ts_signal_info_handler.removeCallbacks(timer_position_adjust_ts_signal_info_runnable);  
+							if(resetrotorstatuscache){
+								resetrotorstatuscache = false;
+								//mLockDvb.resetrotorstatuscache();
+							}
+						}         
+						});	
+
+		timer_position_adjust_ts_signal_info_handler.postDelayed(timer_position_adjust_ts_signal_info_runnable, 500);
+		
 	}
 
 	public static class DefaultList{
@@ -3676,6 +5115,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 	private AlertDialog.Builder scanBuilder;
 	ScanModeAdapter mScanModeAdapter = null;
+	/*
 	private void showScanConfigDia(){
 		
 		ContentValues values=null;
@@ -3825,10 +5265,191 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		
 	}
+	*/
+
+	private void showScanConfigDia(){
+		ContentValues values=null;
+	  	mDialog = new AlertDialog(mContext){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						if(mDialog!=null&& mDialog.isShowing()){
+							mDialog.dismiss();
+						}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.dvbs_set_scan_config_dia);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.scan_mode));
+		
+		ListView mList = (ListView)window.findViewById(R.id.set_list);
+
+		if(mScanModeAdapter==null)
+			mScanModeAdapter = new ScanModeAdapter(DTVScanDvbsConfig.this);
+		mList.setAdapter(mScanModeAdapter);
+		mList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					// TODO Auto-generated method stub
+
+					TextView info = (TextView)arg1.findViewById(R.id.info);
+					switch(arg2){
+							
+						case 0:
+							String mode = mLast.getString("scan_mode","default");
+							if (isUnicableOn()==false){							
+								
+								if(mode.equals("default")){
+									info.setText(R.string.scan_mode_blind);
+									mLast.edit().putString ("scan_mode","blind").commit();
+								}	
+								else if(mode.equals("blind")){
+									info.setText(R.string.scan_mode_network);
+									mLast.edit().putString ("scan_mode","network").commit();
+								}
+								else{
+									info.setText(R.string.scan_mode_default);
+									mLast.edit().putString ("scan_mode","default").commit();
+								}
+							}
+							else{
+								if(mode.equals("default")){
+									info.setText(R.string.scan_mode_network);
+									mLast.edit().putString ("scan_mode","network").commit();
+								}				
+								else{
+									info.setText(R.string.scan_mode_default);
+									mLast.edit().putString ("scan_mode","default").commit();
+								}
+							}
+							break;
+						case 1:
+							String crypted = mLast.getString("scan_mode_crypted","all");
+							if(crypted.equals("all")){
+								info.setText(R.string.scan_crypted_fta);
+								mLast.edit().putString ("scan_mode_crypted","fta").commit();
+							}	
+							else if(crypted.equals("fta")){
+								info.setText(R.string.scan_crypted_all);
+								mLast.edit().putString ("scan_mode_crypted","all").commit();
+								
+							}
+							
+							break;
+							
+						case 2:
+							String service_mode = mLast.getString("scan_service_mode","all");
+							if(service_mode.equals("all")){
+								info.setText(R.string.scan_service_tv);
+								mLast.edit().putString ("scan_service_mode","tv").commit();
+							}	
+							else if(service_mode.equals("tv")){
+								info.setText(R.string.scan_service_radio);
+								mLast.edit().putString ("scan_service_mode","radio").commit();
+							}
+							else{
+								info.setText(R.string.scan_service_all);
+								mLast.edit().putString ("scan_service_mode","all").commit();
+							}
+							break;
+						
+					}
+				}	
+		 });
+
+		no.setFocusable(true);     
+     	no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+		        	 //onSetNegativeButton();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+					String mode = mLast.getString("scan_mode","default");
+					String crypted = mLast.getString("scan_mode_crypted","all");
+					String service_mode = mLast.getString("scan_service_mode","all");
+					Log.d(TAG,"@mode="+mode+"@crypted="+crypted+"@service_mode="+service_mode);
+					getScanParaList();
+
+					if(checkHasTpInfo(mode)){
+					
+						Intent intent_scan= new Intent();
+						intent_scan.setClass(DTVScanDvbsConfig.this,DvbsScanResult.class);
+
+						Bundle bundle_scan_dvbs = new Bundle();	
+						bundle_scan_dvbs.putString("scan_mode", mode);
+						intent_scan.putExtras(bundle_scan_dvbs);
+
+						//startActivityForResult(intent_scan,1);	
+						startActivity(intent_scan);	
+						DTVScanDvbsConfig.this.finish();
+					}
+					else{
+						Toast toast = Toast.makeText(
+							DTVScanDvbsConfig.this, 
+					    		R.string.can_not_search,
+					    		Toast.LENGTH_SHORT);
+								toast.setGravity(Gravity.CENTER, 0, 0);
+								toast.show(); 	
+					}
+
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+			}});
+		
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+							
+							}         
+							}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							
+						}         
+						});	
+
+	}
 
 
 	private AlertDialog.Builder satEditBuilder;
 	private View dvbs_sat_edit;
+	/*
 	private void showSatEditDia(){
 		if(ScanSatAndtsInfoList==null||ScanSatAndtsInfoList.size()==0)
 			return;
@@ -3936,16 +5557,16 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 		AlertDialog alert = satEditBuilder.create();
 
-		 alert.setOnShowListener(new DialogInterface.OnShowListener(){
-								public void onShow(DialogInterface dialog) {
-									
-									}         
-									}); 	
-
-		   alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
-								public void onDismiss(DialogInterface dialog) {
+		alert.setOnShowListener(new DialogInterface.OnShowListener(){
+							public void onShow(DialogInterface dialog) {
+								
 								}         
-								});	
+								}); 	
+
+		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
+							public void onDismiss(DialogInterface dialog) {
+							}         
+							});	
 
 		alert.show();	
 		DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -3954,16 +5575,171 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		System.out.println("H = " + displayMetrics.heightPixels);
 		System.out.println("W = " + displayMetrics.widthPixels);
 
-		//alert.getWindow().setLayout(displayMetrics.widthPixels / 2, /*displayMetrics.heightPixels * 2 / 3*/-1);
 
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
 		lp.dimAmount=0.0f;
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
-		
 	}
 
+	*/
+	
+	Dialog mDialog = null;
+	private void showSatEditDia(){
+		if(ScanSatAndtsInfoList==null||ScanSatAndtsInfoList.size()==0)
+			return;
+		
+		ContentValues values=null;
+
+		
+		mDialog = new AlertDialog(mContext){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						if(mDialog!=null&& mDialog.isShowing()){
+							mDialog.dismiss();
+						}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		//mDialog.setCancelable(false);
+		//mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.dvbs_sat_edit_dia);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.edit_title));
+
+	    DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+		
+		final EditText edittext_satname = (EditText) window.findViewById(R.id.edittext_sat_name);
+		final Button button_sat_direction = (Button)window.findViewById(R.id.edit_direction); 
+		final EditText edittext_angle0 = (EditText) window.findViewById(R.id.angle0); 
+		edittext_angle0.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(3)});
+		final EditText edittext_angle1 = (EditText) window.findViewById(R.id.angle1);
+		edittext_angle1.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(1)});
+		final double direction = SatInfo.getSatLongitude();
+
+		final TextView sat_no = (TextView)window.findViewById(R.id.sat_number);
+		sat_no.setText(String.valueOf(gobal_sat_cur_pos+1));
+		
+		edittext_satname.setText(SatInfo.getName());
+		
+		if(direction>0){
+			button_sat_direction.setText("East");
+		}
+		else{
+			button_sat_direction.setText("West");
+		}
+		button_sat_direction.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+
+				if(button_sat_direction.getText().equals("East")){
+					button_sat_direction.setText("West");
+				}
+				else{
+					button_sat_direction.setText("East");
+				}
+			}
+		});
+		
+		edittext_angle0.setText(String.valueOf(Math.abs((int)SatInfo.getSatLongitude())/10));
+		edittext_angle1.setText(String.valueOf((Math.abs(SatInfo.getSatLongitude()))%10));
+
+		no.setFocusable(true);   
+     	//no.requestFocus();   
+     	no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+		        	 //onSetNegativeButton();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+				 //onSetPositiveButton(cur_choise_index);
+				 ContentValues values = new ContentValues();
+				values.put("sat_name", edittext_satname.getText().toString());
+
+				DbSat sat_node = getSatInfoByPostion(gobal_sat_cur_pos);
+				sat_node.setName(edittext_satname.getText().toString());
+				int temp=0;
+				if(button_sat_direction.getText().equals("East")){
+					if(!(edittext_angle0.getText().toString().equals("")||edittext_angle1.getText().toString().equals(""))){
+						temp=Integer.parseInt(edittext_angle0.getText().toString())*10+Integer.parseInt(edittext_angle1.getText().toString());
+						
+						values.put("sat_longitude",temp);
+					}
+					else
+						return;
+				}else{	
+					if(!(edittext_angle0.getText().toString().equals("")||edittext_angle1.getText().toString().equals(""))){
+						temp=0-(Integer.parseInt(edittext_angle0.getText().toString())*10+Integer.parseInt(edittext_angle1.getText().toString()));
+						values.put("sat_longitude",temp);
+					}	
+					else
+						return;
+				}
+
+				int sat_id = sat_node.getSatId();
+
+				if(getConflictSat(sat_node.getSatId(),temp)){
+					
+					Toast toast = Toast.makeText(
+										DTVScanDvbsConfig.this, 
+										"Satellite angle is already exist",
+										Toast.LENGTH_SHORT);
+									toast.setGravity(Gravity.CENTER, 0, 0);
+									toast.show();
+					return;				
+				}
+				editSatData(sat_id,values,"sat");	
+				sat_node.setSatLongitude((double)temp);
+				TextView sat_name = (TextView) findViewById(R.id.sat_name);
+				sat_name.setTextColor(Color.YELLOW);
+				sat_name.setText(edittext_satname.getText().toString());
+	
+				mySatAdapter.notifyDataSetChanged();
+				
+				 
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+	          }});
+	
+	}
+
+	/*
 	private void showSatAddDia(){
 
 		ContentValues values=null;
@@ -4065,17 +5841,155 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		System.out.println("H = " + displayMetrics.heightPixels);
 		System.out.println("W = " + displayMetrics.widthPixels);
 
-		//alert.getWindow().setLayout(displayMetrics.widthPixels / 2, /*displayMetrics.heightPixels * 2 / 3*/-1);
-
+		/*
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
 		lp.dimAmount=0.0f;
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
+	*/
+
+	private void showSatAddDia(){
+		ContentValues values=null;
+
+		mDialog = new AlertDialog(mContext){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						if(mDialog!=null&& mDialog.isShowing()){
+							mDialog.dismiss();
+						}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.dvbs_sat_edit_dia);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.add_title));
 
 
+		final EditText edittext_satname = (EditText) window.findViewById(R.id.edittext_sat_name);
+		final Button button_sat_direction = (Button)window.findViewById(R.id.edit_direction); 
+		final EditText edittext_angle0 = (EditText) window.findViewById(R.id.angle0); 
+		edittext_angle0.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(3)});
+		final EditText edittext_angle1 = (EditText) window.findViewById(R.id.angle1);
+		edittext_angle1.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(1)});
+		
+		final TextView sat_no = (TextView)window.findViewById(R.id.sat_number);
+
+		if(ScanSatAndtsInfoList!=null)
+			sat_no.setText(String.valueOf(ScanSatAndtsInfoList.size()+1));
+		else
+			sat_no.setText(String.valueOf(1));
+		
+		edittext_satname.setText("");
+		edittext_angle0.setText("");
+		edittext_angle1.setText("");
+		button_sat_direction.setText("East");
+	
+		button_sat_direction.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+
+				if(button_sat_direction.getText().equals("East")){
+					button_sat_direction.setText("West");
+				}
+				else{
+					button_sat_direction.setText("East");
+				}
+			}
+		});
+
+		no.setFocusable(true);   
+     	//no.requestFocus();   
+     	no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+		        	 //onSetNegativeButton();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+				int angle;
+				
+				if((edittext_angle0.getText().toString().equals(""))||(edittext_angle0.getText().toString().equals(null))||
+					(edittext_angle1.getText().toString().equals(""))||(edittext_angle1.getText().toString().equals(null)))
+					{
+						if(mDialog!=null&& mDialog.isShowing()){
+							mDialog.dismiss();
+						}
+						return;
+					}
+				
+					if(button_sat_direction.getText().equals("East")){
+						angle=Integer.parseInt(edittext_angle0.getText().toString())*10+Integer.parseInt(edittext_angle1.getText().toString());
+					}else{	
+						angle=0-(Integer.parseInt(edittext_angle0.getText().toString())*10+Integer.parseInt(edittext_angle1.getText().toString()));
+					}
+					
+					addSatData(edittext_satname.getText().toString(),(double)angle);
+
+					mySatAdapter = new SatAdapter(DTVScanDvbsConfig.this,ScanSatAndtsInfoList);
+					sat_list.setAdapter(mySatAdapter);
+		
+					mySatAdapter.notifyDataSetChanged();
+					sat_list.setSelection(sat_list.getCount()-1);
+
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+			}});
+		
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+							
+							}         
+							}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							show_no_satellites_info();
+						}         
+						});	
+			
+	}	
+		
+	
 	private AlertDialog.Builder tsEditBuilder;
 	private View dvbs_ts_edit;
+	/*
 	private void showTsEditDia(){
 
 		if(tsInfoList==null||tsInfoList.size()==0){
@@ -4197,16 +6111,163 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		System.out.println("H = " + displayMetrics.heightPixels);
 		System.out.println("W = " + displayMetrics.widthPixels);
 
-		//alert.getWindow().setLayout(displayMetrics.widthPixels / 2, /*displayMetrics.heightPixels * 2 / 3*/-1);
-
+		//alert.getWindow().setLayout(displayMetrics.widthPixels / 2, /*displayMetrics.heightPixels * 2 / 3*///-1);
+		/*
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
 		lp.dimAmount=0.0f;
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
 	}
+	*/
 
+	private void showTsEditDia(){
+		if(tsInfoList==null||tsInfoList.size()==0){
+			return;
+		}
+		
+		
+		ContentValues values=null;
 
+		
+		mDialog = new AlertDialog(mContext){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						if(mDialog!=null&& mDialog.isShowing()){
+							mDialog.dismiss();
+						}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		//mDialog.setCancelable(false);
+		//mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.dvbs_ts_edit_dia);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.edit_title));
+
+	    final DbTransponder TsInfo  = queryTsData(list_cur_pos);
+		
+		final EditText edittext_frequency= (EditText) window.findViewById(R.id.edittext_frequency);
+		final EditText edittext_symbol = (EditText) window.findViewById(R.id.edittext_symbol);
+		edittext_frequency.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(5)});
+		final TextView ts_number = (TextView) window.findViewById(R.id.item_no);
+		edittext_symbol.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(5)});
+
+		final Button polarization = (Button) window.findViewById(R.id.polarization);
+
+		if(TsInfo!=null){
+			ts_number.setText(String.valueOf(list_cur_pos+1));
+			edittext_frequency.setText(String.valueOf(TsInfo.getFrequency()/1000));
+			edittext_symbol.setText(String.valueOf(TsInfo.getSymbol()/1000));
+
+			if(TsInfo.getPolarization()==1)
+				polarization.setText("V");
+			else
+				polarization.setText("H");
+		}
+
+		polarization.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+
+				if(polarization.getText().equals("V")){
+					polarization.setText("H");
+				}
+				else{
+					polarization.setText("V");
+				}
+			}
+		});
+
+		
+		no.setFocusable(true);   
+     	//no.requestFocus();   
+     	no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+		        	 //onSetNegativeButton();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+				 //onSetPositiveButton(cur_choise_index);
+				ContentValues values = new ContentValues();
+				if(edittext_frequency.getText().toString().equals("")==false){
+					values.put("freq", Integer.parseInt(edittext_frequency.getText().toString())*1000);
+				}	
+				else{
+					return;
+				}	
+				if(edittext_symbol.getText().toString().equals("")==false){
+					values.put("symb", Integer.parseInt(edittext_symbol.getText().toString())*1000);
+				}
+				else{
+					return ;
+				}
+
+				if(getConflictTp(TsInfo.getSatId(),(Integer.parseInt(edittext_frequency.getText().toString())*1000),(Integer.parseInt(edittext_symbol.getText().toString())*1000),(polarization.getText().toString().equals("H"))==true?0:1)){
+					
+					Toast toast = Toast.makeText(
+										DTVScanDvbsConfig.this, 
+										"Transponder is already exist",
+										Toast.LENGTH_SHORT);
+									toast.setGravity(Gravity.CENTER, 0, 0);
+									toast.show();
+									return;
+				}
+
+				TsInfo.setFrequency(Integer.parseInt(edittext_frequency.getText().toString())*1000);
+				TsInfo.setSymbol(Integer.parseInt(edittext_symbol.getText().toString())*1000);
+
+				if(polarization.getText().toString().equals("H")){
+					values.put("polar",0);
+					TsInfo.setPolarization(0);
+				}
+				else{
+					values.put("polar",1);
+					TsInfo.setPolarization(1);
+				}
+				editTsData(gobal_sat_cur_pos,list_cur_pos,values);	
+				myTsAdapter.notifyDataSetChanged();
+				 
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+	          }});
+			  
+	}	
 
 
 	private Handler timer_ts_signal_info_handler = new Handler();   
@@ -4354,7 +6415,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	}
 
 
-
+	/*
 	private void showTsAddDia(){
 		ContentValues values=null;
 		tsEditBuilder = new AlertDialog.Builder(this);
@@ -4485,13 +6546,182 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		System.out.println("H = " + displayMetrics.heightPixels);
 		System.out.println("W = " + displayMetrics.widthPixels);
 
-		//alert.getWindow().setLayout(displayMetrics.widthPixels / 2, /*displayMetrics.heightPixels * 2 / 3*/-1);
+		//alert.getWindow().setLayout(displayMetrics.widthPixels / 2, displayMetrics.heightPixels * 2 / 3);
 
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
 		lp.dimAmount=0.0f;
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
+	*/
+
+	private void showTsAddDia(){
+		ContentValues values=null;
+
+		mDialog = new AlertDialog(mContext){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						if(mDialog!=null&& mDialog.isShowing()){
+							mDialog.dismiss();
+						}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.dvbs_ts_edit_dia);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.add_title));
+
+
+		final EditText edittext_frequency= (EditText) window.findViewById(R.id.edittext_frequency);
+		final EditText edittext_symbol = (EditText) window.findViewById(R.id.edittext_symbol);
+		edittext_frequency.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(5)});
+		final TextView ts_number = (TextView) window.findViewById(R.id.item_no);
+		edittext_symbol.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(5)});
+
+		final Button polarization = (Button) window.findViewById(R.id.polarization);
+
+		if(tsInfoList==null)
+			ts_number.setText(String.valueOf(1));	
+		else	
+			ts_number.setText(String.valueOf(tsInfoList.size()+1));
+		edittext_frequency.setText("");
+		edittext_symbol.setText("");
+		polarization.setText("V");
+			
+		polarization.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+
+				if(polarization.getText().equals("V")){
+					polarization.setText("H");
+				}
+				else{
+					polarization.setText("V");
+				}
+			}
+		});
+
+		no.setFocusable(true);   
+     	//no.requestFocus();   
+     	no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+		        	 //onSetNegativeButton();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+					DbTransponder TsInfo  = new DbTransponder();
+					ContentValues values = new ContentValues();
+
+					int freq = 0, symb = 0, polar;
+					if(edittext_frequency.getText().toString().equals("")==false){
+						freq = Integer.parseInt(edittext_frequency.getText().toString())*1000;
+						values.put("freq", freq);
+						TsInfo.setFrequency(freq);
+					}	
+					if(edittext_symbol.getText().toString().equals("")==false){
+						symb = Integer.parseInt(edittext_symbol.getText().toString())*1000;
+						values.put("symb", symb);
+						TsInfo.setSymbol(symb);
+					}
+					
+					if(polarization.getText().toString().equals("H")){
+						values.put("polar",0);
+						TsInfo.setPolarization(0);
+						polar = 0;
+					}
+					else{
+						values.put("polar",1);
+						TsInfo.setPolarization(1);
+						polar = 1;
+					}
+					
+					if (freq <= 0 || symb <= 0) {
+						Toast toast = Toast.makeText(
+									DTVScanDvbsConfig.this, 
+									"Invalid value",
+									Toast.LENGTH_SHORT);
+								toast.setGravity(Gravity.CENTER, 0, 0);
+								toast.show();
+						return;			
+					}
+					DbSat sat_node = getSatInfoByPostion(gobal_sat_cur_pos);
+					int sat_id = sat_node.getSatId();
+					if(getConflictTp(sat_id,TsInfo.getFrequency(),TsInfo.getSymbol(),TsInfo.getPolarization())){	
+						Toast toast = Toast.makeText(
+											DTVScanDvbsConfig.this, 
+											"Transponder angle is already exist",
+											Toast.LENGTH_SHORT);
+										toast.setGravity(Gravity.CENTER, 0, 0);
+										toast.show();
+							return;			
+					}else{
+						TsInfo.setSatId(sat_id);
+						addTsData(gobal_sat_cur_pos,values,TsInfo);
+						//TsInfo.setDbId(getTsDbId(sat_id, freq, symb, polar));
+						getTsData(gobal_sat_cur_pos);
+						myTsAdapter = new TsAdapter(DTVScanDvbsConfig.this,tsInfoList);
+						sat_list.setAdapter(myTsAdapter);
+						myTsAdapter.notifyDataSetChanged();
+						sat_list.setSelection(sat_list.getCount()-1);
+						show_no_satellites_info();
+					}
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+			}});
+		
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+							
+							}         
+							}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							show_no_satellites_info();
+						}         
+						});	
+	
+	}
+	
+
+
 
 
 	private void refresh_sat_data(int pos){
@@ -4740,7 +6970,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					//Log.d(TAG,"angle"+angle_float);
 					mv.position.setText(String.valueOf(angle_float));  
 					if(satinfo.getSelectedFlag()==true)
-						mv.icon.setBackgroundResource(R.drawable.set_channel_search);
+						mv.icon.setBackgroundResource(R.drawable.selected);
 					else 
 						mv.icon.setBackgroundResource(0);
 
@@ -4881,7 +7111,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					mv.symbol.setText(String.valueOf(tsinfo.getSymbol()/1000)+"  KS/s");  
 
 					if(tsinfo.getSelectedFlag()==true)
-						mv.icon.setBackgroundResource(R.drawable.set_channel_search);
+						mv.icon.setBackgroundResource(R.drawable.selected);
 					else 
 						mv.icon.setBackgroundResource(0);
 
@@ -5690,7 +7920,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 		holder.icon.setVisibility(View.VISIBLE);
 		 holder.icon1.setVisibility(View.VISIBLE);
-	    	 holder.icon1.setBackgroundResource(R.drawable.pull_right_1); 
+	    	 holder.icon1.setBackgroundResource(R.drawable.arrow_down2); 
 
 		switch(position){
 			case 0:

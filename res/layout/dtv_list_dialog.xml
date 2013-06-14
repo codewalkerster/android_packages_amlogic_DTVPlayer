@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_marginTop="100px" 
+		android:layout_width="644px" 
+		android:layout_height="458px"
     android:background="@drawable/settings_bg"
     android:id="@+id/RelativeLayoutParent">
 	
 	<LinearLayout 
 		android:id="@+id/RelativeLayoutBG"
 		android:layout_centerHorizontal="true"
-		android:layout_marginTop="100px" 
-		android:layout_width="644px" 
-		android:layout_height="458px"
+		 android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
 		android:orientation="vertical">  
     
  	    <RelativeLayout android:id="@+id/RelativeLayoutTitle"

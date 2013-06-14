@@ -103,14 +103,14 @@
 
 	        <LinearLayout
 	            android:layout_width="match_parent"
-	            android:layout_height="match_parent"
+	            android:layout_height="60dp"
 	            android:layout_marginTop="10dp"
 	            android:gravity="center"
 	            android:orientation="horizontal" >
 
 	            <ImageView
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
+	                android:layout_width="45dp"
+	                android:layout_height="45dp"
 	                android:background="@drawable/ok_icon" >
 	            </ImageView>
 
@@ -119,14 +119,14 @@
 	                android:layout_height="wrap_content"
 	                android:layout_gravity="center"
 	                android:layout_marginRight="20dp"
-	                android:text="@string/help_info_select"
+	                android:text="@string/confirm"
 	                android:textColor="#FFFFFFFF"
 	                android:textSize="20sp" />
 
 	            <ImageView
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:background="@drawable/return_icon" >
+	                android:layout_width="45dp"
+	                android:layout_height="45dp"
+	                android:background="@drawable/goto_icon" >
 	            </ImageView>
 
 	            <TextView
@@ -134,13 +134,13 @@
 	                android:layout_height="wrap_content"
 	                android:layout_gravity="center"
 	                android:layout_marginRight="20dp"
-	                android:text="@string/help_info_return"
+	                android:text="@string/goto_s"
 	                android:textColor="#FFFFFFFF"
 	                android:textSize="20sp" />
 	            <ImageView
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:background="@drawable/return_icon" >
+	                android:layout_width="45dp"
+	                android:layout_height="45dp"
+	                android:background="@drawable/rec" >
 	            </ImageView>
 
 	            <TextView
@@ -148,7 +148,7 @@
 	                android:layout_height="wrap_content"
 	                android:layout_gravity="center"
 	                android:layout_marginRight="20dp"
-	                android:text="@string/help_info_return"
+	                android:text="@string/rec"
 	                android:textColor="#FFFFFFFF"
 	                android:textSize="20sp" />
 	            <ImageView
@@ -162,7 +162,7 @@
 	                android:layout_height="wrap_content"
 	                android:layout_gravity="center"
 	                android:layout_marginRight="20dp"
-	                android:text="@string/help_info_return"
+	                android:text="@string/find"
 	                android:textColor="#FFFFFFFF"
 	                android:textSize="20sp" />
 	        </LinearLayout>

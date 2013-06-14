@@ -368,16 +368,29 @@ public class DTVChannelList extends DTVActivity{
 					return true;
 				}	
 				break;
+				
 			case KeyEvent.KEYCODE_ZOOM_IN:
 				showPvrTimeSetDialog(DTVChannelList.this);
 				return true;
+				
 			case KeyEvent.KEYCODE_ZOOM_OUT:
 				showSatellitesList();
 				return true;
 			case KeyEvent.KEYCODE_TAB: //info
 				Log.d(TAG,"KEYCODE_TAB");	
 				showProgramSearchDialog();
-				return true;	
+				return true;
+			/*	
+			case DTVActivity.KEYCODE_GOTO_BUTTON:
+				showSatellitesList();
+				return true;
+			case DTVActivity.KEYCODE_REC:
+				showPvrTimeSetDialog(DTVChannelList.this);
+				return true;
+			case DTVActivity.KEYCODE_RED_BUTTON:
+				showProgramSearchDialog();
+				return true;
+			*/	
 		}
 		return super.onKeyDown(keyCode, event);
 	}	  
@@ -699,7 +712,41 @@ public class DTVChannelList extends DTVActivity{
 		diaBuilder.setTitle(R.string.sat_name);
 
 		getSatellitesListData();
-		ListView LimitListView = new ListView(this);
+
+
+
+		final Dialog mDialog = new AlertDialog(this){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						dismiss();
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.show();
+		mDialog.setContentView(R.layout.dtv_list_dialog);
+
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		lp.dimAmount=0.5f;
+		lp.x=800;	
+		lp.y=450;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		
+		ListView LimitListView =(ListView)window.findViewById(R.id.settings_list);
 		
 		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
@@ -718,8 +765,8 @@ public class DTVChannelList extends DTVActivity{
         	    
         });
 		LimitListView.setAdapter(new mySatListAdapter(this,null));		
-		diaBuilder.setView(LimitListView);
-		AlertDialog alert = diaBuilder.create();
+		//diaBuilder.setView(LimitListView);
+		//AlertDialog alert = diaBuilder.create();
 		/*
 		alert.setOnKeyListener( new DialogInterface.OnKeyListener(){
 			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
@@ -734,6 +781,8 @@ public class DTVChannelList extends DTVActivity{
 			}
 		});
 		*/
+
+		/*
 		alert.setOnShowListener(new DialogInterface.OnShowListener(){
 							public void onShow(DialogInterface dialog) {
 								
@@ -753,6 +802,7 @@ public class DTVChannelList extends DTVActivity{
 		lp.x=800;	
 		lp.y=450;
 		alert.getWindow().setAttributes(lp);
+		*/
 		//alert.getWindow().setLayout(displayMetrics.widthPixels / 3, -1);	
 	}
 
