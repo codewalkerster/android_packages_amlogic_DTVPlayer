@@ -588,5 +588,22 @@
 	<string name="rename">Rename</string>
 	<string name="skip">Skip</string>
 	<string name="lock">Lock</string>
+
+	<!--event add dialog-->
+	<string name="channel_name">Channel Name</string>
+	<string name="event_name">Event Name</string>
+	<string name="event_start_date">Start Date</string>
+	<string name="event_start_time">Start Time</string>
+	<string name="event_end_time">End time</string>
+	<string name="duration">Duration Time</string>
+	<string name="repeat">Repeat</string>
+	<string name="mode">Mode</string>
+	<string name="status">Status</string>
+	
+	<string name="daily">Daily</string>
+	<string name="weekly">Weekly</string>
+	<string name="once">Once</string>
+	<string name="view">View</string>
+	<string name="pvr">PVR</string>
 	
 </resources>

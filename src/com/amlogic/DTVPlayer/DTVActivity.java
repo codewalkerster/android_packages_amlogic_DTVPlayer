@@ -398,10 +398,43 @@ abstract public class DTVActivity extends TVActivity{
 
 	public void DTVPlayerStartRecordingWithTime(long start,long duration){
 		TVProgram mTVProgram = DTVPlayerGetDataByCurrentID();
-		if(mTVProgram!=null)
-			TVBooking.bookProgram(this,mTVProgram,TVBooking.FL_RECORD,start,duration);
+			if(mTVProgram!=null)
+				{
+			try{
+				TVBooking.bookProgram(this, mTVProgram, TVBooking.FL_RECORD, start,duration, TVBooking.RP_NONE, true);
+			}catch(Exception e){
+			}
+		}
 	}
 
+	public void DTVPlayerAddBook(int mode, long start,long duration,int repeat){
+		TVProgram mTVProgram = DTVPlayerGetDataByCurrentID();
+		int m_mode=0;
+		int m_repeat=0;
+			
+		if(mTVProgram!=null)
+		{
+			if(mode==0)
+				m_mode=TVBooking.FL_PLAY;
+			else
+				m_mode=TVBooking.FL_RECORD;
+
+			if(repeat==0)
+				m_repeat=TVBooking.RP_NONE;
+			else if(repeat==1)
+				m_repeat=TVBooking.RP_DAILY;
+			else 
+				m_repeat=TVBooking.RP_WEEKLY;
+
+			try{
+				
+				TVBooking.bookProgram(this, mTVProgram, m_mode, start,duration, m_repeat, true);
+				
+			}catch(Exception e){
+			}
+		}
+	}
+	
 	public void DTVPlayerStopRecording(){
 		stopRecording();
 	}
@@ -451,6 +484,7 @@ abstract public class DTVActivity extends TVActivity{
 	/*************TeleText**************/
 
 	public void DTVTTShow(){
+		Log.d(TAG,"DTVTTShow");
 		ttShow();
 	}
 

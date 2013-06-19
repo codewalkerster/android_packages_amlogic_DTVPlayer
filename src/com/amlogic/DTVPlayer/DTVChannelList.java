@@ -22,6 +22,8 @@ import android.view.View.*;
 import android.view.animation.*;
 import android.util.DisplayMetrics;
 import android.widget.*;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AbsListView.OnScrollListener;
 import android.app.*;
 import android.content.*;
@@ -370,7 +372,7 @@ public class DTVChannelList extends DTVActivity{
 				break;
 				
 			case KeyEvent.KEYCODE_ZOOM_IN:
-				showPvrTimeSetDialog(DTVChannelList.this);
+				showBookAddDialog();
 				return true;
 				
 			case KeyEvent.KEYCODE_ZOOM_OUT:
@@ -637,6 +639,539 @@ public class DTVChannelList extends DTVActivity{
 		);		
 	}
 
+	private  class EventAddAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+
+		
+		private Context cont;
+		private String[] DATA;
+
+	 	class ViewHolder {
+			
+			TextView text;
+			ImageView icon;
+			TextView  info;
+			ImageView icon1;
+		}
+	
+		public EventAddAdapter(Context context) {
+			super();
+			cont = context;
+			mInflater=LayoutInflater.from(context);
+
+			DATA = new String[5];
+			DATA[0]= cont.getResources().getString(R.string.event_start_date);			
+			DATA[1]= cont.getResources().getString(R.string.event_start_time);
+			DATA[2]= cont.getResources().getString(R.string.duration);		
+			DATA[3]= cont.getResources().getString(R.string.repeat);			
+			DATA[4]= cont.getResources().getString(R.string.mode);	
+		}
+
+		public int getCount() {	
+			return DATA.length;
+		}
+
+		public Object getItem(int position) {
+
+			return position;
+		}
+	
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder=null;
+
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.epg_event_add_list, null);
+				holder = new ViewHolder();
+				holder.text = (TextView) convertView.findViewById(R.id.text);
+				holder.info = (TextView)convertView.findViewById(R.id.info);
+				holder.icon = (ImageView)convertView.findViewById(R.id.icon);
+				holder.icon1 = (ImageView)convertView.findViewById(R.id.icon1);
+				convertView.setTag(holder);
+			}else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			Date dt_start =  new Date(getUTCTime());
+
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
+			SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MMMM-dd"); 
+			String str_start = sdf.format(dt_start); 
+			String str_date  = sdf_date.format(dt_start);
+	
+			holder.text.setText(DATA[position]);
+			holder.icon.setBackgroundResource(R.drawable.arrow_down2); 
+			holder.info.setVisibility(View.VISIBLE);
+			holder.icon.setVisibility(View.VISIBLE);
+			holder.icon1.setVisibility(View.INVISIBLE);
+			holder.info.setTextColor(Color.YELLOW);	
+			switch(position){
+				case 0:
+					holder.info.setText(str_date);
+					break;
+				case 1:
+					holder.info.setText(str_start);
+					break;
+				case 2:
+					holder.info.setText("0 "+getString(R.string.dtvplayer_pvr_rec_min));
+					break;
+				case 3:
+					holder.info.setText(cont.getResources().getString(R.string.once));
+					break;
+				case 4:
+					holder.info.setText(cont.getResources().getString(R.string.view));
+					break;	
+			
+			} 
+			
+			return convertView;
+		}
+	}
+
+	class BookAdd{
+		long start_date;
+		long start_time;
+		long duration;
+		int repeat;
+		int mode;
+	}
+	
+    BookAdd mBookAdd =null;
+	private void showBookAddDialog(){
+		if(mBookAdd==null)
+			mBookAdd = new BookAdd();
+		else{
+			mBookAdd.start_time=getUTCTime();
+			mBookAdd.duration=0;
+			mBookAdd.repeat=0;
+			mBookAdd.mode=0;
+		}
+
+		final Dialog mDialog = new AlertDialog(this){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						//if(mDialog!=null&& mDialog.isShowing()){
+							dismiss();
+						//}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.book_add_dialog);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		//title.setText(getString(R.string.scan_mode));
+		title.setText("Event Add");
+	
+		final TextView text_channel_name= (TextView) window.findViewById(R.id.text_channel_name);
+		
+		Date dt_start =  new Date(getUTCTime());
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
+		SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MMMM-dd"); 
+		String str_start = sdf.format(dt_start); 
+		String str_date  = sdf_date.format(dt_start);
+		
+		text_channel_name.setText(mTVProgramList[cur_select_item].getName());
+		
+		final ListView LimitListView = (ListView)window.findViewById(R.id.set_list); 	
+		LimitListView.setAdapter(new EventAddAdapter(this));
+		
+		LimitListView.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+		public void onItemSelected(AdapterView<?> parent, View view,
+			int position, long id) {
+				Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
+				//SetLimitItemSelected = position;
+			}
+
+			public void onNothingSelected(AdapterView<?> parent) {
+				Log.d(TAG,"<<sat_list onNothingSelected>> ");
+			}
+		});
+		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				
+				final TextView text =(TextView) arg1.findViewById(R.id.info);
+				final ImageView icon=(ImageView)arg1.findViewById(R.id.icon);	
+				final ImageView icon1=(ImageView)arg1.findViewById(R.id.icon1);
+				
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				System.out.println("onItemSelected arg1 " + arg1);
+				System.out.println("onItemSelected arg2 " + arg2);
+				System.out.println("onItemSelected arg3 " + arg3);
+				
+				switch(arg2){
+					case 0:
+						showPvrDateSetDialog(text);
+						break;
+					case 1:
+						showTimeDateSetDialog(text);
+						break;
+					case 2:
+						showEditPvrTimeDialog(text);
+						break;
+					case 3:  
+						if(text.getText().equals(getString((R.string.once)))){
+							text.setText(getString(R.string.daily));
+							if(mBookAdd!=null)
+								mBookAdd.repeat=1;
+						}
+						else if(text.getText().equals(getString((R.string.daily)))){
+							text.setText(getString(R.string.weekly));
+							if(mBookAdd!=null)
+								mBookAdd.repeat=2;
+						}
+						else{
+							text.setText(getString(R.string.once));
+							if(mBookAdd!=null)
+								mBookAdd.repeat=0;
+						}
+						
+						break;
+					case 4:
+						if(text.getText().equals(getString((R.string.view)))){
+							text.setText(getString(R.string.pvr));
+							if(mBookAdd!=null)
+								mBookAdd.mode=1;
+						}
+						else{
+							text.setText(getString(R.string.view));
+							if(mBookAdd!=null)
+								mBookAdd.mode=0;
+						}
+						break;					
+				}
+			}
+        	    
+        });
+
+		no.setFocusable(true);     
+     	no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+		        	 //onSetNegativeButton();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+					if(mBookAdd!=null)
+						DTVPlayerAddBook(mBookAdd.mode,mBookAdd.start_time,mBookAdd.duration,mBookAdd.repeat);
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+			}});
+		
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+								
+							}         
+							}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							
+						}         
+						});	
+	
+	}
+
+	private AlertDialog.Builder editBuilder=null;
+	public void showPvrDateSetDialog(View v){
+		final TextView text_info = (TextView)v;
+		AlertDialog alert_password=null;	
+
+		LinearLayout pvr_time_layout = null;
+		if(editBuilder==null)
+		editBuilder = new AlertDialog.Builder(this);
+
+		pvr_time_layout=(LinearLayout) getLayoutInflater().inflate(R.layout.date_piker_dialog, null);
+
+		DatePicker dp=(DatePicker)pvr_time_layout.findViewById(R.id.dPicker);
+		pvr_time_init();
+		dp.init(mYear, mMonth, mDay, new DatePicker.OnDateChangedListener()    {
+		 	  
+				public void onDateChanged(DatePicker view, int year, int monthOfYear,
+				int dayOfMonth) 
+				{
+					mYear=year;
+					mMonth= monthOfYear;
+					mDay=dayOfMonth;
+				
+				}
+			});
+		  /*  
+		  tp=(TimePicker)pvr_time_layout.findViewById(R.id.tPicker);
+		  tp.setIs24HourView(true);
+          tp.setCurrentHour(mHour); 
+		  tp.setCurrentMinute(mMinute); 
+		  tp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+		  	public void onTimeChanged(TimePicker view,int hourOfDay,int minute)      {
+		  	mHour=hourOfDay;
+			mMinute=minute;
+			  
+			}    
+		  });	
+			*/
+			
+		  final int time_init = (int)(time_test(mYear,mMonth,mDay,mHour,mMinute,0)/1000);
+		  
+		  //editBuilder.setTitle(R.string.pvr_set);
+		  editBuilder.setView(pvr_time_layout); 
+
+		  editBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+                
+
+				//int srv = DATA_DB_ID[cur_select_item];
+				int now=0;	
+				int end=0;
+
+				now = (int)(time_test(mYear,mMonth,mDay,mHour,mMinute,0)/1000);
+	 			Date date =  new Date((long)now*1000);
+		
+	
+				SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MMMM-dd"); 
+				String str_date  = sdf_date.format(date);
+			
+				text_info.setText(str_date);
+				if(mBookAdd!=null)
+					mBookAdd.start_time=now;
+			}
+		});
+
+		editBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				
+			}        
+		}); 
+		 
+		  alert_password = editBuilder.create();
+		  alert_password.setOnShowListener(new DialogInterface.OnShowListener(){
+								public void onShow(DialogInterface dialog) {
+
+									}         
+									}); 	
+
+		   alert_password.setOnDismissListener(new DialogInterface.OnDismissListener(){
+								public void onDismiss(DialogInterface dialog) {
+								
+								}         
+								});	
+
+		  
+		  alert_password.show();
+
+	
+		  WindowManager m = getWindowManager();   
+		  Display d = m.getDefaultDisplay();  	
+		 	
+		  WindowManager.LayoutParams lp=alert_password.getWindow().getAttributes();
+		  lp.dimAmount=0.0f;
+		  //lp.height = (int) (d.getHeight() * 0.95);  
+		  //lp.width = (int) (d.getWidth() * 0.85);
+		  alert_password.getWindow().setAttributes(lp);
+		  alert_password.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+	}
+
+	public void showTimeDateSetDialog(View v){
+		final TextView text_info = (TextView)v;
+		AlertDialog alert_password=null;	
+
+		LinearLayout pvr_time_layout = null;
+		if(editBuilder==null)
+		editBuilder = new AlertDialog.Builder(this);
+
+		pvr_time_layout=(LinearLayout) getLayoutInflater().inflate(R.layout.time_piker_dialog, null);
+
+		TimePicker tp=(TimePicker)pvr_time_layout.findViewById(R.id.tPicker);
+		pvr_time_init();
+		
+		  tp=(TimePicker)pvr_time_layout.findViewById(R.id.tPicker);
+		  tp.setIs24HourView(true);
+          tp.setCurrentHour(mHour); 
+		  tp.setCurrentMinute(mMinute); 
+		  tp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+		  	public void onTimeChanged(TimePicker view,int hourOfDay,int minute)      {
+		  	mHour=hourOfDay;
+			mMinute=minute;
+			  
+			}    
+		  });	
+			
+		  final int time_init = (int)(time_test(mYear,mMonth,mDay,mHour,mMinute,0)/1000);
+		  
+		  //editBuilder.setTitle(R.string.pvr_set);
+			editBuilder.setView(pvr_time_layout); 
+
+			editBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+
+				public void onClick(DialogInterface dialog, int which) {
+
+				int now=0;	
+
+				now = (int)(time_test(mYear,mMonth,mDay,mHour,mMinute,0)/1000);
+				Date date =  new Date((long)now*1000);
+
+
+				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
+				String str_date  = sdf.format(date);
+
+				text_info.setText(str_date);
+				if(mBookAdd!=null)
+					mBookAdd.start_time=now;
+			}
+		});
+
+		editBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				
+			}        
+		}); 
+		 
+		  alert_password = editBuilder.create();
+		  alert_password.setOnShowListener(new DialogInterface.OnShowListener(){
+								public void onShow(DialogInterface dialog) {
+
+									}         
+									}); 	
+
+		   alert_password.setOnDismissListener(new DialogInterface.OnDismissListener(){
+								public void onDismiss(DialogInterface dialog) {
+								
+								}         
+								});	
+		  
+		  alert_password.show();
+		  WindowManager m = getWindowManager();   
+		  Display d = m.getDefaultDisplay();  	
+		 	
+		  WindowManager.LayoutParams lp=alert_password.getWindow().getAttributes();
+		  lp.dimAmount=0.0f;
+		  alert_password.getWindow().setAttributes(lp);
+		  alert_password.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+	}
+
+	private AlertDialog.Builder builder;
+	Toast toast;
+	public void showEditPvrTimeDialog(View v){
+		builder = new AlertDialog.Builder(this);
+		
+		final EditText editText = new EditText(this);
+		editText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(4)});
+
+		builder.setTitle(R.string.edit_title);
+		final TextView text_time =(TextView) v;
+		editText.setText("");
+		builder.setView(editText); 
+
+		AlertDialog alert = builder.create();
+
+		alert.setOnKeyListener( new DialogInterface.OnKeyListener(){
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				// TODO Auto-generated method stub
+				switch(keyCode)
+				{	
+					case KeyEvent.KEYCODE_DPAD_CENTER:
+					case KeyEvent.KEYCODE_ENTER:
+						String time = editText.getText().toString();
+						if(time==null||time.equals("")){
+							editText.setText(null);
+							toast = Toast.makeText(DTVChannelList.this, 
+						    	R.string.invalid_input,
+						    	Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						}
+						else{
+							if(Integer.parseInt(time)==0){
+								editText.setText(null);
+								toast = Toast.makeText(DTVChannelList.this, 
+							    	R.string.invalid_input,
+							    	Toast.LENGTH_SHORT);
+								toast.setGravity(Gravity.CENTER, 0, 0);
+								toast.show();
+							}
+							else{
+								text_time.setText(editText.getText().toString()+getString(R.string.dtvplayer_pvr_rec_min));
+								if(mBookAdd!=null)
+									mBookAdd.duration=Long.valueOf(editText.getText().toString())*60*1000;	
+								dialog.cancel();
+							}	
+						}
+						return true;
+					case  KeyEvent.KEYCODE_BACK:
+						dialog.cancel();
+						return true;
+				}
+				
+				return false;
+			}
+		});	
+
+		
+		alert.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+			
+							}         
+							}); 	
+
+		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {	
+						}         
+						});	
+		alert.show();	
+		alert.getWindow().setLayout(500, -200);
+		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+		lp.dimAmount=0.5f;
+		alert.getWindow().setAttributes(lp);
+		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+	}
+
+	
 	private static class mySatListAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Context cont;

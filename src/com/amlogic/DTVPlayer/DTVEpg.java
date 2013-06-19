@@ -20,6 +20,8 @@ import android.view.View.*;
 import android.view.animation.*;
 import android.util.DisplayMetrics;
 import android.widget.*;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AbsListView.OnScrollListener;
 import android.app.*;
 import android.app.AlertDialog.*;
@@ -226,8 +228,8 @@ public class DTVEpg extends DTVActivity{
 		EitListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 				// TODO Auto-generated method stub				
-				showEventBookDialog(v, position);
 				//showEventBookDialog(v, position);
+				showEventAddDialog(v, current_date_index,position);
 			}
 		});
 		
@@ -359,7 +361,35 @@ public class DTVEpg extends DTVActivity{
 		date_button4.setOnClickListener(new channelListButtonClick()); 	
 		date_button5.setOnClickListener(new channelListButtonClick()); 	
 		date_button6.setOnClickListener(new channelListButtonClick()); 
+
+		//refresh time
+		refresh_time_thread();		
+	}
+
+	private void refresh_time_thread()
+	{
+	    currenttimer_handler = new Handler();
+	    currenttimer_runnable = new Runnable() 
+		{
+			public void run() 
+			{
+				refresh_currenttime();
+				currenttimer_handler.postDelayed(currenttimer_runnable, 1000);
+			}   
+		};
+	    currenttimer_handler.postDelayed(currenttimer_runnable, 1000);
+	}
+
+
+	private void refresh_currenttime()
+	{		
+		Date date = new Date(get_current_datetime()); 
+		SimpleDateFormat sdf = new SimpleDateFormat("EEEE,MMMM-dd-yyyy hh:mm:ss aa"); 
+		String today = sdf.format(date); 
 		
+		TextView TempTexView; 
+		TempTexView = (TextView)findViewById(R.id.current_time);
+		TempTexView.setText((""+today));
 	}
 
 
@@ -474,11 +504,7 @@ public class DTVEpg extends DTVActivity{
 		//return date;
 		return getUTCTime();
 	}
-	
-	private void refresh_currenttime(){		
 		
-	}
-	
 	private void refresh_progname(){		
 		
 	}
@@ -836,7 +862,8 @@ public class DTVEpg extends DTVActivity{
 		};
 	}
 
-	private void showEventAddDialog(View v,int position){
+	/*private void showEventAddDialog(View v,int position){
+		
 		final int item = position;
 		final View TempView = v;
 		int pos = 0;
@@ -877,6 +904,255 @@ public class DTVEpg extends DTVActivity{
 				}
 			}
 		};
+		
+	}
+	*/
+
+	private  class EventAddAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+
+		
+		private Context cont;
+		private String[] DATA;
+
+	 	class ViewHolder {
+			
+			TextView text;
+			ImageView icon;
+			TextView  info;
+			ImageView icon1;
+		}
+	
+		public EventAddAdapter(Context context) {
+			super();
+			cont = context;
+			mInflater=LayoutInflater.from(context);
+			
+			DATA = new String[2];
+			DATA[0]= cont.getResources().getString(R.string.repeat);			
+			DATA[1]= cont.getResources().getString(R.string.mode);
+				
+		}
+
+		public int getCount() {	
+			return DATA.length;
+		}
+
+		public Object getItem(int position) {
+
+			return position;
+		}
+	
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder=null;
+
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.epg_event_add_list, null);
+				holder = new ViewHolder();
+				holder.text = (TextView) convertView.findViewById(R.id.text);
+				holder.info = (TextView)convertView.findViewById(R.id.info);
+				holder.icon = (ImageView)convertView.findViewById(R.id.icon);
+				holder.icon1 = (ImageView)convertView.findViewById(R.id.icon1);
+				convertView.setTag(holder);
+			}else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			
+			holder.text.setText(DATA[position]);
+			holder.icon.setBackgroundResource(R.drawable.arrow_down2); 
+			holder.info.setVisibility(View.VISIBLE);
+			holder.icon.setVisibility(View.VISIBLE);
+			holder.icon1.setVisibility(View.INVISIBLE);
+			holder.info.setTextColor(Color.YELLOW);	
+			switch(position){
+				case 0:
+					holder.info.setText(cont.getResources().getString(R.string.once));
+					break;
+				case 1:
+					holder.info.setText(cont.getResources().getString(R.string.view));
+					break;
+			
+			} 
+			
+			return convertView;
+		}
+	}
+	
+	int mode=0;
+	private void showEventAddDialog(View v,int date,int position){
+		String message = mTVEvent[date][position].getEventDescr()+"\n"+mTVEvent[date][position].getEventExtDescr();
+		final int pos = position;
+		
+		final Dialog mDialog = new AlertDialog(this){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						//if(mDialog!=null&& mDialog.isShowing()){
+							dismiss();
+						//}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.event_add_dialog);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		//title.setText(getString(R.string.scan_mode));
+		title.setText("Event Add");
+	
+		final TextView text_channel_name= (TextView) window.findViewById(R.id.text_channel_name);
+		final TextView text_event_name = (TextView) window.findViewById(R.id.text_event_name);
+		final TextView text_event_start_date = (TextView) window.findViewById(R.id.text_event_start_date);
+		final TextView text_event_start_time = (TextView) window.findViewById(R.id.text_event_start_time);
+		final TextView text_event_end_time = (TextView) window.findViewById(R.id.text_event_end_time);
+
+		text_event_name.setText(mTVEvent[date][position].getName());
+
+		Date dt_start =  new Date(mTVEvent[date][position].getStartTime()*1000);
+		Date dt_end   =  new Date(mTVEvent[date][position].getEndTime()*1000);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
+		SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MMMM-dd"); 
+		String str_start = sdf.format(dt_start); 
+		String str_end   = sdf.format(dt_end); 
+		String str_date  = sdf_date.format(dt_start);
+		text_event_start_date.setText(str_date);
+		text_event_start_time.setText(str_start);
+		text_event_end_time.setText(str_end);
+		
+		text_channel_name.setText(mTVProgramList[cur_select_item].getName());
+		
+		final ListView LimitListView = (ListView)window.findViewById(R.id.set_list); 	
+		LimitListView.setAdapter(new EventAddAdapter(this));
+
+		
+		LimitListView.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+		public void onItemSelected(AdapterView<?> parent, View view,
+			int position, long id) {
+				Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
+				//SetLimitItemSelected = position;
+			}
+
+			public void onNothingSelected(AdapterView<?> parent) {
+				Log.d(TAG,"<<sat_list onNothingSelected>> ");
+			}
+		});
+		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				
+				final TextView text =(TextView) arg1.findViewById(R.id.info);
+				final ImageView icon=(ImageView)arg1.findViewById(R.id.icon);	
+				final ImageView icon1=(ImageView)arg1.findViewById(R.id.icon1);
+				
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				System.out.println("onItemSelected arg1 " + arg1);
+				System.out.println("onItemSelected arg2 " + arg2);
+				System.out.println("onItemSelected arg3 " + arg3);
+				
+				switch(arg2){
+					case 0:  
+						if(text.getText().equals(getString((R.string.once)))){
+							text.setText(getString(R.string.daily));
+						}
+						else if(text.getText().equals(getString((R.string.daily)))){
+							text.setText(getString(R.string.weekly));
+						}
+						else{
+							text.setText(getString(R.string.once));
+						}
+						break;
+					case 1:
+						if(text.getText().equals(getString((R.string.view)))){
+							text.setText(getString(R.string.pvr));
+							mode=1;
+						}
+						else{
+							text.setText(getString(R.string.view));
+							mode=2;
+						}
+						break;					
+				}
+			}
+        	    
+        });
+
+		no.setFocusable(true);     
+     	no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+		        	 //onSetNegativeButton();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+			  		if(mode==1){
+						update_bookstatus(mTVEvent[current_date_index][pos].getID(),1);
+						mTVEvent[current_date_index][pos].setSubFlag(1);
+						//icon.setBackgroundResource(R.drawable.epg_event_book_1);
+			  		}else if((mode==2)){
+						update_bookstatus(mTVEvent[current_date_index][pos].getID(),2);
+						mTVEvent[current_date_index][pos].setSubFlag(2);
+						//icon.setBackgroundResource(R.drawable.epg_event_book_2);
+					}
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+			}});
+		
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+								
+							}         
+							}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							
+						}         
+						});	
+	
 	}
 	
 

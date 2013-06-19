@@ -9,10 +9,34 @@ android:id="@+id/epg_layout_parent"
 android:background ="@drawable/bg"
 >
 
-	<LinearLayout
+	<RelativeLayout
 	android:layout_width="fill_parent"
 	android:layout_height="110dp"
 	android:id="@+id/epg_layout_top"> 
+
+		<!--
+		<com.amlogic.widget.DigitalClock		
+		android:id="@+id/DigitalClock"	
+		android:layout_alignParentBottom="true" 
+		android:layout_alignParentRight="true" 
+		android:textColor="@android:color/white" 
+		android:textSize="22sp"					
+		android:shadowColor="@android:color/white" 
+		android:shadowRadius="2.0"		
+		android:layout_width="420dp"	
+		android:layout_height="30dp"	
+		/>
+		-->
+		
+		<TextView
+		android:id="@+id/current_time"
+		android:layout_width="420dp"	
+		android:layout_height="30dp"
+		android:layout_alignParentBottom="true" 
+		android:layout_alignParentRight="true" 
+		android:textSize="22sp"
+		android:textColor="@android:color/white" 
+		/>	
 		<TextView
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
@@ -22,7 +46,7 @@ android:background ="@drawable/bg"
 		android:textSize="40sp"
 		android:layout_marginRight="30dp"
 		/>
-	</LinearLayout>
+	</RelativeLayout>
 
 	<LinearLayout
 	android:orientation="horizontal"
@@ -319,10 +343,7 @@ android:background ="@drawable/bg"
 				android:layout_height="440dp">
 				</ListView>
 				</LinearLayout>
-			
 
-				
-			
 		</LinearLayout>
 			
 	</LinearLayout>
@@ -432,31 +453,7 @@ android:background ="@drawable/bg"
 			android:layout_marginRight="30dp"
 			/>
 		</LinearLayout>
-		<LinearLayout
-		android:layout_weight="1"    
-		android:gravity="center_horizontal"
-		android:layout_width="wrap_content"
-		android:layout_height="fill_parent"
-		> 
-			<ImageView 
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_gravity="center"
-			android:background="@drawable/blue_button"
-			android:contentDescription="@string/app"
-		    ></ImageView>
-		    <TextView
-		    android:layout_marginLeft="20sp"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-		    android:layout_gravity="center"
-			android:text="@string/epg_page_down"
-			android:textColor="#FFFFFFFF"
-			android:textSize="20sp"
-			android:layout_marginRight="30dp"
-			/>
-		</LinearLayout>
-		
+
 	</LinearLayout>
 </LinearLayout>	
 

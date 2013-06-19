@@ -791,7 +791,7 @@ public class DTVProgramEdit extends DTVActivity{
 									break;
 								case 5: //add into group
 									programGroupOperate(pos);
-									mCustomDialog.dismissDialog();
+									//mCustomDialog.dismissDialog();
 									break;
 								default:
 									break;

@@ -1207,8 +1207,13 @@ public class DTVPlayer extends DTVActivity{
 					input_major=0;	
 					input_minor=0;
 				}
-				else{				
-					if((DTVPlayerCheckNumerInputIsValid(pronumber)==false)||(pronumber<=0)){
+				else{	
+					if(DTVPlayerInTeletextStatus){
+						pronumber = 0;	
+						pronumber_string ="";
+						HideProgramNo();
+					}
+					else if((DTVPlayerCheckNumerInputIsValid(pronumber)==false)||(pronumber<=0)){
 						toast = Toast.makeText(
 							DTVPlayer.this, 
 				    		R.string.invalid_input,
