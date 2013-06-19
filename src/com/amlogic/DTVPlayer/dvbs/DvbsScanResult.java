@@ -338,17 +338,6 @@ public class DvbsScanResult extends DTVActivity{
 		if(mLast.getString("scan_mode","default").equals("default")){
 			
 			if(mSatScanCount<DTVScanDvbsConfig.getDefaultList().size()){
-				/*
-				int smode = DVBClient.SCAN_DVBS| DVBClient.SCAN_ALLBAND|(isUnicableOn()?DVBClient.SCAN_SAT_UNICABLE:0);
-			 	if (mLast.getString("scan_mode_crypted","all").equals("fta")) {
-			 		smode |= DVBClient.SCAN_FTA;
-			 	}
-			 	if (mLast.getString("scan_service_mode","all").equals("tv")) {
-			 		smode |= DVBClient.SCAN_TV;
-			 	} else if (mLast.getString("scan_service_mode","all").equals("radio")) {
-			 		smode |= DVBClient.SCAN_RADIO;
-			 	}
-			 	*/
 				while(mSatScanCount<DTVScanDvbsConfig.getDefaultList().size()){
 						if(DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).ts_list!=null)
 							break;
@@ -358,6 +347,7 @@ public class DvbsScanResult extends DTVActivity{
 
 				if(mSatScanCount<DTVScanDvbsConfig.getDefaultList().size()){										
 					TVScanParams sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_QPSK, DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).ts_list);
+					sp.setDtvOptions(getScanOptions());
 					startScan(sp);						 
 					sat_info.setText(String.valueOf(mSatScanCount+1)+"/"+String.valueOf(DTVScanDvbsConfig.getDefaultList().size())+"						"+DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).sat.sat_name);
 				}
@@ -365,17 +355,6 @@ public class DvbsScanResult extends DTVActivity{
 		}
 		else if(mLast.getString("scan_mode","default").equals("network")){
 			if(mSatScanCount<DTVScanDvbsConfig.getDefaultList().size()) {
-				/*
-				int smode = DVBClient.SCAN_DVBS|DVBClient.SCAN_AUTO|(isUnicableOn()?DVBClient.SCAN_SAT_UNICABLE:0);
-			 	if (mLast.getString("scan_mode_crypted","all").equals("fta")) {
-			 		smode |= DVBClient.SCAN_FTA;
-			 	}
-			 	if (mLast.getString("scan_service_mode","all").equals("tv")) {
-			 		smode |= DVBClient.SCAN_TV;
-			 	} else if (mLast.getString("scan_service_mode","all").equals("radio")) {
-			 		smode |= DVBClient.SCAN_RADIO;
-			 	}
-			 	*/
 				while(mSatScanCount<DTVScanDvbsConfig.getDefaultList().size()){
 						if(DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).ts_list!=null)
 							break;
@@ -386,6 +365,7 @@ public class DvbsScanResult extends DTVActivity{
 				if(mSatScanCount<DTVScanDvbsConfig.getDefaultList().size()){
 					
 					TVScanParams sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_QPSK, DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).ts_list);
+					sp.setDtvOptions(getScanOptions());
 					startScan(sp);		
 					sat_info.setText(String.valueOf(mSatScanCount+1)+"/"+String.valueOf(DTVScanDvbsConfig.getDefaultList().size())+"						"+DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).sat.sat_name);
 					}
@@ -393,19 +373,9 @@ public class DvbsScanResult extends DTVActivity{
 		}
 		else if(mLast.getString("scan_mode","default").equals("blind")){
 			if(mSatScanCount<DTVScanDvbsConfig.getDefaultList().size()) {
-				/*
-				int smode = DVBClient.SCAN_SAT_BLIND|DVBClient.SCAN_DVBS;
-			 	if (mLast.getString("scan_mode_crypted","all").equals("fta")) {
-			 		smode |= DVBClient.SCAN_FTA;
-			 	}	
-			 	if (mLast.getString("scan_service_mode","all").equals("tv")) {
-			 		smode |= DVBClient.SCAN_TV;
-			 	} else if (mLast.getString("scan_service_mode","all").equals("radio")) {
-			 		smode |= DVBClient.SCAN_RADIO;
-			 	}*/
-				//mScanDvb.startScan(DVBClient.SCAN_STD_DVB, smode,DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).ts_list, false,DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).sat);
 				TVScanParams sp = TVScanParams.dtvBlindScanParams(0, DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).sat.getParams(), TVChannelParams.MODE_QPSK);
 				Log.d(TAG, "Start Scan...dvb-s dtvManualScanParams");
+				sp.setDtvOptions(getScanOptions());
 				startScan(sp);		
 
 				tv_list_temp = tp_list;
@@ -587,19 +557,8 @@ public class DvbsScanResult extends DTVActivity{
 					 progressBar.setProgress(0);
 				
 					 if(mLast.getString("scan_mode","default").equals("blind")){	
-					 	/*
-					 	int smode = DVBClient.SCAN_SAT_BLIND|DVBClient.SCAN_DVBS;
-					 	if (mLast.getString("scan_mode_crypted","all").equals("fta")) {
-					 		smode |= DVBClient.SCAN_FTA;
-					 	}				
-					 	if (mLast.getString("scan_service_mode","all").equals("tv")) {
-					 		smode |= DVBClient.SCAN_TV;
-					 	} else if (mLast.getString("scan_service_mode","all").equals("radio")) {
-					 		smode |= DVBClient.SCAN_RADIO;
-					 	}
-
-					 	*/
 						TVScanParams sp = TVScanParams.dtvBlindScanParams(0, DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).sat.getParams(), TVChannelParams.MODE_QPSK);	
+						sp.setDtvOptions(getScanOptions());
 						startScan(sp);		
 
 						tv_list_temp = tp_list;
@@ -612,17 +571,6 @@ public class DvbsScanResult extends DTVActivity{
 						radiolistview.setVisibility(View.INVISIBLE);
 					 }
 					else if(mLast.getString("scan_mode","default").equals("default")){
-						/*
-						int smode = DVBClient.SCAN_DVBS| DVBClient.SCAN_ALLBAND|(isUnicableOn()?DVBClient.SCAN_SAT_UNICABLE:0);
-					 	if (mLast.getString("scan_mode_crypted","all").equals("fta")) {
-					 		smode |= DVBClient.SCAN_FTA;
-					 	}
-					 	if (mLast.getString("scan_service_mode","all").equals("tv")) {
-					 		smode |= DVBClient.SCAN_TV;
-					 	} else if (mLast.getString("scan_service_mode","all").equals("radio")) {
-					 		smode |= DVBClient.SCAN_RADIO;
-					 	}
-					 	*/
 						while(mSatScanCount<DTVScanDvbsConfig.getDefaultList().size()){
 							if(DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).ts_list!=null)
 								break;
@@ -632,22 +580,12 @@ public class DvbsScanResult extends DTVActivity{
 
 						if(mSatScanCount<DTVScanDvbsConfig.getDefaultList().size()){
 							TVScanParams sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_QPSK, DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).ts_list);
+							sp.setDtvOptions(getScanOptions());
 							startScan(sp);		
 						}
 						
 					}
 					else if(mLast.getString("scan_mode","default").equals("network")){
-						/*
-						int smode = DVBClient.SCAN_DVBS|DVBClient.SCAN_AUTO|(isUnicableOn()?DVBClient.SCAN_SAT_UNICABLE:0);
-					 	if (mLast.getString("scan_mode_crypted","all").equals("fta")) {
-					 		smode |= DVBClient.SCAN_FTA;
-					 	}
-					 	if (mLast.getString("scan_service_mode","all").equals("tv")) {
-					 		smode |= DVBClient.SCAN_TV;
-					 	} else if (mLast.getString("scan_service_mode","all").equals("radio")) {
-					 		smode |= DVBClient.SCAN_RADIO;
-					 	}
-					 	*/
 						while(mSatScanCount<DTVScanDvbsConfig.getDefaultList().size()){
 							if(DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).ts_list!=null)
 								break;
@@ -657,6 +595,7 @@ public class DvbsScanResult extends DTVActivity{
 
 						if(mSatScanCount<DTVScanDvbsConfig.getDefaultList().size()){
 							TVScanParams sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_QPSK,DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).ts_list);
+							sp.setDtvOptions(getScanOptions());
 							startScan(sp);	
 						}
 					}
@@ -705,6 +644,23 @@ public class DvbsScanResult extends DTVActivity{
 				break;
 	
 		}
+	}
+
+	private int getScanOptions(){
+		int options = 0;
+	 	if (mLast.getString("scan_mode_crypted","all").equals("fta")) {
+	 		options |= TVScanParams.DTV_OPTION_FTA;
+	 	}
+
+		Log.d(TAG, "scan service mode " + mLast.getString("scan_service_mode","all"));
+	 	if (mLast.getString("scan_service_mode","all").equals("tv")) {
+	 		options |= TVScanParams.DTV_OPTION_NO_RADIO;
+	 	} else if (mLast.getString("scan_service_mode","all").equals("radio")) {
+	 		options |= TVScanParams.DTV_OPTION_NO_TV;
+	 	}
+
+		Log.d(TAG, "options "+options);
+		return options;
 	}
 
 	/*
