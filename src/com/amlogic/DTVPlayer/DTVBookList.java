@@ -55,7 +55,6 @@ public class DTVBookList extends DTVActivity{
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtv_book_list);
-		
 	}
 
 	public void onConnected(){
@@ -102,6 +101,7 @@ public class DTVBookList extends DTVActivity{
 		listview = (ListView)findViewById(R.id.list_content);
 		myAdapter = new MyAdapter(DTVBookList.this, serviceList);
         listview.setAdapter(myAdapter);
+		listview.setOnItemClickListener(new listOnItemClick());
 	}
 	
 	private void setup_db(){
@@ -116,8 +116,8 @@ public class DTVBookList extends DTVActivity{
 		}
 
 		//get all book list data
-		mTVBooking = TVBooking.selectAllPlayBookings(this);
-		
+		mTVBooking = TVBooking.selectByStatus(this,TVBooking.ST_WAIT_START);
+
 		//add to serviceList
 		if(mTVBooking!=null){
 			int count = mTVBooking.length;
@@ -129,13 +129,20 @@ public class DTVBookList extends DTVActivity{
 				serviceinfo.setEventName(mTVBooking[i].getEventName());
 				
 	    		Date dt_start =  new Date(mTVBooking[i].getStart()*1000);
-	    		Date dt_end   =  new Date((mTVBooking[i].getStart()+mTVBooking[i].getDuration())*1000);
-	    		
-	    		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm"); 
+	    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
 	    		String str_start = sdf.format(dt_start); 
-	    		String str_end   = sdf.format(dt_end); 
+				serviceinfo.setTime(""+str_start);
 
-				serviceinfo.setTime(""+str_start+" ~ "+str_end);
+				long dt_duration   = mTVBooking[i].getDuration()/60/1000;
+				if(dt_duration==0)
+					serviceinfo.setDuration("");
+				else
+	    			serviceinfo.setDuration(""+dt_duration+" MIN");
+				
+				serviceinfo.setMode(mTVBooking[i].getFlag());
+				serviceinfo.setRepeat(mTVBooking[i].getRepeat());
+				serviceinfo.setStatus(mTVBooking[i].getStatus());
+				
 				serviceList.add(serviceinfo);
 				id++;
 			}
@@ -185,14 +192,50 @@ public class DTVBookList extends DTVActivity{
 	      }
 	    }	
 	}
-    
+
+	private void  deleteBookItem( int cur_pos){
+		serviceList.remove(cur_pos);
+		if(mTVBooking[cur_pos]!=null)
+			mTVBooking[cur_pos].delete();
+		mTVBooking = TVBooking.selectByStatus(this,TVBooking.ST_WAIT_START);
+	}
+
+	private void showItemClickDialog(int position){
+		final int item = position;
+	
+		int pos = 0;
+		String items[] = new String[]{"delete", "Edit"};
+		
+		new SingleChoiseDialog(DTVBookList.this,items,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText("   ");
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				Log.d(TAG,"dialog choise="+which);
+
+				switch(which){
+					case 0:
+						deleteBookItem(item);
+						break;
+					case 1:
+						
+						break;
+				}
+			}
+		};
+	}
+	
     class listOnItemClick implements AdapterView.OnItemClickListener
     {
     	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) 
     	{   
 			serviceInfo serviceinfo = getServiceInfoByPostion(arg2);
 		  	
-
+			showItemClickDialog(arg2);
 		    myAdapter.setSelectItem(arg2);
 		    myAdapter.notifyDataSetChanged();
         }      	
@@ -257,10 +300,31 @@ public class DTVBookList extends DTVActivity{
 					mv.programName.setText(serviceinfo.getProgramName());
 					mv.eventName.setText(serviceinfo.getEventName());
 					mv.time.setText(serviceinfo.getTime());
-					mv.mode.setText(String.valueOf(serviceinfo.getMode()));
-					mv.repeat.setText(String.valueOf(serviceinfo.getRepeat()));
-					mv.status.setText(String.valueOf(serviceinfo.getStatus()));
-					   
+
+					mv.duration.setText(serviceinfo.getDuration());
+
+					if(serviceinfo.getMode()==1)
+						mv.mode.setText(getString(R.string.view));
+					else if(serviceinfo.getMode()==2)
+						mv.mode.setText(getString(R.string.pvr));
+
+					if(serviceinfo.getRepeat()==0)
+						mv.repeat.setText(getString(R.string.once));
+					else if(serviceinfo.getRepeat()==1)
+						mv.repeat.setText(getString(R.string.daily));
+					else if(serviceinfo.getRepeat()==2)
+						mv.repeat.setText(getString(R.string.weekly));
+					
+
+					if(serviceinfo.getStatus()==0) // wait start
+						mv.status.setText(getString(R.string.scheduled));
+					else if(serviceinfo.getStatus()==1) //cannelled
+						mv.status.setText(getString(R.string.scheduled));
+					else if(serviceinfo.getStatus()==2) //started
+						mv.status.setText(getString(R.string.recording));
+					else if(serviceinfo.getStatus()==3)  //end
+						mv.status.setText(getString(R.string.completed));
+
 				}
 			}
 		}
@@ -277,6 +341,7 @@ public class DTVBookList extends DTVActivity{
 			       
 				mv.programName = (TextView)convertView.findViewById(R.id.bookProgramName) ;
 				mv.eventName= (TextView)convertView.findViewById(R.id.bookEventName) ;
+				mv.duration=(TextView)convertView.findViewById(R.id.duration);
 				mv.time= (TextView)convertView.findViewById(R.id.booktime) ;
 				mv.mode= (TextView)convertView.findViewById(R.id.mode) ;
 				mv.repeat= (TextView)convertView.findViewById(R.id.repeat) ;
@@ -300,6 +365,7 @@ public class DTVBookList extends DTVActivity{
 		      TextView     programName;
 		      TextView 	   eventName;
 		      TextView     time;
+			  TextView     duration;
 			  TextView 	   mode;
 			  TextView 	   repeat;
 			  TextView 	   status;
@@ -311,6 +377,7 @@ public class DTVBookList extends DTVActivity{
 		private String program_name;
 		private String event_name;
 		private String time;
+		private String duration;
 		private int    repeat;
 		private int    mode;
 		private int    status;
@@ -354,6 +421,14 @@ public class DTVBookList extends DTVActivity{
 		
 		public void setTime(String time) {
 			this.time = time;
+		}
+
+		public String getDuration() {
+			return duration;
+		}
+		
+		public void setDuration(String time) {
+			this.duration = time;
 		}
 
 		public int getRepeat(){

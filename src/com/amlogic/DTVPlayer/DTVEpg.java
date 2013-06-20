@@ -985,7 +985,8 @@ public class DTVEpg extends DTVActivity{
 		}
 	}
 	
-	int mode=0;
+	int mode=1;
+	int repeat=0;
 	private void showEventAddDialog(View v,int date,int position){
 		String message = mTVEvent[date][position].getEventDescr()+"\n"+mTVEvent[date][position].getEventExtDescr();
 		final int pos = position;
@@ -1092,12 +1093,15 @@ public class DTVEpg extends DTVActivity{
 					case 0:  
 						if(text.getText().equals(getString((R.string.once)))){
 							text.setText(getString(R.string.daily));
+							repeat=1;
 						}
 						else if(text.getText().equals(getString((R.string.daily)))){
 							text.setText(getString(R.string.weekly));
+							repeat=2;
 						}
 						else{
 							text.setText(getString(R.string.once));
+							repeat=0;
 						}
 						break;
 					case 1:
@@ -1126,15 +1130,21 @@ public class DTVEpg extends DTVActivity{
 		          }});	 
 		yes.setOnClickListener(new OnClickListener(){
 	          public void onClick(View v) {
+			  		/*
 			  		if(mode==1){
-						update_bookstatus(mTVEvent[current_date_index][pos].getID(),1);
-						mTVEvent[current_date_index][pos].setSubFlag(1);
+						//update_bookstatus(mTVEvent[current_date_index][pos].getID(),1);
+						//mTVEvent[current_date_index][pos].setSubFlag(1);
 						//icon.setBackgroundResource(R.drawable.epg_event_book_1);
+						DTVPlayerAddEvent(mTVEvent[current_date_index][pos],1);
 			  		}else if((mode==2)){
-						update_bookstatus(mTVEvent[current_date_index][pos].getID(),2);
-						mTVEvent[current_date_index][pos].setSubFlag(2);
+						//update_bookstatus(mTVEvent[current_date_index][pos].getID(),2);
+						//mTVEvent[current_date_index][pos].setSubFlag(2);
 						//icon.setBackgroundResource(R.drawable.epg_event_book_2);
+						DTVPlayerAddEvent(mTVEvent[current_date_index][pos],2);
 					}
+					*/
+					DTVPlayerAddEvent(mTVEvent[current_date_index][pos].getID(),mode,repeat);	
+					
 					if(mDialog!=null&& mDialog.isShowing()){
 						mDialog.dismiss();
 					}

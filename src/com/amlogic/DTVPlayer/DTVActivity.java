@@ -407,8 +407,11 @@ abstract public class DTVActivity extends TVActivity{
 		}
 	}
 
-	public void DTVPlayerAddBook(int mode, long start,long duration,int repeat){
-		TVProgram mTVProgram = DTVPlayerGetDataByCurrentID();
+	public void DTVPlayerAddBook(int id,int mode, long start,long duration,int repeat){
+		//TVProgram mTVProgram = DTVPlayerGetDataByCurrentID();
+		
+		TVProgram mTVProgram = TVProgram.selectByID(this,id);
+		
 		int m_mode=0;
 		int m_repeat=0;
 			
@@ -423,12 +426,42 @@ abstract public class DTVActivity extends TVActivity{
 				m_repeat=TVBooking.RP_NONE;
 			else if(repeat==1)
 				m_repeat=TVBooking.RP_DAILY;
-			else 
+			else if(repeat==2)
 				m_repeat=TVBooking.RP_WEEKLY;
 
 			try{
 				
 				TVBooking.bookProgram(this, mTVProgram, m_mode, start,duration, m_repeat, true);
+				
+			}catch(Exception e){
+			}
+		}
+	}
+
+	public void DTVPlayerAddEvent(int id,int flag,int repeat){
+		TVEvent mTVEvent = TVEvent.selectByID(this,id);
+		
+		int mFlag = 0;
+		int m_repeat=0;
+		
+		if(mTVEvent!=null)
+		{
+			if(flag==1)
+				mFlag=TVBooking.FL_PLAY;
+			else if(flag==2)
+				mFlag=TVBooking.FL_RECORD;
+			
+			if(repeat==0)
+				m_repeat=TVBooking.RP_NONE;
+			else if(repeat==1)
+				m_repeat=TVBooking.RP_DAILY;
+			else if(repeat==2)
+				m_repeat=TVBooking.RP_WEEKLY;
+
+
+			try{
+				
+				TVBooking.bookEvent(this, mTVEvent, mFlag ,repeat,true);
 				
 			}catch(Exception e){
 			}

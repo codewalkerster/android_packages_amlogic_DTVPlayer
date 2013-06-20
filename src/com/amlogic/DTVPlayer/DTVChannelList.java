@@ -659,12 +659,12 @@ public class DTVChannelList extends DTVActivity{
 			cont = context;
 			mInflater=LayoutInflater.from(context);
 
-			DATA = new String[5];
-			DATA[0]= cont.getResources().getString(R.string.event_start_date);			
-			DATA[1]= cont.getResources().getString(R.string.event_start_time);
-			DATA[2]= cont.getResources().getString(R.string.duration);		
-			DATA[3]= cont.getResources().getString(R.string.repeat);			
-			DATA[4]= cont.getResources().getString(R.string.mode);	
+			DATA = new String[4];
+			//DATA[0]= cont.getResources().getString(R.string.event_start_date);			
+			DATA[0]= cont.getResources().getString(R.string.event_start_time);
+			DATA[1]= cont.getResources().getString(R.string.duration);		
+			DATA[2]= cont.getResources().getString(R.string.repeat);			
+			DATA[3]= cont.getResources().getString(R.string.mode);	
 		}
 
 		public int getCount() {	
@@ -700,7 +700,7 @@ public class DTVChannelList extends DTVActivity{
 			Date dt_start =  new Date(getUTCTime());
 
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
-			SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MMMM-dd"); 
+			SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
 			String str_start = sdf.format(dt_start); 
 			String str_date  = sdf_date.format(dt_start);
 	
@@ -714,16 +714,16 @@ public class DTVChannelList extends DTVActivity{
 				case 0:
 					holder.info.setText(str_date);
 					break;
+				//case 1:
+					//holder.info.setText(str_start);
+					//break;
 				case 1:
-					holder.info.setText(str_start);
-					break;
-				case 2:
 					holder.info.setText("0 "+getString(R.string.dtvplayer_pvr_rec_min));
 					break;
-				case 3:
+				case 2:
 					holder.info.setText(cont.getResources().getString(R.string.once));
 					break;
-				case 4:
+				case 3:
 					holder.info.setText(cont.getResources().getString(R.string.view));
 					break;	
 			
@@ -743,14 +743,14 @@ public class DTVChannelList extends DTVActivity{
 	
     BookAdd mBookAdd =null;
 	private void showBookAddDialog(){
-		if(mBookAdd==null)
-			mBookAdd = new BookAdd();
-		else{
-			mBookAdd.start_time=getUTCTime();
-			mBookAdd.duration=0;
-			mBookAdd.repeat=0;
-			mBookAdd.mode=0;
-		}
+		if(mBookAdd==null){
+			mBookAdd = new BookAdd();	
+		}	
+	
+		mBookAdd.start_time=getUTCTime();
+		mBookAdd.duration=0;
+		mBookAdd.repeat=0;
+		mBookAdd.mode=0;
 
 		final Dialog mDialog = new AlertDialog(this){
 			@Override
@@ -842,13 +842,13 @@ public class DTVChannelList extends DTVActivity{
 					case 0:
 						showPvrDateSetDialog(text);
 						break;
+					//case 1:
+						//showTimeDateSetDialog(text);
+						//break;
 					case 1:
-						showTimeDateSetDialog(text);
-						break;
-					case 2:
 						showEditPvrTimeDialog(text);
 						break;
-					case 3:  
+					case 2:  
 						if(text.getText().equals(getString((R.string.once)))){
 							text.setText(getString(R.string.daily));
 							if(mBookAdd!=null)
@@ -866,7 +866,7 @@ public class DTVChannelList extends DTVActivity{
 						}
 						
 						break;
-					case 4:
+					case 3:
 						if(text.getText().equals(getString((R.string.view)))){
 							text.setText(getString(R.string.pvr));
 							if(mBookAdd!=null)
@@ -894,8 +894,11 @@ public class DTVChannelList extends DTVActivity{
 		          }});	 
 		yes.setOnClickListener(new OnClickListener(){
 	          public void onClick(View v) {
-					if(mBookAdd!=null)
-						DTVPlayerAddBook(mBookAdd.mode,mBookAdd.start_time,mBookAdd.duration,mBookAdd.repeat);
+					if(mBookAdd!=null){
+						int db_id=mTVProgramList[cur_select_item].getID();	
+						Log.d(TAG,"22222"+mBookAdd.start_time);
+						DTVPlayerAddBook(db_id,mBookAdd.mode,mBookAdd.start_time,mBookAdd.duration,mBookAdd.repeat);
+					}
 					if(mDialog!=null&& mDialog.isShowing()){
 						mDialog.dismiss();
 					}
@@ -940,19 +943,18 @@ public class DTVChannelList extends DTVActivity{
 				
 				}
 			});
-		  /*  
-		  tp=(TimePicker)pvr_time_layout.findViewById(R.id.tPicker);
-		  tp.setIs24HourView(true);
-          tp.setCurrentHour(mHour); 
-		  tp.setCurrentMinute(mMinute); 
-		  tp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+		TimePicker tp=(TimePicker)pvr_time_layout.findViewById(R.id.tPicker);		
+		tp=(TimePicker)pvr_time_layout.findViewById(R.id.tPicker);
+		tp.setIs24HourView(true);
+		tp.setCurrentHour(mHour); 
+		tp.setCurrentMinute(mMinute); 
+		tp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
 		  	public void onTimeChanged(TimePicker view,int hourOfDay,int minute)      {
 		  	mHour=hourOfDay;
 			mMinute=minute;
 			  
 			}    
-		  });	
-			*/
+		  });	 
 			
 		  final int time_init = (int)(time_test(mYear,mMonth,mDay,mHour,mMinute,0)/1000);
 		  
@@ -972,12 +974,14 @@ public class DTVChannelList extends DTVActivity{
 	 			Date date =  new Date((long)now*1000);
 		
 	
-				SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MMMM-dd"); 
+				SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
 				String str_date  = sdf_date.format(date);
 			
 				text_info.setText(str_date);
 				if(mBookAdd!=null)
 					mBookAdd.start_time=now;
+
+				Log.d(TAG,"11111"+mBookAdd.start_time);
 			}
 		});
 
@@ -1062,6 +1066,7 @@ public class DTVChannelList extends DTVActivity{
 				text_info.setText(str_date);
 				if(mBookAdd!=null)
 					mBookAdd.start_time=now;
+
 			}
 		});
 
