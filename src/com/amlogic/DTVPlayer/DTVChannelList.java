@@ -563,12 +563,21 @@ public class DTVChannelList extends DTVActivity{
 			mHour = Integer.valueOf(para[3]).intValue();
 			mMinute = Integer.valueOf(para[4]).intValue();
 		}
+
+		Log.d(TAG,"mYear="+mYear+"  mMonth="+mMonth+"  mDay="+mDay+"  mHour="+mHour+" mMinute="+mMinute);
+
 	}
 
-	long time_test(int y,int m, int d,int h,int min,int s){		
+	long time_test(int y,int m, int d,int h,int min,int s){	
+		Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT")); 
+		cal.set(y, m, d, h, min, s); 
+		return cal.getTime().getTime(); 
+		/*
 		Calendar Calendar_sys=Calendar.getInstance();
-		Calendar_sys.set( y, m,  d, h, min, s);
+		Date date = new Date( y, m,  d, h, min, s);
+		Calendar_sys.setTime(date);
 	    return Calendar_sys.getTime().getTime();
+	    */
 	}
 
 	private void showPvrTimeSetDialog(Context context){
@@ -896,7 +905,6 @@ public class DTVChannelList extends DTVActivity{
 	          public void onClick(View v) {
 					if(mBookAdd!=null){
 						int db_id=mTVProgramList[cur_select_item].getID();	
-						Log.d(TAG,"22222"+mBookAdd.start_time);
 						DTVPlayerAddBook(db_id,mBookAdd.mode,mBookAdd.start_time,mBookAdd.duration,mBookAdd.repeat);
 					}
 					if(mDialog!=null&& mDialog.isShowing()){
@@ -956,7 +964,7 @@ public class DTVChannelList extends DTVActivity{
 			}    
 		  });	 
 			
-		  final int time_init = (int)(time_test(mYear,mMonth,mDay,mHour,mMinute,0)/1000);
+		  //final int time_init = (int)(time_test(mYear,mMonth,mDay,mHour,mMinute,0)/1000);
 		  
 		  //editBuilder.setTitle(R.string.pvr_set);
 		  editBuilder.setView(pvr_time_layout); 
@@ -967,11 +975,11 @@ public class DTVChannelList extends DTVActivity{
                 
 
 				//int srv = DATA_DB_ID[cur_select_item];
-				int now=0;	
+				long now=0;	
 				int end=0;
 
-				now = (int)(time_test(mYear,mMonth,mDay,mHour,mMinute,0)/1000);
-	 			Date date =  new Date((long)now*1000);
+				now = time_test(mYear,mMonth,mDay,mHour,mMinute,0);
+	 			Date date =  new Date(now);
 		
 	
 				SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
@@ -980,8 +988,6 @@ public class DTVChannelList extends DTVActivity{
 				text_info.setText(str_date);
 				if(mBookAdd!=null)
 					mBookAdd.start_time=now;
-
-				Log.d(TAG,"11111"+mBookAdd.start_time);
 			}
 		});
 

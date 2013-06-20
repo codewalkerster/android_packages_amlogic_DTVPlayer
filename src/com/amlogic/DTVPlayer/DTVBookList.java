@@ -128,7 +128,7 @@ public class DTVBookList extends DTVActivity{
 				serviceinfo.setProgramName(mTVBooking[i].getProgramName());
 				serviceinfo.setEventName(mTVBooking[i].getEventName());
 				
-	    		Date dt_start =  new Date(mTVBooking[i].getStart()*1000);
+	    		Date dt_start =  new Date(mTVBooking[i].getStart());
 	    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
 	    		String str_start = sdf.format(dt_start); 
 				serviceinfo.setTime(""+str_start);
