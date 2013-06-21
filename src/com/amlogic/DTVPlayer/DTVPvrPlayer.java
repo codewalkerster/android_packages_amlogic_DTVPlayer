@@ -41,6 +41,7 @@ public class DTVPvrPlayer extends DTVActivity{
 	    	record_id = bundle.getInt("booking_id");
 			proname = bundle.getString("program_name");
 		}	
+		openVideo();
 		DTVPvrPlayerUIInit();
 	}
 
@@ -49,8 +50,10 @@ public class DTVPvrPlayer extends DTVActivity{
 		super.onConnected();
 		startPlayback(record_id);
 		pvrHandler.postDelayed(pvrTimer, 1000);
+
+		setVideoViewWindow();
 	}
-	
+
 	@Override
 	protected void onStart(){
 		Log.d(TAG, "onStart");
@@ -70,8 +73,8 @@ public class DTVPvrPlayer extends DTVActivity{
 	protected void onStop(){
 		Log.d(TAG, "onStop");
 		super.onStop();
-		pvrHandler.removeCallbacks(pvrTimer);
-		stopPlayback();
+		//pvrHandler.removeCallbacks(pvrTimer);
+		//stopPlayback();
 	}
 
 	public void onDisconnected(){
@@ -97,7 +100,7 @@ public class DTVPvrPlayer extends DTVActivity{
 				Log.d(TAG, "Scan End");
 				break;
 			case TVMessage.TYPE_RECORD_END:	
-				switch(msg.getRecordErrorCode()){
+				switch(msg.getErrorCode()){
 					case  TVMessage.REC_ERR_OPEN_FILE:
 						DTVTimeShiftingStop();
 						toast = Toast.makeText(
@@ -349,7 +352,9 @@ public class DTVPvrPlayer extends DTVActivity{
 			public void onSetNegativeButton(){
 			}
 			public void onSetPositiveButton(){
-				DTVPvrPlayerStop();
+
+				pvrHandler.removeCallbacks(pvrTimer);
+				stopPlayback();
 				Intent intent = new Intent();
 				intent.setClass(DTVPvrPlayer.this, DTVPlayer.class);
 				startActivity(intent);
@@ -635,6 +640,17 @@ public class DTVPvrPlayer extends DTVActivity{
 			pvrHandler.postDelayed(this, 1000);
 		}
 	};
+
+	private void setVideoViewWindow(){
+		RelativeLayout video_position= (RelativeLayout) findViewById(R.id.RelativeLayout_video);
+		int[] location = new  int[2] ;
+		//video_position.getLocationInWindow(location); 
+		video_position.getLocationOnScreen(location);
+		int height = video_position.getMeasuredHeight();
+		int width = video_position.getMeasuredWidth();
+		Log.d(TAG,"x=="+location[0]+"-----y=="+location[1]+"---width=="+width+"----height=="+height);
+		setVideoWindow(new Rect(location[0], location[1], width, height));
+	}
 	
 }
 

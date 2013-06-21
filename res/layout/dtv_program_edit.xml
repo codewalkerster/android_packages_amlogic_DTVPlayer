@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="1280dp"
+android:layout_height="720dp"
+android:id="@+id/epg_layout_parent"
+android:background ="@drawable/bg" 
+>
+
+	<LinearLayout
+	android:layout_width="fill_parent"
+	android:layout_height="110dp"
+	android:id="@+id/epg_layout_top"> 
+		<TextView
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:gravity="center"
+		android:text="@string/title_program_edit"
+		android:textColor="#FFFFFFFF"
+		android:textSize="40sp"
+		android:layout_marginRight="30dp"
+		/>
+	</LinearLayout>
+
+	<LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="525dp"
+	android:id="@+id/epg_layout_mid"
+	android:baselineAligned="false"
+	>
+		<LinearLayout
+		android:id="@+id/epg_pro"
+		android:layout_weight="8"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:paddingLeft="21dp" >
+				
+			
+				<LinearLayout 
+				android:background ="@drawable/epg_content_bg3"  
+				android:layout_width="fill_parent" 
+				android:layout_height="70dp"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:padding="5dp"
+				>
+					<LinearLayout
+					android:background="@drawable/dtvchannellist_button_arrow_left"	      
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:layout_marginLeft="10dp"
+					>
+					</LinearLayout>
+		  
+					
+					
+					<RelativeLayout
+					android:gravity="center"
+					android:layout_weight="7"  
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:layout_marginLeft="5dp"
+					android:layout_marginRight="5dp"
+					> 
+						<ImageButton 
+						android:id="@+id/prolist_button"
+						android:layout_width="fill_parent"
+						android:layout_height="51dp"
+						android:layout_centerInParent="true"
+						android:background="@drawable/epg_date_button"
+						android:contentDescription="@string/app"
+						></ImageButton>
+
+						<TextView
+						    android:id="@+id/prolist"
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:layout_centerInParent="true"
+						    android:textColor="#FFFFFFFF"
+						    android:textSize="24sp" />
+
+					</RelativeLayout>
+				   
+				    <LinearLayout
+				    android:background ="@drawable/dtvchannellist_button_arrow_right"   
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content" 
+					android:layout_weight="1"
+					android:layout_marginRight="10dp"
+					>
+						
+					</LinearLayout>
+				</LinearLayout>
+					
+				<LinearLayout 
+				android:background ="@drawable/epg_content_bg3"   
+				android:layout_marginTop="10dp" 
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content" 
+				android:focusable = "false"
+				android:orientation="horizontal" 
+				android:padding="10dp">
+				<ListView 
+				android:id="@+id/programListView"
+				android:layout_width="fill_parent" 
+				android:layout_height="440dp">
+				</ListView>
+				</LinearLayout>
+			
+		</LinearLayout>
+
+		<LinearLayout
+		    android:id="@+id/epg_layout_eitlist"
+		    android:layout_width="640dp"
+		    android:layout_height="fill_parent"
+		    android:orientation="vertical"
+		    android:paddingLeft="21dp"
+		    android:paddingRight="21dp" >
+			
+				<LinearLayout 
+				android:id="@+id/video_position"  
+				android:baselineAligned="false"    
+				
+				android:background="#00000000"
+				android:foreground="#00000000"
+				android:gravity="center_vertical"
+				android:layout_width="fill_parent" 
+				android:layout_height="300dp" 
+				android:orientation="horizontal"
+				android:padding="5dp">
+
+					<VideoView
+					android:layout_height="fill_parent"
+					android:layout_width="fill_parent"
+					android:id="@+id/VideoView">
+					</VideoView>  
+					
+				</LinearLayout>
+
+				<LinearLayout 
+				android:background ="@drawable/epg_content_bg3"   
+				android:layout_marginTop="10dp"
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content" 
+				android:focusable = "false"
+				android:orientation="horizontal"
+				android:padding="10dp">
+				<ListView 
+				android:id="@+id/List_detail"
+				android:layout_width="fill_parent" 
+				android:layout_height="fill_parent"
+				android:focusable="false">
+				</ListView>
+				</LinearLayout>				
+			
+		</LinearLayout>
+			
+	</LinearLayout>
+	
+	<LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="85dp"
+	android:gravity="center_vertical"
+	android:id="@+id/epg_layout_bottom"
+	>
+		
+		<LinearLayout
+		android:layout_weight="4"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/fav"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/fav"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="4"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/goto_icon"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/goto_s"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/epg_info_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		      android:layout_marginLeft="20sp"    
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/rename"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/red_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"     
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/delete"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/yellow_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		     android:layout_marginLeft="20sp"  
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/skip"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/blue_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/lock"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/green_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/move"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+	</LinearLayout>
+</LinearLayout>	

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background ="@drawable/bg">
+    
+	<LinearLayout
+		android:orientation="vertical"  
+		android:layout_height="fill_parent"
+		android:layout_width="fill_parent"
+		>
+    
+		<TextView  
+			android:layout_gravity="center"	
+			android:layout_width="fill_parent"	    
+			android:layout_height="80dp"
+			android:textColor="@android:color/white"
+			android:gravity="center"
+			android:paddingLeft="50dp"
+			android:paddingTop="30dp"
+			android:textSize="40sp"
+			android:text="@string/scan_program"
+			/>    
+
+		<TextView
+		    android:background ="@drawable/epg_content_bg1" 
+			android:id="@+id/sat_info"
+			android:gravity="center"
+			android:layout_gravity="center|left"	
+			android:layout_width="fill_parent"	    
+			android:layout_height="60px"
+			android:textColor="@android:color/white"
+			android:paddingLeft="50dp"
+			android:layout_marginLeft="20dp"
+			android:layout_marginRight="20dp"
+			android:layout_marginBottom="10dp"
+			android:textSize="24sp"
+			/>    		
+
+		
+		<LinearLayout
+			android:orientation="horizontal"  
+			android:layout_width="fill_parent"
+			android:layout_height="10px"
+			android:layout_weight="1">
+			<LinearLayout
+			    android:background ="@drawable/epg_content_bg3"  
+				android:padding="5dp"
+				android:layout_marginLeft="20dp"
+				android:orientation="vertical"
+				android:layout_width="10dp"
+				android:layout_height="fill_parent"
+				android:layout_weight="1">
+				<TextView
+					android:id="@+id/tv"
+					android:text="@string/tv"
+					android:layout_width="fill_parent"
+					android:layout_height="45dp"
+					android:textSize="22sp"
+					android:gravity="center"
+					android:layout_gravity="center_vertical"/>
+				 <ListView
+				    android:id="@+id/tv_list"
+				  	android:layout_width="fill_parent"
+				  	android:layout_height="wrap_content"					     				     
+				  	android:scrollbars="vertical"/> 		
+					    						
+			</LinearLayout> 
+			<LinearLayout
+			    android:background ="@drawable/epg_content_bg3"  
+				android:padding="5dp"
+				android:layout_marginLeft="20dp"
+				android:layout_marginRight="20dp"
+				android:orientation="vertical"
+				android:layout_width="10dp"
+				android:layout_height="fill_parent"
+				android:layout_weight="1"
+				android:paddingLeft="30dp">
+
+				<TextView
+					android:id="@+id/radio"
+					android:text="@string/radio"
+					android:layout_width="fill_parent"
+					android:layout_height="45px"
+					android:textSize="22sp"
+					android:gravity="center"
+					android:layout_gravity="center_vertical"/>
+				 <ListView
+				 	android:id="@+id/radio_list"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"					     				     
+					android:scrollbars="vertical"/> 		
+
+			</LinearLayout> 
+		</LinearLayout> 
+
+		<LinearLayout
+		    android:background ="@drawable/epg_content_bg3"  
+			android:padding="5dp"
+			android:layout_marginTop="10dp"
+			android:layout_marginLeft="20dp"
+			android:layout_marginRight="20dp"
+			android:orientation="vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="110dp">
+			<LinearLayout
+			    android:layout_marginLeft="20dp"
+				android:layout_marginRight="20dp" 
+				android:orientation="horizontal"
+				android:gravity="center"	
+				android:layout_width="fill_parent"
+				android:layout_height="50px"
+				>
+				 <TextView  
+				 	android:text="@string/progress"
+				 	android:textSize="20sp"
+					android:layout_width="70px" 
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:layout_marginLeft="30px"/>
+				<ProgressBar
+					android:id="@+id/ProgressBar" 
+					android:layout_gravity="center_vertical"
+					android:layout_width="wrap_content" 
+					android:layout_height="16px"
+					style="?android:attr/progressBarStyleHorizontal"
+					android:layout_weight="10"/>
+				<TextView  
+					android:id="@+id/progress_value"
+					android:textSize="20sp"
+					android:layout_width="70px" 
+					android:layout_height="wrap_content"
+					android:layout_marginLeft="30px"
+					android:layout_weight="1"/>
+					
+			</LinearLayout> 	
+
+			<TextView
+				android:id="@+id/ts_info"
+				android:layout_width="fill_parent"	    
+				android:layout_height="60dp"
+				android:textColor="@android:color/white"
+				android:gravity="center"
+				android:textSize="24sp"
+				>
+			</TextView>
+		</LinearLayout>	  	
+		
+		<LinearLayout
+			android:layout_marginLeft="20dp"
+			android:layout_marginRight="20dp"
+			android:orientation="vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="90dp"
+			android:paddingBottom="6px">
+			
+
+			<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="70dp"
+			android:gravity="center_horizontal"
+			android:orientation="horizontal"
+			>
+				<LinearLayout
+				android:layout_weight="1"    
+				android:gravity="center_horizontal"
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				> 
+					<ImageView 
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center"
+					android:background="@drawable/move_icon"
+					android:contentDescription="@string/app_name"
+				    ></ImageView>
+				    <TextView
+				    android:layout_marginLeft="20sp"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+				    android:layout_gravity="center"
+					android:text="@string/epg_ok"
+					android:textColor="#FFFFFFFF"
+					android:textSize="20sp"
+					android:layout_marginRight="30dp"
+					/>
+				</LinearLayout>
+				<LinearLayout
+				android:layout_weight="1"    
+				android:gravity="center_horizontal"
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				> 
+					<ImageView 
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center"
+					android:background="@drawable/ok_icon"
+					android:contentDescription="@string/app_name"
+				    ></ImageView>
+				    <TextView
+				      android:layout_marginLeft="20sp"    
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+				    android:layout_gravity="center"
+					android:text="@string/epg_info"
+					android:textColor="#FFFFFFFF"
+					android:textSize="20sp"
+					android:layout_marginRight="30dp"
+					/>
+				</LinearLayout>
+				<LinearLayout
+				android:layout_weight="1"    
+				android:gravity="center_horizontal"
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				> 
+					<ImageView 
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"
+					android:background="@drawable/return_icon"
+					android:contentDescription="@string/app_name"
+					></ImageView>
+					<TextView
+					android:layout_marginLeft="20sp"     
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"
+					android:text="@string/epg_exit"
+					android:textColor="#FFFFFFFF"
+					android:textSize="20sp"
+					android:layout_marginRight="30dp"
+					/>
+				</LinearLayout>		
+			</LinearLayout> 
+		</LinearLayout> 	
+	</LinearLayout>
+
+	<RelativeLayout 
+		android:id="@+id/information"
+		android:layout_centerInParent="true"  
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:visibility="gone"	
+		>    
+ 
+		<TextView 
+		android:id="@+id/information_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:textSize="24sp">
+		</TextView>
+	</RelativeLayout>   	
+</RelativeLayout>
+

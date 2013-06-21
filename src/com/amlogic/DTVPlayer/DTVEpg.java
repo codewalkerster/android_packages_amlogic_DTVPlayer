@@ -11,13 +11,17 @@ import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVEvent;
+import com.amlogic.tvutil.TVGroup;
 
 import java.util.*;
 import java.text.*;
 import android.view.*;
 import android.view.View.*;
 import android.view.animation.*;
+import android.util.DisplayMetrics;
 import android.widget.*;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AbsListView.OnScrollListener;
 import android.app.*;
 import android.app.AlertDialog.*;
@@ -29,7 +33,10 @@ import android.text.method.*;
 import android.database.*;
 import android.os.*;
 import java.lang.reflect.Field;
-
+import android.graphics.Color;
+import com.amlogic.widget.Rotate3D;
+import com.amlogic.widget.CustomDialog;
+import com.amlogic.widget.CustomDialog.ICustomDialog;
 import com.amlogic.widget.SingleChoiseDialog;
 
 public class DTVEpg extends DTVActivity{
@@ -45,44 +52,10 @@ public class DTVEpg extends DTVActivity{
 	
 	private final static int    EIT_ITEM_WIDTHOF_HOURBG         = 240;
 	
-	private final static int    EIT_ITEM_LEFTMARGINOF_HOURBG    = 1;
-	private final static int    EIT_ITEM_COLOROF_HOURBG         = Color.argb(200, 0, 0, 0);
-	
-	private final static int    EIT_ITEM_HEIGHTOF_DATEBG        = 67;
 	private final static int    EIT_ITEM_BOTTOMMARGINOF_DATEBG  = 1;
-	private final static int    EIT_ITEM_LEFTMARGINOF_DATEBG    = 10;
-	private final static int    EIT_ITEM_COLOROF_DATEBG         = Color.argb(200, 0, 0, 0);
 
 	private final static int    EIT_ITEM_CONTENT_MAXCOUNT       = 100;
-	private final static float  EIT_ITEM_CONTENT_TEXTSIZE       = 20F;
-	
-	private final static int    EIT_ITEM_CONTENT_LEFTMARGIN     = 1;
-	private final static int    EIT_ITEM_CONTENT_BOTTOMMARGIN   = 1;
-	
-	private final static int    EIT_TIEM_FOCUSCOLOR             = Color.argb(200, 255, 180, 0);
-	private final static int    EIT_TIEM_UNFOCUSCOLOR_ODD       = Color.argb(200, 75, 75, 75);
-	private final static int    EIT_TIEM_UNFOCUSCOLOR_EVEN      = Color.argb(200, 42, 42, 42);
-	
-	
-	/*********************ctrl id*************************************/
-	private final static int    EIT_TITLE_PROGNAME_ID           = 0;
-	private final static int    EIT_TITLE_CURRENTTIME_ID        = EIT_TITLE_PROGNAME_ID+1;
-	private final static int    EIT_TITLE_EVENTNAME_ID          = EIT_TITLE_PROGNAME_ID+2;
-	private final static int    EIT_TITLE_EVENTDETAIL_ID        = EIT_TITLE_PROGNAME_ID+3;
-	private final static int    EIT_FIRSTDAY_TEXTVIEW_ID        = EIT_TITLE_PROGNAME_ID+4;
 
-	/*********************layout size*************************************/
-	private final int LAYOUT_SMALL = 0;
-	private final int LAYOUT_MID   = 1;
-	private final int LAYOUT_LARGE = 2;
-	private final int LAYOUT_SMALL576 = 3;
-	
-	private int Layout_size = LAYOUT_MID;
-
-    private int EIT_ITEM_HEIGHTOF_HOURBG = 39;
-	private int EIT_ITEM_CONTENT_HEIGHT  = EIT_ITEM_HEIGHTOF_DATEBG;
-	private int EIT_ITEMWIDTH_PERMINUTE  = EIT_ITEM_WIDTHOF_HOURBG/60; // (EIT_ITEM_WIDTHOF_HOURBG/60);
-	
 	private Handler  currenttimer_handler;
 	private Runnable currenttimer_runnable;
 	
@@ -90,16 +63,12 @@ public class DTVEpg extends DTVActivity{
 	private ProgressDialog progressDialog;  
 	
 	/********ctrl var *************/
-	private View TempItemView;
-	
 	private LinearLayout EPG_parent_linearlayout;
 	private ListView EitListView;
-	private Button   ExitButton;
+
 	private TextView HelpInfoTextView;
-	private int Eit_ItemColor[];
 	
 	/********db var*********/
-	private Cursor srv_Cursor;  
 	private TVEvent[][] mTVEvent=new TVEvent[7][];
 	private int cur_service_id=-1;
 	private int cur_source_id;
@@ -107,8 +76,16 @@ public class DTVEpg extends DTVActivity{
 	/**********count var*******************/
 	private int  eit_notify = 0;
 	private long tickcount  = 1;
-
 	private int  TempFlag   = 0;	
+	private int  current_date_index=0;
+ 
+	ImageButton date_button0 = null;
+	ImageButton date_button1 = null;
+	ImageButton date_button2 = null;
+	ImageButton date_button3 = null;
+	ImageButton date_button4 = null;
+	ImageButton date_button5 = null;
+	ImageButton date_button6 = null;
 	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
@@ -116,17 +93,22 @@ public class DTVEpg extends DTVActivity{
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.dtvepg);
-		DTVEpgUIInit();
+		
 	}
 
 	public void onStart(){
 		super.onStart();
-		
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
+		DTVEpgUIInit();
+
+		//channel list
+		mDTVSettings = new DTVSettings(this);
+		DTVChannelList_UI_Init();
+		myAdapter.notifyDataSetChanged();
 	}
 
 	public void onDisconnected(){
@@ -153,30 +135,105 @@ public class DTVEpg extends DTVActivity{
 			case TVMessage.TYPE_EVENT_UPDATE:
 				eit_notify ++ ;
 				break;	
+			case TVMessage.TYPE_PROGRAM_START:	
+				Log.d(TAG,"New program start!");
+				cur_service_id = DTVEpgGetID();
+		        db_id = cur_service_id;
+				Log.d(TAG,"db_id="+db_id);
+				new Thread(){     
+		            public void run(){   
+		         		Message msg;
+		                try{
+		                	Thread.sleep(1000);
+		                	setup_db();
+		                }
+		                catch (Exception e){
+		                 	
+		                }
+
+		                try{
+		                    msg = waiting_handler.obtainMessage();
+		                    msg.arg1 = 2;
+		                	waiting_handler.sendMessage(msg);
+		                	Thread.sleep(1000);
+		                }
+		                catch (Exception e){
+		                 		
+		                } 
+
+		                try{
+		                    msg = waiting_handler.obtainMessage();
+		                    msg.arg1 = 3;
+		                	waiting_handler.sendMessage(msg);
+		                	//Thread.sleep(1000);
+		                }
+		                catch (Exception e){
+		                 	
+						} 
+					}
+				}.start(); 
+				myAdapter.notifyDataSetChanged();
+				break;
 			default:
 				break;
 	
 		}
 	}
 
-	private void DTVEpgUIInit(){
-		Layout_size = LAYOUT_MID;
-		EIT_ITEM_CONTENT_HEIGHT = EIT_ITEM_HEIGHTOF_DATEBG;
-		EIT_ITEM_HEIGHTOF_HOURBG = 39;
-		EIT_ITEMWIDTH_PERMINUTE  = EIT_ITEM_WIDTHOF_HOURBG/60;
-        
-		cur_service_id = DTVEpgGetID();
-        Eit_ItemColor = new int[2];
-        Eit_ItemColor[0] = EIT_TIEM_UNFOCUSCOLOR_ODD;
-        Eit_ItemColor[1] = EIT_TIEM_UNFOCUSCOLOR_EVEN;
-
+	private int eit_list_cur_pos=0;
+	
+	private void DTVEpgUIInit(){	
 		/*setup view*/
-        EPG_parent_linearlayout = (LinearLayout)findViewById(R.id.epg_layout_parent);
-		EPG_parent_linearlayout.setVisibility(View.INVISIBLE);
+        
         EitListView  = (ListView)findViewById(R.id.EitListView);
         EitListView.setItemsCanFocus(true);
-       	HelpInfoTextView   = (TextView)findViewById(R.id.epg_tv_helpinfo);
-		    
+
+		EitListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			public void onItemSelected(AdapterView<?> parent, View view,
+			int position, long id) {
+				Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
+				eit_list_cur_pos = position;
+				list_status=1;
+			}
+
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+		});
+
+		
+		EitListView.setOnKeyListener(new OnKeyListener() { 
+			public boolean onKey(View v, int keyCode, KeyEvent event) {		
+				switch(keyCode){
+					case KeyEvent.KEYCODE_TAB: //info
+						if (event.getAction() == KeyEvent.ACTION_DOWN) {
+							showInfoDia(v,current_date_index,eit_list_cur_pos);	
+						}
+						return true;
+					case KeyEvent.KEYCODE_PAGE_UP:
+						if (event.getAction() == KeyEvent.ACTION_DOWN) {
+							if(mEitListDBAdapter!=null){
+								mEitListDBAdapter.setSelectItem(myAdapter.getSelectItem());
+								mEitListDBAdapter.notifyDataSetChanged();
+							}	
+							Log.d(TAG, "press page up");
+						}
+						break;
+					case KeyEvent.KEYCODE_PAGE_DOWN:	
+
+						break;
+				} 
+				return false;
+		}}); 
+					
+		EitListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+				// TODO Auto-generated method stub				
+				//showEventBookDialog(v, position);
+				showEventAddDialog(v, current_date_index,position);
+			}
+		});
+		
+     	    
 	    progressDialog = ProgressDialog.show(DTVEpg.this, getString(R.string.epg_loading), getString(R.string.epg_waiting), true, false);   
 		WindowManager.LayoutParams lp=progressDialog.getWindow().getAttributes();
 		lp.dimAmount=0.0f;
@@ -221,17 +278,20 @@ public class DTVEpg extends DTVActivity{
 	            	break;
 	            	
 	            	case 2:
-						refresh_Eitlistview();
+						refresh_Eitlistview(0);
 	            	break;
 
 					case 3:
-	                    EPG_parent_linearlayout.setVisibility(View.VISIBLE);
+	                    //EPG_parent_linearlayout.setVisibility(View.VISIBLE);
 	                    progressDialog.dismiss();  
 						if (TempFlag == 0){
 							TempFlag = 1;
 							moveto_currentevent();
 						}
 	            	break;
+					case 4:
+						update_new_eit();
+						break;
             	}
             }
         };  
@@ -284,6 +344,52 @@ public class DTVEpg extends DTVActivity{
 				
             }
          }.start(); 
+
+
+		date_button0 = (ImageButton)findViewById(R.id.date_button0);
+		date_button1 = (ImageButton)findViewById(R.id.date_button1); 
+		date_button2 = (ImageButton)findViewById(R.id.date_button2);
+		date_button3 = (ImageButton)findViewById(R.id.date_button3); 
+		date_button4 = (ImageButton)findViewById(R.id.date_button4); 
+		date_button5 = (ImageButton)findViewById(R.id.date_button5); 
+		date_button6 = (ImageButton)findViewById(R.id.date_button6); 
+
+		date_button0.setOnClickListener(new channelListButtonClick()); 	
+		date_button1.setOnClickListener(new channelListButtonClick()); 	
+		date_button2.setOnClickListener(new channelListButtonClick()); 	
+		date_button3.setOnClickListener(new channelListButtonClick()); 
+		date_button4.setOnClickListener(new channelListButtonClick()); 	
+		date_button5.setOnClickListener(new channelListButtonClick()); 	
+		date_button6.setOnClickListener(new channelListButtonClick()); 
+
+		//refresh time
+		refresh_time_thread();		
+	}
+
+	private void refresh_time_thread()
+	{
+	    currenttimer_handler = new Handler();
+	    currenttimer_runnable = new Runnable() 
+		{
+			public void run() 
+			{
+				refresh_currenttime();
+				currenttimer_handler.postDelayed(currenttimer_runnable, 1000);
+			}   
+		};
+	    currenttimer_handler.postDelayed(currenttimer_runnable, 1000);
+	}
+
+
+	private void refresh_currenttime()
+	{		
+		Date date = new Date(get_current_datetime()); 
+		SimpleDateFormat sdf = new SimpleDateFormat("EEEE,MMMM-dd-yyyy hh:mm:ss aa"); 
+		String today = sdf.format(date); 
+		
+		TextView TempTexView; 
+		TempTexView = (TextView)findViewById(R.id.current_time);
+		TempTexView.setText((""+today));
 	}
 
 
@@ -335,6 +441,7 @@ public class DTVEpg extends DTVActivity{
 	}
 
 	private void moveto_currentevent(){
+		/*
         View TempButton = DTVEpg.this.getCurrentFocus();
         if (TempButton != null){
             Log.d("moveto_currentevent >>>", TempButton.toString());
@@ -383,77 +490,10 @@ public class DTVEpg extends DTVActivity{
 				}
     		}
     	}
+    	*/
 	}
 	
 	private void create_proganddate(){
-		/*
-		LinearLayout proganddate_view  = (LinearLayout)findViewById(R.id.epg_layout_ProgNameAndDate);
-		TextView TempTexView;
-		((LinearLayout)proganddate_view).addView(TempTexView); 
-		*/
-
-		TextView  program_name = (TextView)findViewById(R.id.Text_program_name);
-		program_name.setText("");
-
-		program_name.setTextSize(24F);
-		switch(Layout_size){
-			case LAYOUT_SMALL:
-				program_name.setTextSize(18F);
-			break;
-			case LAYOUT_SMALL576:
-				program_name.setTextSize(20F);
-			break;
-			case LAYOUT_MID:
-				program_name.setTextSize(24F);
-			break;
-			
-			case LAYOUT_LARGE:
-				program_name.setTextSize(28F);
-			break;
-		}
-		
-		TextPaint tp = program_name.getPaint();
-        tp.setFakeBoldText(true);
-		program_name.setTextColor(Color.WHITE);
-		program_name.setGravity(Gravity.LEFT);
-
-		program_name.setHeight(40);
-		switch(Layout_size){
-			case LAYOUT_SMALL:
-				program_name.setHeight(35);
-			break;
-			case LAYOUT_SMALL576:
-				program_name.setHeight(38);
-			break;
-			
-			case LAYOUT_MID:
-				program_name.setHeight(40);
-			break;
-			
-			case LAYOUT_LARGE:
-				program_name.setHeight(60);
-			break;
-		}	
-	
-		TextView  date = (TextView)findViewById(R.id.Text_date);
-		date.setTextColor(Color.WHITE);
-		date.setGravity(Gravity.LEFT);
-		date.setHeight(36);
-
-		switch(Layout_size){
-			case LAYOUT_SMALL:
-				date.setHeight(30);
-			break;
-			case LAYOUT_SMALL576:
-				date.setHeight(33);
-			break;
-			case LAYOUT_MID:
-				date.setHeight(36);
-			break;
-			case LAYOUT_LARGE:
-				date.setHeight(80);
-			break;
-		}
 		
 	}
 	
@@ -464,20 +504,9 @@ public class DTVEpg extends DTVActivity{
 		//return date;
 		return getUTCTime();
 	}
-	
-	private void refresh_currenttime(){		
-		Date date = new Date(getUTCTime());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
-		String today = sdf.format(date); 
-		TextView TempTexView; 
-		TempTexView = (TextView)findViewById(R.id.Text_date);
-		TempTexView.setText((""+today));
-	}
-	
+		
 	private void refresh_progname(){		
-		TextView TempTexView; 
-		TempTexView = (TextView)findViewById(R.id.Text_program_name);
-		TempTexView.setText(DTVEpg_get_currentprogname());
+		
 	}
 	
 	private void setup_db(){
@@ -505,23 +534,28 @@ public class DTVEpg extends DTVActivity{
         						1 * 24 * 60 * 60*1000);
 		Log.d("mTVEvent[6]:",""+mTVEvent[6].length);
 		
-		if (mTVEvent[0].length > 0)
-			HelpInfoTextView.setText(R.string.epg_operate_des01);
-		else
-			HelpInfoTextView.setText(R.string.epg_no_epg_info);
+		//if (mTVEvent[0].length > 0)
+			//HelpInfoTextView.setText(R.string.epg_operate_des01);
+		//else
+			//HelpInfoTextView.setText(R.string.epg_no_epg_info);
 	}
-	
-	private void refresh_Eitlistview(){
-        EitListView.setAdapter(new EitListDBAdapter(this)); 
+
+	EitListDBAdapter mEitListDBAdapter =null;
+	private void refresh_Eitlistview(int date){
+		mEitListDBAdapter = new EitListDBAdapter(this,date);
+        EitListView.setAdapter(mEitListDBAdapter); 
+		mEitListDBAdapter.notifyDataSetChanged();
 	}
 
 	private  void SetAlarm(long time){
-		/*		
+			
+		//Intent intent = new Intent(this, AlarmReceiver.class);
 		Intent intent = new Intent(this, AlarmReceiver.class);
-		PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent,0);
+		PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent ,Intent.FLAG_ACTIVITY_NEW_TASK);
 		AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
 		am.set(AlarmManager.RTC_WAKEUP, time*1000, pi);	
-		*/						
+		
+		//am.set(AlarmManager.POWER_OFF_WAKEUP, time*1000, pi);		
 	}
 
 	private void update_bookstatus(int eventid, int bookflag){
@@ -539,8 +573,6 @@ public class DTVEpg extends DTVActivity{
 			
 			case 1:	
 			{
-				//cv.put("sub_flag", 1);
-				//this.getContentResolver().update(DVBClient.TABLE_EVENT, cv, "db_id= "+eventid, null); 
 				DTVEpg_deleteRec(eventid);
 				DTVEpg_subscribeEPGEvent(eventid);
 			}
@@ -555,12 +587,14 @@ public class DTVEpg extends DTVActivity{
 	}
 	
 	private void refresh_bookstatus(View view, int bookflag){
+		/*
 		if (bookflag == 0)
 			((Button)view).setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 		else if (bookflag == 1)
 			((Button)view).setCompoundDrawablesWithIntrinsicBounds(R.drawable.epg_event_book_1, 0, 0, 0);
 		else if (bookflag == 2)
 			((Button)view).setCompoundDrawablesWithIntrinsicBounds(R.drawable.epg_event_book_2, 0, 0, 0);
+		*/
 	}
 	
 	private void setup_timeupdatethread(){
@@ -579,181 +613,15 @@ public class DTVEpg extends DTVActivity{
 	}
 	
 	private void create_eventnameanddetailinfo(){
-		LinearLayout eventname_detailinfo_view  = (LinearLayout)findViewById(R.id.epg_layout_EventNameAndDetailInfo);
-		LinearLayout.LayoutParams TempLP; 
-	
-		TextView TempTexView;
 		
-		TempTexView = new TextView(DTVEpg.this);
-		TempLP= new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);					
-			
-		TempTexView.setSingleLine(true);
-		TempTexView.setLayoutParams(TempLP);
-		TempTexView.setId(EIT_TITLE_EVENTNAME_ID);
-		TempTexView.setText("                                  ");
-
-		TempTexView.setTextSize(20F);
-		switch(Layout_size)
-		{
-			case LAYOUT_SMALL:		
-				TempTexView.setTextSize(15F);
-			break;
-			case LAYOUT_SMALL576:		
-				TempTexView.setTextSize(17F);
-			break;
-			case LAYOUT_MID:
-				TempTexView.setTextSize(20F);
-			break;
-			
-			case LAYOUT_LARGE:
-				TempTexView.setTextSize(22F);
-			break;
-		}
-	
-		TempTexView.setTextColor(Color.WHITE);
-		TempTexView.setGravity(Gravity.CENTER_VERTICAL);
-		
-		/*sth wrong if set WRAP_CONTENT
-		 * TempTexView.setBackgroundResource(R.drawable.eventname_bg_mid);
-		TempTexView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.eventname_bg_left, 0, R.drawable.eventname_bg_right, 0);
-		*/
-
-		((LinearLayout)eventname_detailinfo_view).addView(TempTexView); 
-		
-		TempTexView = new TextView(DTVEpg.this);
-		TempLP= new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 1);					
-		TempTexView.setLayoutParams(TempLP);
-		TempTexView.setBackgroundResource(R.drawable.epg_event_name_divider);
-		((LinearLayout)eventname_detailinfo_view).addView(TempTexView); 
-
-		
-		TempTexView = new TextView(DTVEpg.this);
-		TempLP= new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);					
-		TempLP.topMargin = 1;
-		TempTexView.setLayoutParams(TempLP);
-		TempTexView.setId(EIT_TITLE_EVENTDETAIL_ID);
-		TempTexView.setText("");
-		TempTexView.setTextColor(Color.WHITE);
-
-		TempTexView.setTextSize(15F);
-		TempTexView.setOnClickListener(new DetailOnClick());
-
-		switch(Layout_size)
-		{
-			case LAYOUT_SMALL:
-				TempTexView.setTextSize(12F);
-			break;
-			case LAYOUT_SMALL576:		
-				TempTexView.setTextSize(13F);
-			break;
-			case LAYOUT_MID:
-				TempTexView.setTextSize(15F);
-			break;
-			
-			case LAYOUT_LARGE:
-				TempTexView.setTextSize(18F);
-			break;
-		}
-		
-		TempTexView.setGravity(Gravity.LEFT);
-		((LinearLayout)eventname_detailinfo_view).addView(TempTexView); 
-		((LinearLayout)eventname_detailinfo_view).setVisibility(View.INVISIBLE);
 	}
 	
-	private void refresh_eventnameanddetailinfo(String progname, String detailinfo){
-		TextView TempTexView; 
-		TempTexView = (TextView)findViewById(EIT_TITLE_EVENTNAME_ID);
-		TempTexView.setText(progname);
+	
 
-		TempTexView = (TextView)findViewById(EIT_TITLE_EVENTDETAIL_ID);
-		TempTexView.setText(detailinfo);
-		
-		LinearLayout eventname_detailinfo_view  = (LinearLayout)findViewById(R.id.epg_layout_EventNameAndDetailInfo);
-		eventname_detailinfo_view.setVisibility(View.VISIBLE);
-	}
-
-	private void clear_eventnameanddetailinfo(){
-		TextView TempTexView; 
-		TempTexView = (TextView)findViewById(EIT_TITLE_EVENTNAME_ID);
-		TempTexView.setText("");
-
-		TempTexView = (TextView)findViewById(EIT_TITLE_EVENTDETAIL_ID);
-		TempTexView.setText("");
-		
-		LinearLayout eventname_detailinfo_view  = (LinearLayout)findViewById(R.id.epg_layout_EventNameAndDetailInfo);
-		eventname_detailinfo_view.setVisibility(View.INVISIBLE);
-	}
+	
 	
 	private void create_dates(){
-		LinearLayout datesView  = (LinearLayout)findViewById(R.id.epg_layout_Date);
-
-		for(int i=0; i<7; i++)
-		{
-			LinearLayout.LayoutParams TempLP = 
-			new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);					
-			if (i == 0)
-			{	
-				TempLP.topMargin = EIT_ITEM_HEIGHTOF_HOURBG;
-
-				switch(Layout_size)
-				{
-				case LAYOUT_SMALL:
-					TempLP.topMargin = 23;
-				break;
-				case LAYOUT_SMALL576:		
-					TempLP.topMargin = 31;
-				break;
-				case LAYOUT_MID:
-					TempLP.topMargin = EIT_ITEM_HEIGHTOF_HOURBG;
-				break;
-				
-				case LAYOUT_LARGE:
-					TempLP.topMargin = EIT_ITEM_HEIGHTOF_HOURBG-1;
-				break;
-				}
-			}
-			TempLP.bottomMargin = EIT_ITEM_BOTTOMMARGINOF_DATEBG;
-			TempLP.leftMargin   = 0;//EIT_ITEM_LEFTMARGINOF_DATEBG;
-			
-			TextView TempTexView;
-			TempTexView = new TextView(DTVEpg.this);
-			
-			TempTexView.setLayoutParams(TempLP);
-			TempTexView.setTextColor(Color.WHITE);
-
-			TempTexView.setId(EIT_FIRSTDAY_TEXTVIEW_ID+i);
-			
-			TextPaint tp = TempTexView.getPaint();
-            tp.setFakeBoldText(true);
-			TempTexView.setText("");
-			TempTexView.setGravity(Gravity.CENTER);
-
-
-			TempTexView.setTextSize(17F);
-			TempTexView.setHeight(EIT_ITEM_HEIGHTOF_DATEBG+1);
-			switch(Layout_size)
-			{
-			case LAYOUT_SMALL:		
-				TempTexView.setHeight(42+1);
-				TempTexView.setTextSize(13F);
-			break;
-
-			case LAYOUT_SMALL576:		
-				TempTexView.setHeight(52+1);
-				TempTexView.setTextSize(15F);
-			break;
-			case LAYOUT_MID:
-				TempTexView.setHeight(EIT_ITEM_HEIGHTOF_DATEBG+1);
-				TempTexView.setTextSize(17F);
-			break;
-			
-			case LAYOUT_LARGE:
-				TempTexView.setHeight(101+1);
-				TempTexView.setTextSize(20F);
-			break;
-			}
-			((LinearLayout)datesView).addView(TempTexView); 
-		}
+		
 	}
 
 	private void refresh_dates(int focusindex){
@@ -772,71 +640,38 @@ public class DTVEpg extends DTVActivity{
 			calendar.setTime(new Date(get_firstmillisofcurrentday()+ i * 24 * 60 * 60 * 1000));
 			String today = sdf.format(new Date(get_firstmillisofcurrentday()+ i * 24 * 60 * 60 * 1000)); 
 
-			TextView TempTexView; 
-			TempTexView = (TextView)findViewById(EIT_FIRSTDAY_TEXTVIEW_ID+i);
-			TempTexView.setText((""+today +"\n "+ Weeks[calendar.get(Calendar.DAY_OF_WEEK) - 1]));
+			TextView TempTexView=null; 
+			switch(i){
+				case 0:
+					TempTexView = (TextView)findViewById(R.id.date0);
+					break;
+				case 1:
+					TempTexView = (TextView)findViewById(R.id.date1);
+					break;
+				case 2:
+					TempTexView = (TextView)findViewById(R.id.date2);
+					break;
+				case 3:
+					TempTexView = (TextView)findViewById(R.id.date3);
+					break;
+				case 4:
+					TempTexView = (TextView)findViewById(R.id.date4);
+					break;	
+				case 5:
+					TempTexView = (TextView)findViewById(R.id.date5);
+					break;
+				case 6:
+					TempTexView = (TextView)findViewById(R.id.date6);
+					break;
 
-			TempTexView.setBackgroundColor(EIT_TIEM_UNFOCUSCOLOR_ODD);
+			}
+			if(TempTexView!=null)
+			TempTexView.setText(Weeks[calendar.get(Calendar.DAY_OF_WEEK) - 1]);
 		}
 	}
 	
 	private void create_hours(){
-		LinearLayout HoursView  = (LinearLayout)findViewById(R.id.EitHourBglinearLayout);
-		HoursView.setBackgroundColor(EIT_ITEM_COLOROF_HOURBG);
 		
-		for(int i=0; i<24; i++)
-		{
-			LinearLayout.LayoutParams TempLP = 
-			new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);					
-			TempLP.leftMargin = 0;//EIT_ITEM_LEFTMARGINOF_HOURBG;
-			
-			TextView TempTexView;
-			TempTexView = new TextView(DTVEpg.this);
-			
-			TempTexView.setLayoutParams(TempLP);
-			TempTexView.setText(""+i+":00");
-			TempTexView.setTextColor(Color.WHITE);
-
-			TempTexView.setTextSize(20F);
-			switch(Layout_size)
-			{
-				case LAYOUT_SMALL:		
-					TempTexView.setTextSize(15F);
-				break;
-				case LAYOUT_SMALL576:		
-					TempTexView.setTextSize(17F);
-				break;
-				case LAYOUT_MID:
-					TempTexView.setTextSize(20F);
-				break;
-				
-				case LAYOUT_LARGE:
-					TempTexView.setTextSize(22F);
-				break;
-			}
-
-			TempTexView.setGravity(Gravity.LEFT);
-			
-			TempTexView.setWidth(EIT_ITEM_WIDTHOF_HOURBG);
-			TempTexView.setHeight(EIT_ITEM_HEIGHTOF_HOURBG);
-			switch(Layout_size){
-				case LAYOUT_SMALL:
-				case LAYOUT_SMALL576:		
-					TempTexView.setHeight(24);
-				break;
-				
-				case LAYOUT_MID:
-					TempTexView.setHeight(EIT_ITEM_HEIGHTOF_HOURBG);
-				break;
-				
-				case LAYOUT_LARGE:
-					TempTexView.setHeight(59);//EIT_ITEM_HEIGHTOF_HOURBG*1.5
-				break;
-			}
-					
-			TempTexView.setBackgroundResource(R.drawable.epg_hour_bg);
-			((LinearLayout)HoursView).addView(TempTexView); 
-		}
 	}
 	
 	/*disable HOME key*/
@@ -845,276 +680,131 @@ public class DTVEpg extends DTVActivity{
 		//this.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_KEYGUARD);  
 		super.onAttachedToWindow();  
 	} 
-	
+
 	public class EitListDBAdapter extends BaseAdapter{
-		private Context _Context; 
-		private View create_eit_content() {
-			View convertView = getLayoutInflater().inflate(R.layout.dtvepg_eitlistitem, null);
-			for(int i=0; i<EIT_ITEM_CONTENT_MAXCOUNT; i++){
-				LinearLayout.LayoutParams TempLP = 
-					new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);					
-				TempLP.leftMargin = EIT_ITEM_CONTENT_LEFTMARGIN;
-				TempLP.bottomMargin = EIT_ITEM_CONTENT_BOTTOMMARGIN;
+
+		private LayoutInflater mInflater;
+		private Context cont;
+		private int selectItem;
+		private int date;
+		
+		
+		class ViewHolder {
+			TextView time;
+			TextView eit_name;	
+			ImageView icon_book;
+			ImageView icon_pvr;
+		}
+		
+		public EitListDBAdapter(Context context, int index) {
+			super();
+			cont = context;
+			mInflater=LayoutInflater.from(context);	
+			date = index;
+		}
+
+		public int getCount() {
+			if(mTVEvent[date]!=null){
+				return mTVEvent[date].length;
+			}	
+			else
+				return 0;
+		}
+
+		public Object getItem(int position) {
+			return position;
+		}
+		
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public void setSelectItem(int position){
+			this.selectItem = position;
+		}
+        
+        public int getSelectItem(){
+			return this.selectItem;
+        }
+		
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder;	
+			if (convertView == null){    
+				convertView = mInflater.inflate(R.layout.epg_eitlist_item, null);
 				
-				Button TempButton;
-				TempButton = new Button(_Context);
-				
-				TempButton.setId(i);
-				TempButton.setTextColor(Color.WHITE);
-
-				TempButton.setTextSize(18F);
-
-				switch(Layout_size)
-				{
-					case LAYOUT_SMALL:	
-						TempButton.setTextSize(13F);
-					break;
-					case LAYOUT_SMALL576:	
-						TempButton.setTextSize(15F);
-					break;
-					case LAYOUT_MID:
-						TempButton.setTextSize(18F);
-					break;
-					
-					case LAYOUT_LARGE:
-						TempButton.setTextSize(20);
-					break;
-				}
-
-				TempButton.setLayoutParams(TempLP);
-				TempButton.setVisibility(View.GONE);
-
-				TempButton.setFocusableInTouchMode(true);
-				TempButton.setOnFocusChangeListener(new EitItemOnFocusChange());
-				TempButton.setOnClickListener(new EitItemOnClick());
-				TempButton.setSingleLine(true);
-				TempButton.setEllipsize(TextUtils.TruncateAt.valueOf("MARQUEE"));
-				
-				((LinearLayout)convertView).addView(TempButton); 
+				holder = new ViewHolder();
+				holder.time = (TextView)convertView.findViewById(R.id.time);
+				holder.eit_name = (TextView) convertView.findViewById(R.id.eit_name);
+				holder.icon_book = (ImageView) convertView.findViewById(R.id.icon_1);
+				holder.icon_pvr = (ImageView)convertView.findViewById(R.id.icon);
+				convertView.setTag(holder);
 			}
+			else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+		
+			// Bind the data efficiently with the holder.
+			
+			
+			if(mTVEvent[date]!=null){
+				if (mTVEvent[date].length>0){	
+					/*
+					if (
+						(position == 0 ) && 
+						(
+						        mTVEvent[date][position].getStartTime() 
+								> 
+						        (get_firstmillisofcurrentday()/1000+ date * 24 * 60 * 60))
+						)
+					{
+						
+						holder.eit_name.setText("N/A");
+
+					}
+					else
+					*/
+						holder.eit_name.setText(mTVEvent[date][position].getName());
+
+					Date dt_start =  new Date(mTVEvent[date][position].getStartTime()*1000);
+		    		Date dt_end   =  new Date(mTVEvent[date][position].getEndTime()*1000);
+		    		
+		    		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
+		    		String str_start = sdf.format(dt_start); 
+		    		String str_end   = sdf.format(dt_end); 
+					
+					holder.time.setText(""+str_start + "--" + str_end);					
+					
+					switch(mTVEvent[date][position].getSubFlag()){
+						case 0:
+							holder.icon_book.setBackgroundResource(Color.TRANSPARENT);
+							holder.icon_pvr.setBackgroundResource(Color.TRANSPARENT);
+							
+						break;
+						case 1:
+							holder.icon_book.setBackgroundResource(R.drawable.epg_event_book_1); 
+						break;
+						case 2:
+							holder.icon_book.setBackgroundResource(R.drawable.epg_event_book_2); 
+						break;
+					}
+
+				}
+			}
+		
 			return convertView;
 		}
 		
-		public EitListDBAdapter(Context context)
-		{
-			_Context = context;
-		}
-		
-		public int getCount() 
-		{
-			return EIT_ITEM_COUNT;
-		}
-		
-		public Object getItem(int arg0) 
-		{
-			return null;
-		}
-		
-		public long getItemId(int arg0) 
-		{
-			return arg0;
-		}
-		
-		public View getView(int position, View convertView, ViewGroup parent) 
-		{			
-			if (convertView == null)
-			{	
-				convertView = create_eit_content();
-			}
-
-			if(mTVEvent[position]!=null){
-				if (mTVEvent[position].length>0){	
-
-					int TempInt = 0;
-					for(int i=0;((i<EIT_ITEM_CONTENT_MAXCOUNT)&&(i<mTVEvent[position].length));i++)
-					{
-						Button TempButton;
-						long TempLong;
-						
-						if (
-							(i == 0 ) && 
-							(
-							        mTVEvent[position][i].getStartTime() 
-									> 
-							        (get_firstmillisofcurrentday()/1000+ position * 24 * 60 * 60))
-							)
-						{
-							TempButton = (Button)((LinearLayout)convertView).findViewById(0);
-							TempInt = 1;
-							
-							TempLong =  mTVEvent[position][i].getStartTime() 
-							                - (get_firstmillisofcurrentday()/1000+ position * 24 * 60 * 60);
-							
-							TempButton.setHeight(EIT_ITEM_CONTENT_HEIGHT);
-							TempButton.setHint("-1");
-							TempButton.setWidth(((int)TempLong/60)*EIT_ITEMWIDTH_PERMINUTE - 1);
-							TempButton.setText("N/A");
-							
-							TempButton.setBackgroundColor(Eit_ItemColor[1 - (position%2)]);	
-							TempButton.setVisibility(View.VISIBLE);
-						}
-
-						 
-						TempButton = (Button)((LinearLayout)convertView).findViewById(i+TempInt);
-						if(TempButton==null){
-							return convertView;
-						}
-
-						if ((i == (mTVEvent[position].length - 1) )||(i == 0))
-						{
-						
-							if (mTVEvent[position].length == 1)
-							{
-
-								if ( mTVEvent[position][i].getStartTime()  
-									< (get_firstmillisofcurrentday()/1000+ position * 24 * 60 * 60) )
-								{
-
-									if ( mTVEvent[position][i].getEndTime()
-										< (get_firstmillisofcurrentday()/1000+ (position+1) * 24 * 60 * 60)
-										)
-										{
-											TempLong = mTVEvent[position][i].getEndTime() 
-										           - (get_firstmillisofcurrentday()/1000+ position * 24 * 60 * 60);
-										}
-
-									else
-										TempLong = 24 * 60 * 60;
-										
-								}
-
-								else
-								{
-
-									if(mTVEvent[position][i].getEndTime()
-											>
-							           (get_firstmillisofcurrentday()/1000+ (position+1) * 24 * 60 * 60) )
-									{
-										TempLong = (get_firstmillisofcurrentday()/1000+ (position+1) * 24 * 60 * 60)
-									       - mTVEvent[position][i].getStartTime() ;	
-									}
-
-									else
-									{
-										TempLong = mTVEvent[position][i].getEndTime()
-								          - mTVEvent[position][i].getStartTime() ;
-									}
-								}
-							}	
-
-							else
-							{
-								if ((i == 0 ) && 
-								(
-								        mTVEvent[position][i].getStartTime()  
-										<
-								        (get_firstmillisofcurrentday()/1000+ position * 24 * 60 * 60))
-								)	
-								{
-									TempLong = mTVEvent[position][i].getEndTime()
-								           - (get_firstmillisofcurrentday()/1000+ position * 24 * 60 * 60);
-								}
-								else
-								if((i == (mTVEvent[position].length - 1) ) && 
-								(
-								        mTVEvent[position][i].getEndTime()
-										>
-								        (get_firstmillisofcurrentday()/1000+ (position+1) * 24 * 60 * 60))
-								)	
-								{
-									TempLong = (get_firstmillisofcurrentday()/1000+ (position+1) * 24 * 60 * 60)
-									       - mTVEvent[position][i].getStartTime() ;
-								}
-								else{
-
-									
-									
-									
-									if((i < (mTVEvent[position].length - 1) ))
-									{
-										long start = mTVEvent[position][i].getStartTime() ;
-										long end =  mTVEvent[position][i+1].getStartTime(); 
-										TempLong = end-start;	
-									}
-									else{
-										TempLong = mTVEvent[position][i].getEndTime() 
-							          - mTVEvent[position][i].getStartTime() ;
-
-									}
-								}	
-							}
-							
-						}
-						else
-						{
-							long start = mTVEvent[position][i].getStartTime() ;
-							long end =  mTVEvent[position][i+1].getStartTime(); 
-							TempLong = end-start;		
-							/*
-							TempLong = mTVEvent[position].getLong(mTVEvent[position].getEndTime()) 
-							          - mTVEvent[position].getLong(mTVEvent[position].getStartTime());
-							*/          
-						}
-
-						LinearLayout.LayoutParams TempLP = 
-						new LinearLayout.LayoutParams(((int)TempLong/60)*EIT_ITEMWIDTH_PERMINUTE - 1, EIT_ITEM_CONTENT_HEIGHT);					
-							TempLP.leftMargin = EIT_ITEM_CONTENT_LEFTMARGIN;
-							TempLP.bottomMargin = EIT_ITEM_CONTENT_BOTTOMMARGIN;
-						TempButton.setLayoutParams(TempLP);	
-						TempButton.setHeight(EIT_ITEM_CONTENT_HEIGHT);
-						TempButton.setWidth(((int)TempLong/60)*EIT_ITEMWIDTH_PERMINUTE - 1);
-						TempButton.setHint(""+i);
-						TempButton.setText(""+mTVEvent[position][i].getName());	
-
-						//TempButton.setWidth(((int)TempLong/60)*EIT_ITEMWIDTH_PERMINUTE - 1);	
-
-						TempButton.setBackgroundColor(Eit_ItemColor[1 - (position%2)]);	
-						TempButton.setVisibility(View.VISIBLE);
-
-						final int pos = position;
-						final int item = i;
-						TempButton.setOnKeyListener(new OnKeyListener() { 
-						public boolean onKey(View v, int keyCode, KeyEvent event) {		
-					
-							switch(keyCode)
-							{
-								case KeyEvent.KEYCODE_TAB: //info
-									if (event.getAction() == KeyEvent.ACTION_DOWN) {
-										showInfoDia(v,pos,item);	
-																		}
-									return true;	
-							} 
-							return false;
-						}}); 
-
-						
-
-						switch(mTVEvent[position][i].getSubFlag())
-						{
-							case 0:
-								refresh_bookstatus(TempButton, 0);
-							break;
-							case 1:
-								refresh_bookstatus(TempButton, 1);
-							break;
-							case 2:
-								refresh_bookstatus(TempButton, 2);
-							break;
-						}
-					}
-				}
-			}	
-			return convertView;	
-		}
 	} 
 
 	AlertDialog.Builder builder=null;
-    	private void showInfoDia(View v,int pos,int i){
-
-		String message = mTVEvent[pos][i].getEventDescr()+"\n"+mTVEvent[pos][i].getEventExtDescr();
+    private void showInfoDia(View v,int date,int pos){
+		
+		String message = mTVEvent[date][pos].getEventDescr()+"\n"+mTVEvent[date][pos].getEventExtDescr();
 				
 		builder = new AlertDialog.Builder(DTVEpg.this) ;
-		builder.setTitle((((Button)v).getText().toString()!=null&&!(((Button)v).getText().toString().equals("")))?((Button)v).getText().toString():"--");
+		builder.setTitle(mTVEvent[date][pos].getName());
 		//builder.setMessage((mTVEvent[pos].getString(mTVEvent[pos].getColumnIndex("ext_descr"))!=null&&!(mTVEvent[pos].getString(mTVEvent[pos].getColumnIndex("ext_descr")).equals("")))?
 		builder.setMessage(message);
 		builder.setPositiveButton("ok", null);
@@ -1128,6 +818,547 @@ public class DTVEpg extends DTVActivity{
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		
 	}	
+
+	private void showEventBookDialog(View v,int position){
+		final int item = position;
+		final View TempView = v;
+		int pos = 0;
+		String items[] = new String[]{"Cancel Book", "BookPlay", "BookRecord"};
+		
+		new SingleChoiseDialog(DTVEpg.this,items,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText("   ");
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				Log.d(TAG,"dialog choise="+which);
+				//refresh_bookstatus(TempItemView, which);
+				final ImageView icon = (ImageView)TempView.findViewById(R.id.icon_1);
+				switch(which){
+					case 0:
+						update_bookstatus(mTVEvent[current_date_index][item].getID(),0);
+						mTVEvent[current_date_index][item].setSubFlag(0);
+						icon.setBackgroundResource(0);
+					break;
+					case 1:
+						update_bookstatus(mTVEvent[current_date_index][item].getID(),1);
+						mTVEvent[current_date_index][item].setSubFlag(1);
+						icon.setBackgroundResource(R.drawable.epg_event_book_1);
+					break;
+					case 2:
+						update_bookstatus(mTVEvent[current_date_index][item].getID(),2);
+						mTVEvent[current_date_index][item].setSubFlag(2);
+						icon.setBackgroundResource(R.drawable.epg_event_book_2);
+						//if((long)(mTVEvent[current_date_index][item].getStartTime())>System.currentTimeMillis()/1000)
+							//SetAlarm(mTVEvent[current_date_index][item].getStartTime()-100);
+						Calendar cal = Calendar.getInstance();
+						SetAlarm(cal.getTimeInMillis()/1000+60);	
+					break;
+				}
+			}
+		};
+	}
+
+	/*private void showEventAddDialog(View v,int position){
+		
+		final int item = position;
+		final View TempView = v;
+		int pos = 0;
+		String items[] = new String[]{"Cancel Book", "BookPlay", "BookRecord"};
+		
+		new SingleChoiseDialog(DTVEpg.this,items,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText("   ");
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				Log.d(TAG,"dialog choise="+which);
+				//refresh_bookstatus(TempItemView, which);
+				final ImageView icon = (ImageView)TempView.findViewById(R.id.icon_1);
+				switch(which){
+					case 0:
+						update_bookstatus(mTVEvent[current_date_index][item].getID(),0);
+						mTVEvent[current_date_index][item].setSubFlag(0);
+						icon.setBackgroundResource(0);
+					break;
+					case 1:
+						update_bookstatus(mTVEvent[current_date_index][item].getID(),1);
+						mTVEvent[current_date_index][item].setSubFlag(1);
+						icon.setBackgroundResource(R.drawable.epg_event_book_1);
+					break;
+					case 2:
+						update_bookstatus(mTVEvent[current_date_index][item].getID(),2);
+						mTVEvent[current_date_index][item].setSubFlag(2);
+						icon.setBackgroundResource(R.drawable.epg_event_book_2);
+						//if((long)(mTVEvent[current_date_index][item].getStartTime())>System.currentTimeMillis()/1000)
+							//SetAlarm(mTVEvent[current_date_index][item].getStartTime()-100);
+						Calendar cal = Calendar.getInstance();
+						SetAlarm(cal.getTimeInMillis()/1000+60);	
+					break;
+				}
+			}
+		};
+		
+	}
+	*/
+
+	private  class EventAddAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+
+		
+		private Context cont;
+		private String[] DATA;
+
+	 	class ViewHolder {
+			
+			TextView text;
+			ImageView icon;
+			TextView  info;
+			ImageView icon1;
+		}
+	
+		public EventAddAdapter(Context context) {
+			super();
+			cont = context;
+			mInflater=LayoutInflater.from(context);
+			
+			DATA = new String[2];
+			DATA[0]= cont.getResources().getString(R.string.repeat);			
+			DATA[1]= cont.getResources().getString(R.string.mode);
+				
+		}
+
+		public int getCount() {	
+			return DATA.length;
+		}
+
+		public Object getItem(int position) {
+
+			return position;
+		}
+	
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder=null;
+
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.epg_event_add_list, null);
+				holder = new ViewHolder();
+				holder.text = (TextView) convertView.findViewById(R.id.text);
+				holder.info = (TextView)convertView.findViewById(R.id.info);
+				holder.icon = (ImageView)convertView.findViewById(R.id.icon);
+				holder.icon1 = (ImageView)convertView.findViewById(R.id.icon1);
+				convertView.setTag(holder);
+			}else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			
+			holder.text.setText(DATA[position]);
+			holder.icon.setBackgroundResource(R.drawable.arrow_down2); 
+			holder.info.setVisibility(View.VISIBLE);
+			holder.icon.setVisibility(View.VISIBLE);
+			holder.icon1.setVisibility(View.INVISIBLE);
+			holder.info.setTextColor(Color.YELLOW);	
+			switch(position){
+				case 0:
+					holder.info.setText(cont.getResources().getString(R.string.once));
+					break;
+				case 1:
+					holder.info.setText(cont.getResources().getString(R.string.view));
+					break;
+			
+			} 
+			
+			return convertView;
+		}
+	}
+	
+	int mode=1;
+	int repeat=0;
+	private void showEventAddDialog(View v,int date,int position){
+		String message = mTVEvent[date][position].getEventDescr()+"\n"+mTVEvent[date][position].getEventExtDescr();
+		final int pos = position;
+		
+		final Dialog mDialog = new AlertDialog(this){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						//if(mDialog!=null&& mDialog.isShowing()){
+							dismiss();
+						//}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.event_add_dialog);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.5f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		//title.setText(getString(R.string.scan_mode));
+		title.setText("Event Add");
+	
+		final TextView text_channel_name= (TextView) window.findViewById(R.id.text_channel_name);
+		final TextView text_event_name = (TextView) window.findViewById(R.id.text_event_name);
+		final TextView text_event_start_date = (TextView) window.findViewById(R.id.text_event_start_date);
+		final TextView text_event_start_time = (TextView) window.findViewById(R.id.text_event_start_time);
+		final TextView text_event_end_time = (TextView) window.findViewById(R.id.text_event_end_time);
+
+		text_event_name.setText(mTVEvent[date][position].getName());
+
+		Date dt_start =  new Date(mTVEvent[date][position].getStartTime()*1000);
+		Date dt_end   =  new Date(mTVEvent[date][position].getEndTime()*1000);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
+		SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MMMM-dd"); 
+		String str_start = sdf.format(dt_start); 
+		String str_end   = sdf.format(dt_end); 
+		String str_date  = sdf_date.format(dt_start);
+		text_event_start_date.setText(str_date);
+		text_event_start_time.setText(str_start);
+		text_event_end_time.setText(str_end);
+		
+		text_channel_name.setText(mTVProgramList[cur_select_item].getName());
+		
+		final ListView LimitListView = (ListView)window.findViewById(R.id.set_list); 	
+		LimitListView.setAdapter(new EventAddAdapter(this));
+
+		
+		LimitListView.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+		public void onItemSelected(AdapterView<?> parent, View view,
+			int position, long id) {
+				Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
+				//SetLimitItemSelected = position;
+			}
+
+			public void onNothingSelected(AdapterView<?> parent) {
+				Log.d(TAG,"<<sat_list onNothingSelected>> ");
+			}
+		});
+		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				
+				final TextView text =(TextView) arg1.findViewById(R.id.info);
+				final ImageView icon=(ImageView)arg1.findViewById(R.id.icon);	
+				final ImageView icon1=(ImageView)arg1.findViewById(R.id.icon1);
+				
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				System.out.println("onItemSelected arg1 " + arg1);
+				System.out.println("onItemSelected arg2 " + arg2);
+				System.out.println("onItemSelected arg3 " + arg3);
+				
+				switch(arg2){
+					case 0:  
+						if(text.getText().equals(getString((R.string.once)))){
+							text.setText(getString(R.string.daily));
+							repeat=1;
+						}
+						else if(text.getText().equals(getString((R.string.daily)))){
+							text.setText(getString(R.string.weekly));
+							repeat=2;
+						}
+						else{
+							text.setText(getString(R.string.once));
+							repeat=0;
+						}
+						break;
+					case 1:
+						if(text.getText().equals(getString((R.string.view)))){
+							text.setText(getString(R.string.pvr));
+							mode=1;
+						}
+						else{
+							text.setText(getString(R.string.view));
+							mode=2;
+						}
+						break;					
+				}
+			}
+        	    
+        });
+
+		no.setFocusable(true);     
+     	no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+		        	 //onSetNegativeButton();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+			  		/*
+			  		if(mode==1){
+						//update_bookstatus(mTVEvent[current_date_index][pos].getID(),1);
+						//mTVEvent[current_date_index][pos].setSubFlag(1);
+						//icon.setBackgroundResource(R.drawable.epg_event_book_1);
+						DTVPlayerAddEvent(mTVEvent[current_date_index][pos],1);
+			  		}else if((mode==2)){
+						//update_bookstatus(mTVEvent[current_date_index][pos].getID(),2);
+						//mTVEvent[current_date_index][pos].setSubFlag(2);
+						//icon.setBackgroundResource(R.drawable.epg_event_book_2);
+						DTVPlayerAddEvent(mTVEvent[current_date_index][pos],2);
+					}
+					*/
+					DTVPlayerAddEvent(mTVEvent[current_date_index][pos].getID(),mode,repeat);	
+					
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+			}});
+		
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+								
+							}         
+							}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							
+						}         
+						});	
+	
+	}
+	
+
+	/*
+	private AlertDialog.Builder diaBuilder;
+	private AlertDialog alert; 
+	private int SetLimitItemSelected = 0;
+	private View dvbs_set_limit_list;
+	private void showBookAddDia(){
+
+		diaBuilder = new AlertDialog.Builder(this);
+	    LayoutInflater layoutInflater = LayoutInflater.from(this);  
+		
+ 	 	dvbs_set_limit_list = layoutInflater.inflate(R.layout.dvbs_set_limit_dia, null); 
+		//diaBuilder.setTitle(R.string.dish_setup_conf_button_des7_info);
+
+		final ListView LimitListView = (ListView)dvbs_set_limit_list.findViewById(R.id.set_limit_list); 
+
+	
+		final TextView edittext_frequency= (TextView) dvbs_set_limit_list.findViewById(R.id.edittext_frequency);
+		final TextView edittext_symbol = (TextView) dvbs_set_limit_list.findViewById(R.id.edittext_symbol);
+		final TextView polarization = (TextView) dvbs_set_limit_list.findViewById(R.id.polarization);
+		
+		LimitListView.setOnItemSelectedListener(new OnItemSelectedListener() {
+			public void onItemSelected(AdapterView<?> parent, View view,
+				int position, long id) {
+					Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
+
+					SetLimitItemSelected = position;
+					
+				}
+
+				public void onNothingSelected(AdapterView<?> parent) {
+					Log.d(TAG,"<<sat_list onNothingSelected>> ");
+				}
+			}
+		);
+		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+	        {
+
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
+					final TextView text =(TextView) arg1.findViewById(R.id.info);
+					final ImageView icon=(ImageView)arg1.findViewById(R.id.icon);	
+					final ImageView icon1=(ImageView)arg1.findViewById(R.id.icon1);
+					
+					
+					// TODO Auto-generated method stub
+					System.out.println("onItemSelected arg0 " + arg0);
+					System.out.println("onItemSelected arg1 " + arg1);
+					System.out.println("onItemSelected arg2 " + arg2);
+					System.out.println("onItemSelected arg3 " + arg3);
+
+					
+					switch(arg2){
+						case 0:  //move continue
+							text.setText("Stop");	
+							hideMoveIcon(icon);
+							hideMoveIcon(icon1);
+							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STOP_MOVING,null);
+							 t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
+							break;
+						
+					}
+				}
+	        	    
+	        });
+
+		LimitListView.setOnKeyListener( new OnKeyListener(){
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+				int pos=0;	
+					TextView text=null;	
+					ImageView icon =null;
+					ImageView icon1=null;
+					ListView listView = (ListView) v;
+					DvbsSetLimitAdapter adapter = null;
+					if (listView.getSelectedView() != null) {
+					        // (cast if necessary) and use selected view
+						//pos = listView.getSelected();
+						View view = listView.getChildAt(SetLimitItemSelected);
+						text =(TextView) view.findViewById(R.id.info);
+						icon = (ImageView)  view.findViewById(R.id.icon);
+						icon1 = (ImageView)  view.findViewById(R.id.icon1);
+						adapter = (DvbsSetLimitAdapter)listView.getAdapter();
+				}
+				
+ 				if (event.getAction() == KeyEvent.ACTION_UP) {
+ 	
+	        			
+		
+					// TODO Auto-generated method stub
+					switch(keyCode)
+					{	
+						case KeyEvent.KEYCODE_DPAD_RIGHT:
+							if(SetLimitItemSelected==0){
+								Log.d(TAG,"KEYCODE_DPAD_RIGHT"+SetLimitItemSelected);
+								my_cmdParams.unit=0;
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_EAST,(Object)my_cmdParams);
+								text.setText("East");
+								hideMoveIcon(icon);
+								showMoveIcon(icon1);
+								adapter.notifyDataSetChanged();
+								resetrotorstatuscache = true;
+							}
+							else if(SetLimitItemSelected==1) {
+								Log.d(TAG,"KEYCODE_DPAD_RIGHT"+SetLimitItemSelected);
+								my_cmdParams.unit=1;	
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_EAST,(Object)my_cmdParams);
+								text.setText("East");
+								showMoveIcon1(icon1,text);	
+								adapter.notifyDataSetChanged();
+								resetrotorstatuscache = true;
+							}
+							return true;
+						case KeyEvent.KEYCODE_DPAD_LEFT:
+							if(SetLimitItemSelected==0){
+								Log.d(TAG,"KEYCODE_DPAD_LEFT"+SetLimitItemSelected);
+								my_cmdParams.unit=0;	
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_WEST,(Object)my_cmdParams);
+								text.setText("West");
+								hideMoveIcon(icon1);
+								showMoveIcon(icon);
+								adapter.notifyDataSetChanged();
+								resetrotorstatuscache = true;
+							}
+							else if(SetLimitItemSelected==1) {
+								Log.d(TAG,"KEYCODE_DPAD_LEFT"+SetLimitItemSelected);
+								my_cmdParams.unit=1;	
+								t.onSetupCmd(t.ROTOR_CMD_MOVE_WEST,(Object)my_cmdParams);
+								text.setText("West");
+								showMoveIcon1(icon,text);
+								adapter.notifyDataSetChanged();
+								resetrotorstatuscache = true;
+								
+							}
+							return true;
+					}
+ 				}	
+				else if(event.getAction() == KeyEvent.ACTION_DOWN){
+					switch(keyCode)
+					{
+						case KeyEvent.KEYCODE_DPAD_DOWN:
+							Log.d(TAG,"----continue is stop-----"+SetLimitItemSelected);
+							if(SetLimitItemSelected==0)
+							{
+								hideMoveIcon(icon);
+								hideMoveIcon(icon1);
+								text.setText("Stop");
+								t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);						
+							}
+							break;
+					}	
+				}	
+				return false;
+	            }
+			
+		});	
+		
+				
+		diaBuilder.setView(dvbs_set_limit_list);
+	
+		alert = diaBuilder.create();
+
+		alert.setOnShowListener(new DialogInterface.OnShowListener(){
+							public void onShow(DialogInterface dialog) {
+									t.onSetupCmd(50,null);
+								}         
+								}); 	
+
+		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
+							public void onDismiss(DialogInterface dialog) {
+							t.quitLoop();	
+							timer_position_adjust_ts_signal_info_handler.removeCallbacks(timer_position_adjust_ts_signal_info_runnable);  
+							if(resetrotorstatuscache){
+								resetrotorstatuscache = false;
+								//mLockDvb.resetrotorstatuscache();
+							}
+							}         
+							});	
+
+		alert.show();	
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		//alert.getWindow().setLayout(displayMetrics.widthPixels / 2, -1);
+
+		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+		lp.dimAmount=0.00f;
+		alert.getWindow().setAttributes(lp);
+		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		
+		timer_position_adjust_ts_signal_info_handler.postDelayed(timer_position_adjust_ts_signal_info_runnable, 500);
+	}
+	*/
+	
 	
     private class ChoiceOnClickListener implements DialogInterface.OnClickListener 
     {  
@@ -1146,6 +1377,7 @@ public class DTVEpg extends DTVActivity{
 
 	class EitItemOnClick  implements OnClickListener{
 		public void onClick(View v){
+			/*
        		final int i=Integer.valueOf(((Button)v).getHint().toString());
         	if (i != -1){	
         		try{
@@ -1164,73 +1396,7 @@ public class DTVEpg extends DTVActivity{
 				catch(Exception e){
 				    Log.d(TAG, e.getMessage());
 				}
-				/*
-				try{
-					TempItemView = v;
-					final CharSequence[] book_items = {"Cancel Book", "BookPlay", "BookRecord"};
-					Dialog dialog = null;  
-				    Builder builder = new AlertDialog.Builder(DTVEpg.this);  
-				    builder.setTitle("   ");  
-				    final ChoiceOnClickListener choiceListener = new ChoiceOnClickListener();  
-				    builder.setSingleChoiceItems(book_items, 0, choiceListener);  
-				      
-				    DialogInterface.OnClickListener btnListener =   
-				        new DialogInterface.OnClickListener() 
-				    	{  
-				            public void onClick(DialogInterface dialogInterface, int which) 
-				            {  
-				            	if (TempItemView  == null)
-									Log.d("Error #################################################", "TempItemView is null");
-								else{
-					            	int TempInt = EitListView.getPositionForView(TempItemView);
-					                int choiceWhich   = choiceListener.getWhich();  
-									refresh_bookstatus(TempItemView, choiceWhich);
-									try{
-										switch(choiceWhich){
-											case 0:
-												update_bookstatus(mTVEvent[TempInt][i].getID(),0);
-											break;
-											
-											case 1:
-												update_bookstatus(mTVEvent[TempInt][i].getID(),1);
-											break;
-											
-											case 2:
-												update_bookstatus(mTVEvent[TempInt][i].getID(),2);
-												
-												//Log.d("EPG","start="+(mTVEvent[TempInt].getLong(mTVEvent[TempInt].getStartTime()))+"System.currentTimeMillis()"+System.currentTimeMillis());
-												if((long)(mTVEvent[TempInt][i].getStartTime())>System.currentTimeMillis()/1000)
-													SetAlarm(mTVEvent[TempInt][i].getStartTime()-100);
-											break;
-										}
-									}
-									catch(Exception e)
-									{
-									    Log.d("update_bookstatus Exception#################################################", e.getMessage());
-									}
-								}
-				            }  
-				        };  
-				    builder.setPositiveButton("Ok", btnListener);  
-				    builder.setNegativeButton("Cancel", null);
-				    dialog = builder.create(); 
-				    dialog.show();
-				    dialog.getWindow().setLayout(450, 450);
-
-				    AlertDialog alert = builder.create();
-					dialog.show();
-
-					WindowManager.LayoutParams lp=dialog.getWindow().getAttributes();
-					lp.dimAmount=0.0f;
-					dialog.getWindow().setAttributes(lp);
-					dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);		
-					
-				}
-				catch(Exception e)
-				{
-				    Log.d(TAG,"EitItemOnClick Exception>>>>---"+e.getMessage());
-				}
-				*/
+				
 				TempItemView = v;
 				if(TempItemView  == null)
 					Log.d(TAG,"TempItemView is null");
@@ -1270,70 +1436,9 @@ public class DTVEpg extends DTVActivity{
 			else{
 				clear_eventnameanddetailinfo();
 			}
-
+			*/
         }
 	}
-	
-	class EitItemOnFocusChange  implements OnFocusChangeListener{
-		public void onFocusChange(View v, boolean isFocused){		
-	    	  refresh_dates(EitListView.getPositionForView(v));
-              
-	       	  final int i=Integer.valueOf(((Button)v).getHint().toString());
-			  if (i != -1){
-			  
-					try 
-					{
-						int TempInt = EitListView.getPositionForView(v);
-
-						Date dt_start =  new Date(mTVEvent[TempInt][i].getStartTime()*1000);
-				    		Date dt_end   =  new Date(mTVEvent[TempInt][i].getEndTime()*1000);
-				    		
-				    		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
-				    		String str_start = sdf.format(dt_start); 
-				    		String str_end   = sdf.format(dt_end); 
-						
-				  		refresh_eventnameanddetailinfo(((Button)v).getText().toString()+ "[" + str_start + "--" + str_end +"]",
-			         		get_detailinfo(mTVEvent[TempInt][i].getID()));
-					}
-					catch(Exception e)
-					{
-					    Log.d(TAG,e.getMessage());
-					}
-			  }
-			  else
-			  {
-					clear_eventnameanddetailinfo();
-			  }
-			  
-		      if (isFocused==true)
-		      {
-		    	  ((Button)v).setBackgroundColor(EIT_TIEM_FOCUSCOLOR);
-		      }
-		      else 
-		      {
-				  if(EitListView.getPositionForView(v)%2 == 1)
-		    		  ((Button)v).setBackgroundColor(EIT_TIEM_UNFOCUSCOLOR_ODD);
-					else
-						((Button)v).setBackgroundColor(EIT_TIEM_UNFOCUSCOLOR_EVEN);	
-		      }
-	    }	
-	}
-	
-	class ExitOnClick  implements OnClickListener{
-        public void onClick(View v){ 
-		    finish();
-        }
-    }
-
-	class DetailOnClick  implements OnClickListener{
-        public void onClick(View v){ 
-        	new AlertDialog.Builder(DTVEpg.this) 
-        	.setTitle("--")
-        	.setMessage(((TextView)v).getText())
-        	.setPositiveButton("ok", null)
-        	.show();
-        }
-    }	
 	
 	private void update_new_eit(){
 		progressDialog.show();
@@ -1350,7 +1455,7 @@ public class DTVEpg extends DTVActivity{
                 	setup_db();
                 }
                 catch (Exception e){
-                 	Log.d("update_new_eit Exception 1", e.getMessage());	
+                 	
                 }
 
                 try{
@@ -1360,7 +1465,7 @@ public class DTVEpg extends DTVActivity{
                 	Thread.sleep(1000);
                 }
                 catch (Exception e){
-                 	Log.d("update_new_eit Exception 2", e.getMessage());	
+                 		
                 } 
 
                 try{
@@ -1370,13 +1475,580 @@ public class DTVEpg extends DTVActivity{
                 	//Thread.sleep(1000);
                 }
                 catch (Exception e){
-                 	Log.d("update_new_eit Exception 3", e.getMessage());	
+                 	
 				} 
 			}
 		}.start(); 
 		
 		eit_notify = 0;
 	}
+	
+	
+/****************************Channel List****************************/
+
+	ListView ListView_channel=null;
+	TextView Text_title=null;
+	private int class_total=0;
+	private int cur_class_no=-1;
+	private int cur_select_item=0;
+	private IconAdapter myAdapter=null;
+	private TVProgram[]  mTVProgramList=null;
+	private DTVSettings mDTVSettings=null;
+	private int list_status=-1;
+
+	int db_id=-1;
+	private int service_type=TVProgram.TYPE_TV;
+	private boolean favor=false;
+
+	private void getListData(int type){
+		if(type==0)
+			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,true);
+		else if(type==1)
+			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,true);
+	}
+
+	private void getListFavorite(){
+		mTVProgramList=TVProgram.selectByFavorite(this,true);	
+	}
+
+
+	TVGroup[] mTVGroup=null;
+	private int getListProgramClass(){
+		mTVGroup=DTVProgramManagerGetGroupList();
+		if(mTVGroup!=null)
+			return mTVGroup.length;
+		else
+			return 0;
+	}
+	
+	private void getClassData(int class_no){
+		mTVProgramList=DTVProgramManagerGetProByGroup(class_no);
+	}
+
+	private LinearLayout LinearLayoutListView=null;
+	private void DTVChannelList_UI_Init(){
+
+		Bundle bundle = this.getIntent().getExtras();
+		if(bundle!=null){
+	    	db_id = bundle.getInt("db_id");
+			service_type=getCurrentProgramType();
+		}	
+
+		ImageButton prolist_button = (ImageButton)findViewById(R.id.prolist_button);
+		prolist_button.setOnClickListener(new channelListButtonClick()); 	
+
+		Text_title=(TextView)findViewById(R.id.prolist);
+		Text_title.setTextColor(Color.YELLOW);
+		
+		class_total = getListProgramClass();
+		if(service_type == TVProgram.TYPE_RADIO){
+			getListData(1);
+			Text_title.setText(R.string.radio);
+		}	
+		else{
+			service_type = TVProgram.TYPE_TV;
+			getListData(0);
+			Text_title.setText(R.string.tv);
+		}
+		
+		ListView_channel = (ListView) findViewById(R.id.programListView);
+		myAdapter = new IconAdapter(this,null);
+		ListView_channel.setOnItemSelectedListener(mOnSelectedListener);
+		ListView_channel.setOnScrollListener(new listOnScroll()); 
+		ListView_channel.setOnItemClickListener(mOnItemClickListener);
+		ListView_channel.setAdapter(myAdapter);
+		setFocusPosition();
+	}
+
+	public void setFocusPosition(){
+		int i = 0;
+		if(mTVProgramList!=null){
+			for(i=0;i<mTVProgramList.length;i++){
+				if(db_id == mTVProgramList[i].getID()){
+					ListView_channel.setFocusableInTouchMode(true);
+	   			  	ListView_channel.requestFocus();
+	   			  	ListView_channel.requestFocusFromTouch();
+	        		ListView_channel.setSelection(i);
+					cur_select_item = i;
+					break;
+				}
+			}	
+		}
+	}
+	
+  	private AdapterView.OnItemSelectedListener mOnSelectedListener = new AdapterView.OnItemSelectedListener(){
+		public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
+			ListView_channel = (ListView) findViewById(R.id.programListView);
+			if(ListView_channel.hasFocus() == true){
+			}
+			cur_select_item = position;
+			list_status=0;
+		}
+		public void onNothingSelected(AdapterView<?> parent){
+		}
+	};
+
+	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
+		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
+			int db_id=mTVProgramList[position].getID();	
+			int serviceType = mTVProgramList[position].getType();
+			DTVPlayerPlayById(db_id);
+			current_date_index=0;
+			date_button0.setBackgroundResource(R.drawable.epg_date_button_press);	
+			date_button1.setBackgroundResource(R.drawable.epg_date_button);
+			date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+			date_button3.setBackgroundResource(R.drawable.epg_date_button);
+			date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+			date_button5.setBackgroundResource(R.drawable.epg_date_button);
+			date_button6.setBackgroundResource(R.drawable.epg_date_button);
+		}
+	};
+
+	private Button.OnFocusChangeListener mOnFocusChangeListener = new Button.OnFocusChangeListener(){
+        public void onFocusChange(View v, boolean hasFocus) {
+           // TODO Auto-generated method stub
+			if(hasFocus == true){
+				v.setBackgroundResource(R.drawable.epg_date_button);
+			}
+			else{
+				switch(current_date_index){
+						case 0:
+							date_button0.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;
+						case 1:
+							date_button1.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;
+						case 2:
+							date_button2.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;
+						case 3:
+							date_button3.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;
+						case 4:
+							date_button4.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;
+						case 5:
+							date_button5.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;	
+						case 6:
+							date_button6.setBackgroundResource(R.drawable.epg_date_button_press);
+							break;	
+					}
+			}	
+           
+        }
+    };
+
+	private class IconAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+		private Context cont;
+		private List<String> listItems;
+		private int selectItem;
+		
+		class ViewHolder {
+			TextView prono;
+			TextView text;	
+			ImageView icon_scrambled;
+			ImageView icon_fav;
+			ImageView icon;
+		}
+		
+		public IconAdapter(Context context, List<String> list) {
+			super();
+			cont = context;
+			mInflater=LayoutInflater.from(context);			  
+		}
+
+		public int getCount() {
+			if(mTVProgramList==null)
+				return 0;
+			else
+				return mTVProgramList.length;
+		}
+
+		public Object getItem(int position) {
+			return position;
+		}
+		
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public void setSelectItem(int position){
+			this.selectItem = position;
+		}
+        
+        public int getSelectItem(){
+			return this.selectItem;
+        }
+		
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder;	
+			if (convertView == null){    
+				convertView = mInflater.inflate(R.layout.epg_channellist_item, null);
+				
+				holder = new ViewHolder();
+				holder.prono = (TextView)convertView.findViewById(R.id.prono);
+				holder.text = (TextView) convertView.findViewById(R.id.ItemText);
+				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+				holder.icon_scrambled = (ImageView)convertView.findViewById(R.id.icon_scrambled);
+				holder.icon_fav = (ImageView)convertView.findViewById(R.id.icon_fav);
+				convertView.setTag(holder);
+			}
+			else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+		
+			// Bind the data efficiently with the holder.
+
+			if(mDTVSettings.getScanRegion().contains("ATSC")==false){
+				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber()));
+			}
+			else{
+				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber())+"-"+Integer.toString(mTVProgramList[position].getNumber().getMinor()));
+			}
+			
+			holder.text.setText(mTVProgramList[position].getName());
+			
+			Log.d(TAG,"db_id="+db_id);
+			Log.d(TAG,"mTVProgramList[position].getID()="+mTVProgramList[position].getID());
+			if(db_id == mTVProgramList[position].getID()){  
+				//convertView.setBackgroundColor(Color.RED);  
+				holder.text.setTextColor(Color.YELLOW);
+			}	
+			else{
+				//convertView.setBackgroundColor(Color.TRANSPARENT); 
+				holder.text.setTextColor(Color.WHITE);
+			}	
+		
+			if(mTVProgramList[position].getLockFlag()){
+				holder.icon.setBackgroundResource(R.drawable.dtvplayer_icon_lock); 
+			}	
+			else{
+				holder.icon.setBackgroundResource(Color.TRANSPARENT);
+			}
+
+			if(mTVProgramList[position].getFavoriteFlag()){
+				holder.icon_fav.setBackgroundResource(R.drawable.dtvplayer_icon_fav); 
+			}	
+			else{
+				holder.icon_fav.setBackgroundResource(Color.TRANSPARENT);
+			}	
+
+			if(mTVProgramList[position].getScrambledFlag()){
+				holder.icon_scrambled.setBackgroundResource(R.drawable.dtvplayer_icon_scrambled); 
+			}	
+			else{
+				holder.icon_scrambled.setBackgroundResource(Color.TRANSPARENT);
+			}			  
+			return convertView;
+		}
+	}	
+		
+	class listOnScroll implements OnScrollListener{
+		public void onScroll(AbsListView view, int firstVisibleItem,int visibleItemCount, int totalItemCount) {
+			//reset_timer();	
+		}
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+			//reset_timer();
+		}
+    }	
+	
+	class MouseClick implements OnClickListener{    
+		public void onClick(View v) {
+			// TODO Auto-generated method stub	
+	    	//reset_timer();
+			switch (v.getId()) {
+				case R.id.arrow_left:
+					break;
+			}
+		}
+     }
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		//reset_timer();
+		switch (keyCode) {
+			/*
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+				DTVListDealLeftAndRightKey(0);
+				break;		
+			case KeyEvent.KEYCODE_DPAD_RIGHT:	
+				DTVListDealLeftAndRightKey(1);
+				break;
+			*/	
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+				if(list_status==0){
+					if(cur_select_item == ListView_channel.getCount()-1){
+				    	ListView_channel.setSelection(0); 	
+						return true;
+					}	
+				}
+				else if(list_status==1){
+					if(eit_list_cur_pos == EitListView.getCount()-1){
+				    	EitListView.setSelection(0); 	
+						return true;
+					}	
+				}
+				break;
+			case KeyEvent.KEYCODE_DPAD_UP:
+				if(list_status==1){
+					switch(current_date_index){
+						case 0:
+							date_button0.requestFocus();
+							break;
+						case 1:
+							date_button1.requestFocus();
+							break;
+						case 2:
+							date_button2.requestFocus();
+							break;
+						case 3:
+							date_button3.requestFocus();
+							break;
+						case 4:
+							date_button4.requestFocus();
+							break;
+						case 5:
+							date_button5.requestFocus();
+							break;	
+						case 6:
+							date_button6.requestFocus();
+							break;	
+					}
+				}	
+				else if(list_status==0){
+					/*
+					if(cur_select_item == 0){
+						ListView_channel.setSelection(ListView_channel.getCount()-1); 
+						return true;
+					}	
+					*/
+				}
+				break;
+			case KeyEvent.KEYCODE_BACK:	
+				DTVEpg.this.finish();
+				break;
+			case DTVActivity.KEYCODE_YELLOW_BUTTON:
+				if(list_status==1){
+					if(EitListView.getChildCount()>eit_list_cur_pos)
+						EitListView.setSelection(0);
+					else{
+						EitListView.setSelection(eit_list_cur_pos-EitListView.getChildCount());
+					}
+					mEitListDBAdapter.notifyDataSetChanged();
+				}
+				else if(list_status==0){
+					if(ListView_channel.getChildCount()>cur_select_item)
+						ListView_channel.setSelection(0);
+					else{
+						ListView_channel.setSelection(cur_select_item-ListView_channel.getChildCount());
+					}
+					myAdapter.notifyDataSetChanged();
+				}
+				break;
+			case DTVActivity.KEYCODE_BLUE_BUTTON:
+				int p=0;
+				if(list_status==1){
+					p = eit_list_cur_pos+EitListView.getChildCount();
+					if(p<EitListView.getCount())
+						EitListView.setSelection(p-1);
+					else{
+						EitListView.setSelection(EitListView.getCount()-1);
+					}
+					mEitListDBAdapter.notifyDataSetChanged();
+				}
+				else if(list_status==0){
+					p = cur_select_item+ListView_channel.getChildCount();
+					if(p<ListView_channel.getCount())
+						ListView_channel.setSelection(p-1);
+					else{
+						ListView_channel.setSelection(ListView_channel.getCount()-1);
+					}
+					myAdapter.notifyDataSetChanged();
+				}
+									
+				break;	
+			case DTVActivity.KEYCODE_RED_BUTTON:	
+				Intent Intent_booklist = new Intent();
+				Intent_booklist.setClass(DTVEpg.this, DTVBookList.class);
+				startActivityForResult(Intent_booklist,22);
+				break;
+		}
+		return super.onKeyDown(keyCode, event);
+	}	  
+
+	
+	Rotate3D lQuest1Animation=null;		
+	Rotate3D lQuest2Animation =null;	
+ 	Rotate3D rQuest1Animation=null;	
+    Rotate3D rQuest2Animation=null;	
+	public void initAnimation() {
+		DisplayMetrics dm = new DisplayMetrics();
+		dm = getResources().getDisplayMetrics();
+		int mCenterX = dm.widthPixels / 2;
+		int mCenterY = dm.heightPixels / 2;
+		
+		int duration = 300;
+		lQuest1Animation = new Rotate3D(0, -90, mCenterX, mCenterY);	
+		lQuest1Animation.setFillAfter(true);
+		lQuest1Animation.setDuration(duration);
+
+		lQuest2Animation = new Rotate3D(90, 0, mCenterX, mCenterY);		
+		lQuest2Animation.setFillAfter(true);
+		lQuest2Animation.setDuration(duration);
+
+		rQuest1Animation = new Rotate3D(0, 90, mCenterX, mCenterY);		
+		rQuest1Animation.setFillAfter(true);
+		rQuest1Animation.setDuration(duration);
+
+		rQuest2Animation = new Rotate3D(-90, 0, mCenterX, mCenterY);	
+		rQuest2Animation.setFillAfter(true);
+		rQuest2Animation.setDuration(duration);
+	}
+
+	class channelListButtonClick  implements android.view.View.OnClickListener{	  
+		public void onClick(View v) {		
+			// TODO Auto-generated method stub		
+			switch (v.getId()) {			
+				case R.id.prolist_button:		
+					if((service_type == TVProgram.TYPE_RADIO)&&(favor!=true)){
+						getListData(0);
+						Text_title.setText(R.string.tv);
+						service_type = TVProgram.TYPE_TV;
+						myAdapter.notifyDataSetChanged();
+					}
+					else if((service_type == TVProgram.TYPE_TV)&&(favor!=true)){
+						Log.d(TAG,"##########"+class_total);
+						if(class_total>0){	
+							service_type = -1;
+						   	cur_class_no = class_total-1;
+							Text_title.setText(mTVGroup[cur_class_no].getName());
+							getClassData(mTVGroup[cur_class_no].getID());
+							myAdapter.notifyDataSetChanged();
+						}
+						else{					
+							Text_title.setText(R.string.favorite);
+							getListFavorite();
+							myAdapter.notifyDataSetChanged();
+							favor=true;
+						}	
+					}	
+					else if((favor!=true)&&(service_type != TVProgram.TYPE_TV)&&(service_type != TVProgram.TYPE_RADIO)){
+						if(cur_class_no>0&&class_total>0)
+						{
+							service_type = -1;
+							cur_class_no --;
+							Text_title.setText(mTVGroup[cur_class_no].getName());
+							getClassData(mTVGroup[cur_class_no].getID());
+							myAdapter.notifyDataSetChanged();
+							
+						}
+						else
+						{
+							Text_title.setText(R.string.favorite);
+							getListFavorite();
+							myAdapter.notifyDataSetChanged();
+							favor=true;
+						}
+					}
+					else if(favor==true)
+					{
+						getListData(1);
+						Text_title.setText(R.string.radio);
+						service_type = TVProgram.TYPE_RADIO;
+						myAdapter.notifyDataSetChanged();
+						favor=false;
+					}	
+					setFocusPosition();							
+					break;
+				case R.id.date_button0:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button_press);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button);
+					
+					refresh_Eitlistview(0);
+					current_date_index = 0;
+					break;
+				case R.id.date_button1:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button_press);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button);
+					refresh_Eitlistview(1);
+					current_date_index = 1;
+					break;
+				case R.id.date_button2:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button_press);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button);
+					refresh_Eitlistview(2);
+					current_date_index = 2;
+					break;	
+				case R.id.date_button3:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button_press);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button);
+					refresh_Eitlistview(3);
+					current_date_index = 3;
+					break;
+				case R.id.date_button4:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button_press);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button);
+					refresh_Eitlistview(4);
+					current_date_index = 4;
+					break;
+				case R.id.date_button5:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button_press);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button);
+					refresh_Eitlistview(5);
+					current_date_index = 5;
+					break;
+				case R.id.date_button6:
+					date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button1.setBackgroundResource(R.drawable.epg_date_button);
+					date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button3.setBackgroundResource(R.drawable.epg_date_button);
+					date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+					date_button5.setBackgroundResource(R.drawable.epg_date_button);
+					date_button6.setBackgroundResource(R.drawable.epg_date_button_press);
+					refresh_Eitlistview(6);
+					current_date_index = 6;
+					break;
+			}		
+
+		}	
+	}
+
+
 	
 
 }

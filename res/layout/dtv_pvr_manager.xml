@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="1280dp"
+android:layout_height="720dp"
+android:id="@+id/epg_layout_parent"
+android:background ="@drawable/bg" 
+>
+
+	<LinearLayout
+	android:layout_width="fill_parent"
+	android:layout_height="110dp"
+	android:id="@+id/epg_layout_top"> 
+		<TextView
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:gravity="center"
+		android:text="@string/title_pvr_manager"
+		android:textColor="#FFFFFFFF"
+		android:textSize="40sp"
+		android:layout_marginRight="30dp"
+		/>
+	</LinearLayout>
+
+	<LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="525dp"
+	android:id="@+id/epg_layout_mid"
+	android:baselineAligned="false"
+	>
+		<LinearLayout
+		android:id="@+id/epg_pro"
+		android:background ="@drawable/epg_content_bg3"   
+		android:layout_weight="9"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:layout_marginLeft="21dp"
+		android:paddingLeft="10dp" 
+		android:paddingRight="10dp">
+			<TabHost 
+		    android:id="@+id/TabHost01" 
+		    android:layout_width="fill_parent"  
+		    android:layout_height="fill_parent"
+		    android:layout_marginTop="5dp"
+		    >   
+		   
+		    <LinearLayout 
+		        android:layout_width="fill_parent"  
+		        android:orientation="vertical" 
+		        android:layout_height="fill_parent">  
+		        
+		        <TabWidget 
+		        	android:id="@android:id/tabs" 
+		            android:layout_width="fill_parent"  
+		            android:layout_height="70dp"/> 
+		                  
+		        <FrameLayout 
+		            android:id="@android:id/tabcontent"  
+		            android:layout_width="fill_parent"  
+		            android:layout_height="fill_parent"	           
+					android:layout_marginTop="5dp" 
+		            >                          
+				   	<LinearLayout  
+				   	  android:id="@+id/LinearLayout1" 
+					  android:orientation="vertical"
+					  android:layout_width="fill_parent"
+					  android:layout_height="fill_parent">  
+					  		   
+				  	  <LinearLayout
+						  android:orientation="vertical"
+						  android:layout_width="fill_parent"						 
+						  android:layout_height="fill_parent"
+						  android:layout_weight="1">
+						  <ListView
+						     android:id="@+id/listview_recmanager"
+						     android:layout_width="fill_parent"
+						     android:layout_height="wrap_content"					     				     
+						     android:scrollbars="vertical"/>    
+					  </LinearLayout> 
+				   </LinearLayout> 			  
+				 </FrameLayout>   
+	    	  </LinearLayout>   
+		  </TabHost>  		
+		    
+		</LinearLayout>
+
+		<LinearLayout
+		    android:id="@+id/epg_layout_eitlist"
+		    android:layout_width="540dp"
+		    android:layout_height="fill_parent"
+		    android:orientation="vertical"
+		    android:paddingLeft="21dp"
+		    android:paddingRight="21dp" >
+			
+				<LinearLayout 
+				android:id="@+id/video_position"  
+				android:baselineAligned="false"    
+				
+				android:background="#00000000"
+				android:foreground="#00000000"
+				android:gravity="center_vertical"
+				android:layout_width="fill_parent" 
+				android:layout_height="300dp" 
+				android:orientation="horizontal"
+				android:padding="5dp">
+
+					<VideoView
+					android:layout_height="fill_parent"
+					android:layout_width="fill_parent"
+					android:id="@+id/VideoView">
+					</VideoView>  
+					
+				</LinearLayout>
+
+				<LinearLayout 
+				android:background ="@drawable/epg_content_bg3"   
+				android:layout_marginTop="10dp"
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content" 
+				android:focusable = "false"
+				android:orientation="vertical"
+				android:padding="15dp">
+					<TextView
+					  	android:id="@+id/programName"
+					  	android:layout_width="fill_parent"
+					  	android:gravity="center|left"
+					  	android:layout_gravity="center"
+					  	android:layout_height="wrap_content"
+					  	android:singleLine="true"
+					  	android:text="@string/recmanager_proname"
+					  	android:layout_weight="1"
+					  	android:textSize="20sp"/>	
+					  <TextView
+					  	android:id="@+id/evt_name"
+					  	android:layout_width="fill_parent"
+					  	android:gravity="center|left"
+					  	android:layout_gravity="center"
+					  	android:layout_height="wrap_content"
+					  	android:text="@string/recmanager_evtname"
+					  	android:layout_weight="1"
+					  	android:textSize="20sp"/>	
+
+					  <TextView
+					  	android:id="@+id/time"
+					  	android:layout_width="fill_parent"
+					  	android:gravity="center|left"
+					  	android:layout_gravity="center"
+					  	android:layout_height="wrap_content"
+					  	android:text="@string/recmanager_time"
+					  	android:layout_weight="1"
+					  	android:textSize="20sp"/>	
+					  	<TextView
+					  	android:id="@+id/filename"
+					  	android:layout_width="fill_parent"
+					  	android:gravity="center|left"
+					  	android:layout_gravity="center"
+					  	android:layout_height="wrap_content"
+					  	android:text="@string/recmanager_filename"
+					  	android:layout_weight="1"
+					  	android:textSize="20sp"/>	
+				    
+				</LinearLayout>				
+			
+		</LinearLayout>
+			
+	</LinearLayout>
+
+	
+	<LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="85dp"
+	android:gravity="center_vertical"
+	android:id="@+id/epg_layout_bottom"
+	>
+		
+		<LinearLayout
+		android:layout_weight="4"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/ok_icon"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_ok"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/epg_info_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		      android:layout_marginLeft="20sp"    
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_info"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/red_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"     
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_booklist"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/yellow_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		     android:layout_marginLeft="20sp"  
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_page_up"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/blue_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_page_down"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		
+	</LinearLayout>
+</LinearLayout>	
+

@@ -3,138 +3,483 @@
 <LinearLayout
 xmlns:android="http://schemas.android.com/apk/res/android"
 android:orientation="vertical"
-android:layout_width="1280px"
-android:layout_height="720px"
+android:layout_width="1280dp"
+android:layout_height="720dp"
 android:id="@+id/epg_layout_parent"
+android:background ="@drawable/bg"
 >
 
-	<LinearLayout
-	android:orientation="horizontal"
+	<RelativeLayout
 	android:layout_width="fill_parent"
-	android:layout_height="110px"
-	android:background ="@drawable/epg_title_bg"
-	android:id="@+id/epg_layout_top"
-	>
-			<LinearLayout
-			android:id="@+id/epg_layout_ProgNameAndDate"
-			android:layout_width="300px"
-			android:layout_height="wrap_content"
-			android:layout_marginLeft ="40px"
-			android:layout_marginTop  ="30px"
-			android:orientation="vertical" >
-				<TextView 
-				      android:id="@+id/Text_program_name"
-				      android:layout_width="fill_parent"
-				      android:layout_height="40px"
-				      android:textSize="26px"  
-				      android:singleLine="true" 
-				      >
-				</TextView>
-				
-				<TextView 
-				      android:id="@+id/Text_date"
-				      android:layout_width="fill_parent"
-				      android:layout_height="26px"
-				      android:textSize="20px"  
-				      android:singleLine="true" 
-				      >
-				</TextView>
-				
-		   </LinearLayout>
-		   
-			<LinearLayout
-			android:id="@+id/epg_layout_EventNameAndDetailInfo"
-			android:layout_width="900px"
-			android:layout_height="fill_parent"
-			android:layout_marginTop  ="7px"
-			android:orientation="vertical" >
-		   </LinearLayout>
-	</LinearLayout>
+	android:layout_height="110dp"
+	android:id="@+id/epg_layout_top"> 
 
-	<LinearLayout
-	android:orientation="horizontal"
-	android:layout_width="fill_parent"
-	android:layout_height="525px"
-	android:id="@+id/epg_layout_mid"
-	
-	 >
-			   	<LinearLayout
-				android:id="@+id/epg_layout_Date"
-				android:layout_width="wrap_content"
-				android:layout_height="fill_parent"
-				android:background ="@drawable/epg_date_bg"
-				android:orientation="vertical" >
-			   </LinearLayout>
-
-				<LinearLayout
-				android:id="@+id/epg_layout_eitlist"
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:background="@drawable/epg_eit_list_bg"
-				android:orientation="vertical">
-						
-								<HorizontalScrollView 
-								android:id="@+id/horizontalScrollView1" 
-								
-								android:layout_width="wrap_content" 
-								android:layout_height="wrap_content">
-								
-									    <LinearLayout 
-									    android:id="@+id/HrzSVlinearLayout" 
-									    android:layout_width="match_parent" 
-									    android:layout_height="match_parent" 
-									    android:orientation="vertical">
-									    
-										    <LinearLayout 
-										    android:id="@+id/EitHourBglinearLayout" 
-										    android:layout_width="wrap_content" 
-										    android:layout_height="38px" 
-										    android:focusable = "false"
-										    android:orientation="horizontal">
-											</LinearLayout>
-											
-											<ListView 
-										    android:id="@+id/EitListView"
-										    android:layout_width="5760px" 
-										    android:layout_height="480px">
-										    </ListView>
-										</LinearLayout>
-								</HorizontalScrollView>
-				</LinearLayout>
-			
-	</LinearLayout>
-	
-	<LinearLayout
-	android:orientation="horizontal"
-	android:layout_width="fill_parent"
-	android:layout_height="85px"
-	android:background ="@drawable/epg_bottom_bg"
-	android:id="@+id/epg_layout_bottom"
-	>
-
-
-	   <TextView
-	  	android:id="@+id/epg_tv_helpinfo"
+		<!--
+		<com.amlogic.widget.DigitalClock		
+		android:id="@+id/DigitalClock"	
+		android:layout_alignParentBottom="true" 
+		android:layout_alignParentRight="true" 
+		android:textColor="@android:color/white" 
+		android:textSize="22sp"					
+		android:shadowColor="@android:color/white" 
+		android:shadowRadius="2.0"		
+		android:layout_width="420dp"	
+		android:layout_height="30dp"	
+		/>
+		-->
+		
+		<TextView
+		android:id="@+id/current_time"
+		android:layout_width="420dp"	
+		android:layout_height="30dp"
+		android:layout_alignParentBottom="true" 
+		android:layout_alignParentRight="true" 
+		android:textSize="22sp"
+		android:textColor="@android:color/white" 
+		/>	
+		<TextView
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
+		android:gravity="center"
+		android:text="@string/epg_title"
+		android:textColor="#FFFFFFFF"
+		android:textSize="40sp"
+		android:layout_marginRight="30dp"
+		/>
+	</RelativeLayout>
 
-    
- 
-	    android:textStyle="bold"   
-	    android:textColor="#FFFFFF"   
-	    android:shadowColor="#ff000000"  
-	    android:shadowDx="2"  
+	<LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="525dp"
+	android:id="@+id/epg_layout_mid"
+	android:baselineAligned="false"
+	>
+		<LinearLayout
+		android:id="@+id/epg_pro"
+		android:layout_weight="7"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:paddingLeft="21dp" >
+				
+			
+				<LinearLayout 
+				android:background ="@drawable/epg_content_bg3"  
+				android:layout_width="fill_parent" 
+				android:layout_height="70dp"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:padding="5dp"
+				>
+					<LinearLayout
+					android:background="@drawable/dtvchannellist_button_arrow_left"	      
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:layout_marginLeft="10dp"
+					>
+					</LinearLayout>
+		  
+					
+					
+					<RelativeLayout
+					android:gravity="center"
+					android:layout_weight="7"  
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:layout_marginLeft="5dp"
+					android:layout_marginRight="5dp"
+					> 
+						<ImageButton 
+						android:id="@+id/prolist_button"
+						android:layout_width="fill_parent"
+						android:layout_height="51dp"
+						android:layout_centerInParent="true"
+						android:background="@drawable/epg_date_button"
+						android:contentDescription="@string/app"
+						></ImageButton>
 
-	  	android:textSize="16sp"
-	  	android:gravity="center"
-	  	android:singleLine="true">
-		</TextView>
+						<TextView
+						    android:id="@+id/prolist"
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:layout_centerInParent="true"
+						    android:textColor="#FFFFFFFF"
+						    android:textSize="24sp" />
 
+					</RelativeLayout>
+				   
+				    <LinearLayout
+				    android:background ="@drawable/dtvchannellist_button_arrow_right"   
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content" 
+					android:layout_weight="1"
+					android:layout_marginRight="10dp"
+					>
+						
+					</LinearLayout>
+				</LinearLayout>
+					
+				<LinearLayout 
+				android:background ="@drawable/epg_content_bg3"   
+				android:layout_marginTop="10dp" 
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content" 
+				android:focusable = "false"
+				android:orientation="horizontal" 
+				android:padding="10dp">
+				<ListView 
+				android:id="@+id/programListView"
+				android:layout_width="fill_parent" 
+				android:layout_height="440dp">
+				</ListView>
+				</LinearLayout>
+			
+		</LinearLayout>
 
+		<LinearLayout
+		    android:id="@+id/epg_layout_eitlist"
+		    android:layout_width="772dp"
+		    android:layout_height="fill_parent"
+		    android:orientation="vertical"
+		    android:paddingLeft="21dp"
+		    android:paddingRight="21dp" >
+			
+				<LinearLayout 
+				android:baselineAligned="false"    
+				android:background ="@drawable/epg_content_bg3"   
+				android:gravity="center_vertical"
+				android:layout_width="fill_parent" 
+				android:layout_height="70dp" 
+				android:orientation="horizontal"
+				android:padding="5dp">
+				
+				    
+				    <RelativeLayout				
+					android:layout_width="wrap_content"
+					android:layout_height="fill_parent"
+					android:layout_weight="1"    
+					android:gravity="center"
+					> 
+						<ImageButton 
+						android:id="@+id/date_button0"
+						android:layout_width="103dp"
+						android:layout_height="51dp"
+						android:layout_centerInParent="true"
+						android:background="@drawable/epg_date_button"
+						android:contentDescription="@string/app"
+						></ImageButton>
+						<TextView
+						android:id="@+id/date0"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerInParent="true"
+						android:text="@string/epg_sunday"
+						android:textColor="#FFFFFFFF"
+						android:textSize="20sp"
+						/>
+					</RelativeLayout>
+
+					<RelativeLayout
+					    android:layout_width="wrap_content"
+					    android:layout_height="fill_parent"
+					    android:layout_weight="1"
+					    android:gravity="center" >
+						<ImageButton 
+						android:id="@+id/date_button1"
+						android:layout_width="103dp"
+						android:layout_height="51dp"
+						android:layout_centerInParent="true"
+						android:background="@drawable/epg_date_button"
+						android:contentDescription="@string/app"
+						></ImageButton>
+						<TextView
+						android:id="@+id/date1"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerInParent="true"
+						android:text="@string/epg_monday"
+						android:textColor="#FFFFFFFF"
+						android:textSize="20sp"
+						/>
+					</RelativeLayout>
+
+					<RelativeLayout
+					android:layout_weight="1"    
+					android:gravity="center"
+					android:layout_width="wrap_content"
+					android:layout_height="fill_parent"
+					> 
+						<ImageButton 
+						android:id="@+id/date_button2"
+						android:layout_width="103dp"
+						android:layout_height="51dp"
+						android:layout_centerInParent="true"
+						android:background="@drawable/epg_date_button"
+						android:contentDescription="@string/app"
+						></ImageButton>
+
+						<TextView
+							android:id="@+id/date2"
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:layout_centerInParent="true"
+						    android:text="@string/epg_tuesday"
+						    android:textColor="#FFFFFFFF"
+						    android:textSize="20sp" />
+
+					</RelativeLayout>
+					<RelativeLayout
+					android:layout_weight="1"    
+					android:gravity="center"
+					android:layout_width="wrap_content"
+					android:layout_height="fill_parent"
+					> 
+						<ImageButton 
+						android:id="@+id/date_button3"
+						android:layout_width="103dp"
+						android:layout_height="51dp"
+						android:layout_centerInParent="true"
+						android:background="@drawable/epg_date_button"
+						android:contentDescription="@string/app"
+						></ImageButton>
+						<TextView
+						android:id="@+id/date3"   
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerInParent="true"
+						android:text="@string/epg_wednesday"
+						android:textColor="#FFFFFFFF"
+						android:textSize="20sp"
+						/>
+					</RelativeLayout>
+					<RelativeLayout
+					android:layout_weight="1"    
+					android:gravity="center"
+					android:layout_width="wrap_content"
+					android:layout_height="fill_parent"
+					> 
+						<ImageButton 
+						android:id="@+id/date_button4"
+						android:layout_width="103dp"
+						android:layout_height="51dp"
+						android:layout_centerInParent="true"
+						android:background="@drawable/epg_date_button"
+						android:contentDescription="@string/app"
+						></ImageButton>
+						<TextView
+						android:id="@+id/date4"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerInParent="true"
+						android:text="@string/epg_thursday"
+						android:textColor="#FFFFFFFF"
+						android:textSize="20sp"
+						/>
+					</RelativeLayout>
+					<RelativeLayout
+					android:layout_weight="1"    
+					android:gravity="center"
+					android:layout_width="wrap_content"
+					android:layout_height="fill_parent"
+					> 
+						<ImageButton 
+						android:id="@+id/date_button5"
+						android:layout_width="103dp"
+						android:layout_height="51dp"
+						android:layout_centerInParent="true"
+						android:background="@drawable/epg_date_button"
+						android:contentDescription="@string/app"
+						></ImageButton>
+						<TextView
+						android:id="@+id/date5"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerInParent="true"
+						android:text="@string/epg_friday"
+						android:textColor="#FFFFFFFF"
+						android:textSize="20sp"
+						/>
+					</RelativeLayout>
+					<RelativeLayout
+					android:layout_weight="1"    
+					android:gravity="center"
+					android:layout_width="wrap_content"
+					android:layout_height="fill_parent"
+					> 
+					<ImageButton 
+					android:id="@+id/date_button6"
+					android:layout_width="103dp"
+					android:layout_height="51dp"
+					android:layout_centerInParent="true"
+					android:background="@drawable/epg_date_button"
+					android:contentDescription="@string/app"
+					></ImageButton>
+					<TextView
+					android:id="@+id/date6"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerInParent="true"
+					android:text="@string/epg_saturday"
+					android:textColor="#FFFFFFFF"
+					android:textSize="20sp"
+					
+					/>
+					</RelativeLayout>
+				</LinearLayout>
+
+				<LinearLayout 
+				android:background ="@drawable/epg_content_bg3"   
+				android:layout_marginTop="10dp"
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content" 
+				android:focusable = "false"
+				android:orientation="horizontal"
+				android:padding="10dp">
+				<ListView 
+				android:id="@+id/EitListView"
+				android:layout_width="fill_parent" 
+				android:layout_height="440dp">
+				</ListView>
+				</LinearLayout>
+
+		</LinearLayout>
+			
+	</LinearLayout>
+
+	
+	<LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="85dp"
+	android:gravity="center_vertical"
+	android:id="@+id/epg_layout_bottom"
+	>
 		
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/ok_icon"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_ok"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/epg_info_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		      android:layout_marginLeft="20sp"    
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_info"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/red_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"     
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_booklist"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/yellow_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		     android:layout_marginLeft="20sp"  
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_page_up"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/blue_button"
+			android:contentDescription="@string/app"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/epg_page_down"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
 		
 	</LinearLayout>
-</LinearLayout>
+</LinearLayout>	
 
 
 

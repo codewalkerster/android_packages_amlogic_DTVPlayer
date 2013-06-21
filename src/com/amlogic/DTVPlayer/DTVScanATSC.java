@@ -1630,31 +1630,31 @@ public class DTVScanATSC extends DTVActivity{
 		switch(dvbscanatsc_manu_modulation)
 		{
 				case DTVScanATSC.SETTINGS_MODULATION_QAM_AUTO:
-					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000));
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000, TVChannelParams.MODULATION_QAM_AUTO));
 					break;
 				case DTVScanATSC.SETTINGS_MODULATION_QAM_16:
-					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000));
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000, TVChannelParams.MODULATION_QAM_16));
 					break;
 				case DTVScanATSC.SETTINGS_MODULATION_QAM_32:
-					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000));
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000, TVChannelParams.MODULATION_QAM_32));
 					break;			
 				case DTVScanATSC.SETTINGS_MODULATION_QAM_64:
-					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000));
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000, TVChannelParams.MODULATION_QAM_64));
 					break;	
 				case DTVScanATSC.SETTINGS_MODULATION_QAM_128:
-					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000));
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000, TVChannelParams.MODULATION_QAM_128));
 					break;	
 				case DTVScanATSC.SETTINGS_MODULATION_QAM_256:
-					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000));
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000, TVChannelParams.MODULATION_QAM_256));
 					break;					
 				case DTVScanATSC.SETTINGS_MODULATION_VSB_8:	
-					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000));
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000, TVChannelParams.MODULATION_VSB_8));
 					break;
 				case DTVScanATSC.SETTINGS_MODULATION_VSB_16:	
-					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000));
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000, TVChannelParams.MODULATION_VSB_16));
 					break;
 				default:
-					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000));
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.atscParams(dvbscanatsc_manu_freq * 1000, TVChannelParams.MODULATION_VSB_8));
 					break;
 		}
 		

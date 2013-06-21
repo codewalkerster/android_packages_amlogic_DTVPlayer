@@ -4,138 +4,122 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     
-	<LinearLayout 
-			android:id="@+id/RelativeLayout01" 
-			android:layout_centerHorizontal="true"
-			android:layout_marginTop="100px" 
-			android:layout_width="644px" 
-			android:layout_height="429px"
-			android:orientation="vertical"
-			android:background="@drawable/settings_bg">
-	    
-	 	    <LinearLayout 
-				android:layout_alignParentTop="true"		
-				android:orientation="horizontal"    
-				android:layout_width="fill_parent" 
-				android:layout_height="43px">  
-				
-	           <ImageView 
-		           	android:id="@+id/arrow_left"
-					android:layout_width="32px"
-					android:layout_height="43px"
-					android:layout_weight="1"
-					android:layout_marginLeft="20px"
-					android:layout_alignParentBottom="true"
-					android:background="@drawable/dtvchannellist_button_arrow_left"/>		      
-		            
-	           <TextView 
-					android:id="@+id/Text_title"
-					android:layout_width="fill_parent"
-					android:layout_height="fill_parent"
-					android:layout_weight="6"
-					android:gravity="center"
-					android:textSize="24sp">
-			    </TextView>
-	            
-				<ImageView 
-					android:id="@+id/arrow_right"
-					android:layout_width="32px"
-					android:layout_height="43px"
-					android:layout_weight="1"
-					android:layout_marginRight="20px"
-					android:layout_alignParentBottom="true"
-					android:background="@drawable/dtvchannellist_button_arrow_right"
-				 />	
-		    </LinearLayout>   
-		    
-		    <LinearLayout android:id="@+id/LinearLayoutListView"
-	    		android:layout_alignParentBottom="true"	
-				android:layout_centerInParent="true"  
-				android:layout_width="fill_parent" 
-				android:layout_height="336px"
-				android:paddingLeft="10px"
-				android:paddingRight="13px"
-				>	
-				<!--
+	<LinearLayout
+	    android:id="@+id/RelativeLayout01"
+	    android:layout_width="644dp"
+	    android:layout_height="429dp"
+	    android:layout_centerInParent="true"
+	    android:background="@drawable/channel_listcontent_bg"
+	    android:orientation="vertical"
+	    android:padding="15dp" >
+
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="43dp"
+	        android:layout_alignParentTop="true"
+	        android:orientation="horizontal" >
+
+	        <ImageView
+	            android:id="@+id/arrow_left"
+	            android:layout_width="32dp"
+	            android:layout_height="43dp"
+	            android:layout_alignParentBottom="true"
+	            android:layout_marginLeft="20dp"
+	            android:layout_weight="1"
+	            android:background="@drawable/dtvchannellist_button_arrow_left" />
+
+	        <TextView
+	            android:id="@+id/Text_title"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:layout_weight="6"
+	            android:gravity="center"
+	            android:textSize="24sp" >
+	        </TextView>
+
+	        <ImageView
+	            android:id="@+id/arrow_right"
+	            android:layout_width="32dp"
+	            android:layout_height="43dp"
+	            android:layout_alignParentBottom="true"
+	            android:layout_marginRight="20dp"
+	            android:layout_weight="1"
+	            android:background="@drawable/dtvchannellist_button_arrow_right" />
+	    </LinearLayout>
+
+	    <LinearLayout
+	        android:id="@+id/LinearLayoutListView"
+	        android:layout_width="fill_parent"
+	        android:layout_height="254dp"
+	        android:layout_marginTop="10dp"
+	        android:layout_alignParentBottom="true"
+	        android:layout_centerInParent="true"
+	        android:layout_weight="4.13"
+	        android:background="@drawable/epg_content_bg4"
+	        android:paddingLeft="10px"
+	        android:paddingRight="13px" >
+
+	        <!--
 			    <ListView 
 			      android:id="@+id/ListView_channel"
 			      android:layout_width="fill_parent"
 			      android:layout_height="fill_parent"		      
 			    ></ListView>
-			    -->
-			    <com.amlogic.widget.FocusScrollListView 
-			        android:id="@+id/ListView_channel"
-			        android:layout_width="match_parent"
-			        android:layout_height="match_parent"
-			        android:padding="0dip"
-			        android:layout_margin="0dip"
-		        	android:listSelector="#00000000">
-		    	</com.amlogic.widget.FocusScrollListView>	
-	    	</LinearLayout>
-	    	<LinearLayout
-	    		android:layout_width="fill_parent"
-				android:layout_height="50px"
-				android:layout_marginRight="20px"
-				android:layout_marginLeft="20px"
-	    		android:orientation="vertical">
-				<RelativeLayout
-					android:id="@+id/inforbar_line" 
-					android:layout_width="fill_parent"
-					android:layout_height="2px"
-					android:background="@drawable/line"
-					>	
-				</RelativeLayout>
-		     
-	  	     	<LinearLayout
-		    		android:layout_width="match_parent"
-		    		android:layout_height="match_parent"
-		    		android:orientation="horizontal"
-		    		android:gravity="center"
-		    		android:layout_marginBottom="8px">
-	    		
-		    		<ImageView 
-		    			android:layout_width="wrap_content"
-		    			android:layout_height="wrap_content"
-						android:background="@drawable/move"
-		    		>
-		    		</ImageView>
-		    		<TextView
-				        android:layout_width="wrap_content"
-				        android:layout_height="wrap_content"
-				        android:layout_gravity="center"
-				        android:text="@string/help_info_move"
-				        android:textColor="#FFFFFFFF"
-				        android:textSize="20sp" 
-				        android:layout_marginRight="30px"
-				        />
-		    		<ImageView 
-		    			android:layout_width="wrap_content"
-		    			android:layout_height="wrap_content"
-						android:background="@drawable/enter"
-		    		></ImageView>
-		    		<TextView
-				        android:layout_width="wrap_content"
-				        android:layout_height="wrap_content"
-				        android:layout_gravity="center"
-				        android:text="@string/help_info_select"
-				        android:textColor="#FFFFFFFF"
-				        android:textSize="20sp"
-				        android:layout_marginRight="30px"
-				        />
-		    		<ImageView 
-		    			android:layout_width="wrap_content"
-		    			android:layout_height="wrap_content"
-						android:background="@drawable/return_icon"
-		    		></ImageView>
-		    		<TextView
-				        android:layout_width="wrap_content"
-				        android:layout_height="wrap_content"
-				        android:layout_gravity="center"
-				        android:text="@string/help_info_return"
-				        android:textColor="#FFFFFFFF"
-				        android:textSize="20sp" />
-	    		</LinearLayout>
-			</LinearLayout>	
-     </LinearLayout>
+	        -->
+
+	        <com.amlogic.widget.FocusScrollListView
+	            android:id="@+id/ListView_channel"
+	            android:layout_width="match_parent"
+	            android:layout_height="match_parent"
+	            android:layout_margin="0dip"
+	            android:listSelector="#00000000"
+	            android:padding="0dip" >
+	        </com.amlogic.widget.FocusScrollListView>
+	    </LinearLayout>
+
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="match_parent"
+	            android:layout_marginTop="10dp"
+	            android:gravity="center"
+	            android:orientation="horizontal" >
+
+	            <ImageView
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/ok_icon" >
+	            </ImageView>
+
+	            <TextView
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_gravity="center"
+	                android:layout_marginRight="30px"
+	                android:text="@string/help_info_select"
+	                android:textColor="#FFFFFFFF"
+	                android:textSize="20sp" />
+
+	            <ImageView
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/return_icon" >
+	            </ImageView>
+
+	            <TextView
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_gravity="center"
+	                android:text="@string/help_info_return"
+	                android:textColor="#FFFFFFFF"
+	                android:textSize="20sp" />
+	        </LinearLayout>
+	    </LinearLayout>
+	</LinearLayout>
+
 </RelativeLayout>
  

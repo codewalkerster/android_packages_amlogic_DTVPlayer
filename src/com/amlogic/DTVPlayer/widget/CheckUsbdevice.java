@@ -42,10 +42,10 @@ public class CheckUsbdevice
 	public String checkPvrFilePath(String file_path){
 		String path=null;
 
-		File[] files = new File("/mnt").listFiles();
+		File[] files = new File("/storage/external_storage").listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.getPath().startsWith("/mnt/sd") && !(file.getPath().equals("/mnt/sdcard"))) {
+				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
 					/*File[] myfiles = new File(file.getPath()).listFiles();
 					if (myfiles != null){
 						for (File myfile : myfiles){*/
@@ -67,9 +67,9 @@ public class CheckUsbdevice
 			}	
 		}
 
-		if(sdcard_deal("/mnt/sdcard/external_sdcard/"))
+		if(sdcard_deal("/storage/external_storage/sdcard1"))
 		{
-			path = "/mnt/sdcard/external_sdcard/"+file_path;
+			path = "/storage/external_storage/sdcard1/"+file_path;
 			File pvr_file = new File(path);
 			if(pvr_file.canRead())
 				return path;
@@ -83,10 +83,10 @@ public class CheckUsbdevice
 
 
 	public String getDevice() {
-		File[] files = new File("/mnt").listFiles();
+		File[] files = new File("/storage/external_storage").listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.getPath().startsWith("/mnt/sd") && !(file.getPath().equals("/mnt/sdcard"))) {
+				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
 					/*File[] myfiles = new File(file.getPath()).listFiles();
 					if (myfiles != null){
 						for (File myfile : myfiles){*/
@@ -108,8 +108,8 @@ public class CheckUsbdevice
 			}	
 		}
 
-		if(sdcard_deal("/mnt/sdcard/external_sdcard"))
-			return "/mnt/sdcard/external_sdcard";
+		if(sdcard_deal("/mnt/sdcard/external_sdcard1"))
+			return "/mnt/sdcard/external_sdcard1";
 
 		return null;
 	}
@@ -248,17 +248,17 @@ public class CheckUsbdevice
 		if(satellites_db_file_list == null)
 			satellites_db_file_list =  new ArrayList<String>();
 		
-		File[] files = new File("/mnt").listFiles();
+		File[] files = new File("/storage/external_storage").listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.getPath().startsWith("/mnt/sd") && !(file.getPath().equals("/mnt/sdcard"))) {
+				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
 					File[] myfiles = new File(file.getPath()).listFiles();
 						if (myfiles != null){	
 							File[] db_files = new File(file.getPath()).listFiles();
 							for(File db_file : db_files){
 							if(db_file.isDirectory()){
 
-							}else if((db_file.getName().endsWith("amdb"))&&(db_file.getName().startsWith("satellites"))){								
+							}else if((db_file.getName().endsWith("xml"))&&(db_file.getName().startsWith("satellites"))){								
 								satellites_db_file_list.add(file.getPath()+"/"+db_file.getName());
 								Log.d("U disk","DB satellites file name:"+db_file.getName());
 							}
@@ -272,13 +272,13 @@ public class CheckUsbdevice
 		if(externalStorageState.equals(Environment.MEDIA_MOUNTED)){  
 
 		Log.d("SDcard",Environment.getExternalStorageDirectory().getAbsolutePath()); 
-		File[] db_file_sds = new File("/mnt/sdcard").listFiles();
+		File[] db_file_sds = new File("/storage/external_storage/sdcard1").listFiles();
 		for(File db_file_sd : db_file_sds){
 			if(db_file_sd.isDirectory()){
 
 			}else{
 				if((db_file_sd.getName().endsWith("amdb"))&&(db_file_sd.getName().startsWith("satellites"))){
-					satellites_db_file_list.add("/mnt/sdcard/"+db_file_sd.getName());
+					satellites_db_file_list.add("/storage/external_storage/sdcard1/"+db_file_sd.getName());
 					Log.d("SDCard","DB satellites file name:"+db_file_sd.getName());
 					}
 				}

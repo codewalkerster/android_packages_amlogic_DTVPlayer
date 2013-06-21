@@ -19,6 +19,7 @@ import android.view.View.*;
 import android.view.animation.*;
 import android.widget.*;
 import android.app.*;
+import android.graphics.*;
 import android.content.*;
 import android.os.*;
 import android.text.*;
@@ -55,18 +56,17 @@ public class DTVPlayer extends DTVActivity{
 		super.onConnected();
 		//set input source on DTV
 		//setInputSource(TVConst.SourceInput.SOURCE_DTV);
+		
+		mDTVSettings = new DTVSettings(this);
 		if(isHavePragram()==false){ 
 			showNoProgramDia(); 
 		}
-		
-		
-		mDTVSettings = new DTVSettings(this);
 		mDTVSettings.setTeltextBound();
-		
+		playValid();
 		if(bundle!=null){	
 			//int db_id = DTVPlayerGetCurrentProgramID();
 			//DTVPlayerPlayById(db_id);	
-			playValid();
+			//playValid();
 			ShowControlBar();
 			updateInforbar();
 			ShowProgramNo(pronumber);
@@ -166,7 +166,7 @@ public class DTVPlayer extends DTVActivity{
 				}
 				break;
 			case TVMessage.TYPE_RECORD_END:	
-				switch(msg.getRecordErrorCode()){
+				switch(msg.getErrorCode()){
 					case  TVMessage.REC_ERR_OPEN_FILE:
 						
 						toast = Toast.makeText(
@@ -352,6 +352,7 @@ public class DTVPlayer extends DTVActivity{
 					HideControlBar();
 				}
 				else if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){	
+					Log.d(TAG,"dtvplyaer_b_txt="+dtvplyaer_b_txt+"--DTVPlayerInTeletextStatus="+DTVPlayerInTeletextStatus);
 					DTVTTHide();
 					DTVPlayerInTeletextStatus=false;
 				}	
@@ -369,16 +370,19 @@ public class DTVPlayer extends DTVActivity{
 					ShowControlBar();
 				}
 				else //if(mainmenu_show_flag==false)
-					ShowMainMenu();
+				{
+					HideControlBar();
+					ShowChannelList();
+				}	
 				return true;
 			case KeyEvent.KEYCODE_ENTER:
 				Log.d(TAG,"KEYCODE_ENTER");
 				break;		 
-			case KeyEvent.KEYCODE_ZOOM_IN:	
+			case DTVActivity.KEYCODE_RED_BUTTON:	
 				Log.d(TAG,"KEYCODE_ZOOM_IN");
 				showTeltext(DTVPlayer.this);
 				return true;
-			case KeyEvent.KEYCODE_ZOOM_OUT:
+			case DTVActivity.KEYCODE_YELLOW_BUTTON:
 				Log.d(TAG,"KEYCODE_ZOOM_OUT");
 				showPvrDurationTimeSetDialog(DTVPlayer.this);
 				return true;
@@ -423,6 +427,7 @@ public class DTVPlayer extends DTVActivity{
 					//HideMainMenu();
 				//else
 					ShowMainMenu();
+					//setVideoWindow(new Rect(200,100,500,400));
 				return true;
 		}
 		
@@ -659,13 +664,20 @@ public class DTVPlayer extends DTVActivity{
 				else if(region.contains("DVBS"))
 				{
 					Log.d(TAG, "goto DTVScanDVBS");
-					Intent_scan.setClass(DTVPlayer.this, DTVScanDVBS.class);
+					//Intent_scan.setClass(DTVPlayer.this, DTVScanDVBS.class);
+					Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
 				}	
 				else if(region.contains("DVB-C"))
 				{
 					Log.d(TAG, "goto DTVScanDVBC");
 					Intent_scan.setClass(DTVPlayer.this, DTVScanDVBC.class);				
 				}
+				else
+				{
+					Log.d(TAG, "goto DTVScanDVBS");
+					//Intent_scan.setClass(DTVPlayer.this, DTVScanDVBS.class);
+					Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
+				}		
 				
 				startActivity(Intent_scan);
 			}
@@ -682,17 +694,13 @@ public class DTVPlayer extends DTVActivity{
 						ShowControlBar();
 					}
 					else if(mainmenu_show_flag==false){
-						ShowMainMenu();
+						HideControlBar();
+						ShowChannelList();
 					}
 					break;
 				case R.id.Button_mainmenu_list:
 					HideMainMenu();
-					Intent pickerIntent = new Intent();
-					Bundle bundle_list = new Bundle();
-					bundle_list.putInt("db_id", DTVPlayerGetCurrentProgramID());
-					pickerIntent.putExtras(bundle_list);
-					pickerIntent.setClass(DTVPlayer.this, DTVChannelList.class);
- 		           	startActivity(pickerIntent);
+					ShowChannelList();
  		            break;
 				case R.id.Button_mainmenu_epg:
 					HideMainMenu();
@@ -882,9 +890,10 @@ public class DTVPlayer extends DTVActivity{
 		mainmenu_show_flag = true;	
 
 		Intent intent = new Intent();
-		intent.setClass(DTVPlayer.this, DTVMainMenu.class);
+		//intent.setClass(DTVPlayer.this, DTVMainMenu.class);
+		intent.setClass(DTVPlayer.this, DTVSettingsMenu.class);
         startActivity(intent);
-		overridePendingTransition(R.anim.slide_left, R.anim.slide_right); 
+		//overridePendingTransition(R.anim.slide_left, R.anim.slide_right); 
 	}
 
 	private void HideMainMenu(){
@@ -897,6 +906,15 @@ public class DTVPlayer extends DTVActivity{
 		}
 		*/
 		mainmenu_show_flag = false;
+	}
+
+	private void ShowChannelList(){
+		Intent pickerIntent = new Intent();
+		Bundle bundle_list = new Bundle();
+		bundle_list.putInt("db_id", DTVPlayerGetCurrentProgramID());
+		pickerIntent.putExtras(bundle_list);
+		pickerIntent.setClass(DTVPlayer.this, DTVChannelList.class);
+		startActivity(pickerIntent);
 	}
 	
 	private boolean inforbar_show_flag=false;
@@ -951,6 +969,8 @@ public class DTVPlayer extends DTVActivity{
 	}
 
 	private void updateInforbar(){
+		if (mDTVSettings == null)
+			return;
 		dtvplayer_atsc_antenna_source = mDTVSettings.getAtscAntennaSource();
 		Text_screentype_info = (TextView) findViewById(R.id.Text_screentype_info);
 		Text_parent_control_info_icon = (TextView) findViewById(R.id.Text_parent_control_info_icon);
@@ -997,6 +1017,9 @@ public class DTVPlayer extends DTVActivity{
 			Text_nextevent.setText(getString(R.string.dtvplayer_no_next_event));
 		else
 			Text_nextevent.setText(dtvplayer_next_event);
+
+		TextView Text_parent_rate = (TextView) findViewById(R.id.Text_parent_rate);	
+		
 
 		if(mDTVSettings.getScanRegion().contains("ATSC")==false){
 			Text_proname.setText(Integer.toString(dtvplayer_pronumber)+"  "+dtvplayer_name);
@@ -1184,8 +1207,13 @@ public class DTVPlayer extends DTVActivity{
 					input_major=0;	
 					input_minor=0;
 				}
-				else{				
-					if((DTVPlayerCheckNumerInputIsValid(pronumber)==false)||(pronumber<=0)){
+				else{	
+					if(DTVPlayerInTeletextStatus){
+						pronumber = 0;	
+						pronumber_string ="";
+						HideProgramNo();
+					}
+					else if((DTVPlayerCheckNumerInputIsValid(pronumber)==false)||(pronumber<=0)){
 						toast = Toast.makeText(
 							DTVPlayer.this, 
 				    		R.string.invalid_input,
@@ -1508,23 +1536,33 @@ public class DTVPlayer extends DTVActivity{
 
 	private boolean isHavePragram(){
 		TVProgram[]  mTVProgramList=null;
-		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,false);
+		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,0);
 		if(mTVProgramList!=null){
-			if(mTVProgramList.length!=0)
+			if(mTVProgramList.length!=0){
+				Log.d(TAG,"0000000");
 				return true;
+			}	
 			else{
-				mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,false);
-				if(mTVProgramList==null)
+				mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
+				if(mTVProgramList==null){
+					Log.d(TAG,"11111");
 					return false;
-				else if(mTVProgramList.length!=0)
+				}	
+				else if(mTVProgramList.length!=0){
+					Log.d(TAG,"222222");
 					return true;
+				}
 			}
+			Log.d(TAG,"33333");
 		}
 		else{
-			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,false);
-			if(mTVProgramList==null)
+			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
+			if(mTVProgramList==null){
+				Log.d(TAG,"444444");
 				return false;
+			}	
 		}
+		Log.d(TAG,"5555555");
 		return false;
 	}
 
@@ -1876,7 +1914,7 @@ public class DTVPlayer extends DTVActivity{
 					tail.setText(R.string.dtvplayer_pvr_min);
 
 					final EditText mEditText = (EditText)window.findViewById(R.id.edit);
-					mEditText.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(5)});
+					mEditText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(5)});
 					mEditText.setText(null);
 					Button no = (Button)window.findViewById(R.id.no);
 					no.setText(R.string.no);

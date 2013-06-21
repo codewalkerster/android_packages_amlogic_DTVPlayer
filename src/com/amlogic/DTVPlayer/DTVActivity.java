@@ -39,6 +39,24 @@ import java.lang.reflect.Field;
  */
 abstract public class DTVActivity extends TVActivity{
     private static final String TAG="DTVActivity";
+
+	final public static int KEYCODE_RED_BUTTON=KeyEvent.KEYCODE_ZOOM_IN;
+	final public static int KEYCODE_YELLOW_BUTTON=KeyEvent.KEYCODE_ZOOM_OUT;
+	final public static int KEYCODE_BLUE_BUTTON=KeyEvent.KEYCODE_TV_REPEAT;
+	final public static int KEYCODE_GREEN_BUTTON=KeyEvent.KEYCODE_TAB;
+	
+	final public static int KEYCODE_GOTO_BUTTON=KeyEvent.KEYCODE_MEDIA_REWIND;
+	final public static int KEYCODE_REC=KeyEvent.KEYCODE_MEDIA_FAST_FORWARD;
+	
+	final public static int KEYCODE_TIMESHIFTING=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
+	final public static int KEYCODE_AUDIO=KeyEvent.KEYCODE_MEDIA_NEXT;
+	
+	final public static int KEYCODE_EPG=KeyEvent.KEYCODE_TV_SWITCH;
+	final public static int KEYCODE_TTX=KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE;	
+	final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_TV_SUBTITLE;
+	final public static int KEYCODE_INFO=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
+
+
 	private TVProgram TVProgram=null;
 	private static int dtvactivity_actived_num = 0;
 	//private static int dtvlayout_gravity = Gravity.CENTER;
@@ -77,51 +95,65 @@ abstract public class DTVActivity extends TVActivity{
 		/*reset layout by reproduction rate*/
 		String outputmode = SystemProperties.get("ubootenv.var.outputmode");
 		int x = 0, y = 0, w = 0, h = 0;
+		String x_s = null, y_s = null, w_s = null, h_s = null;
+		String not_set = "";
 		
 		Log.d(TAG, "setContentView " + outputmode);
 		
 		if(outputmode.contains("1080p") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.1080poutputheight"));
+			x_s = SystemProperties.get("ubootenv.var.1080poutputx");
+			y_s = SystemProperties.get("ubootenv.var.1080poutputy");
+			w_s = SystemProperties.get("ubootenv.var.1080poutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.1080poutputheight");
 		}
 		else if(outputmode.contains("1080i") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.1080ioutputheight"));		
+			x_s = SystemProperties.get("ubootenv.var.1080ioutputx");
+			y_s = SystemProperties.get("ubootenv.var.1080ioutputy");
+			w_s = SystemProperties.get("ubootenv.var.1080ioutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.1080ioutputheight");		
 		}
 		else if(outputmode.contains("720p") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.720poutputheight"));		
+			x_s = SystemProperties.get("ubootenv.var.720poutputx");
+			y_s = SystemProperties.get("ubootenv.var.720poutputy");
+			w_s = SystemProperties.get("ubootenv.var.720poutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.720poutputheight");		
 		}
 		else if(outputmode.contains("576p") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.576poutputheight"));			
+			x_s = SystemProperties.get("ubootenv.var.576poutputx");
+			y_s = SystemProperties.get("ubootenv.var.576poutputy");
+			w_s = SystemProperties.get("ubootenv.var.576poutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.576poutputheight");			
 		}
 		else if(outputmode.contains("576i") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.576ioutputheight"));					
+			x_s = SystemProperties.get("ubootenv.var.576ioutputx");
+			y_s = SystemProperties.get("ubootenv.var.576ioutputy");
+			w_s = SystemProperties.get("ubootenv.var.576ioutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.576ioutputheight");					
 		}
 		else if(outputmode.contains("480p") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.480poutputheight"));			
+			x_s = SystemProperties.get("ubootenv.var.480poutputx");
+			y_s = SystemProperties.get("ubootenv.var.480poutputy");
+			w_s = SystemProperties.get("ubootenv.var.480poutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.480poutputheight");			
 		}
 		else if(outputmode.contains("480i") == true){
-			x = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputx"));
-			y = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputy"));
-			w = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputwidth"));
-			h = Integer.parseInt(SystemProperties.get("ubootenv.var.480ioutputheight"));				
-		}		
+			x_s = SystemProperties.get("ubootenv.var.480ioutputx");
+			y_s = SystemProperties.get("ubootenv.var.480ioutputy");
+			w_s = SystemProperties.get("ubootenv.var.480ioutputwidth");
+			h_s = SystemProperties.get("ubootenv.var.480ioutputheight");				
+		}
+
+		if((x_s != null) && (y_s != null) && (w_s != null) && (h_s != null)){
+			if((x_s.equals("")) || (y_s.equals("")) || (w_s.equals("")) ||(h_s.equals(""))){
+				Log.e(TAG, "not set reproduction");
+			} else {
+				x = Integer.parseInt(x_s);
+				y = Integer.parseInt(y_s);
+				w = Integer.parseInt(w_s);
+				h = Integer.parseInt(h_s);
+			}
+		}
+		
 /*
 		AbsoluteLayout root = new AbsoluteLayout(this);
 
@@ -215,6 +247,54 @@ abstract public class DTVActivity extends TVActivity{
         Log.d(TAG, "onDestroy");
         super.onDestroy();
     }
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event){
+		// TODO Auto-generated method stub
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_ZOOM_IN:	
+				Log.d(TAG,"KEYCODE_ZOOM_IN");
+				break;	
+			case KeyEvent.KEYCODE_ZOOM_OUT:
+				Log.d(TAG,"KEYCODE_ZOOM_OUT");
+				break;	
+			case KeyEvent.KEYCODE_TV_REPEAT:
+				Log.d(TAG,"KEYCODE_TV_REPEAT");
+				break;	
+			case KeyEvent.KEYCODE_MEDIA_REWIND:
+				Log.d(TAG,"KEYCODE_MEDIA_REWIND");
+				break;	
+			case KeyEvent.KEYCODE_TAB: //info
+				Log.d(TAG,"KEYCODE_TAB");	
+				break;	
+			case KeyEvent.KEYCODE_TV_SWITCH: //tv/radio
+				Log.d(TAG,"KEYCODE_TV_SWITCH");	
+				break;	
+			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE: //16:9/4:3
+				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_DISPAYMODE");
+				break;	
+			case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
+				Log.d(TAG,"KEYCODE_MEDIA_PREVIOUS");	
+				break;	
+			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: //epg
+				Log.d(TAG,"KEYCODE_MEDIA_FAST_FORWARD");
+				break;	
+			case KeyEvent.KEYCODE_MEDIA_NEXT: //pvr manager
+				Log.d(TAG,"KEYCODE_MEDIA_NEXT");
+				break;	
+			case KeyEvent.KEYCODE_TV_SUBTITLE:
+				Log.d(TAG,"KEYCODE_TV_SUBTITLE");
+				break;	
+			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
+				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_VOICEMODE");			
+				break;	
+			case KeyEvent.KEYCODE_MENU:				
+				break;	
+		}
+		
+		return super.onKeyDown(keyCode, event);
+	}
+
 
 	private void DTVActivity_ActivedStateManage(boolean actived){
 		Log.d(TAG, "DTVActivity_ActivedStateManage actived " + actived + " dtvactivity_actived_num " + dtvactivity_actived_num);
@@ -318,10 +398,76 @@ abstract public class DTVActivity extends TVActivity{
 
 	public void DTVPlayerStartRecordingWithTime(long start,long duration){
 		TVProgram mTVProgram = DTVPlayerGetDataByCurrentID();
-		if(mTVProgram!=null)
-			TVBooking.bookProgram(this,mTVProgram,TVBooking.FL_RECORD,start,duration);
+			if(mTVProgram!=null)
+				{
+			try{
+				TVBooking.bookProgram(this, mTVProgram, TVBooking.FL_RECORD, start,duration, TVBooking.RP_NONE, true);
+			}catch(Exception e){
+			}
+		}
 	}
 
+	public void DTVPlayerAddBook(int id,int mode, long start,long duration,int repeat){
+		//TVProgram mTVProgram = DTVPlayerGetDataByCurrentID();
+		
+		TVProgram mTVProgram = TVProgram.selectByID(this,id);
+		
+		int m_mode=0;
+		int m_repeat=0;
+			
+		if(mTVProgram!=null)
+		{
+			if(mode==0)
+				m_mode=TVBooking.FL_PLAY;
+			else
+				m_mode=TVBooking.FL_RECORD;
+
+			if(repeat==0)
+				m_repeat=TVBooking.RP_NONE;
+			else if(repeat==1)
+				m_repeat=TVBooking.RP_DAILY;
+			else if(repeat==2)
+				m_repeat=TVBooking.RP_WEEKLY;
+
+			try{
+				
+				TVBooking.bookProgram(this, mTVProgram, m_mode, start,duration, m_repeat, true);
+				
+			}catch(Exception e){
+			}
+		}
+	}
+
+	public void DTVPlayerAddEvent(int id,int flag,int repeat){
+		TVEvent mTVEvent = TVEvent.selectByID(this,id);
+		
+		int mFlag = 0;
+		int m_repeat=0;
+		
+		if(mTVEvent!=null)
+		{
+			if(flag==1)
+				mFlag=TVBooking.FL_PLAY;
+			else if(flag==2)
+				mFlag=TVBooking.FL_RECORD;
+			
+			if(repeat==0)
+				m_repeat=TVBooking.RP_NONE;
+			else if(repeat==1)
+				m_repeat=TVBooking.RP_DAILY;
+			else if(repeat==2)
+				m_repeat=TVBooking.RP_WEEKLY;
+
+
+			try{
+				
+				TVBooking.bookEvent(this, mTVEvent, mFlag ,repeat,true);
+				
+			}catch(Exception e){
+			}
+		}
+	}
+	
 	public void DTVPlayerStopRecording(){
 		stopRecording();
 	}
@@ -371,6 +517,7 @@ abstract public class DTVActivity extends TVActivity{
 	/*************TeleText**************/
 
 	public void DTVTTShow(){
+		Log.d(TAG,"DTVTTShow");
 		ttShow();
 	}
 
@@ -520,6 +667,7 @@ abstract public class DTVActivity extends TVActivity{
 	}
 
 	/*********settings************/
+	
 	public boolean DTVGetSubtitleStatus(){
 		return getBooleanConfig("tv:subtitle:enable");
 	}

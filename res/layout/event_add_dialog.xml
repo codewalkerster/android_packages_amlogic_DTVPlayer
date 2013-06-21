@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content">
+
+	<LinearLayout
+		android:id="@+id/layout_head"
+		android:layout_width="match_parent"
+		android:layout_height="80dp"
+		android:orientation="vertical"
+		android:padding="14dp"
+		android:gravity="center"
+		android:background="@drawable/vchip_pin_head_bg"
+		android:layout_alignTop="@+id/layout_parent"
+		>
+
+		<TextView
+		android:id="@+id/title"
+		android:layout_width="match_parent"
+		android:layout_height="34dp"
+		android:layout_gravity="center_horizontal"
+		android:text="@string/enter_password"
+		android:textColor="#FFFFFFFF"
+		android:gravity="center"
+		android:textSize="24sp" 
+		android:layout_marginTop="20dp"
+		android:layout_marginBottom="10dp" />	
+	</LinearLayout> 
+
+	<LinearLayout
+		android:id="@+id/layout_body"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="14px"
+		android:gravity="center"
+		android:background="@drawable/vchip_pin_body_bg"
+		android:layout_above="@+id/layout_tail" 
+		android:layout_below="@+id/layout_head" >
+    
+		<LinearLayout
+	    	android:orientation="vertical"
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:layout_marginTop="20px">
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content" 
+			android:layout_marginLeft="60px"
+			android:layout_marginRight="20dp">
+
+			<TextView
+				android:layout_width="290dp"
+				android:textSize="20sp"
+				android:layout_height="40dp"
+				android:layout_gravity="center_vertical"
+				android:singleLine="true"
+				android:text="@string/channel_name"/>
+			<TextView android:id="@+id/text_channel_name"
+				android:layout_width="300dp"
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:textSize="20sp"
+				/>
+		</LinearLayout>
+
+		
+		<LinearLayout
+			android:orientation="horizontal" 
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="60px"
+			android:layout_marginRight="20dp">
+			<TextView
+				android:layout_width="290dp"
+				android:textSize="20sp"
+				android:layout_height="40dp"
+				android:layout_gravity="center_vertical"
+				android:singleLine="true"
+				android:text="@string/event_name"/>
+
+			<TextView
+				android:singleLine="true"
+				android:id="@+id/text_event_name"
+				android:layout_width="300dp"
+				android:layout_height="wrap_content"
+				android:textSize="20sp"
+			></TextView>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="60px"
+			android:layout_marginRight="20dp">
+			<TextView
+				android:layout_width="290dp"
+				android:textSize="20sp"
+				android:layout_height="40dp"
+				android:layout_gravity="center_vertical"
+				android:singleLine="true"
+				android:text="@string/event_start_date"/>
+			<TextView android:id="@+id/text_event_start_date"
+				android:layout_width="300dp"
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:textSize="20sp"/>
+		</LinearLayout>
+	    
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="60px"
+			android:layout_marginRight="20dp">
+			<TextView
+				android:layout_width="290dp"
+				android:textSize="20sp"
+				android:layout_height="40dp"
+				android:layout_gravity="center_vertical"
+				android:singleLine="true"
+				android:text="@string/event_start_time"/>
+			<TextView android:id="@+id/text_event_start_time"
+				android:layout_width="300dp"
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:textSize="20sp"/>
+		</LinearLayout>
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="60px"
+			android:layout_marginRight="20dp">
+			<TextView
+				android:layout_width="290dp"
+				android:textSize="20sp"
+				android:layout_height="40dp"
+				android:layout_gravity="center_vertical"
+				android:singleLine="true"
+				android:text="@string/event_end_time"/>
+			<TextView android:id="@+id/text_event_end_time"
+				android:layout_width="300dp"
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:textSize="20sp"/>
+		</LinearLayout>
+		
+		</LinearLayout>
+		
+		<ListView
+			android:id="@+id/set_list"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginRight="10dp"
+			android:scrollbars="vertical"/> 		
+
+	</LinearLayout> 
+	
+	<LinearLayout
+		android:id="@+id/layout_tail" 
+		android:layout_width="fill_parent"
+		android:layout_height="95dp"
+		android:orientation="vertical"
+		android:background="@drawable/vchip_pin_tail_bg"
+		android:layout_alignBottom="@+id/layout_parent"
+		>
+		<RelativeLayout
+			android:id="@+id/inforbar_line" 
+			android:layout_width="fill_parent"
+			android:layout_height="3px"
+			android:background="@drawable/line"
+			android:layout_marginLeft="30px"
+			android:layout_marginRight="30px" >
+		</RelativeLayout> 
+	    <LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:padding="14px"
+			android:layout_marginBottom="20px" 
+			android:gravity="center">
+			
+			<Button android:id="@+id/no"
+			   android:layout_width="wrap_content"
+	           android:layout_height="45px"
+	       	   android:background="@drawable/button_pin_null"
+	       	   android:layout_weight="1"
+	           />
+	           
+			<Button android:id="@+id/yes"
+			   android:layout_width="wrap_content"
+	           android:layout_height="45px"
+	       	   android:background="@drawable/button_pin_null"
+	       	   android:layout_weight="1"
+	           />
+		</LinearLayout>
+	</LinearLayout>
+	
+</LinearLayout>

@@ -36,7 +36,7 @@ import java.util.*;
 import com.amlogic.widget.SureDialog;
 
 
-public class DTVDeviceBrowser extends Activity implements OnItemClickListener {
+public class DTVDeviceBrowser extends DTVActivity implements OnItemClickListener {
 	private static final String TAG="DTVDeviceBrowser";
 
 	private getDiskInfoThread  t=null;
@@ -54,7 +54,7 @@ public class DTVDeviceBrowser extends Activity implements OnItemClickListener {
 	private static int widthPixels=0;
 	private static int heightPixels=0;
 	private static float density =0;	
-	private String sd_path="/mnt/sdcard/external_sdcard";
+	private String sd_path="/storage/external_storage/sdcard1";
     
     class MountEventReceiver extends BroadcastReceiver {
 
@@ -161,10 +161,44 @@ public class DTVDeviceBrowser extends Activity implements OnItemClickListener {
 	  	WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
 		setContentView(R.layout.dtvdevice_browser);
-		mContext = this;    
+		mContext = this;  
+		
+	}
+
+	DTVSettings mDTVSettings; 
+	public void onConnected(){
+		Log.d(TAG, "connected");
+		super.onConnected();
+		mDTVSettings = new DTVSettings(DTVDeviceBrowser.this);
 		DTVDeviceBrowerUIInit();
 	}
 
+	public void onDisconnected(){
+		Log.d(TAG, "disconnected");
+		super.onDisconnected();
+	}
+
+	public void onMessage(TVMessage msg){
+		Log.d(TAG, "message "+msg.getType());
+		switch (msg.getType()) {
+			case TVMessage.TYPE_SCAN_PROGRESS:
+				
+				break;
+			case TVMessage.TYPE_SCAN_STORE_BEGIN:
+				Log.d(TAG, "Storing ...");
+				break;
+			case TVMessage.TYPE_SCAN_STORE_END:
+				Log.d(TAG, "Store Done !");
+				
+				break;
+			case TVMessage.TYPE_SCAN_END:
+				Log.d(TAG, "Scan End");
+				break;
+			default:
+				break;
+	
+		}
+	}
 	private void DTVDeviceBrowerUIInit(){
          
     	deviceList = new ArrayList<DeviceItem>();
@@ -220,10 +254,10 @@ public class DTVDeviceBrowser extends Activity implements OnItemClickListener {
 						
 					}
 					public void onSetPositiveButton(){
+						Log.d(TAG,"dev_list_sel="+dev_list_sel);
 						if((dev_list_sel>=0)&&(dev_list_sel<deviceList.size())){
 							DeviceItem item = deviceList.get(dev_list_sel);  
-							//DVBPlayer.getConnect().setRecorderStorePath(item.Path);
-							DTVSettings mDTVSettings = new DTVSettings(DTVDeviceBrowser.this);
+							Log.d(TAG,"path="+item.Path);
 							mDTVSettings.setRecordStoragePath(item.Path);
 							DTVDeviceBrowser.this.finish();
             			}
@@ -241,9 +275,11 @@ public class DTVDeviceBrowser extends Activity implements OnItemClickListener {
 						
 					}
 					public void onSetPositiveButton(){
+						Log.d(TAG,"dev_list_sel="+dev_list_sel);
 						if((dev_list_sel>=0)&&(dev_list_sel<deviceList.size())){
-            				DeviceItem item = deviceList.get(dev_list_sel);  
-							//DVBPlayer.getConnect().setRecorderStorePath(item.Path);
+            				DeviceItem item = deviceList.get(dev_list_sel);
+							Log.d(TAG,"path="+item.Path);
+							mDTVSettings.setRecordStoragePath(item.Path);
             				DTVDeviceBrowser.this.finish();
             			}
 					}
@@ -251,8 +287,6 @@ public class DTVDeviceBrowser extends Activity implements OnItemClickListener {
 
 				break;
         }
-
-
 		
 		return;
 	}
@@ -330,7 +364,7 @@ public class DTVDeviceBrowser extends Activity implements OnItemClickListener {
 			dev_list_sel = position;
 		}
 		
-	    Log.d("onItemClick","onItemClick******"+position);	
+	    Log.d(TAG,"onItemClick******"+position);	
 		if(deviceList.size()>0){
 				//showDialog(DIALOG_YES_NO_MESSAGE);
 				showPromptDialog(DIALOG_YES_NO_MESSAGE);
@@ -389,10 +423,10 @@ public class DTVDeviceBrowser extends Activity implements OnItemClickListener {
 
 	private void getDevice() {
 		deviceList.clear();
-		File[] files = new File("/mnt").listFiles();
+		File[] files = new File("/storage/external_storage").listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.getPath().startsWith("/mnt/sd") && !(file.getPath().equals("/mnt/sdcard"))) {
+				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
 					File myfile = file;
 					Log.d(TAG,"device path: "+myfile.getName());
 					DeviceItem item = getDeviceName(myfile.getName());								
@@ -416,10 +450,10 @@ public class DTVDeviceBrowser extends Activity implements OnItemClickListener {
 
 	private void getDeviceOnBack() {
 		deviceList.clear();
-		File[] files = new File("/mnt").listFiles();
+		File[] files = new File("/storage/external_storage").listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.getPath().startsWith("/mnt/sd") && !(file.getPath().equals("/mnt/sdcard"))) {
+				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
 					File myfile = file;
 					Log.d(TAG,"device path: "+myfile.getName());
 
@@ -615,7 +649,7 @@ public class DTVDeviceBrowser extends Activity implements OnItemClickListener {
 
 			if(deviceList!=null)
 			{
-				readSDCard("/mnt/sdcard",item);
+				readSDCard("/storage/external_storage/sdcard1",item);
 				deviceList.add(item);
 
 			}	

@@ -86,12 +86,11 @@ public class DTVScanDVBS extends DTVActivity{
 				
 				switch(arg2){
 					case 0:
-						{	/*
+						{	
 							Intent intent_dish_setup = new Intent();
-							intent_dish_setup.setClass(DTVScanDVBS.this, DTVScanDvbsScanConfig.class);
+							intent_dish_setup.setClass(DTVScanDVBS.this, DTVScanDvbsConfig.class);
  							startActivity(intent_dish_setup);
-							DvbsSettings.this.finish();
-							*/
+							DTVScanDVBS.this.finish();
 						}	
 						break;
 					case 1:     //DB management
