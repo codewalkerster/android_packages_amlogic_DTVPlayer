@@ -80,9 +80,11 @@ mkdir .tmp
 mkdir .tmp/SYSTEM
 mkdir .tmp/SYSTEM/app
 mkdir .tmp/SYSTEM/lib
+mkdir .tmp/SYSTEM/etc
 
 APPS="TVService DTVPlayer"
 LIBS="am_adp am_mw jnitvmboxdevice jnitvdatabase jnitvscanner jnitvsubtitle jnitvepgscanner zvbi"
+CFG_FILES="tv_default.cfg tv_default.dtd tv_default.xml"
 
 for i in $APPS; do
 	cp $ANDROID_BUILD_TOP/out/target/product/$TARGET_PRODUCT/system/app/$i.apk .tmp/SYSTEM/app/
@@ -93,6 +95,10 @@ done
 
 for i in $LIBS; do
 	cp $ANDROID_BUILD_TOP/out/target/product/$TARGET_PRODUCT/system/lib/lib$i.so .tmp/SYSTEM/lib
+done
+
+for i in $CFG_FILES; do
+	cp $ANDROID_BUILD_TOP/out/target/product/$TARGET_PRODUCT/system/etc/$i .tmp/SYSTEM/etc
 done
 
 $ANDROID_BUILD_TOP/build/tools/releasetools/aml_update_packer .tmp $PKG
