@@ -32,8 +32,10 @@ import android.os.*;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.SimpleAdapter;  
 import java.lang.reflect.Field;
 
+import com.amlogic.tvsubtitle.TVSubtitleView;
 import com.amlogic.widget.PasswordDialog;
 import com.amlogic.widget.SureDialog;
 import com.amlogic.widget.SingleChoiseDialog;
@@ -46,6 +48,7 @@ public class DTVProgramEdit extends DTVActivity{
  
 	private DTVSettings mDTVSettings=null;
 	private TextView mTextview=null;
+	private TextView mTextInfo=null;
 	ListView ListView_programmanager=null;
 	TextView Text_title=null;
 	private int cur_select_item=0;
@@ -190,13 +193,16 @@ public class DTVProgramEdit extends DTVActivity{
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtv_program_edit); 
-		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
-		openVideo(video_view,true);
+		
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
-		super.onConnected();		
+		super.onConnected();
+		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
+		   
+		TVSubtitleView mSubtitleView= (TVSubtitleView) findViewById(R.id.mSubtitleView);
+		openVideo(video_view,true);
 		mDTVSettings = new DTVSettings(this);
 		/*
 		LinearLayout video_position= (LinearLayout) findViewById(R.id.video_position);
@@ -233,7 +239,8 @@ public class DTVProgramEdit extends DTVActivity{
 				break;
 			case TVMessage.TYPE_PROGRAM_BLOCK:
 				Log.d(TAG,"BLOCK");
-				
+				mTextInfo.setVisibility(View.VISIBLE);
+				mTextInfo.setText("Locked");
 				switch(msg.getProgramBlockType()){
 					case TVMessage.BLOCK_BY_LOCK:
 						//showPasswordDialog(null);
@@ -247,7 +254,16 @@ public class DTVProgramEdit extends DTVActivity{
 				}
 				break;
 			case TVMessage.TYPE_PROGRAM_UNBLOCK:
+				mTextInfo.setVisibility(View.INVISIBLE);
 				Log.d(TAG,"UNBLOCK");
+			case TVMessage.TYPE_SIGNAL_RESUME:
+				mTextInfo.setVisibility(View.INVISIBLE);
+				
+				break;
+			case TVMessage.TYPE_SIGNAL_LOST:
+				mTextInfo.setVisibility(View.VISIBLE);
+				mTextInfo.setText("No Signal");
+				break;
 			default:
 				break;
 		}
@@ -272,15 +288,45 @@ public class DTVProgramEdit extends DTVActivity{
 						String sat_name = TVSatellite.tvSatelliteSelect(DTVProgramEdit.this,sat_id).getSatelliteName();
 						
 						//info.setText(String.valueOf(fre/1000)+" "+pol+" "+String.valueOf(sym/1000)+"  "+sat_name);
-
-	 
-				        ArrayAdapter<String> adapter = new ArrayAdapter<String>(DTVProgramEdit.this,android.R.layout.simple_expandable_list_item_1);   
+	 					/*
+				        ArrayAdapter<String> adapter = new ArrayAdapter<String>(DTVProgramEdit.this,R.layout.simple_list_item);   
 				        adapter.add("Satellite Name:	"+sat_name);   
 				        adapter.add("Fre:	"+String.valueOf(fre/1000));   
 				        adapter.add("Sym:	"+String.valueOf(sym/1000));      
 						adapter.add("Pol:	"+pol);   
-				        List_detail.setAdapter(adapter);   
-				      	
+				        List_detail.setAdapter(adapter);  
+				        */
+ 
+				        ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();   
+				       
+						HashMap<String, Object> map = new HashMap<String, Object>();   
+						map.put("ItemTitle", "Satellite Name:");   
+						map.put("ItemText", sat_name);   
+						listItem.add(map);   
+
+						HashMap<String, Object> map1 = new HashMap<String, Object>();   
+						map1.put("ItemTitle", "Fre:");   
+						map1.put("ItemText", String.valueOf(fre/1000));   
+						listItem.add(map1); 
+
+						HashMap<String, Object> map2 = new HashMap<String, Object>();   
+						map2.put("ItemTitle", "Sym:");   
+						map2.put("ItemText", String.valueOf(sym/1000));   
+						listItem.add(map2); 
+
+						HashMap<String, Object> map3 = new HashMap<String, Object>();   
+						map3.put("ItemTitle", "Pol:");   
+						map3.put("ItemText", pol);   
+						listItem.add(map3); 
+								       
+				        SimpleAdapter listItemAdapter = new SimpleAdapter(DTVProgramEdit.this,listItem,
+							R.layout.simple_list_item,
+							new String[] {"ItemTitle", "ItemText"},
+							new int[] {R.id.ItemTitle,R.id.ItemText}   
+				        );   
+
+				        List_detail.setAdapter(listItemAdapter);   
+
 					}
 				}
 			}
@@ -299,11 +345,11 @@ public class DTVProgramEdit extends DTVActivity{
 	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 				int db_id=mTVProgramList[position].getID();
-				Log.d(TAG,"mOnItemClickListener pos="+position);
-				
-				int serviceType = mTVProgramList[position].getType();
-				DTVPlayerPlayById(db_id);
-
+				if(DTVPlayerGetCurrentProgramID()!=db_id){
+					Log.d(TAG,"mOnItemClickListener pos="+position);	
+					int serviceType = mTVProgramList[position].getType();
+					DTVPlayerPlayById(db_id);
+				}
 		}
 	};
 
@@ -502,7 +548,7 @@ public class DTVProgramEdit extends DTVActivity{
 				break;		
 			case KeyEvent.KEYCODE_DPAD_RIGHT:
 				DTVListDealLeftAndRightKey(1);
-				break;
+				return true;
 			case KeyEvent.KEYCODE_DPAD_DOWN:
 				if(cur_select_item == ListView_channel.getCount()-1){
 					ListView_channel.setSelection(0); 	
@@ -539,6 +585,9 @@ public class DTVProgramEdit extends DTVActivity{
 				break;
 			case DTVActivity.KEYCODE_RED_BUTTON:
 				showSatellitesList();
+				break;
+			case DTVActivity.KEYCODE_SUBTITLE:
+				ttShow();
 				break;
 			case KeyEvent.KEYCODE_BACK:
 				if(move_mode)
@@ -713,7 +762,7 @@ public class DTVProgramEdit extends DTVActivity{
 			//(skip==false)?getString(R.string.add_skip):getString(R.string.del_skip),
 			(lock==false)?getString(R.string.add_lock):getString(R.string.del_lock),		
 			getString(R.string.move),
-			getString(R.string.add_into_group)
+			//getString(R.string.add_into_group)
 		};
 
 		final CustomDialog mCustomDialog = new CustomDialog(mContext);
@@ -789,10 +838,12 @@ public class DTVProgramEdit extends DTVActivity{
 									myAdapter.notifyDataSetChanged();
 									mCustomDialog.dismissDialog();
 									break;
+								/*
 								case 5: //add into group
 									programGroupOperate(pos);
 									//mCustomDialog.dismissDialog();
 									break;
+								*/	
 								default:
 									break;
 							}
@@ -1041,6 +1092,8 @@ public class DTVProgramEdit extends DTVActivity{
 			getListData(0);
 			Text_title.setText(R.string.tv);
 		}
+
+		mTextInfo = (TextView)findViewById(R.id.text_info);
 		
 		ListView_channel = (ListView) findViewById(R.id.programListView);
 		myAdapter = new IconAdapter(this,null);

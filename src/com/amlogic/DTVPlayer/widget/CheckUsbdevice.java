@@ -277,7 +277,7 @@ public class CheckUsbdevice
 			if(db_file_sd.isDirectory()){
 
 			}else{
-				if((db_file_sd.getName().endsWith("amdb"))&&(db_file_sd.getName().startsWith("satellites"))){
+				if((db_file_sd.getName().endsWith("xml"))&&(db_file_sd.getName().startsWith("satellites"))){
 					satellites_db_file_list.add("/storage/external_storage/sdcard1/"+db_file_sd.getName());
 					Log.d("SDCard","DB satellites file name:"+db_file_sd.getName());
 					}
@@ -288,7 +288,69 @@ public class CheckUsbdevice
 		return satellites_db_file_list;
 	}
 	
+	public List<String> getPvrFileList() {
+		String externalStorageState = Environment.getExternalStorageState();  
 
+		List<String> pvr_file_list = null;
+
+		if(pvr_file_list == null)
+			pvr_file_list =  new ArrayList<String>();
+		
+		File[] files = new File("/storage/external_storage").listFiles();
+		if (files != null) {
+			for (File file : files) {
+				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+					File[] myfiles = new File(file.getPath()).listFiles();
+						if (myfiles != null){	
+							for(File my_file : myfiles){
+								if (my_file.getPath().endsWith("TVRecordFiles")){
+									File[] mytsfiles = new File(my_file.getPath()).listFiles();
+									if (mytsfiles != null){	
+										for(File myts_file : mytsfiles){
+											if(myts_file.isDirectory()){
+
+											}else if(myts_file.getName().endsWith(".ts")){								
+												pvr_file_list.add(myts_file.getPath());
+												Log.d("U disk","DB satellites file name:"+myts_file.getPath());
+											}
+										}	
+									}
+								}
+							}
+					}
+				}
+			}	
+
+		}
+
+		if(externalStorageState.equals(Environment.MEDIA_MOUNTED)){  
+			//Log.d("SDcard",Environment.getExternalStorageDirectory().getAbsolutePath()); 
+			File[] ts_file_sds = new File("/storage/external_storage/sdcard1").listFiles();
+			if(ts_file_sds!=null){
+				for(File ts_file_sd : ts_file_sds){
+					if (ts_file_sd.getPath().endsWith("TVRecordFiles")){
+						File[] mytsfiles = new File(ts_file_sd.getPath()).listFiles();
+						if (mytsfiles != null){	
+							for(File myts_file : mytsfiles){
+								if(myts_file.isDirectory()){
+
+								}else{
+									if(myts_file.getName().endsWith(".ts")){
+										pvr_file_list.add(myts_file.getPath());
+										Log.d("SDCard","DB satellites file name:"+myts_file.getName());
+										}
+								}
+							}	
+						}
+					}
+					
+
+				}
+			}	
+	    }  
+	
+		return pvr_file_list;
+	}
 
 
 }

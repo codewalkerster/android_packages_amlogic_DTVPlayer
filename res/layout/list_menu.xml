@@ -66,9 +66,10 @@
 		</RelativeLayout> 
 	  	<LinearLayout
 	    		android:layout_width="fill_parent"
-				android:layout_height="50px"
+				android:layout_height="60dp"
 				android:layout_marginRight="20px"
 				android:layout_marginLeft="20px"
+				android:layout_marginTop="10dp"
 				android:layout_marginBottom="15px"
 	    		android:orientation="vertical">
 				
@@ -80,8 +81,8 @@
 		    		android:layout_marginBottom="8px">
 	    		
 		    		<ImageView 
-		    			android:layout_width="wrap_content"
-		    			android:layout_height="wrap_content"
+		    			android:layout_width="45dp"
+		    			android:layout_height="45dp"
 						android:background="@drawable/move"
 		    		>
 		    		</ImageView>
@@ -95,9 +96,9 @@
 				        android:layout_marginRight="30px"
 				        />
 		    		<ImageView 
-		    			android:layout_width="wrap_content"
-		    			android:layout_height="wrap_content"
-						android:background="@drawable/enter"
+		    			android:layout_width="45dp"
+		    			android:layout_height="45dp"
+						android:background="@drawable/ok_icon"
 		    		></ImageView>
 		    		<TextView
 				        android:layout_width="wrap_content"
@@ -109,8 +110,8 @@
 				        android:layout_marginRight="30px"
 				        />
 		    		<ImageView 
-		    			android:layout_width="wrap_content"
-		    			android:layout_height="wrap_content"
+		    			android:layout_width="45dp"
+		    			android:layout_height="45dp"
 						android:background="@drawable/return_icon"
 		    		></ImageView>
 		    		<TextView

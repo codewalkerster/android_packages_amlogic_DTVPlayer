@@ -46,9 +46,7 @@ public class DTVPlayer extends DTVActivity{
 		setContentView(R.layout.dtvplayer);
 		SystemProperties.set("vplayer.hideStatusBar.enable", "true");
 		bundle = this.getIntent().getExtras();
-		openVideo();
 		
-		DTVPlayerUIInit();
 	}
 
 	public void onConnected(){
@@ -56,7 +54,9 @@ public class DTVPlayer extends DTVActivity{
 		super.onConnected();
 		//set input source on DTV
 		//setInputSource(TVConst.SourceInput.SOURCE_DTV);
+		openVideo();
 		
+		DTVPlayerUIInit();
 		mDTVSettings = new DTVSettings(this);
 		if(isHavePragram()==false){ 
 			showNoProgramDia(); 
@@ -426,8 +426,11 @@ public class DTVPlayer extends DTVActivity{
 				//if(mainmenu_show_flag)
 					//HideMainMenu();
 				//else
+				if(DTVPlayerInTeletextStatus==false)
 					ShowMainMenu();
 					//setVideoWindow(new Rect(200,100,500,400));
+					//Rect r = new Rect(100,100,600,300);
+					//setVideoWindow(r);
 				return true;
 		}
 		

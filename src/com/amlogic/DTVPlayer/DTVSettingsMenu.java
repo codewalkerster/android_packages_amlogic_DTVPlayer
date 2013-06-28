@@ -1106,6 +1106,10 @@ public class DTVSettingsMenu extends DTVActivity {
 		lp.dimAmount=0.5f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setText(getString(R.string.dvbs_dbm_load));
+		title.setTextColor(Color.YELLOW);
 		
 		ListView mListView =(ListView)window.findViewById(R.id.settings_list);
 		DvbsDBXmlAdapter mDvbsDBXmlAdapter = new DvbsDBXmlAdapter(this,filelist);
@@ -1359,10 +1363,12 @@ public class DTVSettingsMenu extends DTVActivity {
 		private Context cont;
 		private List<String> listItems;
 
-		class ViewHolder {
+		class ViewHolder {  
+			TextView 	 filename;
+			TextView     Time;
 			ImageView icon;
-			TextView text;
 		}
+    		
 
 		public DvbsDBXmlAdapter(Context context, List<String> list) {
 			super();
@@ -1391,18 +1397,21 @@ public class DTVSettingsMenu extends DTVActivity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder=null;
 			if (convertView == null) {
-				convertView = mInflater.inflate(R.layout.dtvsettings_list_item, null);		   
+
+				convertView = mInflater.inflate(R.layout.pvr_manager_item, null);
 				holder = new ViewHolder();
-				holder.text = (TextView) convertView.findViewById(R.id.text);
-				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
-				convertView.setTag(holder);
+				
+		      	holder.Time=(TextView) convertView.findViewById(R.id.pvr_time);
+				holder.filename=(TextView) convertView.findViewById(R.id.filename);			   
+			    convertView.setTag(holder);
 			}else {
 				// Get the ViewHolder back to get fast access to the TextView
 				// and the ImageView.
 				holder = (ViewHolder) convertView.getTag();
 			}
-
-			holder.text.setText(listItems.get(position));
+			// Bind the data efficiently with the holder.
+			
+			holder.filename.setText(listItems.get(position));
 			return convertView;
 		}
 	}

@@ -774,8 +774,9 @@ public class DTVEpg extends DTVActivity{
 		    		String str_start = sdf.format(dt_start); 
 		    		String str_end   = sdf.format(dt_end); 
 					
-					holder.time.setText(""+str_start + "--" + str_end);					
-					
+					holder.time.setText(""+str_start + "--" + str_end);	
+
+					/*			
 					switch(mTVEvent[date][position].getSubFlag()){
 						case 0:
 							holder.icon_book.setBackgroundResource(Color.TRANSPARENT);
@@ -789,6 +790,7 @@ public class DTVEpg extends DTVActivity{
 							holder.icon_book.setBackgroundResource(R.drawable.epg_event_book_2); 
 						break;
 					}
+					*/
 
 				}
 			}
@@ -1107,11 +1109,11 @@ public class DTVEpg extends DTVActivity{
 					case 1:
 						if(text.getText().equals(getString((R.string.view)))){
 							text.setText(getString(R.string.pvr));
-							mode=1;
+							mode=2;
 						}
 						else{
 							text.setText(getString(R.string.view));
-							mode=2;
+							mode=1;
 						}
 						break;					
 				}
@@ -1143,6 +1145,7 @@ public class DTVEpg extends DTVActivity{
 						DTVPlayerAddEvent(mTVEvent[current_date_index][pos],2);
 					}
 					*/
+					Log.d(TAG,"mode="+mode + " ---repeat="+repeat);
 					DTVPlayerAddEvent(mTVEvent[current_date_index][pos].getID(),mode,repeat);	
 					
 					if(mDialog!=null&& mDialog.isShowing()){
@@ -1591,16 +1594,18 @@ public class DTVEpg extends DTVActivity{
 	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 			int db_id=mTVProgramList[position].getID();	
-			int serviceType = mTVProgramList[position].getType();
-			DTVPlayerPlayById(db_id);
-			current_date_index=0;
-			date_button0.setBackgroundResource(R.drawable.epg_date_button_press);	
-			date_button1.setBackgroundResource(R.drawable.epg_date_button);
-			date_button2.setBackgroundResource(R.drawable.epg_date_button);		
-			date_button3.setBackgroundResource(R.drawable.epg_date_button);
-			date_button4.setBackgroundResource(R.drawable.epg_date_button);		
-			date_button5.setBackgroundResource(R.drawable.epg_date_button);
-			date_button6.setBackgroundResource(R.drawable.epg_date_button);
+			if(DTVPlayerGetCurrentProgramID()!=db_id){
+				int serviceType = mTVProgramList[position].getType();
+				DTVPlayerPlayById(db_id);
+				current_date_index=0;
+				date_button0.setBackgroundResource(R.drawable.epg_date_button_press);	
+				date_button1.setBackgroundResource(R.drawable.epg_date_button);
+				date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+				date_button3.setBackgroundResource(R.drawable.epg_date_button);
+				date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+				date_button5.setBackgroundResource(R.drawable.epg_date_button);
+				date_button6.setBackgroundResource(R.drawable.epg_date_button);
+			}
 		}
 	};
 

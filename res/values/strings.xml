@@ -605,5 +605,6 @@
 	<string name="once">Once</string>
 	<string name="view">View</string>
 	<string name="pvr">PVR</string>
-	
+	<string name="size">Size</string>
+	<string name="preview">Preview</string>
 </resources>
