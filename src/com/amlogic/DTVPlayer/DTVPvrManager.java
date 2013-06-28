@@ -258,8 +258,9 @@ public class DTVPvrManager extends DTVActivity{
 						
 				return true;	
 			case DTVActivity.KEYCODE_YELLOW_BUTTON:
+				filename = getServiceInfoByPostion(cur_select_item);
 				Bundle bundle_pvr_player = new Bundle();										           
-				bundle_pvr_player.putInt("booking_id", record_db_id); 	
+				bundle_pvr_player.putString("file_name", filename); 	
 				Intent Intent_pvrplayer = new Intent();
 				Intent_pvrplayer.setClass(DTVPvrManager.this, DTVPvrPlayer.class);
 				Intent_pvrplayer.putExtras(bundle_pvr_player);
@@ -268,8 +269,9 @@ public class DTVPvrManager extends DTVActivity{
 				return true;	
 			case DTVActivity.KEYCODE_RED_BUTTON:
 				stopPlaying();
-				if(record_db_id!=-1)
-					startPlayback(record_db_id);
+				String file_name = getServiceInfoByPostion(cur_select_item);	
+				if(file_name!=null)
+					startPlayback(file_name);
 				return true;
 			case DTVActivity.KEYCODE_BLUE_BUTTON:
 				new SureDialog(DTVPvrManager.this){
@@ -406,8 +408,9 @@ public class DTVPvrManager extends DTVActivity{
 				public void onSetPositiveButton(int which){
 					switch(which){
 						case 0:														
-							Bundle bundle_pvr_player = new Bundle();										           
-							bundle_pvr_player.putInt("booking_id", record_db_id); 	
+							Bundle bundle_pvr_player = new Bundle();
+							filename = getServiceInfoByPostion(pos);
+							bundle_pvr_player.putString("file_name", filename); 	
 							Intent Intent_pvrplayer = new Intent();
 							Intent_pvrplayer.setClass(DTVPvrManager.this, DTVPvrPlayer.class);
 							Intent_pvrplayer.putExtras(bundle_pvr_player);

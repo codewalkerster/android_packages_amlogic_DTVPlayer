@@ -32,6 +32,7 @@ public class DTVPvrPlayer extends DTVActivity{
 	private static final String TAG="DTVPvrPlayer";
 	private int record_id =0;
 	private String proname=null;
+	private String file_name = null;
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
@@ -39,7 +40,7 @@ public class DTVPvrPlayer extends DTVActivity{
 		Bundle bundle = this.getIntent().getExtras();
 		if(bundle!=null){
 	    	record_id = bundle.getInt("booking_id");
-			proname = bundle.getString("program_name");
+			file_name = bundle.getString("file_name");
 		}	
 		openVideo();
 		DTVPvrPlayerUIInit();
@@ -48,7 +49,8 @@ public class DTVPvrPlayer extends DTVActivity{
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
-		startPlayback(record_id);
+		Log.d(TAG,"play file ="+file_name);
+		startPlayback(file_name);
 		pvrHandler.postDelayed(pvrTimer, 1000);
 
 		setVideoViewWindow();
