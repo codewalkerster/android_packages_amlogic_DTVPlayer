@@ -43,7 +43,7 @@ public class DTVPvrManager extends DTVActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtv_pvr_manager);
 		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
-		openVideo(video_view,true);
+		openVideo(video_view,null);
 	}
 
 	public void onConnected(){
@@ -205,7 +205,7 @@ public class DTVPvrManager extends DTVActivity{
 
 				HashMap<String, Object> map2 = new HashMap<String, Object>();   
 				map2.put("ItemTitle", getString(R.string.recmanager_filename)+":");
-				map2.put("ItemText", file_name);   
+				map2.put("ItemText", file.getName());   
 				listItem.add(map2); 
 						       
 		        SimpleAdapter listItemAdapter = new SimpleAdapter(DTVPvrManager.this,listItem,

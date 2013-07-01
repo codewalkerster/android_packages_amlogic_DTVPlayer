@@ -426,7 +426,7 @@ public class DTVPlayer extends DTVActivity{
 				//if(mainmenu_show_flag)
 					//HideMainMenu();
 				//else
-				if(DTVPlayerInTeletextStatus==false)
+				//if(DTVPlayerInTeletextStatus==false)
 					ShowMainMenu();
 					//setVideoWindow(new Rect(200,100,500,400));
 					//Rect r = new Rect(100,100,600,300);

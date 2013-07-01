@@ -202,7 +202,7 @@ public class DTVProgramEdit extends DTVActivity{
 		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
 		   
 		TVSubtitleView mSubtitleView= (TVSubtitleView) findViewById(R.id.mSubtitleView);
-		openVideo(video_view,true);
+		openVideo(video_view,mSubtitleView);
 		mDTVSettings = new DTVSettings(this);
 		/*
 		LinearLayout video_position= (LinearLayout) findViewById(R.id.video_position);

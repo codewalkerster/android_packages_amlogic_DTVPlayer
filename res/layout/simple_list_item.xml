@@ -3,7 +3,7 @@
     android:id="@+id/RelativeLayout01"    
     android:layout_width="fill_parent"    
     xmlns:android="http://schemas.android.com/apk/res/android"    
-    android:layout_height="40dp"    
+    android:layout_height="wrap_content"    
     android:paddingBottom="4dip"    
     android:paddingLeft="20dip"  
     android:paddingRight="12dip"
@@ -24,7 +24,7 @@
     android:textSize="22sp" 
      android:layout_weight="2"  
      android:gravity="left"
-     android:singleLine="true"
+     android:singleLine="false"
     />  
 </LinearLayout>  
 
