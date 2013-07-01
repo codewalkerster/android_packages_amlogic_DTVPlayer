@@ -11,6 +11,7 @@ import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVBooking;
+import com.amlogic.tvutil.DTVRecordParams;
 
 import java.util.*;
 import java.text.*;
@@ -76,6 +77,39 @@ public class DTVPvrManager extends DTVActivity{
 			/*case DVBEvent.EVENT_RECORDS_CHANGED:
 				refresh_data();
 			*/	
+			case TVMessage.TYPE_PLAYBACK_MEDIA_INFO:
+				Log.d(TAG, "Got playback media info.");
+				DTVRecordParams mediaInfo = msg.getPlaybackMediaInfo();
+				TVProgram.Audio[] audios = mediaInfo.getAllAudio();
+				if (audios != null){
+					for (int i=0; i<audios.length; i++){
+						Log.d(TAG, "Audio"+i+": pid "+audios[i].getPID()+", fmt "+
+							audios[i].getFormat()+", lang "+audios[i].getLang());
+					}
+				}
+				TVProgram.Subtitle[] subtitles = mediaInfo.getAllSubtitle();
+				if (subtitles != null){
+					for (int i=0; i<subtitles.length; i++){
+						Log.d(TAG, "Subtitle"+i+": pid "+subtitles[i].getPID()+
+							", type "+subtitles[i].getType()+
+							", lang "+subtitles[i].getLang()+
+							", "+subtitles[i].getCompositionPageID()+
+							","+subtitles[i].getAncillaryPageID()+
+							","+subtitles[i].getMagazineNumber()+
+							","+subtitles[i].getMagazineNumber()+
+							","+subtitles[i].getPageNumber());
+					}
+				}
+				TVProgram.Teletext[] teletexts = mediaInfo.getAllTeletext();
+				if (teletexts != null){
+					for (int i=0; i<teletexts.length; i++){
+						Log.d(TAG, "Teletext"+i+": pid "+teletexts[i].getPID()+
+							", lang "+teletexts[i].getLang()+
+							","+teletexts[i].getMagazineNumber()+
+							","+teletexts[i].getPageNumber());
+					}
+				}
+				break;
 			default:
 				break;
 	
