@@ -822,7 +822,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			
 			switch(position){
 				case SETTINGS_RECALL_LIST:
-
+					showRcallSetDialog(info_cur);
 					break;
 			    case SETTINGS_SUBTILE_SWITCH:{	
 			    	if(mDTVSettings.getSubtitleStatus()==false)
@@ -958,7 +958,12 @@ public class DTVSettingsMenu extends DTVActivity {
 			holder.info.setTextColor(Color.YELLOW);
 			switch(position){
 			case SETTINGS_RECALL_LIST:
-				
+				int n = DTVPlayergetRecallNumber();
+				holder.icon.setImageBitmap(mIcon1);
+				holder.info.setVisibility(View.VISIBLE);
+				holder.icon1.setVisibility(View.INVISIBLE);
+				//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+				holder.info.setText(String.valueOf(n));
 				break;
 			case SETTINGS_SUBTILE_SWITCH:
 				{
@@ -2265,6 +2270,52 @@ public class DTVSettingsMenu extends DTVActivity {
 		};
 
 	}	
+
+
+	
+	public void showRcallSetDialog(TextView v){
+		final TextView info_cur = v;
+		int pos = 0;
+		int n = DTVPlayergetRecallNumber();
+		switch(n){
+			case 1:
+				pos=0;
+				break;
+			case 3:
+				pos=1;
+				break;
+			case 5:
+				pos=2;
+				break;	
+		}
+
+		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "1","3","5"},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.timeshift_time_set));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				switch(which){
+					//pos = which;
+					case 0:
+						info_cur.setText("1");
+						DTVPlayerSetRecallNumber(1);
+						break;
+					case 1:
+						info_cur.setText("3");
+						DTVPlayerSetRecallNumber(3);
+						break;
+					case 2:
+						info_cur.setText("5");
+						DTVPlayerSetRecallNumber(5);
+						break;	
+				}
+			}
+		};				
+	}
 
 	private void showSetPasswordDialog(){
 		new PasswordSettingDialog(DTVSettingsMenu.this){

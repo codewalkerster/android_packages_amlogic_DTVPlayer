@@ -16,6 +16,10 @@ import com.amlogic.tvutil.TVBooking;
 import com.amlogic.tvutil.DTVPlaybackParams;
 import com.amlogic.tvutil.DTVRecordParams;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+
 import java.util.*;
 import java.text.*;
 import android.view.*;
@@ -55,6 +59,7 @@ abstract public class DTVActivity extends TVActivity{
 	final public static int KEYCODE_TTX=KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE;	
 	final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_TV_SUBTITLE;
 	final public static int KEYCODE_INFO=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
+	final public static int KEYCODE_RECALL_BUTTON=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
 
 
 	private TVProgram TVProgram=null;
@@ -69,6 +74,16 @@ abstract public class DTVActivity extends TVActivity{
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 		WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		Context otherAppsContext = null;
+		try{
+			otherAppsContext = createPackageContext(
+			"com.amlogic.DTVPlayer", Context.MODE_WORLD_WRITEABLE|Context.MODE_WORLD_READABLE);
+		}
+		catch (NameNotFoundException e){
+		}
+		mLast= PreferenceManager.getDefaultSharedPreferences(otherAppsContext);
+		mLast= PreferenceManager.getDefaultSharedPreferences(otherAppsContext);
     }
 
 	public void onConnected(){
@@ -488,6 +503,7 @@ abstract public class DTVActivity extends TVActivity{
 	
 	public void DTVPlayerPlayById(int db_id){
 		playProgram(db_id);
+		DTVPlayerSetRecallList(db_id);
 	}
 
 	public void DTVPlayerPlayDown(){
@@ -729,6 +745,58 @@ abstract public class DTVActivity extends TVActivity{
 		Log.d(TAG,"current id="+db_id);
 	
 		return TVProgram.selectByID(this,db_id);
+	}
+
+	private static  SharedPreferences mLast = null;
+	public void DTVPlayerSetRecallNumber(int value){
+		if(mLast!=null)
+			mLast.edit().putInt("recall_number",value).commit();
+	}	
+
+	public int DTVPlayergetRecallNumber(){
+		int value = 1;
+		if(mLast!=null)
+			value = mLast.getInt("recall_number",1);
+		return value;
+	}	
+
+	private ArrayList<Integer> recall_list = null;
+	public void DTVPlayerSetRecallList(int id){
+		if(recall_list==null){
+			recall_list = new ArrayList<Integer>();
+			recall_list.add(id);
+		}
+		else{
+			int size = DTVPlayergetRecallNumber();
+			if(recall_list.size()<size){
+				int i=0;
+				for(i=0;i<recall_list.size();i++){
+					if(recall_list.get(i) == id)
+						break;
+				}
+				if(i>=recall_list.size())	
+					recall_list.add(id);
+			}
+			else{
+				recall_list.remove(0);
+				recall_list.add(id);
+			}	
+		}
+	}
+
+	public TVProgram[] DTVPlayerGetRecallList(){
+		if(recall_list==null){
+			return null;
+		}
+		else{
+			int i=0;
+			for(i=0;i<recall_list.size();i++){
+				Log.d(TAG,"--"+recall_list.get(i));
+			}
+			
+		}
+
+		return null;
 	}
 	
 }

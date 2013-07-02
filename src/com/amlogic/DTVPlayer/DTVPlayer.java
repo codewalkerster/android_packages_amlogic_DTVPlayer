@@ -386,6 +386,9 @@ public class DTVPlayer extends DTVActivity{
 				Log.d(TAG,"KEYCODE_ZOOM_OUT");
 				showPvrDurationTimeSetDialog(DTVPlayer.this);
 				return true;
+			case DTVActivity.KEYCODE_RECALL_BUTTON:
+				DTVPlayerGetRecallList();
+				break;
 			case KeyEvent.KEYCODE_TV_REPEAT:
 				Log.d(TAG,"KEYCODE_TV_REPEAT");
 				showSubtitleSettingMenu(DTVPlayer.this);
@@ -404,9 +407,7 @@ public class DTVPlayer extends DTVActivity{
 				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_DISPAYMODE");
 				shortcut_key_deal("pictrue_mode");
 				return true;
-			case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
-				Log.d(TAG,"KEYCODE_MEDIA_PREVIOUS");	
-				return true;
+			
 			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: //epg
 				Log.d(TAG,"KEYCODE_MEDIA_FAST_FORWARD");
 				return true;
