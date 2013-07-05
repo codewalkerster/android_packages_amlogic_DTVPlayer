@@ -503,7 +503,7 @@ abstract public class DTVActivity extends TVActivity{
 	
 	public void DTVPlayerPlayById(int db_id){
 		playProgram(db_id);
-		DTVPlayerSetRecallList(db_id);
+		//DTVPlayerSetRecallList(db_id);
 	}
 
 	public void DTVPlayerPlayDown(){
@@ -767,20 +767,27 @@ abstract public class DTVActivity extends TVActivity{
 			recall_list.add(id);
 		}
 		else{
+	
 			int size = DTVPlayergetRecallNumber();
-			if(recall_list.size()<size){
-				int i=0;
-				for(i=0;i<recall_list.size();i++){
-					if(recall_list.get(i) == id)
-						break;
-				}
-				if(i>=recall_list.size())	
-					recall_list.add(id);
-			}
-			else{
+
+			while(recall_list.size()>=size+1){
 				recall_list.remove(0);
-				recall_list.add(id);
-			}	
+			}
+
+			boolean del=false;
+			int pos = 0;
+			for(int i=0;i<recall_list.size();i++){
+				if(recall_list.get(i) == id){
+					pos = i;
+					del=true;
+					break;
+				}	
+			}
+			
+			if(del)
+				recall_list.remove(pos);
+			
+			recall_list.add(id);
 		}
 	}
 
@@ -796,7 +803,35 @@ abstract public class DTVActivity extends TVActivity{
 			
 		}
 
-		return null;
+		TVProgram[] mTVProgram = null;
+		int RecallNumber = DTVPlayergetRecallNumber();
+		int len = recall_list.size();
+	
+		if(RecallNumber==1){
+			
+			mTVProgram = new TVProgram[1];
+			mTVProgram[0]= TVProgram.selectByID(this,recall_list.get(0));
+			
+		}	
+		else if(recall_list.size() <= RecallNumber+1) {
+			int pos = 0;
+			if(recall_list.size()<=1){
+				pos = 0;
+				mTVProgram = new TVProgram[recall_list.size()];
+			}
+			else{
+				pos = recall_list.size()-2;
+				mTVProgram = new TVProgram[recall_list.size()-1];
+			}
+			int n=0;
+			for(int i=pos;i>=0;i--){
+				mTVProgram[n]= TVProgram.selectByID(this,recall_list.get(i));
+				n++;
+			}
+		}
+		
+		
+		return mTVProgram;
 	}
 	
 }

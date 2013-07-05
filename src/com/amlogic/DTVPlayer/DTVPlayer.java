@@ -150,6 +150,7 @@ public class DTVPlayer extends DTVActivity{
 			case TVMessage.TYPE_PROGRAM_START:
 				RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
 				DTVPlayerGetCurrentProgramData();
+				DTVPlayerSetRecallList(mTVProgram.getID());
 				ShowControlBar();
 				updateInforbar();
 				break;
@@ -387,7 +388,7 @@ public class DTVPlayer extends DTVActivity{
 				showPvrDurationTimeSetDialog(DTVPlayer.this);
 				return true;
 			case DTVActivity.KEYCODE_RECALL_BUTTON:
-				DTVPlayerGetRecallList();
+				showRecallListDialog(DTVPlayer.this);
 				break;
 			case KeyEvent.KEYCODE_TV_REPEAT:
 				Log.d(TAG,"KEYCODE_TV_REPEAT");
@@ -1722,6 +1723,151 @@ public class DTVPlayer extends DTVActivity{
 				DTVPlayerInTeletextStatus=false;
 			}	
 		}	
+	}
+
+	private class RecallListAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+		private Context cont;
+		private int selectItem;
+		TVProgram[] mTVProgramList;
+		class ViewHolder {
+			TextView prono;
+			TextView text;	
+			ImageView icon_scrambled;
+			ImageView icon_fav;
+			ImageView icon;
+		}
+		
+		public RecallListAdapter(Context context, TVProgram[] list) {
+			super();
+			cont = context;
+			mTVProgramList = list;
+			mInflater=LayoutInflater.from(context);			  
+		}
+
+		public int getCount() {
+			if(mTVProgramList==null)
+				return 0;
+			else
+				return mTVProgramList.length;
+		}
+
+		public Object getItem(int position) {
+			return position;
+		}
+		
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public void setSelectItem(int position){
+			this.selectItem = position;
+		}
+        
+        public int getSelectItem(){
+			return this.selectItem;
+        }
+		
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder;	
+			if (convertView == null){    
+				convertView = mInflater.inflate(R.layout.dtvchannellist_item, null);
+				
+				holder = new ViewHolder();
+				holder.prono = (TextView)convertView.findViewById(R.id.prono);
+				holder.text = (TextView) convertView.findViewById(R.id.ItemText);
+				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+				holder.icon_scrambled = (ImageView)convertView.findViewById(R.id.icon_scrambled);
+				holder.icon_fav = (ImageView)convertView.findViewById(R.id.icon_fav);
+				convertView.setTag(holder);
+			}
+			else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+		
+			// Bind the data efficiently with the holder.
+
+			if(mDTVSettings.getScanRegion().contains("ATSC")==false){
+				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber()));
+			}
+			else{
+				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber())+"-"+Integer.toString(mTVProgramList[position].getNumber().getMinor()));
+			}
+			
+			holder.text.setText(mTVProgramList[position].getName());
+			//convertView.setBackgroundColor(Color.TRANSPARENT); 
+			holder.text.setTextColor(Color.WHITE);
+				
+			if(mTVProgramList[position].getLockFlag()){
+				holder.icon.setBackgroundResource(R.drawable.dtvplayer_icon_lock); 
+			}	
+			else{
+				holder.icon.setBackgroundResource(Color.TRANSPARENT);
+			}
+
+			if(mTVProgramList[position].getFavoriteFlag()){
+				holder.icon_fav.setBackgroundResource(R.drawable.dtvplayer_icon_fav); 
+			}	
+			else{
+				holder.icon_fav.setBackgroundResource(Color.TRANSPARENT);
+			}	
+
+			if(mTVProgramList[position].getScrambledFlag()){
+				holder.icon_scrambled.setBackgroundResource(R.drawable.dtvplayer_icon_scrambled); 
+			}	
+			else{
+				holder.icon_scrambled.setBackgroundResource(Color.TRANSPARENT);
+			}			  
+			return convertView;
+		}
+	}
+
+	private TVProgram[] recall_tvprogram =null;
+	private void showRecallListDialog(Context context){
+		recall_tvprogram = DTVPlayerGetRecallList();
+		if(recall_tvprogram==null)
+			return;
+		
+		final Context mContext = context;
+
+		final CustomDialog mCustomDialog = new CustomDialog(mContext);
+		if(recall_tvprogram.length>=1&&DTVPlayergetRecallNumber()>1){
+			mCustomDialog.showDialog(R.layout.dtv_recall_list, new ICustomDialog(){
+					public boolean onKeyDown(int keyCode, KeyEvent event){
+						if(keyCode == KeyEvent.KEYCODE_BACK)
+							mCustomDialog.dismissDialog();
+						return false;
+					}
+					public void showWindowDetail(Window window){
+						TextView Text_title = (TextView)window.findViewById(R.id.Text_title);
+						Text_title.setTextColor(Color.YELLOW);
+						Text_title.setText(getString(R.string.recall_list));
+							
+						ListView ListView_channel = (ListView) window.findViewById(R.id.ListView_channel);
+						RecallListAdapter myAdapter = new RecallListAdapter(DTVPlayer.this,recall_tvprogram);
+
+						ListView_channel.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+								// TODO Auto-generated method stub
+								int db_id=recall_tvprogram[position].getID();	
+								DTVPlayerPlayById(db_id);
+								mCustomDialog.dismissDialog();
+							}
+				        	    
+				        });
+					
+						ListView_channel.setAdapter(myAdapter);
+
+					}
+				}
+			);
+		}	
+		else if(recall_tvprogram.length==1){
+			DTVPlayerPlayById(recall_tvprogram[0].getID());
+		}
 	}
 
 	private static Button BtnSubtitleLanguage=null;
