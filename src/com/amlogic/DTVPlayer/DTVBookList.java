@@ -129,7 +129,6 @@ public class DTVBookList extends DTVActivity{
 				serviceinfo.setId(mTVBooking[i].getID());
 				serviceinfo.setProgramName(mTVBooking[i].getProgramName());
 				serviceinfo.setEventName(mTVBooking[i].getEventName());
-				
 	    		Date dt_start =  new Date(mTVBooking[i].getStart());
 	    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
 	    		String str_start = sdf.format(dt_start); 
@@ -247,7 +246,6 @@ public class DTVBookList extends DTVActivity{
 			serviceInfo serviceinfo = getServiceInfoByPostion(arg2);
 		  	
 			showItemClickDialog(arg2);
-		    //myAdapter.setSelectItem(arg2);
 		    myAdapter.notifyDataSetChanged();
         }      	
     }
@@ -403,7 +401,7 @@ public class DTVBookList extends DTVActivity{
 		public void setId(int id) {
 			this.id = id;
 		}
-		
+
 		public String getProgramName() {
 			return program_name;
 		}
@@ -461,7 +459,6 @@ public class DTVBookList extends DTVActivity{
 		}		
 		
 	}
-
 
 	int mode=1;
 	int repeat=0;

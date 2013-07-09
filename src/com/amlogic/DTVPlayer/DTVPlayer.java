@@ -55,7 +55,7 @@ public class DTVPlayer extends DTVActivity{
 		//set input source on DTV
 		//setInputSource(TVConst.SourceInput.SOURCE_DTV);
 		openVideo();
-		
+
 		DTVPlayerUIInit();
 		mDTVSettings = new DTVSettings(this);
 		if(isHavePragram()==false){ 
@@ -430,9 +430,6 @@ public class DTVPlayer extends DTVActivity{
 				//else
 				//if(DTVPlayerInTeletextStatus==false)
 					ShowMainMenu();
-					//setVideoWindow(new Rect(200,100,500,400));
-					//Rect r = new Rect(100,100,600,300);
-					//setVideoWindow(r);
 				return true;
 		}
 		

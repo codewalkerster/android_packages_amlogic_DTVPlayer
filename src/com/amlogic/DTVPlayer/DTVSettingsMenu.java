@@ -1373,7 +1373,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			TextView     Time;
 			ImageView icon;
 		}
-    		
+
 
 		public DvbsDBXmlAdapter(Context context, List<String> list) {
 			super();
@@ -2270,8 +2270,6 @@ public class DTVSettingsMenu extends DTVActivity {
 		};
 
 	}	
-
-
 	
 	public void showRcallSetDialog(TextView v){
 		final TextView info_cur = v;

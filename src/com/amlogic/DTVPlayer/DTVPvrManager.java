@@ -16,6 +16,7 @@ import com.amlogic.tvutil.DTVRecordParams;
 import java.util.*;
 import java.text.*;
 import java.io.File;
+
 import android.view.*;
 import android.view.View.*;
 import android.view.animation.*;
@@ -116,12 +117,14 @@ public class DTVPvrManager extends DTVActivity{
 		}
 	}
 
+
 	private ListView list;
 	private ArrayList<Object> serviceList;  
     private MyAdapter myAdapter;
   	private int cur_select_item = 0;
 
 	int choise = 0;	
+
 	private String filename=null;
 	private int record_db_id;
 	private Toast toast=null;
@@ -154,11 +157,11 @@ public class DTVPvrManager extends DTVActivity{
 	}
 	
 	private void DTVPvrManagerUIInit(){
+
         list = (ListView)findViewById(R.id.listview_recmanager);
 	    list.setOnItemSelectedListener(mOnSelectedListener);
 		list.setOnItemClickListener(mOnItemClickListener);
 	    list.setOnScrollListener(new listOnScroll()); 
-
 		getFileList();
 		if (null == myAdapter){
 			myAdapter = new MyAdapter(DTVPvrManager.this,filenameList);
@@ -268,6 +271,7 @@ public class DTVPvrManager extends DTVActivity{
 			detail.setVisibility(View.INVISIBLE);
 	}
 
+
 	/*disable HOME key*/
 	@Override 
 	public void onAttachedToWindow(){  
@@ -365,7 +369,6 @@ public class DTVPvrManager extends DTVActivity{
 				return 0;
 			else 
 				return listItems.size();
-			
 		}
 
 		public Object getItem(int position) {
@@ -394,7 +397,6 @@ public class DTVPvrManager extends DTVActivity{
 		public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;	
 			if (convertView == null) {
-
 				convertView = mInflater.inflate(R.layout.pvr_manager_item, null);
 				holder = new ViewHolder();
 				
@@ -474,5 +476,6 @@ public class DTVPvrManager extends DTVActivity{
 		}
 	};
 	
-	
+
 }
+

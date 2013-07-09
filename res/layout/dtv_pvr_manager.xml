@@ -104,7 +104,6 @@ android:background ="@drawable/bg"
 					android:layout_height="fill_parent"
 					android:focusable="false">
 					</ListView>
-					
 				</LinearLayout>				
 			
 		</LinearLayout>
@@ -139,12 +138,12 @@ android:background ="@drawable/bg"
 			android:layout_height="wrap_content"
 		    android:layout_gravity="center"
 			android:text="@string/help_info_select"
+
 			android:textColor="#FFFFFFFF"
 			android:textSize="20sp"
 			android:layout_marginRight="30dp"
 			/>
 		</LinearLayout>
-		
 		<LinearLayout
 		android:layout_weight="1"    
 		android:gravity="center_horizontal"

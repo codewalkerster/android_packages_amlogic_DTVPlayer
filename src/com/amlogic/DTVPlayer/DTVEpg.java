@@ -362,7 +362,6 @@ public class DTVEpg extends DTVActivity{
 		date_button5.setOnClickListener(new channelListButtonClick()); 	
 		date_button6.setOnClickListener(new channelListButtonClick()); 
 
-		
 		date_button0.setOnFocusChangeListener(new dateButtonFocusChange()); 	
 		date_button1.setOnFocusChangeListener(new dateButtonFocusChange()); 	
 		date_button2.setOnFocusChangeListener(new dateButtonFocusChange()); 	
@@ -775,7 +774,6 @@ public class DTVEpg extends DTVActivity{
 					else
 					*/
 						holder.eit_name.setText(mTVEvent[date][position].getName());
-
 					Date dt_start =  new Date(mTVEvent[date][position].getStartTime());
 		    		Date dt_end   =  new Date(mTVEvent[date][position].getEndTime());
 		    		
@@ -800,7 +798,7 @@ public class DTVEpg extends DTVActivity{
 						break;
 					}
 					*/
-
+					
 				}
 			}
 		
@@ -921,7 +919,6 @@ public class DTVEpg extends DTVActivity{
 
 	private  class EventAddAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
-
 		
 		private Context cont;
 		private String[] DATA;
@@ -2062,7 +2059,7 @@ public class DTVEpg extends DTVActivity{
 
 		}	
 	}
-
+	
 	class dateButtonFocusChange  implements android.view.View.OnFocusChangeListener{	  
 		public void onFocusChange(View v, boolean isFocused){	
 			// TODO Auto-generated method stub		
@@ -2153,6 +2150,5 @@ public class DTVEpg extends DTVActivity{
 		}	
 	}
 	
-
 }
 

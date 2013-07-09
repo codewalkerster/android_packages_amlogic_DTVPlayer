@@ -145,8 +145,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		tsInfoTitleLayout = (LinearLayout)findViewById(R.id.ts_info_title_layout);
 		satInfoTitleLayout = (LinearLayout)findViewById(R.id.sat_info_title_layout);
 
-		
-
 		sat_lnb_list = (ListView)findViewById(R.id.sat_lnb_list);	
 		sat_lnb_list.setOnItemClickListener(new AdapterView.OnItemClickListener()
 	        {
@@ -4135,7 +4133,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			
 								EventHandler ha =new EventHandler(Looper.getMainLooper());  
 								ha.sendMessage(message);
-								
 							}
 							break;
 						case LNB_CONTROL_CMD_13V:
@@ -4183,7 +4180,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		
 
 	}
-
 
 	private AlertDialog.Builder diaBuilder;
 	private AlertDialog alert; 
@@ -5558,7 +5554,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		
 		ContentValues values=null;
 
-		
 		mDialog = new Dialog(mContext,R.style.MyDialog){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
@@ -5611,7 +5606,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 		final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         //imm.showSoftInput(edittext_satname,0);
-
 		final Button button_sat_direction = (Button)window.findViewById(R.id.edit_direction); 
 		final EditText edittext_angle0 = (EditText) window.findViewById(R.id.angle0); 
 		edittext_angle0.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(3)});
@@ -5626,7 +5620,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		
 		if(direction>0){
 			button_sat_direction.setText("East");
-			   
 		}
 		else{
 			button_sat_direction.setText("West");
@@ -6250,7 +6243,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	private Runnable timer_ts_signal_info_runnable = new Runnable() {
 
 		public void run() {
-		   
+
 			timer_ts_signal_info_handler.postDelayed(timer_ts_signal_info_runnable,500);  
 		}   
 	};

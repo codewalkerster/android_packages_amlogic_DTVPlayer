@@ -982,8 +982,6 @@ public class DTVChannelList extends DTVActivity{
 			}    
 		  });	 
 			
-		  //final int time_init = (int)(time_test(mYear,mMonth,mDay,mHour,mMinute,0)/1000);
-		  
 		  //editBuilder.setTitle(R.string.pvr_set);
 		  editBuilder.setView(pvr_time_layout); 
 
@@ -1299,16 +1297,13 @@ public class DTVChannelList extends DTVActivity{
 		mDialog.setContentView(R.layout.dvbs_show_sat_dia);
 
 		Window window = mDialog.getWindow();
-
 		window.setGravity(Gravity.CENTER);
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		//WindowManager m = getWindowManager();
 		//Display d = m.getDefaultDisplay();
 		lp.dimAmount=0.5f;
 		lp.x=600;	
-		//lp.y=450;
-		//lp.height = (int) (d.getHeight() * 0.65); 
-		//lp.width = (int) (d.getWidth() * 0.65); 
+
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -1332,11 +1327,11 @@ public class DTVChannelList extends DTVActivity{
 				Text_title.setText(list_sat[arg2].getSatelliteName());
 				myAdapter.notifyDataSetChanged();
 				mDialog.dismiss();
+
 			}
         	    
         });
 		LimitListView.setAdapter(new mySatListAdapter(this,null));		
-			
 	}
 
 

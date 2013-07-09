@@ -1063,6 +1063,7 @@ public class DvbsScanResult extends DTVActivity{
 		return super.onKeyDown(keyCode, event);
 	}
 
+
 	/*
 	private void showReturnDia(){
 		
@@ -1136,7 +1137,6 @@ public class DvbsScanResult extends DTVActivity{
 			}
 		};
 	}
-	
 
 	private void returnSettings(){
 		Intent intent = new Intent();

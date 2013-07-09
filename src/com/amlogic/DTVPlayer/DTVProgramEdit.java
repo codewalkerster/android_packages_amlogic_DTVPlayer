@@ -193,7 +193,6 @@ public class DTVProgramEdit extends DTVActivity{
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtv_program_edit); 
-		
 	}
 
 	public void onConnected(){
@@ -326,7 +325,6 @@ public class DTVProgramEdit extends DTVActivity{
 				        );   
 
 				        List_detail.setAdapter(listItemAdapter);   
-
 					}
 				}
 			}
