@@ -362,6 +362,15 @@ public class DTVEpg extends DTVActivity{
 		date_button5.setOnClickListener(new channelListButtonClick()); 	
 		date_button6.setOnClickListener(new channelListButtonClick()); 
 
+		
+		date_button0.setOnFocusChangeListener(new dateButtonFocusChange()); 	
+		date_button1.setOnFocusChangeListener(new dateButtonFocusChange()); 	
+		date_button2.setOnFocusChangeListener(new dateButtonFocusChange()); 	
+		date_button3.setOnFocusChangeListener(new dateButtonFocusChange()); 
+		date_button4.setOnFocusChangeListener(new dateButtonFocusChange()); 	
+		date_button5.setOnFocusChangeListener(new dateButtonFocusChange()); 	
+		date_button6.setOnFocusChangeListener(new dateButtonFocusChange()); 
+
 		//refresh time
 		refresh_time_thread();		
 	}
@@ -384,7 +393,7 @@ public class DTVEpg extends DTVActivity{
 	private void refresh_currenttime()
 	{		
 		Date date = new Date(get_current_datetime()); 
-		SimpleDateFormat sdf = new SimpleDateFormat("EEEE,MMMM-dd-yyyy hh:mm:ss aa"); 
+		SimpleDateFormat sdf = new SimpleDateFormat("EEEE,MM-dd-yyyy hh:mm:ss aa"); 
 		String today = sdf.format(date); 
 		
 		TextView TempTexView; 
@@ -767,8 +776,8 @@ public class DTVEpg extends DTVActivity{
 					*/
 						holder.eit_name.setText(mTVEvent[date][position].getName());
 
-					Date dt_start =  new Date(mTVEvent[date][position].getStartTime()*1000);
-		    		Date dt_end   =  new Date(mTVEvent[date][position].getEndTime()*1000);
+					Date dt_start =  new Date(mTVEvent[date][position].getStartTime());
+		    		Date dt_end   =  new Date(mTVEvent[date][position].getEndTime());
 		    		
 		    		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
 		    		String str_start = sdf.format(dt_start); 
@@ -855,7 +864,7 @@ public class DTVEpg extends DTVActivity{
 						mTVEvent[current_date_index][item].setSubFlag(2);
 						icon.setBackgroundResource(R.drawable.epg_event_book_2);
 						//if((long)(mTVEvent[current_date_index][item].getStartTime())>System.currentTimeMillis()/1000)
-							//SetAlarm(mTVEvent[current_date_index][item].getStartTime()-100);
+							//SetAlarm(mTVEvent[current_date_index][item].getStartTime()/1000-100);
 						Calendar cal = Calendar.getInstance();
 						SetAlarm(cal.getTimeInMillis()/1000+60);	
 					break;
@@ -1046,11 +1055,12 @@ public class DTVEpg extends DTVActivity{
 
 		text_event_name.setText(mTVEvent[date][position].getName());
 
-		Date dt_start =  new Date(mTVEvent[date][position].getStartTime()*1000);
-		Date dt_end   =  new Date(mTVEvent[date][position].getEndTime()*1000);
+		Log.d(TAG,"start time------"+mTVEvent[date][position].getStartTime());
+		Date dt_start =  new Date(mTVEvent[date][position].getStartTime());
+		Date dt_end   =  new Date(mTVEvent[date][position].getEndTime());
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
-		SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MMMM-dd"); 
+		SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MM-dd"); 
 		String str_start = sdf.format(dt_start); 
 		String str_end   = sdf.format(dt_end); 
 		String str_date  = sdf_date.format(dt_start);
@@ -2053,7 +2063,95 @@ public class DTVEpg extends DTVActivity{
 		}	
 	}
 
-
+	class dateButtonFocusChange  implements android.view.View.OnFocusChangeListener{	  
+		public void onFocusChange(View v, boolean isFocused){	
+			// TODO Auto-generated method stub		
+			if(isFocused){
+				switch (v.getId()) {			
+					
+					case R.id.date_button0:
+						
+						date_button0.setBackgroundResource(R.drawable.epg_date_button_press);		
+						date_button1.setBackgroundResource(R.drawable.epg_date_button);
+						date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button3.setBackgroundResource(R.drawable.epg_date_button);
+						date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button5.setBackgroundResource(R.drawable.epg_date_button);
+						date_button6.setBackgroundResource(R.drawable.epg_date_button);
+						
+						refresh_Eitlistview(0);
+						current_date_index = 0;
+						break;
+					case R.id.date_button1:
+						date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button1.setBackgroundResource(R.drawable.epg_date_button_press);
+						date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button3.setBackgroundResource(R.drawable.epg_date_button);
+						date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button5.setBackgroundResource(R.drawable.epg_date_button);
+						date_button6.setBackgroundResource(R.drawable.epg_date_button);
+						refresh_Eitlistview(1);
+						current_date_index = 1;
+						break;
+					case R.id.date_button2:
+						date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button1.setBackgroundResource(R.drawable.epg_date_button);
+						date_button2.setBackgroundResource(R.drawable.epg_date_button_press);		
+						date_button3.setBackgroundResource(R.drawable.epg_date_button);
+						date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button5.setBackgroundResource(R.drawable.epg_date_button);
+						date_button6.setBackgroundResource(R.drawable.epg_date_button);
+						refresh_Eitlistview(2);
+						current_date_index = 2;
+						break;	
+					case R.id.date_button3:
+						date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button1.setBackgroundResource(R.drawable.epg_date_button);
+						date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button3.setBackgroundResource(R.drawable.epg_date_button_press);
+						date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button5.setBackgroundResource(R.drawable.epg_date_button);
+						date_button6.setBackgroundResource(R.drawable.epg_date_button);
+						refresh_Eitlistview(3);
+						current_date_index = 3;
+						break;
+					case R.id.date_button4:
+						date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button1.setBackgroundResource(R.drawable.epg_date_button);
+						date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button3.setBackgroundResource(R.drawable.epg_date_button);
+						date_button4.setBackgroundResource(R.drawable.epg_date_button_press);		
+						date_button5.setBackgroundResource(R.drawable.epg_date_button);
+						date_button6.setBackgroundResource(R.drawable.epg_date_button);
+						refresh_Eitlistview(4);
+						current_date_index = 4;
+						break;
+					case R.id.date_button5:
+						date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button1.setBackgroundResource(R.drawable.epg_date_button);
+						date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button3.setBackgroundResource(R.drawable.epg_date_button);
+						date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button5.setBackgroundResource(R.drawable.epg_date_button_press);
+						date_button6.setBackgroundResource(R.drawable.epg_date_button);
+						refresh_Eitlistview(5);
+						current_date_index = 5;
+						break;
+					case R.id.date_button6:
+						date_button0.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button1.setBackgroundResource(R.drawable.epg_date_button);
+						date_button2.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button3.setBackgroundResource(R.drawable.epg_date_button);
+						date_button4.setBackgroundResource(R.drawable.epg_date_button);		
+						date_button5.setBackgroundResource(R.drawable.epg_date_button);
+						date_button6.setBackgroundResource(R.drawable.epg_date_button_press);
+						refresh_Eitlistview(6);
+						current_date_index = 6;
+						break;
+				}		
+			}
+		}	
+	}
 	
 
 }

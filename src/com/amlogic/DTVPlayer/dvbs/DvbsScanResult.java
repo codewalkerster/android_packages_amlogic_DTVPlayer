@@ -78,6 +78,7 @@ import com.amlogic.tvutil.DTVPlaybackParams;
 import com.amlogic.tvutil.DTVRecordParams;
 import com.amlogic.tvutil.TVSatellite;
 import com.amlogic.tvutil.TVSatelliteParams;
+import com.amlogic.widget.SureDialog;
 
 public class DvbsScanResult extends DTVActivity{
 
@@ -1062,6 +1063,7 @@ public class DvbsScanResult extends DTVActivity{
 		return super.onKeyDown(keyCode, event);
 	}
 
+	/*
 	private void showReturnDia(){
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(DvbsScanResult.this);
@@ -1110,7 +1112,31 @@ public class DvbsScanResult extends DTVActivity{
 
 				
 	}
+	*/
 
+	private void showReturnDia(){
+		new SureDialog(DvbsScanResult.this,true){
+			public void onSetMessage(View v){
+				((TextView)v).setText("Stop scan?");
+			}
+
+			public void onSetNegativeButton(){
+	  
+			}
+			public void onSetPositiveButton(){
+				stopScan(false);
+			
+				if(sync_flag==false){
+					//mScanDvb.syncProgram(); 
+					sync_flag=true;
+				}	
+				canplay_flag = true;
+				scan_ok_flag = true;
+				returnSettings();
+			}
+		};
+	}
+	
 
 	private void returnSettings(){
 		Intent intent = new Intent();

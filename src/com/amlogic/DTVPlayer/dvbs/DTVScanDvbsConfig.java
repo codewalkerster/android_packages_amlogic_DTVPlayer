@@ -145,57 +145,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		tsInfoTitleLayout = (LinearLayout)findViewById(R.id.ts_info_title_layout);
 		satInfoTitleLayout = (LinearLayout)findViewById(R.id.sat_info_title_layout);
 
-		sat_list.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-		public void onItemSelected(AdapterView<?> parent, View view,
-		int position, long id) {
-			Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
-
-			list_cur_pos = position;
-			if(ListStatus==0){
-				gobal_ts_cur_pos = 0;
-				gobal_sat_cur_pos = list_cur_pos;
-				TextView sat_name = (TextView) findViewById(R.id.sat_name);
-				sat_name.setTextColor(Color.YELLOW);
-				sat_name.setText(ScanSatAndtsInfoList.get(list_cur_pos).getName());
-				if(myLnbSetAdapter!=null)
-					myLnbSetAdapter.notifyDataSetChanged();
-			}	
-		}
-
-		public void onNothingSelected(AdapterView<?> parent) {
-		}
-		});
-
-		sat_list.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				// TODO Auto-generated method stub
-				System.out.println("onItemSelected arg0 " + arg0);
-				ImageView image_cur = (ImageView)arg1.findViewById(R.id.icon);
-				if(ListStatus ==0){					
-					if(((DbSat)ScanSatAndtsInfoList.get(arg2)).getSelectedFlag()==false){
-						((DbSat)ScanSatAndtsInfoList.get(arg2)).setSelectedFlag(true);
-						image_cur.setBackgroundResource(R.drawable.selected);
-					}	
-					else{
-						((DbSat)ScanSatAndtsInfoList.get(arg2)).setSelectedFlag(false);
-						image_cur.setBackgroundResource(0);
-					}
-				}
-				else{
-
-					if(((DbTransponder)tsInfoList.get(arg2)).getSelectedFlag()==false){
-						((DbTransponder)tsInfoList.get(arg2)).setSelectedFlag(true);
-						image_cur.setBackgroundResource(R.drawable.selected);
-					}	
-					else{
-						((DbTransponder)tsInfoList.get(arg2)).setSelectedFlag(false);
-						image_cur.setBackgroundResource(0);
-					}
-				}
-			}
-	        });
+		
 
 		sat_lnb_list = (ListView)findViewById(R.id.sat_lnb_list);	
 		sat_lnb_list.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -257,7 +207,59 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 		/*get data*/
 		ScanSatAndtsInfoList = getScanListSatAndTsDataFromBuildDB();
- 		/*
+
+		sat_list.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+		public void onItemSelected(AdapterView<?> parent, View view,
+		int position, long id) {
+			Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
+
+			list_cur_pos = position;
+			if(ListStatus==0){
+				gobal_ts_cur_pos = 0;
+				gobal_sat_cur_pos = list_cur_pos;
+				TextView sat_name = (TextView) findViewById(R.id.sat_name);
+				sat_name.setTextColor(Color.YELLOW);
+				sat_name.setText(ScanSatAndtsInfoList.get(list_cur_pos).getName());
+				if(myLnbSetAdapter!=null)
+					myLnbSetAdapter.notifyDataSetChanged();
+			}	
+		}
+
+		public void onNothingSelected(AdapterView<?> parent) {
+		}
+		});
+
+		sat_list.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				ImageView image_cur = (ImageView)arg1.findViewById(R.id.icon);
+				if(ListStatus ==0){					
+					if(((DbSat)ScanSatAndtsInfoList.get(arg2)).getSelectedFlag()==false){
+						((DbSat)ScanSatAndtsInfoList.get(arg2)).setSelectedFlag(true);
+						image_cur.setBackgroundResource(R.drawable.selected);
+					}	
+					else{
+						((DbSat)ScanSatAndtsInfoList.get(arg2)).setSelectedFlag(false);
+						image_cur.setBackgroundResource(0);
+					}
+				}
+				else{
+
+					if(((DbTransponder)tsInfoList.get(arg2)).getSelectedFlag()==false){
+						((DbTransponder)tsInfoList.get(arg2)).setSelectedFlag(true);
+						image_cur.setBackgroundResource(R.drawable.selected);
+					}	
+					else{
+						((DbTransponder)tsInfoList.get(arg2)).setSelectedFlag(false);
+						image_cur.setBackgroundResource(0);
+					}
+				}
+			}
+	        });
+		/*
 		new Thread(){
 	            @Override
 	            public void run(){
@@ -517,6 +519,11 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		if(ListStatus==0&&ScanSatAndtsInfoList.size()==0){
 			 no_data_info.setText(getString(R.string.no_scan_list));
 			 no_data_info.setVisibility(View.VISIBLE);
+			 
+			 if(myLnbSetAdapter!=null)
+					myLnbSetAdapter.notifyDataSetChanged();
+			 TextView sat_name = (TextView) findViewById(R.id.sat_name);
+			 sat_name.setText("");
 		}
 		else if(ListStatus==1&&(ScanSatAndtsInfoList.get(gobal_sat_cur_pos).transponder==null||(ScanSatAndtsInfoList.get(gobal_sat_cur_pos).transponder!=null&&ScanSatAndtsInfoList.get(gobal_sat_cur_pos).transponder.size()==0))){
 			no_data_info.setText("No TP information,please add");

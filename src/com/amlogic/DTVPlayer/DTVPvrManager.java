@@ -345,7 +345,7 @@ public class DTVPvrManager extends DTVActivity{
 		private LayoutInflater mInflater;    			
 		private Context cont;
 		private int selectItem;
-		private List<String> listItems;
+		private List<String> listItems=null;
 		
 		class ViewHolder {  
 			TextView 	 filename;
@@ -361,7 +361,7 @@ public class DTVPvrManager extends DTVActivity{
 		}
 
 		public int getCount() {
-			if(list==null)
+			if(listItems==null)
 				return 0;
 			else 
 				return listItems.size();
