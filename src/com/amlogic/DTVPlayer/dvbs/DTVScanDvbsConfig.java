@@ -4873,7 +4873,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					//dvb_sat_para.sat.lnb_num = sat_temp.getLnbNo();//lnb No.
 					dvb_sat_para.sat.sat_name = sat_temp.getName(); //satellite name
 					
-					dvb_sat_para.sat.tv_satparams.sat_longitude = (double)(sat_temp.getPosition());//satellite longitude
+					dvb_sat_para.sat.tv_satparams.sat_longitude = (double)(sat_temp.getSatLongitude());//satellite longitude
 					dvb_sat_para.sat.tv_satparams.lnb_lof_lo = sat_temp.getLoLOF(); //lof_low
 					dvb_sat_para.sat.tv_satparams.lnb_lof_hi = sat_temp.getHiLOF(); //lof_hi
 					dvb_sat_para.sat.tv_satparams.lnb_lof_threadhold = sat_temp.getLofThreshold(); //threshold
@@ -4949,7 +4949,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						//dvb_sat_para.sat.lnb_num = sat_temp.getLnbNo();//lnb No.
 						dvb_sat_para.sat.sat_name = sat_temp.getName(); //satellite name
 						
-						dvb_sat_para.sat.tv_satparams.sat_longitude = (double)(sat_temp.getPosition());//satellite longitude
+						dvb_sat_para.sat.tv_satparams.sat_longitude = (double)(sat_temp.getSatLongitude());//satellite longitude
 						dvb_sat_para.sat.tv_satparams.lnb_lof_lo = sat_temp.getLoLOF(); //lof_low
 						dvb_sat_para.sat.tv_satparams.lnb_lof_hi = sat_temp.getHiLOF(); //lof_hi
 						dvb_sat_para.sat.tv_satparams.lnb_lof_threadhold = sat_temp.getLofThreshold(); //threshold
@@ -5017,7 +5017,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			dvb_sat_para.sat.tv_satparams = new TVSatelliteParams();
 			//dvb_sat_para.sat.lnb_num = sat_temp.getLnbNo();//lnb No.
 			dvb_sat_para.sat.sat_name = sat_node.getName(); //satellite name
-			dvb_sat_para.sat.tv_satparams.sat_longitude =(double)(sat_node.getPosition());//satellite longitude
+			dvb_sat_para.sat.tv_satparams.sat_longitude =(double)(sat_node.getSatLongitude());//satellite longitude
 			dvb_sat_para.sat.tv_satparams.lnb_lof_lo = sat_node.getLoLOF(); //lof_low
 			dvb_sat_para.sat.tv_satparams.lnb_lof_hi = sat_node.getHiLOF(); //lof_hi
 			dvb_sat_para.sat.tv_satparams.lnb_lof_threadhold = sat_node.getLofThreshold(); //threshold
