@@ -660,7 +660,7 @@ public class DTVProgramEdit extends DTVActivity{
 						public void onItemClick(AdapterView<?> parent, View v, int position, long id){			
 							switch(position){
 								case 0: //add
-									final CustomDialog mAddCustomDialog = new CustomDialog(mContext);
+									final CustomDialog mAddCustomDialog = new CustomDialog(mContext,R.style.MyDialog);
 										mAddCustomDialog.showDialog(R.layout.edit_dialog, new ICustomDialog(){
 											public boolean onKeyDown(int keyCode, KeyEvent event){
 												if(keyCode == KeyEvent.KEYCODE_BACK)
@@ -783,7 +783,7 @@ public class DTVProgramEdit extends DTVActivity{
 						public void onItemClick(AdapterView<?> parent, View v, int position, long id){			
 							switch(position){
 								case 0: //edit
-									final CustomDialog mEditCustomDialog = new CustomDialog(mContext);
+									final CustomDialog mEditCustomDialog = new CustomDialog(mContext,R.style.MyDialog);
 									mEditCustomDialog.showDialog(R.layout.edit_dialog, new ICustomDialog(){
 										public boolean onKeyDown(int keyCode, KeyEvent event){
 											if(keyCode == KeyEvent.KEYCODE_BACK)

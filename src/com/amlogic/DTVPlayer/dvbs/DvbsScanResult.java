@@ -869,25 +869,26 @@ public class DvbsScanResult extends DTVActivity{
 			return ;
 		}
 
-		serviceInfo serviceinfo = new serviceInfo();
-		serviceinfo.setName(name);	
-		serviceinfo.setServiceType(service_type);
-		serviceinfo.setServiceId(service_id);
-
-		if(service_type==1){			
-			tv_list.add(serviceinfo);
-			mTvListAdapter = new ScanResultAdapter(DvbsScanResult.this,tv_list);
-			tvlistview.setAdapter(mTvListAdapter);
-			mTvListAdapter.notifyDataSetChanged();
-			tvlistview.setSelection(tv_list.size() -1);
+		if(name!=null){
+			serviceInfo serviceinfo = new serviceInfo();
+			serviceinfo.setName(name);	
+			serviceinfo.setServiceType(service_type);
+			serviceinfo.setServiceId(service_id);
+		
+			if(service_type==1){			
+				tv_list.add(serviceinfo);
+				mTvListAdapter = new ScanResultAdapter(DvbsScanResult.this,tv_list);
+				tvlistview.setAdapter(mTvListAdapter);
+				mTvListAdapter.notifyDataSetChanged();
+				tvlistview.setSelection(tv_list.size() -1);
+			}
+			else if(service_type==2){
+				radio_list.add(serviceinfo);	
+				radiolistview.setVisibility(View.VISIBLE);
+				mRadioListAdapter.notifyDataSetChanged();
+				radiolistview.setSelection(radio_list.size() -1);
+			}
 		}
-		else if(service_type==2){
-			radio_list.add(serviceinfo);	
-			radiolistview.setVisibility(View.VISIBLE);
-			mRadioListAdapter.notifyDataSetChanged();
-			radiolistview.setSelection(radio_list.size() -1);
-		}
-
 		progressBar.setProgress(msg.getScanProgress());
 		Log.d(TAG,""+msg.getScanProgress());
 		progress_value.setText(String.valueOf(msg.getScanProgress())+"%");

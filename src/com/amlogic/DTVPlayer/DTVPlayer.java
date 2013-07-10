@@ -215,8 +215,6 @@ public class DTVPlayer extends DTVActivity{
 	protected void onResume(){
 		Log.d(TAG, ">>>>>>>>onResume<<<<<<<<");
 		super.onResume();
-
-
 	}
 	
 	
@@ -1658,6 +1656,8 @@ public class DTVPlayer extends DTVActivity{
 		}	
 		else
 			dtvplyaer_b_txt=false;
+
+		DTVPlayerInTeletextStatus=false;
 
 		dtvplayer_cur_event=null;
 		dtvplayer_event_des=null;

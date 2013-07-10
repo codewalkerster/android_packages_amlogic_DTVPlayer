@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="620px"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="45px" 
-    android:layout_centerInParent="true"  
+    android:layout_width="620dp"
+    android:layout_height="280dp"
+    android:layout_gravity="center"
     android:orientation="vertical"
     android:background="@drawable/dialog_bg"
     > 
@@ -15,7 +14,7 @@
         android:layout_gravity="center_horizontal"
         android:text="@string/enter_password"
         android:textColor="#FFFFFFFF"
- 				android:gravity="center"
+ 		android:gravity="center"
         android:textSize="24px" 
         android:layout_marginTop="20px"
         android:layout_marginBottom="10px" />	
