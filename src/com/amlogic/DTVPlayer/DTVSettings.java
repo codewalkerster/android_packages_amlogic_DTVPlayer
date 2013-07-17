@@ -27,6 +27,7 @@ public class DTVSettings{
 		mContext.setConfig("tv:subtitle:margin_top",30);
 		mContext.setConfig("tv:subtitle:margin_bottom",30);
 	}
+	
 	public boolean getSubtitleStatus(){
 		if(mContext.getBooleanConfig("tv:subtitle:enable"))
 			return true;
@@ -36,6 +37,23 @@ public class DTVSettings{
 
 	public void setSubtitleStatus(boolean value){
 		mContext.setConfig("tv:subtitle:enable",value);
+	}
+
+	public String getSubtitleLanguage(){
+		return mContext.getStringConfig("tv:subtitle:language");
+	}
+
+	public void setSubtitleLanguage(String lan){
+		mContext.setConfig("tv:subtitle:language",lan);
+	}
+
+	public String getAudLanguage(){
+		return mContext.getStringConfig("tv:audio:language");
+		
+	}
+
+	public void setAudLanguage(String lan){
+		mContext.setConfig("tv:audio:language",lan);
 	}
 
 	public int getScreenMode(){
@@ -121,6 +139,6 @@ public class DTVSettings{
 	public void factoryReset(){
 		mContext.restoreFactorySetting();
 	}
-
+	
 }
 

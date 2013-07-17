@@ -39,6 +39,7 @@
 	      android:id="@+id/dbm_list"
 	      android:layout_width="wrap_content"
 	      android:layout_height="wrap_content"
+	      android:listSelector="@drawable/list_item_bg"
 	   		 ></ListView>     
     </RelativeLayout>
      </RelativeLayout>

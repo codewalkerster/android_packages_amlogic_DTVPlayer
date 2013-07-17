@@ -1675,6 +1675,42 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	}
 	*/
 
+
+	public void showLnbLOFDia(Button v){
+		final Button lof_mode = v;		
+		int pos = 0;
+
+		final String[] ItemData = new String[]{"5150","5750","9750","10050","11300","9750-10600","9750-10600","9750-10750"};
+		for(int i=0;i<ItemData.length;i++){
+			if(lof_mode.getText().equals(ItemData[i]))
+				pos=i;
+		}
+		
+		//LnbSettingItemSelected=pos;
+		
+		SingleChoiseDialog mSingleChoiseDialog = new SingleChoiseDialog(DTVScanDvbsConfig.this,ItemData,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.dish_setup_diseqc));
+			}
+			
+			public void onSetNegativeButton(){
+			}
+			public void onSetPositiveButton(int which){
+				// TODO Auto-generated method stub
+				LnbSettingItemSelected = which;
+				lof_mode.setText(ItemData[LnbSettingItemSelected]);
+				
+			}
+		};	
+
+		mSingleChoiseDialog.mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+				public void onDismiss(DialogInterface dialog) {
+				}         
+		});	
+		
+	}
+
+
 	private void showSatLnbTypeDia(){
 		if(ScanSatAndtsInfoList==null)
 			return;
@@ -1752,32 +1788,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			@Override
 			public void onClick(View arg0) {
 			// TODO Auto-generated method stub
-
-				if(lof_mode.getText().equals("5150")){
-					lof_mode.setText("5750");
-				}
-				else if(lof_mode.getText().equals("5750")){
-					lof_mode.setText("9750");
-				}
-				else if(lof_mode.getText().equals("9750")){
-					lof_mode.setText("10050");
-				}
-				else if(lof_mode.getText().equals("10050")){
-					lof_mode.setText("11300");
-				}
-				else if(lof_mode.getText().equals("11300")){
-					//lof_mode.setText("5150-5750");
-				//}
-				//else if(lof_mode.getText().equals("5150-5750")){
-					lof_mode.setText("9750-10600");
-				}
-				else if(lof_mode.getText().equals("9750-10600")){
-					lof_mode.setText("9750-10750");
-				}
-				else if(lof_mode.getText().equals("9750-10750")){
-					lof_mode.setText("5150");
-				}
-				
+				showLnbLOFDia(lof_mode);
 			}
 		});
 
@@ -1812,10 +1823,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				text_info.setText("0"+" MHz");
 			}	
 			else if(SatInfo.getLoLOF()!=SatInfo.getHiLOF()){
-				text_info.setText(String.valueOf(SatInfo.getLoLOF())+"-"+String.valueOf(SatInfo.getHiLOF())+" MHz");
+				text_info.setText(String.valueOf(SatInfo.getLoLOF()/1000)+"-"+String.valueOf(SatInfo.getHiLOF()/1000)+" MHz");
 			}
 			else if(SatInfo.getLoLOF()==SatInfo.getHiLOF()){
-				text_info.setText(String.valueOf(SatInfo.getLoLOF())+" MHz");
+				text_info.setText(String.valueOf(SatInfo.getLoLOF()/1000)+" MHz");
 			}
 			//lof_mode.setText("5150");
 
@@ -7815,7 +7826,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				break;
 				*/
 		  }
-
+		  holder.icon1.setVisibility(View.INVISIBLE);
 		  holder.icon.setVisibility(View.INVISIBLE);
 		  
 		  return convertView;

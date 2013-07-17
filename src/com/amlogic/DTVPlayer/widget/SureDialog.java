@@ -26,7 +26,7 @@ abstract public class SureDialog {
 	Dialog mDialog = null;
 	private Context mContext = null;
 
-	TextView title;
+	TextView content;
 	Button no ;
     Button yes ;
    
@@ -102,8 +102,12 @@ abstract public class SureDialog {
 		no.setText(R.string.no);
 		yes = (Button)window.findViewById(R.id.yes);
 		yes.setText(R.string.yes);
-		title = (TextView)window.findViewById(R.id.title);
-		onSetMessage(title);
+		
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+
+		content = (TextView)window.findViewById(R.id.content);
+		onSetMessage(content);
 		
      	no.setFocusable(true);   
      	no.requestFocus();   

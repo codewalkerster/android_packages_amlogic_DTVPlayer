@@ -63,7 +63,8 @@
 				    android:id="@+id/tv_list"
 				  	android:layout_width="fill_parent"
 				  	android:layout_height="wrap_content"					     				     
-				  	android:scrollbars="vertical"/> 		
+				  	android:scrollbars="vertical"
+				  	android:listSelector="@drawable/list_item_bg"/> 		
 					    						
 			</LinearLayout> 
 			<LinearLayout
@@ -89,7 +90,8 @@
 				 	android:id="@+id/radio_list"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"					     				     
-					android:scrollbars="vertical"/> 		
+					android:scrollbars="vertical"
+					android:listSelector="@drawable/list_item_bg"/> 		
 
 			</LinearLayout> 
 		</LinearLayout> 
@@ -120,11 +122,14 @@
 					android:layout_marginLeft="30px"/>
 				<ProgressBar
 					android:id="@+id/ProgressBar" 
+					style="?android:attr/progressBarStyleHorizontal"
 					android:layout_gravity="center_vertical"
 					android:layout_width="wrap_content" 
-					android:layout_height="16px"
-					style="?android:attr/progressBarStyleHorizontal"
-					android:layout_weight="10"/>
+					android:layout_height="12dp"
+					android:background="@drawable/progress_bg"
+        			android:progressDrawable="@drawable/progress_horizontal"
+        			android:layout_weight="10"
+					/>
 				<TextView  
 					android:id="@+id/progress_value"
 					android:textSize="20sp"

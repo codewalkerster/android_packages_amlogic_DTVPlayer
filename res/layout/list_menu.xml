@@ -14,7 +14,7 @@
 		android:orientation="vertical"
 		android:padding="14px"
 		android:gravity="center"
-		android:background="@drawable/vchip_pin_head_bg">
+		android:background="@drawable/single_dia_head">
 		<TextView
 			android:id="@+id/title"
 			android:layout_width="match_parent"
@@ -34,7 +34,7 @@
     		android:orientation="horizontal"
     		android:padding="14px"
     		android:gravity="center"
-    		android:background="@drawable/vchip_pin_body_bg">
+    		android:background="@drawable/single_dia_body">
 		<com.amlogic.widget.FocusScrollListView 
 			android:id="@+id/list_item"
 			android:layout_width="fill_parent"
