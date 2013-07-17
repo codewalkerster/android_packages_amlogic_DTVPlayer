@@ -184,7 +184,7 @@ public class DTVChannelList extends DTVActivity{
 						int sat_id = mTVProgramList[position].getChannel().getParams().getSatId();
 						String sat_name = TVSatellite.tvSatelliteSelect(DTVChannelList.this,sat_id).getSatelliteName();
 						
-						info.setText(String.valueOf(fre/1000)+" "+pol+" "+String.valueOf(sym/1000)+"  "+sat_name);
+						info.setText(String.valueOf(fre/1000)+"MHz   "+pol+"   "+String.valueOf(sym/1000)+"KS/s   "+sat_name);
 					}
 				}
 			}

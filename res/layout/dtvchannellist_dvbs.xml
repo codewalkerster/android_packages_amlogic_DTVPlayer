@@ -8,7 +8,7 @@
 	    android:id="@+id/RelativeLayout01"
 	    android:layout_width="644dp"
 	    android:layout_height="529dp"
-	    android:layout_centerInParent="true"
+	    android:layout_gravity="left|center"
 	    android:background="@drawable/channel_listcontent_bg"
 	    android:orientation="vertical"
 	    android:padding="15dp" >
@@ -97,7 +97,8 @@
 	                android:layout_height="fill_parent"
 	                android:layout_weight="6"
 	                android:gravity="center"
-	                android:textSize="24sp" >
+	                android:textSize="24sp"
+	                android:singleLine="true">
 	            </TextView>
 	        </LinearLayout>
 

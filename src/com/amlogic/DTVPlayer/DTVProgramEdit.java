@@ -305,12 +305,12 @@ public class DTVProgramEdit extends DTVActivity{
 
 						HashMap<String, Object> map1 = new HashMap<String, Object>();   
 						map1.put("ItemTitle", "Fre:");   
-						map1.put("ItemText", String.valueOf(fre/1000));   
+						map1.put("ItemText", String.valueOf(fre/1000)+"MHz");   
 						listItem.add(map1); 
 
 						HashMap<String, Object> map2 = new HashMap<String, Object>();   
 						map2.put("ItemTitle", "Sym:");   
-						map2.put("ItemText", String.valueOf(sym/1000));   
+						map2.put("ItemText", String.valueOf(sym/1000)+"KS/s");   
 						listItem.add(map2); 
 
 						HashMap<String, Object> map3 = new HashMap<String, Object>();   

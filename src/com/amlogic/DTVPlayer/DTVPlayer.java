@@ -1633,6 +1633,7 @@ public class DTVPlayer extends DTVActivity{
 				mAudioLang[i]= mAudio[i].getLang();
 				Log.d(TAG,"Audio Lang:"+mAudioLang[i]);
 			}
+			mAudioIndex = mTVProgram.getCurrentAudio(getStringConfig("tv:audio:language"));
 		}	
 
 		mSubtitleCount=mTVProgram.getSubtitleCount();
@@ -1645,6 +1646,8 @@ public class DTVPlayer extends DTVActivity{
 				mSubtitleLang[i]= mSubtitle[i].getLang();
 				Log.d(TAG,"sub Lang:"+mSubtitleLang[i]);
 			}
+
+			mSubtitleIndex=mTVProgram.getCurrentSubtitle(getStringConfig("tv:subtitle:language"));
 		}	
 		else
 			dtvplayer_b_sub=false;
@@ -2012,6 +2015,7 @@ public class DTVPlayer extends DTVActivity{
 					
 				}
 				public void onSetPositiveButton(int which){
+					mAudioIndex=which; 
 					((TVActivity)mContext).switchAudio(which);
 				}
 			};	

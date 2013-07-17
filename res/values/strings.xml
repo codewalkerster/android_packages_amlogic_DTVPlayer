@@ -173,6 +173,15 @@
 		<item>TimeShifting</item>
 	</array>
 
+	
+	<array name="Program_settings_content_dvbs" translatable="false">
+		<item>Program Edit</item>	
+		<item>EPG</item>
+		<item>PVR Configure</item>
+		<item>PVR Manager</item>
+		<item>TimeShifting</item>
+	</array>
+
 	<array name="record_device_content" translatable="false">
 		<item>Disk</item>	
 		<item>Timeshift Size</item>
@@ -608,4 +617,27 @@
 	<string name="size">Size</string>
 	<string name="preview">Preview</string>
 	<string name="recall_list">Recall List</string>
+
+	<array name="settings_lauguage" translatable="false">
+		<item>English</item>
+		<item>Chinese</item>    	
+	</array>	
+
+	
+	<array name="lauguage_iso_639_2" translatable="false">
+		<item>eng</item>
+		<item>chi</item>    	
+	</array>
+
+	<array name="teletext_region_lauguage" translatable="false">
+		<item>English</item>
+		<item>Deutsch</item>    
+		<item>Svenska/Suomi/Magyar</item>
+		<item>Italiano</item>
+		<item>Français</item>   
+		<item>Português/Español</item>
+		<item>Cesky/Slovencina</item>   
+		<item>Türkçe</item>
+	</array>	
+	
 </resources>

@@ -270,20 +270,21 @@ public class CheckUsbdevice
 		}
 
 		if(externalStorageState.equals(Environment.MEDIA_MOUNTED)){  
+			//Log.d("SDcard",Environment.getExternalStorageDirectory().getAbsolutePath()); 
+			File[] db_file_sds = new File("/storage/external_storage/sdcard1").listFiles();
+			if(db_file_sds!=null){
+				for(File db_file_sd : db_file_sds){
+					if(db_file_sd.isDirectory()){
 
-		Log.d("SDcard",Environment.getExternalStorageDirectory().getAbsolutePath()); 
-		File[] db_file_sds = new File("/storage/external_storage/sdcard1").listFiles();
-		for(File db_file_sd : db_file_sds){
-			if(db_file_sd.isDirectory()){
-
-			}else{
-				if((db_file_sd.getName().endsWith("xml"))&&(db_file_sd.getName().startsWith("satellites"))){
-					satellites_db_file_list.add("/storage/external_storage/sdcard1/"+db_file_sd.getName());
-					Log.d("SDCard","DB satellites file name:"+db_file_sd.getName());
+					}else{
+						if((db_file_sd.getName().endsWith("xml"))&&(db_file_sd.getName().startsWith("satellites"))){
+							satellites_db_file_list.add("/storage/external_storage/sdcard1/"+db_file_sd.getName());
+							Log.d("SDCard","DB satellites file name:"+db_file_sd.getName());
+							}
+						}
 					}
-				}
 			}
-	        }  
+		}  
 	
 		return satellites_db_file_list;
 	}

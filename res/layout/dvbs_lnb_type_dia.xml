@@ -11,7 +11,7 @@
 		android:orientation="vertical"
 		android:padding="14dp"
 		android:gravity="center"
-		android:background="@drawable/vchip_pin_head_bg"
+		android:background="@drawable/single_dia_head"
 		android:layout_alignTop="@+id/layout_parent"
 		>
 
@@ -33,173 +33,170 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		android:padding="14px"
+		android:paddingLeft="30dp"
+    	android:paddingRight="30dp"
 		android:gravity="center"
-		android:background="@drawable/vchip_pin_body_bg"
+		android:background="@drawable/single_dia_body"
 		android:layout_above="@+id/layout_tail" 
 		android:layout_below="@+id/layout_head" >
 
-   	<LinearLayout
-		android:orientation="horizontal" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:layout_marginLeft="20dp"
-		android:layout_marginRight="20dp">
-		<TextView
-			android:id="@+id/text_info"
-			android:layout_width="350px"
-			android:textSize="20sp"
+	   	<LinearLayout
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:layout_marginLeft="20dp"
+			android:layout_marginRight="20dp">
+			<TextView
+				android:id="@+id/text_info"
+				android:layout_width="350px"
+				android:textSize="20sp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:singleLine="true"/>
+				
+		</LinearLayout>
+
+		<LinearLayout
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:layout_marginLeft="20dp"
+			android:layout_marginRight="20dp">
+			<TextView
+				android:layout_width="200px"
+				android:textSize="20sp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:singleLine="true"
+				android:text="@string/dish_setup_conf_lnb_user_mode"/>
+
+			 <CheckBox
+			 	android:id="@+id/checkSwitch"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				/> 
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/lof_layout"
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:layout_marginLeft="20dp"
+			android:layout_marginRight="20dp"
+			android:visibility="gone">
+			<TextView
+				android:layout_width="200px"
+				android:textSize="20sp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:singleLine="true"
+				android:text="@string/dish_setup_conf_lnb_lof"/>
+
+			<Button
+				android:id="@+id/lnb_lof_fre"
+				android:layout_width="240px"
+				android:layout_height="wrap_content"
+			></Button>
+
+		</LinearLayout>
+
+
+		<LinearLayout
+			android:id="@+id/user_mode_layout"
+			android:orientation="vertical"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical"
-			android:singleLine="true"/>
+			android:visibility="gone"
+			>
+
+			<LinearLayout
+				android:orientation="horizontal" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:layout_marginLeft="20dp"
+				android:layout_marginRight="20dp">
+
+				<TextView
+					android:layout_width="200px"
+					android:textSize="20sp"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:singleLine="true"
+					android:text="@string/dish_setup_conf_lnb_low"/>
+				<EditText android:id="@+id/edittext_lnb_low"
+					android:layout_width="200px"
+					android:layout_height="wrap_content"
+					android:singleLine="true"
+					android:numeric="integer"/>
+			</LinearLayout>
+
 			
-	</LinearLayout>
 
-	<LinearLayout
-		android:orientation="horizontal" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:layout_marginLeft="20dp"
-		android:layout_marginRight="20dp">
-		<TextView
-			android:layout_width="200px"
-			android:textSize="20sp"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical"
-			android:singleLine="true"
-			android:text="@string/dish_setup_conf_lnb_user_mode"/>
+		    
+			<LinearLayout
+				android:orientation="horizontal" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:layout_marginLeft="20dp"
+				android:layout_marginRight="20dp">
+				<TextView
+					android:layout_width="200px"
+					android:textSize="20sp"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:singleLine="true"
+					android:text="@string/dish_setup_conf_lnb_high"/>
+				<EditText android:id="@+id/edittext_lnb_high"
+					android:layout_width="200px"
+					android:layout_height="wrap_content"
+					android:singleLine="true"
+					android:numeric="integer"/>
+			</LinearLayout>
 
-		 <CheckBox
-		 	android:id="@+id/checkSwitch"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			/> 
-
-	</LinearLayout>
-
-	<LinearLayout
-		android:id="@+id/lof_layout"
-		android:orientation="horizontal" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:layout_marginLeft="20dp"
-		android:layout_marginRight="20dp"
-		android:visibility="gone">
-		<TextView
-			android:layout_width="200px"
-			android:textSize="20sp"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical"
-			android:singleLine="true"
-			android:text="@string/dish_setup_conf_lnb_lof"/>
-
-		<Button
-			android:id="@+id/lnb_lof_fre"
-			android:layout_width="240px"
-			android:layout_height="wrap_content"
-		></Button>
-
-	</LinearLayout>
-
-
-	<LinearLayout
-		android:id="@+id/user_mode_layout"
-		android:orientation="vertical"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:visibility="gone"
-		>
-
-		<LinearLayout
-			android:orientation="horizontal" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:layout_marginLeft="20dp"
-			android:layout_marginRight="20dp">
-
-			<TextView
-				android:layout_width="200px"
-				android:textSize="20sp"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center_vertical"
-				android:singleLine="true"
-				android:text="@string/dish_setup_conf_lnb_low"/>
-			<EditText android:id="@+id/edittext_lnb_low"
-				android:layout_width="200px"
-				android:layout_height="wrap_content"
-				android:singleLine="true"
-				android:numeric="integer"/>
+			<LinearLayout
+				android:orientation="horizontal" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:layout_marginLeft="20dp"
+				android:layout_marginRight="20dp">
+				<TextView
+					android:layout_width="200px"
+					android:textSize="20sp"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:singleLine="true"
+					android:text="@string/dish_setup_conf_lnb_threshold"/>
+				<EditText android:id="@+id/edittext_lnb_threshold"
+					android:layout_width="200px"
+					android:layout_height="wrap_content"
+					android:singleLine="true"
+					android:numeric="integer"/>
+			</LinearLayout>
 		</LinearLayout>
-
-		
-
-	    
-		<LinearLayout
-			android:orientation="horizontal" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:layout_marginLeft="20dp"
-			android:layout_marginRight="20dp">
-			<TextView
-				android:layout_width="200px"
-				android:textSize="20sp"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center_vertical"
-				android:singleLine="true"
-				android:text="@string/dish_setup_conf_lnb_high"/>
-			<EditText android:id="@+id/edittext_lnb_high"
-				android:layout_width="200px"
-				android:layout_height="wrap_content"
-				android:singleLine="true"
-				android:numeric="integer"/>
-		</LinearLayout>
-
-		<LinearLayout
-			android:orientation="horizontal" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:layout_marginLeft="20dp"
-			android:layout_marginRight="20dp">
-			<TextView
-				android:layout_width="200px"
-				android:textSize="20sp"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center_vertical"
-				android:singleLine="true"
-				android:text="@string/dish_setup_conf_lnb_threshold"/>
-			<EditText android:id="@+id/edittext_lnb_threshold"
-				android:layout_width="200px"
-				android:layout_height="wrap_content"
-				android:singleLine="true"
-				android:numeric="integer"/>
-		</LinearLayout>
-	</LinearLayout>
 	</LinearLayout> 
 	
 	<LinearLayout
 		android:id="@+id/layout_tail" 
 		android:layout_width="fill_parent"
-		android:layout_height="95dp"
+		android:layout_height="90dp"
 		android:orientation="vertical"
-		android:background="@drawable/vchip_pin_tail_bg"
+		android:background="@drawable/single_dia_tail"
 		android:layout_alignBottom="@+id/layout_parent"
 		>
-		<RelativeLayout
-			android:id="@+id/inforbar_line" 
-			android:layout_width="fill_parent"
-			android:layout_height="3px"
-			android:background="@drawable/line"
-			android:layout_marginLeft="30px"
-			android:layout_marginRight="30px" >
-		</RelativeLayout> 
+		
 	    <LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:padding="14px"
+			android:paddingLeft="60dp"
+    		android:paddingRight="60dp"
+    		android:paddingTop="30dp"
 			android:layout_marginBottom="20px" 
 			android:gravity="center">
 			
 			<Button android:id="@+id/no"
 			   android:layout_width="wrap_content"
-	           android:layout_height="45px"
-	       	   android:background="@drawable/button_pin_null"
+	           android:layout_height="35dp"
+	       	   android:background="@drawable/single_dia_button"
 	       	   android:layout_weight="1"
 	           />
 	           
 			<Button android:id="@+id/yes"
 			   android:layout_width="wrap_content"
-	           android:layout_height="45px"
-	       	   android:background="@drawable/button_pin_null"
+	           android:layout_height="35dp"
+	       	   android:background="@drawable/single_dia_button"
 	       	   android:layout_weight="1"
+	       	   android:layout_marginLeft="100dp"
 	           />
 		</LinearLayout>
 	</LinearLayout>

@@ -1,42 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_marginTop="100px" 
-	android:layout_width="644px" 
-	android:layout_height="458px"
-    android:background="@drawable/settings_bg"
-    android:id="@+id/RelativeLayoutParent">
-	
-	<LinearLayout 
-		android:id="@+id/RelativeLayoutBG"
-		android:layout_centerHorizontal="true"
-		android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-		android:orientation="vertical">  
-    
- 	    <RelativeLayout android:id="@+id/RelativeLayoutTitle"
-			android:layout_alignParentTop="true"		
-			android:layout_centerInParent="true"  
-			android:layout_width="fill_parent" 
-			android:layout_height="50px">  
-			
-			<TextView 
-		      android:id="@+id/title"
-		      android:layout_width="644px"
-		      android:layout_height="fill_parent"
-		      android:gravity="center"
-		      android:textSize="24sp">
-			</TextView>
-		</RelativeLayout>   
-           
-        <RelativeLayout
-				android:id="@+id/inforbar_line" 
-				android:layout_width="fill_parent"
-				android:layout_height="2px"
-				android:layout_marginRight="20px"
-				android:layout_marginLeft="20px"
-				android:background="@drawable/line"
-				>	
-		</RelativeLayout>   
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" 
+	android:gravity="center"
+	android:padding="50dp"
+    android:orientation="vertical"
+    > 
+
+	<LinearLayout
+   		android:id="@+id/layout_head"
+		android:layout_width="match_parent"
+		android:layout_height="90dp"
+		android:orientation="vertical"
+		android:padding="14dp"
+		android:gravity="center"
+		android:background="@drawable/single_dia_head"
+		android:layout_alignTop="@+id/layout_parent"
+		>
+		
+		<TextView 
+			android:id="@+id/title"
+			android:layout_width="644px"
+			android:layout_height="fill_parent"
+			android:gravity="center"
+			android:textSize="24sp">
+		</TextView>
+	</LinearLayout> 
+
+	<LinearLayout
+		android:id="@+id/layout_body"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:paddingLeft="54dp"
+		android:paddingRight="54dp"
+		android:gravity="center_vertical"
+		android:background="@drawable/single_dia_body"
+		android:layout_above="@+id/layout_tail" 
+		android:layout_below="@+id/layout_head" >
 		<RelativeLayout android:id="@+id/RelativeLayoutList"
     		android:layout_alignParentBottom="true"	
 			android:layout_centerInParent="true"  
@@ -65,27 +66,23 @@
 		        android:listSelector="#00000000">
 		    </com.amlogic.widget.FocusScrollListView>	
 		</RelativeLayout>
-
-		<LinearLayout
-    		android:layout_width="fill_parent"
-			android:layout_height="75dp"
-			android:layout_marginRight="20px"
-			android:layout_marginLeft="20px"
-    		android:orientation="vertical">
-			<RelativeLayout
-				android:id="@+id/inforbar_line" 
-				android:layout_width="fill_parent"
-				android:layout_height="2px"
-				android:background="@drawable/line"
-				>	
-			</RelativeLayout>
-	     
-  	     	<LinearLayout
+	</LinearLayout> 
+	
+    <LinearLayout
+		android:id="@+id/layout_tail" 
+		android:layout_width="fill_parent"
+		android:layout_height="90dp"
+		android:orientation="vertical"
+		android:background="@drawable/single_dia_tail"
+		android:layout_alignBottom="@+id/layout_parent"
+		>
+		
+	    <LinearLayout
 	    		android:layout_width="match_parent"
 	    		android:layout_height="match_parent"
 	    		android:orientation="horizontal"
 	    		android:gravity="center"
-	    		android:layout_marginBottom="18dp">
+	    		android:layout_marginTop="10dp">
     		
 	    		<ImageView 
 	    			android:layout_width="45dp"
@@ -129,7 +126,7 @@
 			        android:textColor="#FFFFFFFF"
 			        android:textSize="20sp" />
     		</LinearLayout>
-		</LinearLayout>	
 	</LinearLayout>
-</RelativeLayout>
+</LinearLayout>
+
  

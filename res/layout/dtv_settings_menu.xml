@@ -142,7 +142,8 @@
 						android:layout_marginTop="10dp"
 						android:layout_marginBottom="10dp"
 						android:layout_marginLeft="8dp"
-						android:layout_marginRight="8dp">
+						android:layout_marginRight="8dp"
+						android:listSelector="@drawable/list_item_bg">
 					</ListView>
 					</LinearLayout>     						        								
 					<LinearLayout

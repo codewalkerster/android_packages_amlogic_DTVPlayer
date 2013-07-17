@@ -108,7 +108,8 @@ android:background ="@drawable/bg"
 				<ListView 
 				android:id="@+id/programListView"
 				android:layout_width="fill_parent" 
-				android:layout_height="440dp">
+				android:layout_height="440dp"
+				android:listSelector="@drawable/list_item_bg">
 				</ListView>
 				</LinearLayout>
 			
