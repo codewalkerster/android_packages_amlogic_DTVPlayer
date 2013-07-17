@@ -283,9 +283,10 @@ public class DTVSettingsMenu extends DTVActivity {
 		else
 			DATA = getResources().getStringArray(R.array.system_settings_content);
 	
-		ttx_region_str = mDTVSettings.getTeletextRegionName();
-		if(ttx_region_str!=null)
-			ttx_region_str_arry = ttx_region_str.split(" "); 
+		//ttx_region_str = mDTVSettings.getTeletextRegionName();
+		//if(ttx_region_str!=null)
+			//ttx_region_str_arry = ttx_region_str.split(" "); 
+		ttx_region_str_arry = getResources().getStringArray(R.array.teletext_region_lauguage);
 
 		//listview
 		ListView_settings = (ListView)findViewById(R.id.settings_list);
@@ -1064,7 +1065,8 @@ public class DTVSettingsMenu extends DTVActivity {
 				holder.icon1.setVisibility(View.INVISIBLE);
 				holder.icon.setImageBitmap(mIcon12);
 				
-				int pos =  mDTVSettings.getTeletextRegion();
+				String region = mDTVSettings.getTeletextRegion(); 
+				int pos = getTTXRegionIndex(region);
 
 				holder.info.setSingleLine(true);
 				holder.info.setEllipsize(TextUtils.TruncateAt.valueOf("MARQUEE"));
@@ -2055,10 +2057,22 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 	}
 
+	private int getTTXRegionIndex(String region){
+		String  ttx_region_str_arry[] = getResources().getStringArray(R.array.teletext_region_lauguage);
+		for(int i=0;i<ttx_region_str_arry.length;i++){
+			if(region.equals(ttx_region_str_arry[i])){
+				return i;
+			}	
+		}
+
+		return 0; 
+	}
+
 
 	public void showTTXRegionDialog(TextView v){
 		final TextView info_cur = v;
-		int pos = mDTVSettings.getTeletextRegion();
+		String region = mDTVSettings.getTeletextRegion(); 
+		int pos = getTTXRegionIndex(region);
 		new SingleChoiseDialog(DTVSettingsMenu.this,ttx_region_str_arry,pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getString(R.string.ttx_region));
@@ -2068,7 +2082,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 			public void onSetPositiveButton(int which){
 				info_cur.setText(ttx_region_str_arry[which]);
-				mDTVSettings.setTeletextRegion(which);
+				mDTVSettings.setTeletextRegion(ttx_region_str_arry[which]);
 			}
 		};
 	}

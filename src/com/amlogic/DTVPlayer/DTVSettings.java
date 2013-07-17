@@ -87,17 +87,12 @@ public class DTVSettings{
 		mContext.setConfig("tv:dtv:dtbt:parent_rate",value);
 	}
 
-	public int getTeletextRegion(){
-		return 0;
+	public String getTeletextRegion(){
+		return mContext.getStringConfig("tv:teletext:region");
 	}
 
-	public void setTeletextRegion(int value){
-
-	}
-
-	public String getTeletextRegionName(){
-		String value = "en";
-		return value;
+	public void setTeletextRegion(String value){
+		mContext.setConfig("tv:teletext:region",value);
 	}
 
 	public void forceParentalRatingCheck(){

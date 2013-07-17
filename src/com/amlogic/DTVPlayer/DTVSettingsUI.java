@@ -117,9 +117,9 @@ public class DTVSettingsUI extends DTVActivity{
 		else
 			DATA = getResources().getStringArray(R.array.settings_content);
 	
-		ttx_region_str = mDTVSettings.getTeletextRegionName();
-		if(ttx_region_str!=null)
-			ttx_region_str_arry = ttx_region_str.split(" "); 
+		//ttx_region_str = mDTVSettings.getTeletextRegionName();
+		//if(ttx_region_str!=null)
+			//ttx_region_str_arry = ttx_region_str.split(" "); 
 
 		//listview
 		ListView_settings = (ListView)findViewById(R.id.settings_list);
@@ -482,12 +482,12 @@ public class DTVSettingsUI extends DTVActivity{
 				holder.icon1.setVisibility(View.INVISIBLE);
 				holder.icon.setImageBitmap(mIcon12);
 				
-				int pos =  mDTVSettings.getTeletextRegion();
+				//int pos =  mDTVSettings.getTeletextRegion();
 
 				holder.info.setSingleLine(true);
 				holder.info.setEllipsize(TextUtils.TruncateAt.valueOf("MARQUEE"));
 				if(ttx_region_str_arry!=null)
-					holder.info.setText(ttx_region_str_arry[pos]);
+					//holder.info.setText(ttx_region_str_arry[pos]);
 
 				break;
 			case SETTINGS_CC:
@@ -520,8 +520,8 @@ public class DTVSettingsUI extends DTVActivity{
 
 	public void showTTXRegionDialog(TextView v){
 		final TextView info_cur = v;
-		int pos = mDTVSettings.getTeletextRegion();
-		new SingleChoiseDialog(DTVSettingsUI.this,ttx_region_str_arry,pos){
+		//int pos = mDTVSettings.getTeletextRegion();
+		new SingleChoiseDialog(DTVSettingsUI.this,ttx_region_str_arry,0){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getString(R.string.ttx_region));
 			}
@@ -529,8 +529,8 @@ public class DTVSettingsUI extends DTVActivity{
 				
 			}
 			public void onSetPositiveButton(int which){
-				info_cur.setText(ttx_region_str_arry[which]);
-				mDTVSettings.setTeletextRegion(which);
+				//info_cur.setText(ttx_region_str_arry[which]);
+				//mDTVSettings.setTeletextRegion(which);
 			}
 		};
 	}

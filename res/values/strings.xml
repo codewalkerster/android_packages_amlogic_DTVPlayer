@@ -628,5 +628,16 @@
 		<item>eng</item>
 		<item>chi</item>    	
 	</array>
+
+	<array name="teletext_region_lauguage" translatable="false">
+		<item>English</item>
+		<item>Deutsch</item>    
+		<item>Svenska/Suomi/Magyar</item>
+		<item>Italiano</item>
+		<item>Français</item>   
+		<item>Português/Español</item>
+		<item>Cesky/Slovencina</item>   
+		<item>Türkçe</item>
+	</array>	
 	
 </resources>
