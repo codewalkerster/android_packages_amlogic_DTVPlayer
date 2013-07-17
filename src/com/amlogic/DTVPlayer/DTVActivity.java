@@ -407,8 +407,8 @@ abstract public class DTVActivity extends TVActivity{
 		return false;
 	}
 
-	public void DTVPlayerStartRecording(){
-		startRecording();
+	public void DTVPlayerStartRecording(long duration){
+		startRecording(duration);
 	}
 
 	public void DTVPlayerStartRecordingWithTime(long start,long duration){
