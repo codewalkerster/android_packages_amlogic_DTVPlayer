@@ -2080,7 +2080,7 @@ public class DTVPlayer extends DTVActivity{
 						public void onClick(View v) {	
 							//DTVPlayerStartRecording();
 							int dration=Integer.parseInt(mEditText.getText().toString());  
-							DTVPlayerStartRecordingWithTime(getUTCTime(),dration*60*1000);
+							DTVPlayerStartRecording(dration*60*1000);
 							showPvrIcon();
 							mCustomDialog.dismissDialog();
 						}
