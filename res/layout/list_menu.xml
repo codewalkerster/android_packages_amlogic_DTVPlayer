@@ -50,20 +50,14 @@
 	</LinearLayout> 
 
 	<LinearLayout
+		android:id="@+id/layout_tail" 
 		android:layout_width="fill_parent"
-		android:layout_height="80px"
-		android:layout_below="@+id/rating_bg_layout"
+		android:layout_height="95dp"
 		android:orientation="vertical"
-		android:background="@drawable/vchip_pin_tail_bg">
+		android:background="@drawable/single_dia_tail"
 
-		<RelativeLayout
-			android:id="@+id/inforbar_line" 
-			android:layout_width="fill_parent"
-			android:layout_height="3px"
-			android:background="@drawable/line"
-			android:layout_marginLeft="30px"
-			android:layout_marginRight="30px" >
-		</RelativeLayout> 
+		>
+		
 	  	<LinearLayout
 	    		android:layout_width="fill_parent"
 				android:layout_height="60dp"

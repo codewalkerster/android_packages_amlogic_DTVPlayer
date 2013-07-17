@@ -104,7 +104,7 @@ public class DTVPvrPlayer extends DTVActivity{
 			case TVMessage.TYPE_RECORD_END:	
 				switch(msg.getErrorCode()){
 					case  TVMessage.REC_ERR_OPEN_FILE:
-						DTVTimeShiftingStop();
+						DTVRecordingStop();
 						toast = Toast.makeText(
 							DTVPvrPlayer.this,
 				    		R.string.check_usb_device,
@@ -114,7 +114,7 @@ public class DTVPvrPlayer extends DTVActivity{
 						DTVPvrPlayer.this.finish();	
 						break;
 					case  TVMessage.REC_ERR_WRITE_FILE:	
-						DTVTimeShiftingStop();
+						DTVRecordingStop();
 						toast = Toast.makeText(
 							DTVPvrPlayer.this,
 				    		R.string.usbdisk_is_full,

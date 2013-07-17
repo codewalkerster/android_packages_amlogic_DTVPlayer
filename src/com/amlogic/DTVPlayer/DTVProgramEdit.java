@@ -104,6 +104,10 @@ public class DTVProgramEdit extends DTVActivity{
 		mTVProgramList=DTVProgramManagerGetProByGroup(id);
 	}
 
+	private void getProgBySatIdAndType(int sat_id,int type){
+		mTVProgramList=TVProgram.selectBySatIDAndType(this,sat_id,type);
+	}
+
 	private void deleteCurrentGroup(){
 		if(TVProgramCurrentId!=-1)
 			DTVProgramManagerDeleteGroup(TVProgramCurrentId);
@@ -1369,11 +1373,48 @@ public class DTVProgramEdit extends DTVActivity{
 		
 	private AlertDialog.Builder diaBuilder;
 	private void showSatellitesList(){
-		diaBuilder = new AlertDialog.Builder(this);
-		diaBuilder.setTitle(R.string.sat_name);
 
 		getSatellitesListData();
-		ListView LimitListView = new ListView(this);
+
+		final Dialog mDialog = new AlertDialog(this){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						dismiss();
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.show();
+		mDialog.setContentView(R.layout.dvbs_show_sat_dia);
+
+		Window window = mDialog.getWindow();
+		window.setGravity(Gravity.CENTER);
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		//WindowManager m = getWindowManager();
+		//Display d = m.getDefaultDisplay();
+		lp.dimAmount=0.5f;
+		lp.x=600;	
+
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.satellites_info_list));
+		
+		ListView LimitListView =(ListView)window.findViewById(R.id.set_list);
 		
 		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
@@ -1385,49 +1426,15 @@ public class DTVProgramEdit extends DTVActivity{
 				System.out.println("onItemSelected arg2 " + arg2);
 				System.out.println("onItemSelected arg3 " + arg3);
 				Log.d(TAG,"id=="+list_sat[arg2].getSatelliteId());
-				getProgBySatellites(list_sat[arg2].getSatelliteId());
-				//Title.setText(SAT_NAME[arg2]);
+				getProgBySatIdAndType(list_sat[arg2].getSatelliteId(),getCurrentProgramType());
+				Text_title.setText(list_sat[arg2].getSatelliteName());
 				myAdapter.notifyDataSetChanged();
+				mDialog.dismiss();
+
 			}
         	    
         });
 		LimitListView.setAdapter(new mySatListAdapter(this,null));		
-		diaBuilder.setView(LimitListView);
-		AlertDialog alert = diaBuilder.create();
-		/*
-		alert.setOnKeyListener( new DialogInterface.OnKeyListener(){
-			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-				// TODO Auto-generated method stub
-				switch(keyCode){	
-					case KeyEvent.KEYCODE_DPAD_CENTER:
-		  			case KeyEvent.KEYCODE_ENTER:
-						dialog.cancel();
-						break;
-				}
-				return false;
-			}
-		});
-		*/
-		alert.setOnShowListener(new DialogInterface.OnShowListener(){
-							public void onShow(DialogInterface dialog) {
-								
-								}         
-								}); 	
-
-		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
-							public void onDismiss(DialogInterface dialog) {
-							}         
-							});	
-
-		alert.show();	
-		DisplayMetrics displayMetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-
-		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-		lp.x=800;	
-		lp.y=450;
-		alert.getWindow().setAttributes(lp);
-		//alert.getWindow().setLayout(displayMetrics.widthPixels / 3, -1);	
 	}
 
 

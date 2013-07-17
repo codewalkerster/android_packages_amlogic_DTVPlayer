@@ -590,6 +590,10 @@ abstract public class DTVActivity extends TVActivity{
 		stopTimeshifting();
 	}
 
+	public void DTVRecordingStop(){
+		stopRecording();
+	}
+	
 	public void DTVSubtitleStop(){}
 	public void DTVTeletextStop(){}
 
