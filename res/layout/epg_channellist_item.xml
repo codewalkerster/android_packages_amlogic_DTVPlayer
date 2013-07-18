@@ -42,13 +42,6 @@
 		android:layout_width="30dp"
 		android:layout_height="30dp"
 		android:gravity="center"
-		/>
-		
-	<ImageView android:id="@+id/icon"
-		android:layout_width="30dp"
-		android:layout_height="30dp"
-		android:gravity="center"
-		android:layout_marginLeft="40dp"
-		android:layout_marginRight="40dp"/>	
+		android:layout_marginRight="40dp"/>
 </LinearLayout>  
 

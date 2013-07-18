@@ -53,11 +53,11 @@ abstract public class DTVActivity extends TVActivity{
 	final public static int KEYCODE_REC=KeyEvent.KEYCODE_MEDIA_FAST_FORWARD;
 	
 	final public static int KEYCODE_TIMESHIFTING=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
-	final public static int KEYCODE_AUDIO=KeyEvent.KEYCODE_MEDIA_NEXT;
+	final public static int KEYCODE_AUDIO=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
 	
 	final public static int KEYCODE_EPG=KeyEvent.KEYCODE_TV_SWITCH;
 	final public static int KEYCODE_TTX=KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE;	
-	final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_TV_SUBTITLE;
+	final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_TV_REPEAT;
 	final public static int KEYCODE_INFO=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
 	final public static int KEYCODE_RECALL_BUTTON=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
 	final public static int KEYCODE_INFO_BUTTON=KeyEvent.KEYCODE_MEDIA_PREVIOUS;

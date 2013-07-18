@@ -36,6 +36,7 @@ public class DTVTimeshifting extends DTVActivity{
 		setContentView(R.layout.dtvtimeshiftplayer); 
 		mDTVSettings= new DTVSettings(this);
 		DTVTimeshiftingUIInit();
+		
 	}
 
 	public void onConnected(){
@@ -65,7 +66,7 @@ public class DTVTimeshifting extends DTVActivity{
 		Log.d(TAG, "onStop");
 		super.onStop();
 		timeshiftingHandler.removeCallbacks(timeshiftingTimer);
-		
+		playValid();
 	}
 
 	public void onDisconnected(){
@@ -114,10 +115,10 @@ public class DTVTimeshifting extends DTVActivity{
 						DTVTimeshifting.this.finish();							
 						break;
 					case  TVMessage.REC_ERR_SYSTEM:
-						DTVTimeshifting.this.finish();	
+						
 						break;							
 				}
-				playValid();
+				
 				break;
 			default:
 				break;
@@ -372,9 +373,9 @@ public class DTVTimeshifting extends DTVActivity{
 					showTimeshiftDialog();
 				}
 				return true;
-			case KeyEvent.KEYCODE_ZOOM_IN:	
-				Log.d(TAG,"KEYCODE_ZOOM_IN");
-				DTVPlayer.showTeltext(DTVTimeshifting.this);	
+			case DTVActivity.KEYCODE_TTX:
+				Log.d(TAG,"KEYCODE_TTX");
+				DTVPlayer.showTeltext(DTVTimeshifting.this);
 				return true;	
 			case KeyEvent.KEYCODE_ZOOM_OUT:
 				
@@ -392,9 +393,9 @@ public class DTVTimeshifting extends DTVActivity{
 				return true;
 			case KeyEvent.KEYCODE_TV_REPEAT:
 				Log.d(TAG,"KEYCODE_TV_REPEAT");
-				DTVPlayer.showSubtitleSettingMenu(DTVTimeshifting.this);
+				//DTVPlayer.showSubtitleSettingMenu(DTVTimeshifting.this);
 				return true;	
-			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
+			case DTVActivity.KEYCODE_AUDIO:
 				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_VOICEMODE");
 				DTVPlayer.showAudioLanguageDialog(DTVTimeshifting.this);
 				return true;		
@@ -402,7 +403,11 @@ public class DTVTimeshifting extends DTVActivity{
 				if(teletext_bar_flag){
 				}
 				return true;	
-			case KeyEvent.KEYCODE_TV_SUBTITLE:
+			case DTVActivity.KEYCODE_SUBTITLE:
+				DTVPlayer.showSubtitleSettingMenu(DTVPvrPlayer.this);
+				return true;	
+				
+				return true;	
 				
 				break;
 		

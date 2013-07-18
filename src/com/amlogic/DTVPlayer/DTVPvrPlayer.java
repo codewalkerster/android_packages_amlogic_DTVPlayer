@@ -49,6 +49,7 @@ public class DTVPvrPlayer extends DTVActivity{
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
+		openVideo();
 		Log.d(TAG,"play file ="+file_name);
 		startPlayback(file_name);
 		pvrHandler.postDelayed(pvrTimer, 1000);
@@ -77,6 +78,7 @@ public class DTVPvrPlayer extends DTVActivity{
 		super.onStop();
 		//pvrHandler.removeCallbacks(pvrTimer);
 		//stopPlayback();
+		playValid();
 	}
 
 	public void onDisconnected(){
@@ -130,6 +132,9 @@ public class DTVPvrPlayer extends DTVActivity{
 						DTVPvrPlayer.this.finish();	
 						break;							
 				}
+				break;
+			case TVMessage.TYPE_PLAYBACK_STOP:
+				DTVPvrPlayer.this.finish();	
 				break;
 			default:
 				break;
@@ -394,132 +399,142 @@ public class DTVPvrPlayer extends DTVActivity{
 				Log.d(TAG,"KEYCODE_ZOOM_IN");
 				DTVPlayer.showTeltext(DTVPvrPlayer.this);	
 				return true;	
-			case KeyEvent.KEYCODE_ZOOM_OUT:
-				
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+				if(DTVPlayer.dtvplyaer_b_txt&&DTVPlayer.DTVPlayerInTeletextStatus){
+					DTVTTGotoNextPage();
+				}	
+				return true;
+			case KeyEvent.KEYCODE_DPAD_UP:
+				Log.d(TAG,"KEYCODE_DPAD_UP");
+				if(DTVPlayer.dtvplyaer_b_txt&&DTVPlayer.DTVPlayerInTeletextStatus){
+					DTVTTGotoPreviousPage();
+				}	
 				return true;
 			case KeyEvent.KEYCODE_TV_REPEAT:
 				Log.d(TAG,"KEYCODE_TV_REPEAT");
-				DTVPlayer.showSubtitleSettingMenu(DTVPvrPlayer.this);
+				//DTVPlayer.showSubtitleSettingMenu(DTVPvrPlayer.this);
 				return true;	
+			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
+				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_VOICEMODE");
+				DTVPlayer.showAudioLanguageDialog(DTVPvrPlayer.this);
+				return true;		
 			case KeyEvent.KEYCODE_TAB: //info
 				if(teletext_bar_flag){
 				}
 				return true;	
 			case KeyEvent.KEYCODE_TV_SUBTITLE:
+				DTVPlayer.showSubtitleSettingMenu(DTVPvrPlayer.this);
+				return true;	
 				
-				break;
-			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
-				break;		
 
-		case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-			play.requestFocus();
-			
-			if (play_status == STAT_PLAY)
-			{
-				DTVTimeShiftingPause();
-				play_status = STAT_PAUSE;
-				play.setBackgroundResource(R.drawable.pause_button);
-				TimeshiftingIcon.setImageResource(R.drawable.timeshifting_pause);
-			}
-			else if (play_status == STAT_PAUSE)
-			{	
-				DTVTimeShiftingResume();
-				play_status = STAT_PLAY;
+			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+				play.requestFocus();
+				
+				if (play_status == STAT_PLAY)
+				{
+					DTVTimeShiftingPause();
+					play_status = STAT_PAUSE;
+					play.setBackgroundResource(R.drawable.pause_button);
+					TimeshiftingIcon.setImageResource(R.drawable.timeshifting_pause);
+				}
+				else if (play_status == STAT_PAUSE)
+				{	
+					DTVTimeShiftingResume();
+					play_status = STAT_PLAY;
+					play.setBackgroundResource(R.drawable.play_button);
+					TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
+				}
+				else if (play_status == STAT_FF)
+				{
+					DTVTimeShiftingForward(0);
+					play_status = STAT_PLAY;
+					speed = 0;
+					play.setBackgroundResource(R.drawable.play_button);
+					TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
+
+				}
+				else if (play_status == STAT_FB)
+				{
+					DTVTimeShiftingBackward(0);
+					play_status = STAT_PLAY;
+					speed = 0;
+					play.setBackgroundResource(R.drawable.play_button);
+					TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
+
+				}
+				else
+				{
+					DTVTimeShiftingPlay();
+					play_status = STAT_PLAY;
+					play.setBackgroundResource(R.drawable.play_button);
+					TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
+
+				}
+				return true;
+			case KeyEvent.KEYCODE_MEDIA_REWIND:
+			case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
+				fastreverse.requestFocus();
+				if (play_status == STAT_FB)
+				{
+					if (speed < 8)
+						speed=speed*2;
+				}
+				else
+				{
+					speed = 2;
+					play_status = STAT_FB;
+				}
+				
+
+				DTVTimeShiftingBackward(speed);
+
 				play.setBackgroundResource(R.drawable.play_button);
-				TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
-			}
-			else if (play_status == STAT_FF)
-			{
-				DTVTimeShiftingForward(0);
-				play_status = STAT_PLAY;
-				speed = 0;
+
+				switch(speed)
+				{
+					case 2:
+						TimeshiftingIcon.setImageResource(R.drawable.backward_speed_2);
+						break;
+					case 4:
+						TimeshiftingIcon.setImageResource(R.drawable.backward_speed_4);
+						break;
+					case 8:
+						TimeshiftingIcon.setImageResource(R.drawable.backward_speed_8);
+						break;	
+				}
+
+				return true;
+			case KeyEvent.KEYCODE_MEDIA_NEXT:
+			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: 
+				fastforword.requestFocus();
+				if (play_status == STAT_FF)
+				{
+					if (speed < 8)
+						speed=speed*2;
+				}
+				else
+				{
+					speed = 2;
+					play_status = STAT_FF;
+				}
+				
+				DTVTimeShiftingForward(speed);
+
 				play.setBackgroundResource(R.drawable.play_button);
-				TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
-
-			}
-			else if (play_status == STAT_FB)
-			{
-				DTVTimeShiftingBackward(0);
-				play_status = STAT_PLAY;
-				speed = 0;
-				play.setBackgroundResource(R.drawable.play_button);
-				TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
-
-			}
-			else
-			{
-				DTVTimeShiftingPlay();
-				play_status = STAT_PLAY;
-				play.setBackgroundResource(R.drawable.play_button);
-				TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
-
-			}
-			return true;
-		case KeyEvent.KEYCODE_MEDIA_REWIND:
-		case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
-			fastreverse.requestFocus();
-			if (play_status == STAT_FB)
-			{
-				if (speed < 8)
-					speed=speed*2;
-			}
-			else
-			{
-				speed = 2;
-				play_status = STAT_FB;
-			}
+				switch(speed)
+				{
+					case 2:
+						TimeshiftingIcon.setImageResource(R.drawable.forward_speed_2);
+						break;
+					case 4:
+						TimeshiftingIcon.setImageResource(R.drawable.forward_speed_4);
+						break;
+					case 8:
+						TimeshiftingIcon.setImageResource(R.drawable.forward_speed_8);
+						break;	
+				}
+				return true;
 			
-
-			DTVTimeShiftingBackward(speed);
-
-			play.setBackgroundResource(R.drawable.play_button);
-
-			switch(speed)
-			{
-				case 2:
-					TimeshiftingIcon.setImageResource(R.drawable.backward_speed_2);
-					break;
-				case 4:
-					TimeshiftingIcon.setImageResource(R.drawable.backward_speed_4);
-					break;
-				case 8:
-					TimeshiftingIcon.setImageResource(R.drawable.backward_speed_8);
-					break;	
-			}
-
-			return true;
-		case KeyEvent.KEYCODE_MEDIA_NEXT:
-		case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: 
-			fastforword.requestFocus();
-			if (play_status == STAT_FF)
-			{
-				if (speed < 8)
-					speed=speed*2;
-			}
-			else
-			{
-				speed = 2;
-				play_status = STAT_FF;
-			}
-			
-			DTVTimeShiftingForward(speed);
-
-			play.setBackgroundResource(R.drawable.play_button);
-			switch(speed)
-			{
-				case 2:
-					TimeshiftingIcon.setImageResource(R.drawable.forward_speed_2);
-					break;
-				case 4:
-					TimeshiftingIcon.setImageResource(R.drawable.forward_speed_4);
-					break;
-				case 8:
-					TimeshiftingIcon.setImageResource(R.drawable.forward_speed_8);
-					break;	
-			}
-			return true;
-			
-
 		}
 		
 		return super.onKeyDown(keyCode, event);
