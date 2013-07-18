@@ -41,6 +41,7 @@ public class DTVTimeshifting extends DTVActivity{
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
+		openVideo();
 		startTimeshifting();
 		timeshiftingHandler.postDelayed(timeshiftingTimer, 1000);
 	}
@@ -107,15 +108,16 @@ public class DTVTimeshifting extends DTVActivity{
 				    		Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
 							toast.show();
-						DTVTimeshifting.this.finish();					
+						DTVTimeshifting.this.finish();							
 					break;
 					case  TVMessage.REC_ERR_ACCESS_FILE:
-						DTVTimeshifting.this.finish();	
+						DTVTimeshifting.this.finish();							
 						break;
 					case  TVMessage.REC_ERR_SYSTEM:
 						DTVTimeshifting.this.finish();	
 						break;							
 				}
+				playValid();
 				break;
 			default:
 				break;
@@ -376,6 +378,17 @@ public class DTVTimeshifting extends DTVActivity{
 				return true;	
 			case KeyEvent.KEYCODE_ZOOM_OUT:
 				
+				return true;
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+				if(DTVPlayer.dtvplyaer_b_txt&&DTVPlayer.DTVPlayerInTeletextStatus){
+					DTVTTGotoNextPage();
+				}	
+				return true;
+			case KeyEvent.KEYCODE_DPAD_UP:
+				Log.d(TAG,"KEYCODE_DPAD_UP");
+				if(DTVPlayer.dtvplyaer_b_txt&&DTVPlayer.DTVPlayerInTeletextStatus){
+					DTVTTGotoPreviousPage();
+				}	
 				return true;
 			case KeyEvent.KEYCODE_TV_REPEAT:
 				Log.d(TAG,"KEYCODE_TV_REPEAT");

@@ -60,7 +60,8 @@ abstract public class DTVActivity extends TVActivity{
 	final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_TV_SUBTITLE;
 	final public static int KEYCODE_INFO=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
 	final public static int KEYCODE_RECALL_BUTTON=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
-
+	final public static int KEYCODE_INFO_BUTTON=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
+	final public static int KEYCODE_FAV_BUTTON=KeyEvent.KEYCODE_TV_SUBTITLE;
 
 	private TVProgram TVProgram=null;
 	private static int dtvactivity_actived_num = 0;
@@ -743,6 +744,10 @@ abstract public class DTVActivity extends TVActivity{
 		return getCurrentProgramID();
 	}
 
+	public int DTVPlayerGetCurrentProgramType(){
+		return getCurrentProgramType();
+	}
+	
 	public TVProgram DTVPlayerGetDataByCurrentID(){
 		int db_id=-1;
 		db_id=DTVPlayerGetCurrentProgramID();

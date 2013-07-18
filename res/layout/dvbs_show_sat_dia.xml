@@ -43,7 +43,7 @@
 		<ListView
 			android:id="@+id/set_list"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
+			android:layout_height="350dp"
 			android:layout_marginLeft="36dp"
 			android:layout_marginRight="36dp" 					     				     
 			android:scrollbars="vertical"

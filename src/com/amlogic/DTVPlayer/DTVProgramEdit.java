@@ -267,6 +267,11 @@ public class DTVProgramEdit extends DTVActivity{
 				mTextInfo.setVisibility(View.VISIBLE);
 				mTextInfo.setText("No Signal");
 				break;
+			case TVMessage.TYPE_PROGRAM_SWITCH:
+				mTextInfo.setVisibility(View.INVISIBLE);
+				break;
+			case TVMessage.TYPE_PROGRAM_START:	
+				break;
 			default:
 				break;
 		}
@@ -347,6 +352,16 @@ public class DTVProgramEdit extends DTVActivity{
 	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 				int db_id=mTVProgramList[position].getID();
+				int type = mTVProgramList[position].getType();
+				if(DTVPlayerGetCurrentProgramType()!=type){
+					if(type==TVProgram.TYPE_RADIO){
+						setProgramType(TVProgram.TYPE_RADIO);
+					}	
+					else{
+						setProgramType(TVProgram.TYPE_TV);
+					}
+				}	
+				
 				if(DTVPlayerGetCurrentProgramID()!=db_id){
 					Log.d(TAG,"mOnItemClickListener pos="+position);	
 					int serviceType = mTVProgramList[position].getType();
@@ -586,10 +601,63 @@ public class DTVProgramEdit extends DTVActivity{
 						
 				break;
 			case DTVActivity.KEYCODE_RED_BUTTON:
+				new SureDialog(DTVProgramEdit.this,true){
+					public void onSetMessage(View v){
+						((TextView)v).setText(getString(R.string.sure_delete));
+					}
+
+					public void onSetNegativeButton(){
+			  
+					}
+					public void onSetPositiveButton(){
+						deleteProgramFromDB(cur_select_item);
+						myAdapter.notifyDataSetChanged();
+					}
+				};
+				break;
+			case DTVActivity.KEYCODE_GREEN_BUTTON:
+				setMoveMode(true);
+				setMoveItemPos(cur_select_item);
+				myAdapter.notifyDataSetChanged();
+				break;
+			case DTVActivity.KEYCODE_GOTO_BUTTON:
 				showSatellitesList();
 				break;
-			case DTVActivity.KEYCODE_SUBTITLE:
-				ttShow();
+			case DTVActivity.KEYCODE_INFO_BUTTON:
+				final CustomDialog mEditCustomDialog = new CustomDialog(DTVProgramEdit.this,R.style.MyDialog);
+				mEditCustomDialog.showDialog(R.layout.edit_dialog, new ICustomDialog(){
+					public boolean onKeyDown(int keyCode, KeyEvent event){
+						if(keyCode == KeyEvent.KEYCODE_BACK)
+							mEditCustomDialog.dismissDialog();
+						return false;
+					}
+					public void showWindowDetail(Window window){
+						TextView title = (TextView)window.findViewById(R.id.title);
+						title.setText(R.string.rename);
+						final EditText mEditText = (EditText)window.findViewById(R.id.edit);
+						mEditText.setText(mTVProgramList[cur_select_item].getName());
+						Button no = (Button)window.findViewById(R.id.no);
+						no.setText(R.string.no);
+						Button yes = (Button)window.findViewById(R.id.yes);
+						yes.setText(R.string.yes);
+						no.setOnClickListener(new OnClickListener(){
+							public void onClick(View v) {
+								mEditCustomDialog.dismissDialog();
+							}
+						});	 
+						yes.setOnClickListener(new OnClickListener(){
+							public void onClick(View v) {	
+								mTVProgramList[cur_select_item].setProgramName(mEditText.getText().toString());
+								myAdapter.notifyDataSetChanged();
+								mEditCustomDialog.dismissDialog();
+							}
+						});	    
+					}
+				});
+				break;
+			case DTVActivity.KEYCODE_FAV_BUTTON:
+				dealFav(cur_select_item);
+				myAdapter.notifyDataSetChanged();
 				break;
 			case KeyEvent.KEYCODE_BACK:
 				if(move_mode)
@@ -758,7 +826,7 @@ public class DTVProgramEdit extends DTVActivity{
 		}
 		
 		final String[] itemChoices = {
-			getString(R.string.edit),
+			getString(R.string.rename),
 			getString(R.string.delete),
 			(fav==false)?getString(R.string.add_fav):getString(R.string.del_fav),
 			//(skip==false)?getString(R.string.add_skip):getString(R.string.del_skip),
@@ -796,7 +864,7 @@ public class DTVProgramEdit extends DTVActivity{
 										}
 										public void showWindowDetail(Window window){
 											TextView title = (TextView)window.findViewById(R.id.title);
-											title.setText(R.string.edit);
+											title.setText(R.string.rename);
 											final EditText mEditText = (EditText)window.findViewById(R.id.edit);
 											mEditText.setText(mTVProgramList[pos].getName());
 											Button no = (Button)window.findViewById(R.id.no);
@@ -820,9 +888,20 @@ public class DTVProgramEdit extends DTVActivity{
 									});
 									break;
 								case 1: //delete
-									deleteProgramFromDB(pos);
-									myAdapter.notifyDataSetChanged();
-									mCustomDialog.dismissDialog();
+									new SureDialog(DTVProgramEdit.this,true){
+										public void onSetMessage(View v){
+											((TextView)v).setText(getString(R.string.sure_delete));
+										}
+
+										public void onSetNegativeButton(){
+								  
+										}
+										public void onSetPositiveButton(){
+											deleteProgramFromDB(pos);
+											myAdapter.notifyDataSetChanged();
+											mCustomDialog.dismissDialog();
+										}
+									};
 									break;
 								case 2: //fav
 									dealFav(pos);
@@ -1201,6 +1280,7 @@ public class DTVProgramEdit extends DTVActivity{
 		private int selectItem;
 		
 		class ViewHolder {
+			ImageView move_icon;
 			TextView prono;
 			TextView text;	
 			ImageView icon_scrambled;
@@ -1240,9 +1320,10 @@ public class DTVProgramEdit extends DTVActivity{
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;	
 			if (convertView == null){    
-				convertView = mInflater.inflate(R.layout.epg_channellist_item, null);
+				convertView = mInflater.inflate(R.layout.program_edit_list, null);
 				
 				holder = new ViewHolder();
+				holder.move_icon = (ImageView)convertView.findViewById(R.id.move_icon);
 				holder.prono = (TextView)convertView.findViewById(R.id.prono);
 				holder.text = (TextView) convertView.findViewById(R.id.ItemText);
 				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
@@ -1297,7 +1378,16 @@ public class DTVProgramEdit extends DTVActivity{
 			}	
 			else{
 				holder.icon_scrambled.setBackgroundResource(Color.TRANSPARENT);
-			}			  
+			}	
+
+			if(getMoveItemPos()==position){
+				holder.move_icon.setBackgroundResource(R.drawable.move_flag); 
+			}	
+			else{
+				holder.move_icon.setBackgroundResource(Color.TRANSPARENT);
+			}	
+				
+			
 			return convertView;
 		}
 	}	

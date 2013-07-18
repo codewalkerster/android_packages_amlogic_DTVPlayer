@@ -1601,8 +1601,18 @@ public class DTVEpg extends DTVActivity{
 	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 			int db_id=mTVProgramList[position].getID();	
+			int serviceType = mTVProgramList[position].getType();
+			if(DTVPlayerGetCurrentProgramType()!=serviceType){
+				if(serviceType==TVProgram.TYPE_RADIO){
+					setProgramType(TVProgram.TYPE_RADIO);
+				}	
+				else{
+					setProgramType(TVProgram.TYPE_TV);
+				}
+			}	
+			
 			if(DTVPlayerGetCurrentProgramID()!=db_id){
-				int serviceType = mTVProgramList[position].getType();
+				
 				DTVPlayerPlayById(db_id);
 				current_date_index=0;
 				date_button0.setBackgroundResource(R.drawable.epg_date_button_press);	

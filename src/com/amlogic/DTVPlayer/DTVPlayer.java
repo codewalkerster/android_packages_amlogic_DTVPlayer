@@ -147,6 +147,9 @@ public class DTVPlayer extends DTVActivity{
 				if(mAlertDialog!=null)
 					dismissDialog(2);
 				break;
+			case TVMessage.TYPE_PROGRAM_SWITCH:
+				hidePasswordDialog();
+				break;
 			case TVMessage.TYPE_PROGRAM_START:
 				RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
 				DTVPlayerGetCurrentProgramData();
@@ -179,7 +182,6 @@ public class DTVPlayer extends DTVActivity{
 						
 						break;
 					case  TVMessage.REC_ERR_WRITE_FILE:	
-						DTVTimeShiftingStop();
 						toast = Toast.makeText(
 							DTVPlayer.this,
 				    		R.string.usbdisk_is_full,
@@ -207,8 +209,6 @@ public class DTVPlayer extends DTVActivity{
 		// TODO Auto-generated method stub
 		Log.d(TAG,">>>>>onRestart<<<<<<");
 		super.onRestart();
-
-	
 	}
 
 	@Override
@@ -1257,7 +1257,7 @@ public class DTVPlayer extends DTVActivity{
 
 	private int input_major = 0;
 	private int input_minor = 0;
-	private static boolean DTVPlayerInTeletextStatus=false;
+	public static boolean DTVPlayerInTeletextStatus=false;
 	private void DTVDealDigtalKey(int value){
 		int number_key_value=0;
 

@@ -108,8 +108,8 @@ public class CheckUsbdevice
 			}	
 		}
 
-		if(sdcard_deal("/mnt/sdcard/external_sdcard1"))
-			return "/mnt/sdcard/external_sdcard1";
+		if(sdcard_deal("/storage/external_storage/sdcard1"))
+			return "/storage/external_storage/sdcard1";
 
 		return null;
 	}
