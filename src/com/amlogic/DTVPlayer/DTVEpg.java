@@ -1545,7 +1545,8 @@ public class DTVEpg extends DTVActivity{
 		}	
 
 		ImageButton prolist_button = (ImageButton)findViewById(R.id.prolist_button);
-		prolist_button.setOnClickListener(new channelListButtonClick()); 	
+		prolist_button.setOnClickListener(new channelListButtonClick()); 
+		prolist_button.setOnFocusChangeListener(new dateButtonFocusChange());
 
 		Text_title=(TextView)findViewById(R.id.prolist);
 		Text_title.setTextColor(Color.YELLOW);
@@ -1803,6 +1804,7 @@ public class DTVEpg extends DTVActivity{
 				break;
 			*/	
 			case KeyEvent.KEYCODE_DPAD_DOWN:
+				Log.d(TAG,"list_status="+list_status+"---cur_select_item="+cur_select_item);
 				if(list_status==0){
 					if(cur_select_item == ListView_channel.getCount()-1){
 				    	ListView_channel.setSelection(0); 	
@@ -1810,8 +1812,10 @@ public class DTVEpg extends DTVActivity{
 					}	
 				}
 				else if(list_status==1){
+					Log.d(TAG,"eit_list_cur_pos="+eit_list_cur_pos+"---EitListView.getCount()="+EitListView.getCount());
 					if(eit_list_cur_pos == EitListView.getCount()-1){
-				    	EitListView.setSelection(0); 	
+						EitListView.requestFocus();
+						EitListView.setSelection(0); 	
 						return true;
 					}	
 				}
@@ -2074,10 +2078,12 @@ public class DTVEpg extends DTVActivity{
 		public void onFocusChange(View v, boolean isFocused){	
 			// TODO Auto-generated method stub		
 			if(isFocused){
-				switch (v.getId()) {			
-					
+				switch (v.getId()) {	
+					case R.id.prolist_button:
+						list_status=0;
+						break;
 					case R.id.date_button0:
-						
+				
 						date_button0.setBackgroundResource(R.drawable.epg_date_button_press);		
 						date_button1.setBackgroundResource(R.drawable.epg_date_button);
 						date_button2.setBackgroundResource(R.drawable.epg_date_button);		

@@ -79,7 +79,7 @@ public class DTVPvrPlayer extends DTVActivity{
 	protected void onStop(){
 		Log.d(TAG, "onStop");
 		super.onStop();
-		//pvrHandler.removeCallbacks(pvrTimer);
+		pvrHandler.removeCallbacks(pvrTimer);
 		//stopPlayback();
 		playValid();
 	}

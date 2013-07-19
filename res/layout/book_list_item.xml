@@ -8,7 +8,7 @@
     
 	  <TextView
 	  	android:id="@+id/bookProgramName"
-	  	android:textSize="20sp"
+	  	android:textSize="23sp"
 	  	android:layout_width="80px"
 	  	android:layout_height="wrap_content"
 	  	android:gravity="center"
@@ -17,7 +17,7 @@
 	  	
 	  <TextView
 	  	android:id="@+id/bookEventName"
-	  	android:textSize="20sp"
+	  	android:textSize="23sp"
 	  	android:layout_width="80px"
 	  	android:layout_height="wrap_content"
 	  	android:gravity="center"
@@ -26,7 +26,7 @@
 
 		<TextView
 	  	android:id="@+id/booktime"
-	  	android:textSize="20sp"
+	  	android:textSize="23sp"
 	  	android:layout_width="80px"
 	  	android:layout_height="wrap_content"
 	  	android:gravity="center"
@@ -35,7 +35,7 @@
 	  	
 	   <TextView
 	  	android:id="@+id/duration"
-	  	android:textSize="20sp"
+	  	android:textSize="23sp"
 	  	android:layout_width="80px"
 	  	android:layout_height="wrap_content"
 	  	android:gravity="center"
@@ -44,7 +44,7 @@
 
 	    <TextView
 	  	android:id="@+id/mode"
-	  	android:textSize="20sp"
+	  	android:textSize="23sp"
 	  	android:layout_width="80px"
 	  	android:layout_height="wrap_content"
 	  	android:gravity="center"
@@ -53,7 +53,7 @@
 
 		<TextView
 	  	android:id="@+id/repeat"
-	  	android:textSize="20sp"
+	  	android:textSize="23sp"
 	  	android:layout_width="80px"
 	  	android:layout_height="wrap_content"
 	  	android:gravity="center"
@@ -62,7 +62,7 @@
 	  	
 	  	<TextView
 	  	android:id="@+id/status"
-	  	android:textSize="20sp"
+	  	android:textSize="23sp"
 	  	android:layout_width="80px"
 	  	android:layout_height="wrap_content"
 	  	android:gravity="center"
