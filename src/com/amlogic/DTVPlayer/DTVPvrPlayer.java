@@ -27,6 +27,8 @@ import android.text.*;
 import android.text.method.*;
 import com.amlogic.widget.SureDialog;
 import com.amlogic.widget.SingleChoiseDialog;
+import com.amlogic.widget.CustomDialog;
+import com.amlogic.widget.CustomDialog.ICustomDialog;
 
 public class DTVPvrPlayer extends DTVActivity{
 	private static final String TAG="DTVPvrPlayer";
@@ -55,6 +57,7 @@ public class DTVPvrPlayer extends DTVActivity{
 		pvrHandler.postDelayed(pvrTimer, 1000);
 
 		setVideoViewWindow();
+		
 	}
 
 	@Override
@@ -135,6 +138,10 @@ public class DTVPvrPlayer extends DTVActivity{
 				break;
 			case TVMessage.TYPE_PLAYBACK_STOP:
 				DTVPvrPlayer.this.finish();	
+				break;
+			case TVMessage.TYPE_PLAYBACK_START:
+				PvrPlayerGetCurrentProgramData();
+				updateInforbar();
 				break;
 			default:
 				break;
@@ -332,7 +339,7 @@ public class DTVPvrPlayer extends DTVActivity{
 		});
 	     
 	    infoLayout.setVisibility(View.INVISIBLE);
-		updateInforbar();
+		
  
 	}
 
@@ -400,13 +407,13 @@ public class DTVPvrPlayer extends DTVActivity{
 				DTVPlayer.showTeltext(DTVPvrPlayer.this);	
 				return true;	
 			case KeyEvent.KEYCODE_DPAD_DOWN:
-				if(DTVPlayer.dtvplyaer_b_txt&&DTVPlayer.DTVPlayerInTeletextStatus){
+				if(dtvplyaer_b_txt&&PvrPlayerInTeletextStatus){
 					DTVTTGotoNextPage();
 				}	
 				return true;
 			case KeyEvent.KEYCODE_DPAD_UP:
 				Log.d(TAG,"KEYCODE_DPAD_UP");
-				if(DTVPlayer.dtvplyaer_b_txt&&DTVPlayer.DTVPlayerInTeletextStatus){
+				if(dtvplyaer_b_txt&&PvrPlayerInTeletextStatus){
 					DTVTTGotoPreviousPage();
 				}	
 				return true;
@@ -416,14 +423,14 @@ public class DTVPvrPlayer extends DTVActivity{
 				return true;	
 			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
 				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_VOICEMODE");
-				DTVPlayer.showAudioLanguageDialog(DTVPvrPlayer.this);
+				showAudioLanguageDialog(DTVPvrPlayer.this);
 				return true;		
 			case KeyEvent.KEYCODE_TAB: //info
 				if(teletext_bar_flag){
 				}
 				return true;	
 			case KeyEvent.KEYCODE_TV_SUBTITLE:
-				DTVPlayer.showSubtitleSettingMenu(DTVPvrPlayer.this);
+				showSubtitleSettingMenu(DTVPvrPlayer.this);
 				return true;	
 				
 
@@ -574,7 +581,86 @@ public class DTVPvrPlayer extends DTVActivity{
 		}
 	}
 
+	public static boolean dtvplayer_b_lock=false;
+	public static boolean dtvplayer_b_fav=false;
+	public static boolean dtvplayer_b_scrambled=false;
+	public static boolean dtvplayer_b_epg=false;
+	public static boolean dtvplyaer_b_txt=false;
+	public static boolean dtvplayer_b_sub=false;
+	public static String  dtvplayer_atsc_antenna_source=null;
+	
+	private static TVProgram.Subtitle mSubtitle[]=null;
+	private static TVProgram.Teletext mTeletext[]=null;
+	private static int mSubtitleCount=0;
+	private static int mTeletextCount=0;
+	private static int mSubtitleIndex=0;
+	private static String mSubtitleLang[]=null;
+
+	TVProgram.Audio mAudio[]=null;
+	private static int mAudioCount=0;
+	private static int mAudioIndex=0;
+	private static String mAudioLang[]=null;
+
+	private String program_name = null;
+	private boolean PvrPlayerInTeletextStatus=false;
+
+	private TVProgram mTVProgram=null;
+	private void PvrPlayerGetCurrentProgramData(){
+		mTVProgram=DTVPlayerGetDataByCurrentID();
+		
+		dtvplayer_b_epg = false;
+		
+		program_name = mTVProgram.getName();
+		dtvplayer_b_lock = mTVProgram.getLockFlag();
+		dtvplayer_b_fav = mTVProgram.getFavoriteFlag();
+		dtvplayer_b_scrambled = mTVProgram.getScrambledFlag();
+		//dtvplayer_atsc_antenna_source = mDTVSettings.getAtscAntennaSource();
+
+		mAudioCount=mTVProgram.getAudioCount();
+		if(mAudioCount>0){
+			mAudio= new TVProgram.Audio[mAudioCount];
+			mAudioLang = new String[mAudioCount];
+			for(int i=0;i<mAudioCount;i++){
+				mAudio[i]=mTVProgram.getAudio(i);
+				mAudioLang[i]= mAudio[i].getLang();
+				Log.d(TAG,"Audio Lang:"+mAudioLang[i]);
+			}
+			mAudioIndex = mTVProgram.getCurrentAudio(getStringConfig("tv:audio:language"));
+		}	
+
+		mSubtitleCount=mTVProgram.getSubtitleCount();
+		if(mSubtitleCount>0){
+			dtvplayer_b_sub=true;
+			mSubtitle = new TVProgram.Subtitle[mSubtitleCount];
+			mSubtitleLang = new String[mSubtitleCount];
+			for(int i=0;i<mSubtitleCount;i++){
+				mSubtitle[i]=mTVProgram.getSubtitle(i);
+				mSubtitleLang[i]= mSubtitle[i].getLang();
+				Log.d(TAG,"sub Lang:"+mSubtitleLang[i]);
+			}
+
+			mSubtitleIndex=mTVProgram.getCurrentSubtitle(getStringConfig("tv:subtitle:language"));
+		}	
+		else
+			dtvplayer_b_sub=false;
+
+		int mTeletextCount = mTVProgram.getTeletextCount();
+		if(mTeletextCount>0){
+			dtvplyaer_b_txt=true;
+			mTeletext = new TVProgram.Teletext[mTeletextCount];
+		}	
+		else
+			dtvplyaer_b_txt=false;
+
+		PvrPlayerInTeletextStatus=false;
+		
+	}
+
+
+
 	private void updateInforbar(){
+		
+		
 		TextView Text_screentype_info = (TextView) findViewById(R.id.Text_screentype_info);
 		TextView Text_parent_control_info_icon = (TextView) findViewById(R.id.Text_parent_control_info_icon);
 		TextView Text_channel_type = (TextView) findViewById(R.id.Text_channel_type);
@@ -592,7 +678,74 @@ public class DTVPvrPlayer extends DTVActivity{
 		Text_proname.setTextColor(Color.YELLOW);
 
 		if(proname!=null)	
-			Text_proname.setText(/*Integer.toString(DTVPlayer.dtvplayer_pronumber)+*/"  "+proname);
+			Text_proname.setText(/*Integer.toString(DTVPlayer.dtvplayer_pronumber)+*/"  "+program_name);
+
+		
+		//if(DTVPlayer.dtvplayer_pronumber>=0)	
+			//Text_proname.setText(Integer.toString(DTVPlayer.dtvplayer_pronumber)+"  "+DTVPlayer.dtvplayer_name);
+
+		if(dtvplayer_b_fav)
+			ImageView_icon_fav.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_fav.setVisibility(View.INVISIBLE);
+
+		if(dtvplayer_b_scrambled)
+			ImageView_icon_scrambled.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_scrambled.setVisibility(View.INVISIBLE);
+
+		if(dtvplayer_b_lock)
+			ImageView_icon_lock.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_lock.setVisibility(View.INVISIBLE);
+
+		if(dtvplayer_b_epg)
+			ImageView_icon_epg.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_epg.setVisibility(View.INVISIBLE);
+
+		if(dtvplyaer_b_txt)
+			ImageView_icon_txt.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_txt.setVisibility(View.INVISIBLE);
+
+		if(dtvplayer_b_sub)
+			ImageView_icon_sub.setVisibility(View.VISIBLE);
+		else
+			ImageView_icon_sub.setVisibility(View.INVISIBLE);
+
+		
+		int mode = DTVGetScreenMode();
+		if(mode==0){
+			Text_screentype_info.setText(getString(R.string.auto));
+		}
+		else  if(mode==2){
+			Text_screentype_info.setText(getString(R.string.type_4_3));
+		}
+		else  if(mode==3){
+			Text_screentype_info.setText(getString(R.string.type_16_9));
+		}
+		
+		
+		mode = DTVGetAudioTrack();
+		if(mode==0){ 						
+			Text_MTS_info.setText(getString(R.string.type_16_9));			
+		}
+		else  if(mode==1){
+			Text_MTS_info.setText(getString(R.string.left));			
+		}
+		else  if(mode==2){
+			Text_MTS_info.setText(getString(R.string.right));				
+		}	
+		
+		if(DTVGetSubtitleStatus()){
+			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.on));	
+		}
+		else{
+			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
+		}
+
+
 
 	}
 
@@ -667,6 +820,173 @@ public class DTVPvrPlayer extends DTVActivity{
 		int width = video_position.getMeasuredWidth();
 		Log.d(TAG,"x=="+location[0]+"-----y=="+location[1]+"---width=="+width+"----height=="+height);
 		setVideoWindow(new Rect(location[0], location[1], width, height));
+	}
+
+	public void showTeltext(Context c){
+		Context mContext = c;
+		if(dtvplyaer_b_txt){
+			if(PvrPlayerInTeletextStatus==false){
+				((DTVActivity)mContext).DTVTTShow();
+				PvrPlayerInTeletextStatus=true;
+			}	
+			else{
+				((DTVActivity)mContext).DTVTTHide();
+				PvrPlayerInTeletextStatus=false;
+			}	
+		}	
+	}
+
+
+	public void showAudioLanguageDialog(Context context){	
+		final Context mContext = context;
+		if(mAudioCount>0){
+			new SingleChoiseDialog(mContext,mAudioLang,mAudioIndex){
+				public void onSetMessage(View v){
+					((TextView)v).setText(mContext.getString(R.string.dtvplayer_audio_language_set));
+				}
+				public void onSetNegativeButton(){
+					
+				}
+				public void onSetPositiveButton(int which){
+					mAudioIndex=which; 
+					((TVActivity)mContext).switchAudio(which);
+				}
+			};	
+		}			
+	}
+
+	private static Button BtnSubtitleLanguage=null;
+	private static void showSubtitleLanguageDialog(Context context){
+		final Context mContext = context;
+		if(mSubtitleCount>0){
+			new SingleChoiseDialog(mContext,mSubtitleLang,mSubtitleIndex){
+				public void onSetMessage(View v){
+					((TextView)v).setText(mContext.getString(R.string.dtvplayer_subtitle_language_set));
+				}
+				public void onSetNegativeButton(){
+					
+				}
+				public void onSetPositiveButton(int which){
+					mSubtitleIndex= which;
+					Log.d(TAG,"mSubtitleIndex="+mSubtitleIndex);
+					if(mSubtitleCount>0)
+						BtnSubtitleLanguage.setText(mSubtitle[mSubtitleIndex].getLang());
+				}
+			};	
+		}
+	}
+
+	public static void showSubtitleSettingMenu(Context context){	
+		final Context mContext = context;
+
+		final CustomDialog mCustomDialog = new CustomDialog(mContext);
+		if(mSubtitleCount>0){
+			mCustomDialog.showDialog(R.layout.dtv_subtitle_settings, new ICustomDialog(){
+					public boolean onKeyDown(int keyCode, KeyEvent event){
+						if(keyCode == KeyEvent.KEYCODE_BACK)
+							mCustomDialog.dismissDialog();
+						return false;
+					}
+					public void showWindowDetail(Window window){
+						TextView title = (TextView)window.findViewById(R.id.title);
+						title.setText(R.string.dtvplayer_subtitle_language_set);
+						final CheckBox checkboxSubtitleSwitch = (CheckBox)window.findViewById(R.id.checkSubtitleSwitch);
+						if(((DTVActivity)mContext).DTVGetSubtitleStatus()){
+							checkboxSubtitleSwitch.setChecked(true);
+						}
+						else{
+							checkboxSubtitleSwitch.setChecked(false);
+						}
+
+						if(mSubtitleCount>0){
+							BtnSubtitleLanguage =(Button)window.findViewById(R.id.BtnSubtitleLanguage);
+							Log.d(TAG,"index0="+mSubtitleIndex);
+							String ss = mSubtitleLang[mSubtitleIndex];
+							BtnSubtitleLanguage.setText(ss);
+
+							BtnSubtitleLanguage.setOnClickListener(new OnClickListener(){
+						          public void onClick(View v) {
+						        	 showSubtitleLanguageDialog(mContext);
+						          }});
+						}	
+
+						Button no = (Button)window.findViewById(R.id.no);
+						no.setText(R.string.no);
+						Button yes = (Button)window.findViewById(R.id.yes);
+						yes.setText(R.string.yes);
+						no.setOnClickListener(new OnClickListener(){
+							public void onClick(View v) {
+								mCustomDialog.dismissDialog();
+							}
+						});	 
+						yes.setOnClickListener(new OnClickListener(){
+							public void onClick(View v) {	
+								if(checkboxSubtitleSwitch.isChecked()){
+									if(((DTVActivity)mContext).DTVGetSubtitleStatus()){
+										((TVActivity)mContext).switchSubtitle(mSubtitleIndex);
+									}
+									else{
+										((TVActivity)mContext).switchSubtitle(mSubtitleIndex);
+										((DTVActivity)mContext).DTVSetSubtitleStatus(true);
+									}
+								}
+								else{
+									((DTVActivity)mContext).DTVSetSubtitleStatus(false);	
+								}
+								mCustomDialog.dismissDialog();
+							}
+						});	    
+					}
+				}
+			);
+		}	
+		else{
+			mCustomDialog.showDialog(R.layout.dtv_subtitle_settings_no_lan, new ICustomDialog(){
+					public boolean onKeyDown(int keyCode, KeyEvent event){
+						return false;
+					}
+					public void showWindowDetail(Window window){
+						TextView title = (TextView)window.findViewById(R.id.title);
+						title.setText(R.string.dtvplayer_subtitle_language_set);
+						final CheckBox checkboxSubtitleSwitch = (CheckBox)window.findViewById(R.id.checkSubtitleSwitch);
+						if(((DTVActivity)mContext).DTVGetSubtitleStatus()){
+							checkboxSubtitleSwitch.setChecked(true);
+						}
+						else{
+							checkboxSubtitleSwitch.setChecked(false);
+						}
+
+						Button no = (Button)window.findViewById(R.id.no);
+						no.setText(R.string.no);
+						Button yes = (Button)window.findViewById(R.id.yes);
+						yes.setText(R.string.yes);
+						no.setOnClickListener(new OnClickListener(){
+							public void onClick(View v) {
+								
+							}
+						});	 
+						yes.setOnClickListener(new OnClickListener(){
+							public void onClick(View v) {	
+								if(checkboxSubtitleSwitch.isChecked()){
+									if(((DTVActivity)mContext).DTVGetSubtitleStatus()){
+										((TVActivity)mContext).switchSubtitle(mSubtitleIndex);
+									}
+									else{
+										((TVActivity)mContext).switchSubtitle(mSubtitleIndex);
+										((DTVActivity)mContext).DTVSetSubtitleStatus(true);
+									}
+								}
+								else{
+									((DTVActivity)mContext).DTVSetSubtitleStatus(false);	
+								}
+								mCustomDialog.dismissDialog();
+							}
+						});	  
+					}
+				}
+			);
+		}		
+		
 	}
 	
 }

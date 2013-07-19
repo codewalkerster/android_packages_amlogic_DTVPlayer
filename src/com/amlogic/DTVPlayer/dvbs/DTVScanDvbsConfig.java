@@ -23,6 +23,8 @@ import com.amlogic.tvutil.TVSatelliteParams;
 import com.amlogic.widget.SureDialog;
 import com.amlogic.widget.SingleChoiseDialog;
 import com.amlogic.widget.MutipleChoiseDialog;
+import com.amlogic.widget.CustomDialog;
+import com.amlogic.widget.CustomDialog.ICustomDialog;
 
 import android.text.*;
 import android.text.method.*;
@@ -386,6 +388,113 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	}
 
 	private void createMenuChoiceDialog(){
+		final String[] itemChoices = {getString(R.string.dish_setup_conf_button_des1_info),getString(R.string.dish_setup_conf_button_des2_info),getString(R.string.dish_setup_conf_button_des3_info),getString(R.string.dish_setup_conf_button_des4_info),getString(R.string.dish_setup_conf_button_des6_info),getString(R.string.dish_setup_conf_button_des8_info)};
+		final String[] itemChoices1 = {getString(R.string.dish_setup_conf_button_des1_info),getString(R.string.dish_setup_conf_button_des2_info),getString(R.string.dish_setup_conf_button_des3_info),getString(R.string.dish_setup_conf_button_des4_info),getString(R.string.dish_setup_conf_button_des6_info),getString(R.string.dish_setup_conf_button_des8_info),getString(R.string.dish_setup_conf_button_des7_info)};
+	
+
+		final CustomDialog mCustomDialog = new CustomDialog(mContext);
+		mCustomDialog.showDialog(R.layout.list_menu, new ICustomDialog(){
+				public boolean onKeyDown(int keyCode, KeyEvent event){
+					if(keyCode == KeyEvent.KEYCODE_BACK)
+						mCustomDialog.dismissDialog();
+					return false;
+				}
+				public void showWindowDetail(Window window){
+					TextView title = (TextView)window.findViewById(R.id.title);
+					title.setTextColor(Color.YELLOW);
+					title.setText("Operations");
+					
+					ListView list_item = (ListView)window.findViewById(R.id.list_item);
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.menu_list_item,ListStatus ==0?itemChoices:itemChoices1);
+					//ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.dtvsettings_list_item,itemChoices);
+					list_item.setAdapter(adapter);  
+					list_item.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+						public void onItemClick(AdapterView<?> parent, View v, int position, long id){			
+							switch (position) {
+								case 0:
+									if(ListStatus ==0&&ScanSatAndtsInfoList.size()>0){
+										ListStatus =1;
+										gobal_sat_cur_pos = list_cur_pos;
+										getTsData(gobal_sat_cur_pos);
+										myTsAdapter = new TsAdapter(DTVScanDvbsConfig.this,tsInfoList);
+										sat_list.setAdapter(myTsAdapter);
+										myTsAdapter.notifyDataSetChanged();
+										sat_list.requestFocus();
+										//sat_list.setSelection(gobal_ts_cur_pos);
+
+										satInfoTitleLayout.setVisibility(View.INVISIBLE);
+										satInfoTitleLayout.setVisibility(View.GONE);
+										tsInfoTitleLayout.setVisibility(View.VISIBLE);
+										show_bottom_set_limit();
+										
+										show_no_satellites_info();
+									}
+									else{
+										ListStatus=0;
+										gobal_ts_cur_pos = list_cur_pos;
+										sat_list.setAdapter(mySatAdapter);
+										mySatAdapter.notifyDataSetChanged();
+										sat_list.requestFocus();
+										sat_list.setSelection(gobal_sat_cur_pos);
+										
+										tsInfoTitleLayout.setVisibility(View.INVISIBLE);
+										tsInfoTitleLayout.setVisibility(View.GONE);
+										satInfoTitleLayout.setVisibility(View.VISIBLE);
+										hide_bottom_set_limit();
+										show_no_satellites_info();
+									}	
+									break;
+								case 1:
+									if(ListStatus ==0){
+										showSatAddDia();
+									}
+									else{
+										showTsAddDia();
+									}
+									break;
+								case 2:
+									Log.d(TAG,"KEY:KEYCODE_MEDIA_REPEAT");
+									if(ListStatus ==0){
+										showSatEditDia();
+									}
+									else{
+										showTsEditDia();
+									}
+									break;
+								case 3: 
+									Log.d(TAG,"KEY:KEYCODE_MEDIA_INFO");
+									showDeleteDia();
+									break;
+								case 4:
+									Log.d(TAG,"KEY:KEYCODE_MEDIA_RATIO");
+									if(ScanSatAndtsInfoList.size()>0)
+										showScanConfigDia();
+									break;
+								case 5:
+									Log.d(TAG,"KEY:KEYCODE_MEDIA_AUDIO");
+									showSetLocationDia();
+									
+									break;	
+								case 6:
+									Log.d(TAG,"KEY:KEYCODE_MEDIA_SUB_T");
+									if(ListStatus==1)
+										showSetLimitAndPositionDia();
+									break;
+								default:
+									break;
+								}
+								mCustomDialog.dismissDialog();
+							}
+						}	
+					);
+				}
+			}	
+		);		
+	}
+
+
+	/*
+	private void createMenuChoiceDialog(){
 	
 		String[] itemChoices = {getString(R.string.dish_setup_conf_button_des1_info),getString(R.string.dish_setup_conf_button_des2_info),getString(R.string.dish_setup_conf_button_des3_info),getString(R.string.dish_setup_conf_button_des4_info),getString(R.string.dish_setup_conf_button_des6_info),getString(R.string.dish_setup_conf_button_des8_info)};
 		String[] itemChoices1 = {getString(R.string.dish_setup_conf_button_des1_info),getString(R.string.dish_setup_conf_button_des2_info),getString(R.string.dish_setup_conf_button_des3_info),getString(R.string.dish_setup_conf_button_des4_info),getString(R.string.dish_setup_conf_button_des6_info),getString(R.string.dish_setup_conf_button_des8_info),getString(R.string.dish_setup_conf_button_des7_info)};
@@ -479,7 +588,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			mMenuChoiceDialog.getWindow().setAttributes(lp);
 			mMenuChoiceDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
-
+	*/
+	
 	protected void onStop(){
 		Log.d(TAG,"onStop");	
 		super.onStop();

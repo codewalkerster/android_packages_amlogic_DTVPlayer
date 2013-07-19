@@ -1539,30 +1539,26 @@ public class DTVPlayer extends DTVActivity{
 		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,0);
 		if(mTVProgramList!=null){
 			if(mTVProgramList.length!=0){
-				Log.d(TAG,"0000000");
 				return true;
 			}	
 			else{
 				mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
 				if(mTVProgramList==null){
-					Log.d(TAG,"11111");
 					return false;
 				}	
 				else if(mTVProgramList.length!=0){
-					Log.d(TAG,"222222");
 					return true;
 				}
 			}
-			Log.d(TAG,"33333");
+			
 		}
 		else{
 			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
 			if(mTVProgramList==null){
-				Log.d(TAG,"444444");
 				return false;
 			}	
 		}
-		Log.d(TAG,"5555555");
+		
 		return false;
 	}
 
@@ -1598,7 +1594,7 @@ public class DTVPlayer extends DTVActivity{
 	private static int mAudioIndex=0;
 	private static String mAudioLang[]=null;
 
-	private static TVProgram mTVProgram=null;
+	private TVProgram mTVProgram=null;
 	private void DTVPlayerGetCurrentProgramData(){
 		mTVProgram=DTVPlayerGetDataByCurrentID();
 
