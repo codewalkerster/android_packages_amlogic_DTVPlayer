@@ -1598,7 +1598,7 @@ public class DTVPlayer extends DTVActivity{
 	private static int mAudioIndex=0;
 	private static String mAudioLang[]=null;
 
-	private TVProgram mTVProgram=null;
+	private static TVProgram mTVProgram=null;
 	private void DTVPlayerGetCurrentProgramData(){
 		mTVProgram=DTVPlayerGetDataByCurrentID();
 

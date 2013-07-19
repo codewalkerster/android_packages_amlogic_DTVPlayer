@@ -391,10 +391,6 @@ public class DTVTimeshifting extends DTVActivity{
 					DTVTTGotoPreviousPage();
 				}	
 				return true;
-			case KeyEvent.KEYCODE_TV_REPEAT:
-				Log.d(TAG,"KEYCODE_TV_REPEAT");
-				//DTVPlayer.showSubtitleSettingMenu(DTVTimeshifting.this);
-				return true;	
 			case DTVActivity.KEYCODE_AUDIO:
 				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_VOICEMODE");
 				DTVPlayer.showAudioLanguageDialog(DTVTimeshifting.this);
@@ -404,13 +400,9 @@ public class DTVTimeshifting extends DTVActivity{
 				}
 				return true;	
 			case DTVActivity.KEYCODE_SUBTITLE:
-				DTVPlayer.showSubtitleSettingMenu(DTVPvrPlayer.this);
+				DTVPlayer.showSubtitleSettingMenu(DTVTimeshifting.this);
 				return true;	
-				
-				return true;	
-				
-				break;
-		
+			
 			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
 				play.requestFocus();
 				
@@ -570,7 +562,7 @@ public class DTVTimeshifting extends DTVActivity{
 		ImageView ImageView_icon_sub=(ImageView)findViewById(R.id.ImageView_icon_sub);
 		ImageView ImageView_icon_txt=(ImageView)findViewById(R.id.ImageView_icon_txt);
 
-		Text_channel_type.setText(DTVPlayer.dtvplayer_atsc_antenna_source);
+		//Text_channel_type.setText(DTVPlayer.dtvplayer_atsc_antenna_source);
 		
 		TextView Text_proname = (TextView) findViewById(R.id.Text_proname);
 		Text_proname.setTextColor(Color.YELLOW);
@@ -617,7 +609,7 @@ public class DTVTimeshifting extends DTVActivity{
 		else
 			ImageView_icon_sub.setVisibility(View.INVISIBLE);
 
-		/*
+		
 		int mode = DTVGetScreenMode();
 		if(mode==0){
 			Text_screentype_info.setText(getString(R.string.auto));
@@ -647,7 +639,7 @@ public class DTVTimeshifting extends DTVActivity{
 		else{
 			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
 		}
-		*/
+		
 	}
 
 
