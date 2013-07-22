@@ -1193,6 +1193,12 @@ public class DTVProgramEdit extends DTVActivity{
 		
 		ListView_channel.setAdapter(myAdapter);
 		setFocusPosition();
+		TVProgram mTVProgram=TVProgram.selectByID(this,db_id);
+		if(mTVProgram.getLockFlag()){
+			mTextInfo.setVisibility(View.VISIBLE);
+			mTextInfo.setText("Locked");
+		}
+		
 	}
 
 	class channelListButtonClick  implements android.view.View.OnClickListener{	  
@@ -1520,7 +1526,6 @@ public class DTVProgramEdit extends DTVActivity{
 				Text_title.setText(list_sat[arg2].getSatelliteName());
 				myAdapter.notifyDataSetChanged();
 				mDialog.dismiss();
-
 			}
         	    
         });
