@@ -103,7 +103,7 @@
 	           android:layout_height="35dp"
 	       	   android:background="@drawable/single_dia_button"
 	       	   android:layout_weight="1"
-	       	   android:layout_marginLeft="100dp"
+	       	   android:layout_marginLeft="60dp"
 	           />
 		</LinearLayout>
 	</LinearLayout>	

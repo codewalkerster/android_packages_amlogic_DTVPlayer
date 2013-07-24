@@ -35,6 +35,8 @@ public class DTVPvrPlayer extends DTVActivity{
 	private int record_id =0;
 	private String proname=null;
 	private String file_name = null;
+	private boolean current_playback_flag=false;
+	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
@@ -44,35 +46,25 @@ public class DTVPvrPlayer extends DTVActivity{
 	    	record_id = bundle.getInt("booking_id");
 			file_name = bundle.getString("file_name");
 		}	
-		openVideo();
-		DTVPvrPlayerUIInit();
+		
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
 		openVideo();
-		Log.d(TAG,"play file ="+file_name);
 		startPlayback(file_name);
+		DTVPvrPlayerUIInit();
+		Log.d(TAG,"play file ="+file_name);
 		pvrHandler.postDelayed(pvrTimer, 1000);
-
-		setVideoViewWindow();
-		
+		current_playback_flag=false;
+		//setVideoViewWindow();
 	}
 
 	@Override
 	protected void onStart(){
 		Log.d(TAG, "onStart");
 		super.onStart();
-		
-		bufferLayout.setVisibility(View.INVISIBLE);
-		infoLayout.setVisibility(View.VISIBLE);
-		play.setEnabled(true);
-		play.setBackgroundResource(R.drawable.play_button);
-		play_status = STAT_PLAY;
-		play.requestFocus();
-		showTimeshiftingIcon();
-
 	}
 
 	@Override
@@ -137,9 +129,14 @@ public class DTVPvrPlayer extends DTVActivity{
 				}
 				break;
 			case TVMessage.TYPE_PLAYBACK_STOP:
-				DTVPvrPlayer.this.finish();	
+				if(current_playback_flag){
+					current_playback_flag=false;
+					DTVPvrPlayer.this.finish();	
+					
+				}	
 				break;
 			case TVMessage.TYPE_PLAYBACK_START:
+				current_playback_flag = true;
 				PvrPlayerGetCurrentProgramData();
 				updateInforbar();
 				break;
@@ -339,8 +336,15 @@ public class DTVPvrPlayer extends DTVActivity{
 		});
 	     
 	    infoLayout.setVisibility(View.INVISIBLE);
-		
- 
+		bufferLayout.setVisibility(View.INVISIBLE);
+		infoLayout.setVisibility(View.VISIBLE);
+		play.setEnabled(true);
+		play.setBackgroundResource(R.drawable.play_button);
+		play_status = STAT_PLAY;
+		play.requestFocus();
+		showTimeshiftingIcon();
+
+
 	}
 
 

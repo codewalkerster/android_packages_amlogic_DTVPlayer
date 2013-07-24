@@ -255,26 +255,30 @@ public class DvbsScanResult extends DTVActivity{
 		
 	}
 
-	private int service_get_dbId(String name, int serviceid, int serviceType)
-	   {
-	   	int dbId = -1;
+	private int service_get_dbId(String name, int serviceid, int serviceType){
+		int dbId = -1;
 
-		/*
-		Cursor cur = this.getContentResolver().query(DVBClient.TABLE_SERVICE ,
-						new String[]{"db_id"}, 
-						"name like ?  and service_id="+serviceid+" and service_type="+serviceType, new String[]{name}, null);
-			
-	      if(cur != null)
-	      {	  
-			 if( cur.moveToFirst() ) {
-				dbId=cur.getInt(0) ;
+	TVProgram mTVProgram = TVProgram.selectByNameAndServiceId(DvbsScanResult.this,name,serviceid,serviceType);
+		
+	/*
+	Cursor cur = this.getContentResolver().query(DVBClient.TABLE_SERVICE ,
+					new String[]{"db_id"}, 
+					"name like ?  and service_id="+serviceid+" and service_type="+serviceType, new String[]{name}, null);
+		
+	  if(cur != null)
+	  {	  
+		 if( cur.moveToFirst() ) {
+			dbId=cur.getInt(0) ;
 
-			}
-			cur.close();
-	      	}
-		*/
-		return dbId;
-	   }
+		}
+		cur.close();
+	  	}
+	*/
+	if(mTVProgram!=null)
+		return mTVProgram.getID();
+	else
+	 return dbId;
+	}
 
 	
 	private void playProgram(int type,int pos){

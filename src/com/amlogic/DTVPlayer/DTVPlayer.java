@@ -233,6 +233,7 @@ public class DTVPlayer extends DTVActivity{
 	public void onDestroy() {
         Log.d(TAG, "onDestroy");
 		SystemProperties.set("vplayer.hideStatusBar.enable", "false");
+		switchScreenType(0);
         super.onDestroy();
     }
 
@@ -397,7 +398,8 @@ public class DTVPlayer extends DTVActivity{
 				shortcut_key_deal("FAV");
 				return true;	
 			case KeyEvent.KEYCODE_TAB: //info
-				Log.d(TAG,"KEYCODE_TAB");	
+				Log.d(TAG,"KEYCODE_TAB");
+				shortcut_key_deal("AUDIOTRACK");
 				return true;
 			case KeyEvent.KEYCODE_TV_SWITCH: //tv/radio
 				Log.d(TAG,"KEYCODE_TV_SWITCH");	
@@ -1073,7 +1075,7 @@ public class DTVPlayer extends DTVActivity{
 		
 		mode = DTVGetAudioTrack();
 		if(mode==0){ 						
-			Text_MTS_info.setText(getString(R.string.type_16_9));			
+			Text_MTS_info.setText(getString(R.string.stereo));			
 		}
 		else  if(mode==1){
 			Text_MTS_info.setText(getString(R.string.left));			
@@ -1403,19 +1405,19 @@ public class DTVPlayer extends DTVActivity{
 		}
 		else if(key.equals("AUDIOTRACK")){
 			int mode = DTVGetAudioTrack();
-			if(mode==0){ 						
+			if(mode==1){ 						
 				ShowInformation(getString(R.string.right));			
-				DTVSetAudioTrack(0);
+				DTVSetAudioTrack(2);
 				Text_MTS_info.setText(getString(R.string.right));			
 			}
-			else  if(mode==1){
+			else  if(mode==2){
 				ShowInformation(getString(R.string.stereo));			
-				DTVSetAudioTrack(1);
+				DTVSetAudioTrack(0);
 				Text_MTS_info.setText(getString(R.string.stereo));			
 			}
-			else  if(mode==2){
+			else  if(mode==0){
 				ShowInformation(getString(R.string.left));				
-				DTVSetAudioTrack(2);
+				DTVSetAudioTrack(1);
 				Text_MTS_info.setText(getString(R.string.left));				
 			}	
 		}
@@ -1532,34 +1534,6 @@ public class DTVPlayer extends DTVActivity{
 			mAlertDialog.getWindow().setAttributes(lp);
 			mAlertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		}
-	}
-
-	private boolean isHavePragram(){
-		TVProgram[]  mTVProgramList=null;
-		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,0);
-		if(mTVProgramList!=null){
-			if(mTVProgramList.length!=0){
-				return true;
-			}	
-			else{
-				mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
-				if(mTVProgramList==null){
-					return false;
-				}	
-				else if(mTVProgramList.length!=0){
-					return true;
-				}
-			}
-			
-		}
-		else{
-			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
-			if(mTVProgramList==null){
-				return false;
-			}	
-		}
-		
-		return false;
 	}
 
 	private String pronumber_string="";

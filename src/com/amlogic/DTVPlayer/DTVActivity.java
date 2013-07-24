@@ -702,19 +702,19 @@ abstract public class DTVActivity extends TVActivity{
 	}
 
 	public int DTVGetScreenMode(){
-		return 0;
+		return getScreenType();
 	}
 
 	public void DTVSetScreenMode(int mode){
-		return;
+		switchScreenType(mode);
 	}
 
 	public int DTVGetAudioTrack(){
-		return 2;
+		return getAudioTrack();
 	}
 
 	public void DTVSetAudioTrack(int mode){
-
+		switchAudioTrack(mode);
 	}
 
 	public int DTVGetTimeShiftingDuration(){
@@ -841,6 +841,35 @@ abstract public class DTVActivity extends TVActivity{
 		
 		
 		return mTVProgram;
+	}
+
+
+	public boolean isHavePragram(){
+		TVProgram[]  mTVProgramList=null;
+		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,0);
+		if(mTVProgramList!=null){
+			if(mTVProgramList.length!=0){
+				return true;
+			}	
+			else{
+				mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
+				if(mTVProgramList==null){
+					return false;
+				}	
+				else if(mTVProgramList.length!=0){
+					return true;
+				}
+			}
+			
+		}
+		else{
+			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
+			if(mTVProgramList==null){
+				return false;
+			}	
+		}
+		
+		return false;
 	}
 	
 }

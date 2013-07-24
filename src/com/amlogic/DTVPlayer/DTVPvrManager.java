@@ -48,6 +48,13 @@ public class DTVPvrManager extends DTVActivity{
 		openVideo(video_view,null);
 	}
 
+	@Override
+	protected void onStop(){
+		Log.d(TAG, "onStop");
+		super.onStop();
+		
+	}
+
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
