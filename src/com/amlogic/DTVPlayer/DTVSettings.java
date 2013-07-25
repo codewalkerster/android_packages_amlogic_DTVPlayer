@@ -27,6 +27,7 @@ public class DTVSettings{
 		mContext.setConfig("tv:subtitle:margin_top",30);
 		mContext.setConfig("tv:subtitle:margin_bottom",30);
 	}
+	
 	public boolean getSubtitleStatus(){
 		if(mContext.getBooleanConfig("tv:subtitle:enable"))
 			return true;
@@ -36,6 +37,23 @@ public class DTVSettings{
 
 	public void setSubtitleStatus(boolean value){
 		mContext.setConfig("tv:subtitle:enable",value);
+	}
+
+	public String getSubtitleLanguage(){
+		return mContext.getStringConfig("tv:subtitle:language");
+	}
+
+	public void setSubtitleLanguage(String lan){
+		mContext.setConfig("tv:subtitle:language",lan);
+	}
+
+	public String getAudLanguage(){
+		return mContext.getStringConfig("tv:audio:language");
+		
+	}
+
+	public void setAudLanguage(String lan){
+		mContext.setConfig("tv:audio:language",lan);
 	}
 
 	public int getScreenMode(){
@@ -62,24 +80,19 @@ public class DTVSettings{
 	}
 	
 	public int getParentalRating(){
-		return mContext.getIntConfig("tv:dtv:dtbt:parent_rate");	
+		return mContext.getIntConfig("tv:dtv:dvb:parent_rate");	
 	}
 
 	public void setParentalRating(int value){
-		mContext.setConfig("tv:dtv:dtbt:parent_rate",value);
+		mContext.setConfig("tv:dtv:dvb:parent_rate",value);
 	}
 
-	public int getTeletextRegion(){
-		return 0;
+	public String getTeletextRegion(){
+		return mContext.getStringConfig("tv:teletext:region");
 	}
 
-	public void setTeletextRegion(int value){
-
-	}
-
-	public String getTeletextRegionName(){
-		String value = "en";
-		return value;
+	public void setTeletextRegion(String value){
+		mContext.setConfig("tv:teletext:region",value);
 	}
 
 	public void forceParentalRatingCheck(){
@@ -121,6 +134,6 @@ public class DTVSettings{
 	public void factoryReset(){
 		mContext.restoreFactorySetting();
 	}
-
+	
 }
 

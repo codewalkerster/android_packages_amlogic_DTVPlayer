@@ -184,7 +184,7 @@ public class DTVChannelList extends DTVActivity{
 						int sat_id = mTVProgramList[position].getChannel().getParams().getSatId();
 						String sat_name = TVSatellite.tvSatelliteSelect(DTVChannelList.this,sat_id).getSatelliteName();
 						
-						info.setText(String.valueOf(fre/1000)+" "+pol+" "+String.valueOf(sym/1000)+"  "+sat_name);
+						info.setText(String.valueOf(fre/1000)+"MHz   "+pol+"   "+String.valueOf(sym/1000)+"KS/s   "+sat_name);
 					}
 				}
 			}
@@ -370,7 +370,25 @@ public class DTVChannelList extends DTVActivity{
 					return true;
 				}	
 				break;
+			case DTVActivity.KEYCODE_AUDIO:
 				
+				if(ListView_channel.getChildCount()>cur_select_item)
+					ListView_channel.setSelection(0);
+				else{
+					ListView_channel.setSelection(cur_select_item-ListView_channel.getChildCount());
+				}
+				myAdapter.notifyDataSetChanged();
+				break;
+			case DTVActivity.KEYCODE_SUBTITLE:
+				int p=0;				
+				p = cur_select_item+ListView_channel.getChildCount();
+				if(p<ListView_channel.getCount())
+					ListView_channel.setSelection(p-1);
+				else{
+					ListView_channel.setSelection(ListView_channel.getCount()-1);
+				}
+				myAdapter.notifyDataSetChanged();			
+				break;		
 			case KeyEvent.KEYCODE_ZOOM_IN:
 				showBookAddDialog();
 				return true;
@@ -563,12 +581,21 @@ public class DTVChannelList extends DTVActivity{
 			mHour = Integer.valueOf(para[3]).intValue();
 			mMinute = Integer.valueOf(para[4]).intValue();
 		}
+
+		Log.d(TAG,"mYear="+mYear+"  mMonth="+mMonth+"  mDay="+mDay+"  mHour="+mHour+" mMinute="+mMinute);
+
 	}
 
-	long time_test(int y,int m, int d,int h,int min,int s){		
+	long time_test(int y,int m, int d,int h,int min,int s){	
+		Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT")); 
+		cal.set(y, m, d, h, min, s); 
+		return cal.getTime().getTime(); 
+		/*
 		Calendar Calendar_sys=Calendar.getInstance();
-		Calendar_sys.set( y, m,  d, h, min, s);
+		Date date = new Date( y, m,  d, h, min, s);
+		Calendar_sys.setTime(date);
 	    return Calendar_sys.getTime().getTime();
+	    */
 	}
 
 	private void showPvrTimeSetDialog(Context context){
@@ -896,7 +923,6 @@ public class DTVChannelList extends DTVActivity{
 	          public void onClick(View v) {
 					if(mBookAdd!=null){
 						int db_id=mTVProgramList[cur_select_item].getID();	
-						Log.d(TAG,"22222"+mBookAdd.start_time);
 						DTVPlayerAddBook(db_id,mBookAdd.mode,mBookAdd.start_time,mBookAdd.duration,mBookAdd.repeat);
 					}
 					if(mDialog!=null&& mDialog.isShowing()){
@@ -956,8 +982,6 @@ public class DTVChannelList extends DTVActivity{
 			}    
 		  });	 
 			
-		  final int time_init = (int)(time_test(mYear,mMonth,mDay,mHour,mMinute,0)/1000);
-		  
 		  //editBuilder.setTitle(R.string.pvr_set);
 		  editBuilder.setView(pvr_time_layout); 
 
@@ -967,11 +991,11 @@ public class DTVChannelList extends DTVActivity{
                 
 
 				//int srv = DATA_DB_ID[cur_select_item];
-				int now=0;	
+				long now=0;	
 				int end=0;
 
-				now = (int)(time_test(mYear,mMonth,mDay,mHour,mMinute,0)/1000);
-	 			Date date =  new Date((long)now*1000);
+				now = time_test(mYear,mMonth,mDay,mHour,mMinute,0);
+	 			Date date =  new Date(now);
 		
 	
 				SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
@@ -980,8 +1004,6 @@ public class DTVChannelList extends DTVActivity{
 				text_info.setText(str_date);
 				if(mBookAdd!=null)
 					mBookAdd.start_time=now;
-
-				Log.d(TAG,"11111"+mBookAdd.start_time);
 			}
 		});
 
@@ -1275,10 +1297,13 @@ public class DTVChannelList extends DTVActivity{
 		mDialog.setContentView(R.layout.dvbs_show_sat_dia);
 
 		Window window = mDialog.getWindow();
+		window.setGravity(Gravity.CENTER);
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		//WindowManager m = getWindowManager();
+		//Display d = m.getDefaultDisplay();
 		lp.dimAmount=0.5f;
 		lp.x=600;	
-		//lp.y=450;
+
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -1298,52 +1323,15 @@ public class DTVChannelList extends DTVActivity{
 				System.out.println("onItemSelected arg2 " + arg2);
 				System.out.println("onItemSelected arg3 " + arg3);
 				Log.d(TAG,"id=="+list_sat[arg2].getSatelliteId());
-				getProgBySatellites(list_sat[arg2].getSatelliteId());
-				//Title.setText(SAT_NAME[arg2]);
+				getProgBySatIdAndType(list_sat[arg2].getSatelliteId(),getCurrentProgramType());
+				Text_title.setText(list_sat[arg2].getSatelliteName());
 				myAdapter.notifyDataSetChanged();
+				mDialog.dismiss();
+
 			}
         	    
         });
 		LimitListView.setAdapter(new mySatListAdapter(this,null));		
-		//diaBuilder.setView(LimitListView);
-		//AlertDialog alert = diaBuilder.create();
-		/*
-		alert.setOnKeyListener( new DialogInterface.OnKeyListener(){
-			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-				// TODO Auto-generated method stub
-				switch(keyCode){	
-					case KeyEvent.KEYCODE_DPAD_CENTER:
-		  			case KeyEvent.KEYCODE_ENTER:
-						dialog.cancel();
-						break;
-				}
-				return false;
-			}
-		});
-		*/
-
-		/*
-		alert.setOnShowListener(new DialogInterface.OnShowListener(){
-							public void onShow(DialogInterface dialog) {
-								
-								}         
-								}); 	
-
-		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
-							public void onDismiss(DialogInterface dialog) {
-							}         
-							});	
-
-		alert.show();	
-		DisplayMetrics displayMetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-
-		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-		lp.x=800;	
-		lp.y=450;
-		alert.getWindow().setAttributes(lp);
-		*/
-		//alert.getWindow().setLayout(displayMetrics.widthPixels / 3, -1);	
 	}
 
 
@@ -1356,9 +1344,12 @@ public class DTVChannelList extends DTVActivity{
 		mTVProgramList=TVProgram.selectBySatID(this,sat_id);
 	}
 
+	private void getProgBySatIdAndType(int sat_id,int type){
+		mTVProgramList=TVProgram.selectBySatIDAndType(this,sat_id,type);
+	}
 	
 	private void showProgramSearchDialog(){
-		final Dialog mDialog = new AlertDialog(this){
+		final Dialog mDialog = new Dialog(this,R.style.MyDialog){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
@@ -1410,8 +1401,8 @@ public class DTVChannelList extends DTVActivity{
 		   @Override
 		   public void onTextChanged(CharSequence s, int start, int before, int count) {
 				// TODO Auto-generated method stub	
-				//items.clear();
-				getListDataByStringKey(s);
+				//getListDataByStringKey(s);
+				getListDataByStringKeyAndType(s,getCurrentProgramType());
 				//Title.setText(R.string.search_program);
 		 		myAdapter.notifyDataSetChanged();
 		   }
@@ -1435,6 +1426,14 @@ public class DTVChannelList extends DTVActivity{
 		no.setOnClickListener(new OnClickListener(){
 		          public void onClick(View v) {				  	 
 					//onSetNegativeButton();
+					if(service_type == TVProgram.TYPE_RADIO){
+						getListData(1);
+					}	
+					else{
+						service_type = TVProgram.TYPE_TV;
+						getListData(0);
+					}
+					myAdapter.notifyDataSetChanged();
 					if(mDialog!=null&& mDialog.isShowing()){
 						mDialog.dismiss();
 					}
@@ -1467,6 +1466,13 @@ public class DTVChannelList extends DTVActivity{
 		Log.d(TAG,"program="+pro_name);
 		
 		mTVProgramList=TVProgram.selectByName(this,pro_name);
+	}
+
+	private void getListDataByStringKeyAndType(CharSequence key,int type){
+		String pro_name = key.toString();
+		Log.d(TAG,"program="+pro_name);
+		
+		mTVProgramList=TVProgram.selectByNameAndType(this,pro_name,type);
 	}
 
 }

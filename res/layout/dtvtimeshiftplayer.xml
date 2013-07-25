@@ -141,6 +141,7 @@
 					android:padding="7px"
 					android:shadowColor="@android:color/white"
 					android:gravity="center"
+					android:visibility="gone"
 					>
 				</TextView>
 			</LinearLayout>

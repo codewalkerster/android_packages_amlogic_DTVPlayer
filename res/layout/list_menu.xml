@@ -14,7 +14,7 @@
 		android:orientation="vertical"
 		android:padding="14px"
 		android:gravity="center"
-		android:background="@drawable/vchip_pin_head_bg">
+		android:background="@drawable/single_dia_head">
 		<TextView
 			android:id="@+id/title"
 			android:layout_width="match_parent"
@@ -34,7 +34,7 @@
     		android:orientation="horizontal"
     		android:padding="14px"
     		android:gravity="center"
-    		android:background="@drawable/vchip_pin_body_bg">
+    		android:background="@drawable/single_dia_body">
 		<com.amlogic.widget.FocusScrollListView 
 			android:id="@+id/list_item"
 			android:layout_width="fill_parent"
@@ -50,26 +50,21 @@
 	</LinearLayout> 
 
 	<LinearLayout
+		android:id="@+id/layout_tail" 
 		android:layout_width="fill_parent"
-		android:layout_height="80px"
-		android:layout_below="@+id/rating_bg_layout"
+		android:layout_height="95dp"
 		android:orientation="vertical"
-		android:background="@drawable/vchip_pin_tail_bg">
+		android:background="@drawable/single_dia_tail"
 
-		<RelativeLayout
-			android:id="@+id/inforbar_line" 
-			android:layout_width="fill_parent"
-			android:layout_height="3px"
-			android:background="@drawable/line"
-			android:layout_marginLeft="30px"
-			android:layout_marginRight="30px" >
-		</RelativeLayout> 
+		>
+		
 	  	<LinearLayout
 	    		android:layout_width="fill_parent"
-				android:layout_height="50px"
+				android:layout_height="60dp"
 				android:layout_marginRight="20px"
 				android:layout_marginLeft="20px"
-				android:layout_marginBottom="15px"
+				android:layout_marginTop="18dp"
+				android:layout_marginBottom="8px"
 	    		android:orientation="vertical">
 				
 	  	     	<LinearLayout
@@ -80,8 +75,8 @@
 		    		android:layout_marginBottom="8px">
 	    		
 		    		<ImageView 
-		    			android:layout_width="wrap_content"
-		    			android:layout_height="wrap_content"
+		    			android:layout_width="45dp"
+		    			android:layout_height="45dp"
 						android:background="@drawable/move"
 		    		>
 		    		</ImageView>
@@ -95,9 +90,9 @@
 				        android:layout_marginRight="30px"
 				        />
 		    		<ImageView 
-		    			android:layout_width="wrap_content"
-		    			android:layout_height="wrap_content"
-						android:background="@drawable/enter"
+		    			android:layout_width="45dp"
+		    			android:layout_height="45dp"
+						android:background="@drawable/ok_icon"
 		    		></ImageView>
 		    		<TextView
 				        android:layout_width="wrap_content"
@@ -109,8 +104,8 @@
 				        android:layout_marginRight="30px"
 				        />
 		    		<ImageView 
-		    			android:layout_width="wrap_content"
-		    			android:layout_height="wrap_content"
+		    			android:layout_width="45dp"
+		    			android:layout_height="45dp"
 						android:background="@drawable/return_icon"
 		    		></ImageView>
 		    		<TextView

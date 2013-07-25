@@ -180,12 +180,13 @@
 								    android:id="@+id/sat_list"
 								  	android:layout_width="fill_parent"
 								  	android:layout_height="fill_parent"					     				     
-								  	android:scrollbars="vertical"/>
+								  	android:scrollbars="vertical"
+								  	android:listSelector="@drawable/list_item_bg"/>
 								<TextView
 									  	android:id="@+id/no_data_info"
-									  	android:padding="45dp"
+									  	android:padding="40dp"
 									  	android:text="@string/no_scan_list"	
-									  	android:layout_width="wrap_content"
+									  	android:layout_width="fill_parent"
 									  	android:textSize="22sp"
 									  	android:layout_height="wrap_content"
 									  	android:gravity="center"
@@ -218,7 +219,8 @@
 						     	android:id="@+id/sat_lnb_list"
 						  	android:layout_width="fill_parent"
 						  	android:layout_height="fill_parent"					     				     
-						  	android:scrollbars="vertical"/> 		
+						  	android:scrollbars="vertical"
+						  	android:listSelector="@drawable/list_item_bg"/> 		
 
 			</LinearLayout> 
 		</LinearLayout> 

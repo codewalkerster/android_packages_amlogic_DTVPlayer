@@ -11,7 +11,7 @@
 		android:orientation="vertical"
 		android:padding="14dp"
 		android:gravity="center"
-		android:background="@drawable/vchip_pin_head_bg"
+		android:background="@drawable/single_dia_head"
 		android:layout_alignTop="@+id/layout_parent"
 		>
 
@@ -33,9 +33,10 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		android:padding="14px"
+		android:paddingLeft="55dp"
+		android:paddingRight="55dp"
 		android:gravity="center"
-		android:background="@drawable/vchip_pin_body_bg"
+		android:background="@drawable/single_dia_body"
 		android:layout_above="@+id/layout_tail" 
 		android:layout_below="@+id/layout_head" >
     
@@ -70,49 +71,45 @@
 		
 		<ListView
 			android:id="@+id/set_list"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginRight="10dp"
-			android:scrollbars="vertical"/> 		
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"					     				     
+			android:scrollbars="vertical"
+			android:listSelector="@drawable/list_item_bg"/> 	
 
 	</LinearLayout> 
 	
 	<LinearLayout
 		android:id="@+id/layout_tail" 
 		android:layout_width="fill_parent"
-		android:layout_height="95dp"
+		android:layout_height="90dp"
 		android:orientation="vertical"
-		android:background="@drawable/vchip_pin_tail_bg"
+		android:background="@drawable/single_dia_tail"
 		android:layout_alignBottom="@+id/layout_parent"
 		>
-		<RelativeLayout
-			android:id="@+id/inforbar_line" 
-			android:layout_width="fill_parent"
-			android:layout_height="3px"
-			android:background="@drawable/line"
-			android:layout_marginLeft="30px"
-			android:layout_marginRight="30px" >
-		</RelativeLayout> 
+		
 	    <LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:padding="14px"
+			android:paddingLeft="60dp"
+    		android:paddingRight="60dp"
+    		android:paddingTop="30dp"
 			android:layout_marginBottom="20px" 
 			android:gravity="center">
 			
 			<Button android:id="@+id/no"
 			   android:layout_width="wrap_content"
-	           android:layout_height="45px"
-	       	   android:background="@drawable/button_pin_null"
+	           android:layout_height="35dp"
+	       	   android:background="@drawable/single_dia_button"
 	       	   android:layout_weight="1"
 	           />
 	           
 			<Button android:id="@+id/yes"
 			   android:layout_width="wrap_content"
-	           android:layout_height="45px"
-	       	   android:background="@drawable/button_pin_null"
+	           android:layout_height="35dp"
+	       	   android:background="@drawable/single_dia_button"
 	       	   android:layout_weight="1"
+	       	   android:layout_marginLeft="100dp"
 	           />
 		</LinearLayout>
 	</LinearLayout>

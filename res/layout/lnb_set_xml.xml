@@ -3,7 +3,6 @@
   android:orientation="horizontal"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-
  >
 
 	  <ImageView android:id="@+id/icon"
@@ -14,7 +13,7 @@
 	   />
 
 	  <TextView android:id="@+id/text"
-	  android:layout_gravity="center_vertical"
+	  android:gravity="center_vertical"
 	  android:layout_width="270px"
 	  android:layout_height="40px" 
 	  android:textSize="18sp"
@@ -31,7 +30,7 @@
 	   />
 	  
 	   <TextView android:id="@+id/info"
-	  android:layout_gravity="center_vertical"
+	  android:gravity="center_vertical"
 	  android:layout_width="120px"
 	  android:layout_height="40px" 
 	  android:textSize="18sp"

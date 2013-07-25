@@ -36,11 +36,13 @@ public class DTVTimeshifting extends DTVActivity{
 		setContentView(R.layout.dtvtimeshiftplayer); 
 		mDTVSettings= new DTVSettings(this);
 		DTVTimeshiftingUIInit();
+		
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
+		openVideo();
 		startTimeshifting();
 		timeshiftingHandler.postDelayed(timeshiftingTimer, 1000);
 	}
@@ -64,7 +66,7 @@ public class DTVTimeshifting extends DTVActivity{
 		Log.d(TAG, "onStop");
 		super.onStop();
 		timeshiftingHandler.removeCallbacks(timeshiftingTimer);
-		
+		playValid();
 	}
 
 	public void onDisconnected(){
@@ -107,15 +109,16 @@ public class DTVTimeshifting extends DTVActivity{
 				    		Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
 							toast.show();
-						DTVTimeshifting.this.finish();					
+						DTVTimeshifting.this.finish();							
 					break;
 					case  TVMessage.REC_ERR_ACCESS_FILE:
-						DTVTimeshifting.this.finish();	
+						DTVTimeshifting.this.finish();							
 						break;
 					case  TVMessage.REC_ERR_SYSTEM:
-						DTVTimeshifting.this.finish();	
+						
 						break;							
 				}
+				
 				break;
 			default:
 				break;
@@ -370,18 +373,25 @@ public class DTVTimeshifting extends DTVActivity{
 					showTimeshiftDialog();
 				}
 				return true;
-			case KeyEvent.KEYCODE_ZOOM_IN:	
-				Log.d(TAG,"KEYCODE_ZOOM_IN");
-				DTVPlayer.showTeltext(DTVTimeshifting.this);	
+			case DTVActivity.KEYCODE_TTX:
+				Log.d(TAG,"KEYCODE_TTX");
+				DTVPlayer.showTeltext(DTVTimeshifting.this);
 				return true;	
 			case KeyEvent.KEYCODE_ZOOM_OUT:
 				
 				return true;
-			case KeyEvent.KEYCODE_TV_REPEAT:
-				Log.d(TAG,"KEYCODE_TV_REPEAT");
-				DTVPlayer.showSubtitleSettingMenu(DTVTimeshifting.this);
-				return true;	
-			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+				if(DTVPlayer.dtvplyaer_b_txt&&DTVPlayer.DTVPlayerInTeletextStatus){
+					DTVTTGotoNextPage();
+				}	
+				return true;
+			case KeyEvent.KEYCODE_DPAD_UP:
+				Log.d(TAG,"KEYCODE_DPAD_UP");
+				if(DTVPlayer.dtvplyaer_b_txt&&DTVPlayer.DTVPlayerInTeletextStatus){
+					DTVTTGotoPreviousPage();
+				}	
+				return true;
+			case DTVActivity.KEYCODE_AUDIO:
 				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_VOICEMODE");
 				DTVPlayer.showAudioLanguageDialog(DTVTimeshifting.this);
 				return true;		
@@ -389,10 +399,10 @@ public class DTVTimeshifting extends DTVActivity{
 				if(teletext_bar_flag){
 				}
 				return true;	
-			case KeyEvent.KEYCODE_TV_SUBTITLE:
-				
-				break;
-		
+			case DTVActivity.KEYCODE_SUBTITLE:
+				DTVPlayer.showSubtitleSettingMenu(DTVTimeshifting.this);
+				return true;	
+			
 			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
 				play.requestFocus();
 				
@@ -552,7 +562,7 @@ public class DTVTimeshifting extends DTVActivity{
 		ImageView ImageView_icon_sub=(ImageView)findViewById(R.id.ImageView_icon_sub);
 		ImageView ImageView_icon_txt=(ImageView)findViewById(R.id.ImageView_icon_txt);
 
-		Text_channel_type.setText(DTVPlayer.dtvplayer_atsc_antenna_source);
+		//Text_channel_type.setText(DTVPlayer.dtvplayer_atsc_antenna_source);
 		
 		TextView Text_proname = (TextView) findViewById(R.id.Text_proname);
 		Text_proname.setTextColor(Color.YELLOW);
@@ -599,7 +609,7 @@ public class DTVTimeshifting extends DTVActivity{
 		else
 			ImageView_icon_sub.setVisibility(View.INVISIBLE);
 
-		/*
+		
 		int mode = DTVGetScreenMode();
 		if(mode==0){
 			Text_screentype_info.setText(getString(R.string.auto));
@@ -629,7 +639,7 @@ public class DTVTimeshifting extends DTVActivity{
 		else{
 			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
 		}
-		*/
+		
 	}
 
 

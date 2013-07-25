@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout    
+		android:layout_width="fill_parent"    
+		xmlns:android="http://schemas.android.com/apk/res/android"    
+		android:orientation="horizontal"  
+		android:layout_height="45dp"       
+		android:paddingLeft="10dp"
+		android:gravity="center_vertical"
+		>
+	<ImageView android:id="@+id/move_icon"
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:gravity="center"
+		android:layout_marginRight="0dp"
+		/>		
+		
+	<TextView       
+		android:id="@+id/prono"
+		android:gravity="left|center_vertical"
+		android:paddingRight="20dp"
+		android:layout_width="70dp"
+		android:layout_height="42dp" 
+		android:textSize="24sp"
+		android:layout_marginLeft="40dp"
+		android:singleLine="true" 
+		android:ellipsize="marquee">  
+	</TextView>  
+
+	<TextView       
+		android:id="@+id/ItemText"
+		android:gravity="left|center_vertical"
+		android:layout_width="220dp"
+		android:layout_height="42dp" 
+		android:textSize="24sp"
+		android:layout_marginLeft="10dp"
+		android:singleLine="true" 
+		android:ellipsize="marquee">  
+	</TextView>  
+   
+	<ImageView android:id="@+id/icon_scrambled"
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:gravity="center"/>
+	<ImageView android:id="@+id/icon_fav"
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:gravity="center"/>		 	 
+	<ImageView android:id="@+id/icon"
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:gravity="center"
+		android:layout_marginRight="40dp"
+		/>
+		
+	
+</LinearLayout>  

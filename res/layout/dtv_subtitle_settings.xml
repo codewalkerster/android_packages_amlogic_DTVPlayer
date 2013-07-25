@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="620px"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="45px" 
-    android:layout_centerInParent="true"  
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" 
+	android:gravity="center"
+	android:padding="50dp"
     android:orientation="vertical"
-    android:background="@drawable/dialog_bg"
     > 
-    <TextView
+
+	<LinearLayout
+   		android:id="@+id/layout_head"
+		android:layout_width="match_parent"
+		android:layout_height="90dp"
+		android:orientation="vertical"
+		android:padding="14dp"
+		android:gravity="center"
+		android:background="@drawable/single_dia_head"
+		android:layout_alignTop="@+id/layout_parent"
+		>
+		
+		<TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="34px"
@@ -15,18 +26,23 @@
         android:text="@string/enter_password"
         android:textColor="#FFFFFFFF"
  		android:gravity="center"
-        android:textSize="24px" 
+        android:textSize="24sp" 
         android:layout_marginTop="20px"
-        android:layout_marginBottom="10px" />	
-	<RelativeLayout
-		android:id="@+id/inforbar_line" 
-		android:layout_width="fill_parent"
-		android:layout_height="3px"
-		android:background="@drawable/line"
-		android:layout_marginLeft="30px"
-		android:layout_marginRight="30px" >
-	</RelativeLayout> 
-	<LinearLayout 
+        android:layout_marginBottom="10px" />
+	</LinearLayout> 
+
+	<LinearLayout
+		android:id="@+id/layout_body"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:paddingLeft="54dp"
+		android:paddingRight="54dp"
+		android:gravity="center_vertical"
+		android:background="@drawable/single_dia_body"
+		android:layout_above="@+id/layout_tail" 
+		android:layout_below="@+id/layout_head" >
+		<LinearLayout 
      	 android:layout_width="fill_parent" 
          android:layout_height="wrap_content"
          android:gravity="left"
@@ -38,7 +54,7 @@
              android:layout_height="wrap_content" 
              android:text="@string/subtitle_switch" 
              android:layout_marginLeft = "30px"
-             android.textSize="20sp"
+             android.textSize="24sp"
 		/>  
 		<CheckBox
 			android:id="@+id/checkSubtitleSwitch"
@@ -60,7 +76,7 @@
 			android:layout_height="wrap_content" 
 			android:text="@string/dtvplayer_subtitle_language_set" 
 			android:layout_marginLeft = "30px"
-			android.textSize="20sp"
+			android.textSize="24sp"
              />  
      
 		<Button
@@ -71,36 +87,42 @@
 			android:layout_marginRight="30px">
 		</Button>    
 	</LinearLayout>
+	</LinearLayout> 
 	
-	<RelativeLayout
-		android:id="@+id/inforbar_line" 
-		android:layout_width="fill_parent"
-		android:layout_height="3px"
-		android:background="@drawable/line"
-		android:layout_marginLeft="30px"
-		android:layout_marginRight="30px" >
-	</RelativeLayout> 
     <LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:padding="14px"
-		android:layout_marginBottom="20px" 
-		android:gravity="center">
+		android:id="@+id/layout_tail" 
+		android:layout_width="fill_parent"
+		android:layout_height="90dp"
+		android:orientation="vertical"
+		android:background="@drawable/single_dia_tail"
+		android:layout_alignBottom="@+id/layout_parent"
+		>
 		
-		<Button android:id="@+id/no"
-		   android:layout_width="wrap_content"
-           android:layout_height="45px"
-       	   android:background="@drawable/button_pin_null"
-       	   android:layout_weight="1"
-           />
-           
-		<Button android:id="@+id/yes"
-		   android:layout_width="wrap_content"
-           android:layout_height="45px"
-       	   android:background="@drawable/button_pin_null"
-       	   android:layout_weight="1"
-           />
+	    <LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:paddingLeft="60dp"
+    		android:paddingRight="60dp"
+    		android:paddingTop="30dp"
+			android:layout_marginBottom="20px" 
+			android:gravity="center">
+			
+			<Button android:id="@+id/no"
+			   android:layout_width="wrap_content"
+	           android:layout_height="35dp"
+	       	   android:background="@drawable/single_dia_button"
+	       	   android:layout_weight="1"
+	           />
+	           
+			<Button android:id="@+id/yes"
+			   android:layout_width="wrap_content"
+	           android:layout_height="35dp"
+	       	   android:background="@drawable/single_dia_button"
+	       	   android:layout_weight="1"
+	       	   android:layout_marginLeft="70dp"
+	           />
+		</LinearLayout>
 	</LinearLayout>
 </LinearLayout>
 

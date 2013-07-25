@@ -283,9 +283,10 @@ public class DTVSettingsMenu extends DTVActivity {
 		else
 			DATA = getResources().getStringArray(R.array.system_settings_content);
 	
-		ttx_region_str = mDTVSettings.getTeletextRegionName();
-		if(ttx_region_str!=null)
-			ttx_region_str_arry = ttx_region_str.split(" "); 
+		//ttx_region_str = mDTVSettings.getTeletextRegionName();
+		//if(ttx_region_str!=null)
+			//ttx_region_str_arry = ttx_region_str.split(" "); 
+		ttx_region_str_arry = getResources().getStringArray(R.array.teletext_region_lauguage);
 
 		//listview
 		ListView_settings = (ListView)findViewById(R.id.settings_list);
@@ -301,9 +302,11 @@ public class DTVSettingsMenu extends DTVActivity {
 
 	private void ProgramItem_Init(){
 		button_status = BUTTON_PROGRAM; 
-		Log.d(TAG,"scan region="+mDTVSettings.getScanRegion());
-		
-		DATA = getResources().getStringArray(R.array.Program_settings_content);
+		if(mDTVSettings.getScanRegion().contains("DVBS")){
+			DATA = getResources().getStringArray(R.array.Program_settings_content_dvbs);
+		}
+		else
+			DATA = getResources().getStringArray(R.array.Program_settings_content);
 
 		//listview
 		ListView_settings = (ListView)findViewById(R.id.settings_list);
@@ -462,15 +465,15 @@ public class DTVSettingsMenu extends DTVActivity {
 				case 0:
 					showScreenTypeDialog(info_cur);		
 					break;
-				case 1: //audio language
-					showScreenTypeDialog(info_cur);	
+				case 1: //subtitle language
+					showSubtitleLanguageDialog(info_cur);
 					break;
 				case 2:  //audio language	
-					showAudioTrackDialog(info_cur);
+					showAudioLanguageDialog(info_cur);
 					break;
-				case 3:
-					showAudioTrackDialog(info_cur);	
-					break;
+				//case 3:
+					//showAudioTrackDialog(info_cur);	
+					//break;
 			}
 		}
 	};
@@ -528,12 +531,12 @@ public class DTVSettingsMenu extends DTVActivity {
 			holder.text.setText(listItems[position]);
 			holder.icon.setVisibility(View.INVISIBLE);
 			holder.info.setTextColor(Color.YELLOW);
+			holder.info.setVisibility(View.VISIBLE);
+			holder.icon1.setVisibility(View.INVISIBLE);
 			switch(position){
 			
 		     case 0://SETTINGS_SCREEN_TYPE:
-			 	 holder.info.setVisibility(View.VISIBLE);
-				 holder.icon1.setVisibility(View.INVISIBLE);
-		    	
+			 	
 
 				 int mode= mDTVSettings.getScreenMode();		 
 				 if(mode==0){
@@ -546,15 +549,17 @@ public class DTVSettingsMenu extends DTVActivity {
 					holder.info.setText(R.string.type_16_9);
 				 }	
 		    	 break;
-			case 1: //audio language
-
+			case 1: //subtitle language
+				String language = getLanguage(getIndexLanguage(mDTVSettings.getSubtitleLanguage()));
+				holder.info.setText(language);
 				break;
 			case 2:  //audio language
-
+				String lan = getLanguage(getIndexLanguage(mDTVSettings.getAudLanguage()));
+				holder.info.setText(lan);
 				break;
+			/*
 			case 3://SETTINGS_AUDIO_TRACK:
-			 	 holder.info.setVisibility(View.VISIBLE);
-				 holder.icon1.setVisibility(View.INVISIBLE);
+			 	
 		    	 holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
 				
 				 int tmp= mDTVSettings.getAudioTrack();
@@ -566,6 +571,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				 else if(tmp == 0)
 				 	holder.info.setText(R.string.left);
 		    	 break;
+		    */	 
 		  }
 
 		  return convertView;
@@ -577,36 +583,99 @@ public class DTVSettingsMenu extends DTVActivity {
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
 			final TextView info_cur = (TextView)v.findViewById(R.id.info);
-			switch(position){
-				case 0:
-					DTVStartProgramManager();
-					DTVSettingsMenu.this.finish();
-					break;
-				case 1:
-					DTVStartEPG();
-					DTVSettingsMenu.this.finish();
-					break;
-				case 2:
-					showSortByDialog(info_cur);
-					break;
-				case 3:
-					Intent Intent_record_device = new Intent();
-	        		Intent_record_device.setClass(DTVSettingsMenu.this, DTVRecordDevice.class);
-	        		startActivityForResult(Intent_record_device,12);
-					//DTVSettingsMenu.this.finish();
-					break;
-				case 4:
-					Intent Intent_pvr_manager = new Intent();
-					Intent_pvr_manager.setClass(DTVSettingsMenu.this,DTVPvrManager.class);
-					startActivity(Intent_pvr_manager);
-					DTVSettingsMenu.this.finish();
-					break;
-				case 5:
-					Intent Intent_timeshifting = new Intent();
-					Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
-					startActivity(Intent_timeshifting);
-					DTVSettingsMenu.this.finish();
-					break;
+			if(mDTVSettings.getScanRegion().contains("DVBS")){
+				switch(position){
+					case 0:
+						if(isHavePragram()){
+								
+							showProgramManagerPasswordDialog();
+							
+						}
+						else{
+							toast = Toast.makeText(
+							DTVSettingsMenu.this,
+							R.string.dtvplayer_no_program,
+							Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						}
+						break;
+					case 1:						
+						if(isHavePragram()){
+							DTVStartEPG();
+							DTVSettingsMenu.this.finish();
+						}
+						else{
+							toast = Toast.makeText(
+							DTVSettingsMenu.this,
+							R.string.dtvplayer_no_program,
+							Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						}
+						break;
+					case 2:
+						Intent Intent_record_device = new Intent();
+		        		Intent_record_device.setClass(DTVSettingsMenu.this, DTVRecordDevice.class);
+		        		startActivityForResult(Intent_record_device,12);
+						//DTVSettingsMenu.this.finish();
+						break;
+					case 3:
+						Intent Intent_pvr_manager = new Intent();
+						Intent_pvr_manager.setClass(DTVSettingsMenu.this,DTVPvrManager.class);
+						startActivity(Intent_pvr_manager);
+						DTVSettingsMenu.this.finish();
+						break;
+					case 4:
+						if(isHavePragram()){
+							Intent Intent_timeshifting = new Intent();
+							Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
+							startActivity(Intent_timeshifting);
+							DTVSettingsMenu.this.finish();
+						}
+						else{
+							toast = Toast.makeText(
+							DTVSettingsMenu.this,
+							R.string.dtvplayer_no_program,
+							Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						}
+						break;
+				}
+			}
+			else{
+				switch(position){
+					case 0:
+						DTVStartProgramManager();
+						DTVSettingsMenu.this.finish();
+						break;
+					case 1:
+						DTVStartEPG();
+						DTVSettingsMenu.this.finish();
+						break;
+					case 2:
+						showSortByDialog(info_cur);
+						break;
+					case 3:
+						Intent Intent_record_device = new Intent();
+		        		Intent_record_device.setClass(DTVSettingsMenu.this, DTVRecordDevice.class);
+		        		startActivityForResult(Intent_record_device,12);
+						//DTVSettingsMenu.this.finish();
+						break;
+					case 4:
+						Intent Intent_pvr_manager = new Intent();
+						Intent_pvr_manager.setClass(DTVSettingsMenu.this,DTVPvrManager.class);
+						startActivity(Intent_pvr_manager);
+						DTVSettingsMenu.this.finish();
+						break;
+					case 5:
+						Intent Intent_timeshifting = new Intent();
+						Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
+						startActivity(Intent_timeshifting);
+						DTVSettingsMenu.this.finish();
+						break;
+				}
 			}
 		}
 	};
@@ -670,18 +739,6 @@ public class DTVSettingsMenu extends DTVActivity {
 				case 2: 
 					holder.info.setVisibility(View.VISIBLE);
 					holder.icon1.setVisibility(View.INVISIBLE);
-					/*
-					holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
-
-					int tmp= mDTVSettings.getAudioTrack();
-
-					if(tmp == 2)
-					holder.info.setText(R.string.stereo);
-					else if(tmp == 1)
-					holder.info.setText(R.string.right);
-					else if(tmp == 0)
-					holder.info.setText(R.string.left);
-					*/	
 				 	break;	
 			}
 
@@ -822,7 +879,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			
 			switch(position){
 				case SETTINGS_RECALL_LIST:
-
+					showRcallSetDialog(info_cur);
 					break;
 			    case SETTINGS_SUBTILE_SWITCH:{	
 			    	if(mDTVSettings.getSubtitleStatus()==false)
@@ -958,7 +1015,12 @@ public class DTVSettingsMenu extends DTVActivity {
 			holder.info.setTextColor(Color.YELLOW);
 			switch(position){
 			case SETTINGS_RECALL_LIST:
-				
+				int n = DTVPlayergetRecallNumber();
+				holder.icon.setImageBitmap(mIcon1);
+				holder.info.setVisibility(View.VISIBLE);
+				holder.icon1.setVisibility(View.INVISIBLE);
+				//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+				holder.info.setText(String.valueOf(n));
 				break;
 			case SETTINGS_SUBTILE_SWITCH:
 				{
@@ -1036,7 +1098,8 @@ public class DTVSettingsMenu extends DTVActivity {
 				holder.icon1.setVisibility(View.INVISIBLE);
 				holder.icon.setImageBitmap(mIcon12);
 				
-				int pos =  mDTVSettings.getTeletextRegion();
+				String region = mDTVSettings.getTeletextRegion(); 
+				int pos = getTTXRegionIndex(region);
 
 				holder.info.setSingleLine(true);
 				holder.info.setEllipsize(TextUtils.TruncateAt.valueOf("MARQUEE"));
@@ -1106,6 +1169,10 @@ public class DTVSettingsMenu extends DTVActivity {
 		lp.dimAmount=0.5f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setText(getString(R.string.dvbs_dbm_load));
+		title.setTextColor(Color.YELLOW);
 		
 		ListView mListView =(ListView)window.findViewById(R.id.settings_list);
 		DvbsDBXmlAdapter mDvbsDBXmlAdapter = new DvbsDBXmlAdapter(this,filelist);
@@ -1359,10 +1426,12 @@ public class DTVSettingsMenu extends DTVActivity {
 		private Context cont;
 		private List<String> listItems;
 
-		class ViewHolder {
+		class ViewHolder {  
+			TextView 	 filename;
+			TextView     Time;
 			ImageView icon;
-			TextView text;
 		}
+
 
 		public DvbsDBXmlAdapter(Context context, List<String> list) {
 			super();
@@ -1391,18 +1460,21 @@ public class DTVSettingsMenu extends DTVActivity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder=null;
 			if (convertView == null) {
-				convertView = mInflater.inflate(R.layout.dtvsettings_list_item, null);		   
+
+				convertView = mInflater.inflate(R.layout.pvr_manager_item, null);
 				holder = new ViewHolder();
-				holder.text = (TextView) convertView.findViewById(R.id.text);
-				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
-				convertView.setTag(holder);
+				
+		      	holder.Time=(TextView) convertView.findViewById(R.id.pvr_time);
+				holder.filename=(TextView) convertView.findViewById(R.id.filename);			   
+			    convertView.setTag(holder);
 			}else {
 				// Get the ViewHolder back to get fast access to the TextView
 				// and the ImageView.
 				holder = (ViewHolder) convertView.getTag();
 			}
-
-			holder.text.setText(listItems.get(position));
+			// Bind the data efficiently with the holder.
+			
+			holder.filename.setText(listItems.get(position));
 			return convertView;
 		}
 	}
@@ -2018,10 +2090,22 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 	}
 
+	private int getTTXRegionIndex(String region){
+		String  ttx_region_str_arry[] = getResources().getStringArray(R.array.teletext_region_lauguage);
+		for(int i=0;i<ttx_region_str_arry.length;i++){
+			if(region.equals(ttx_region_str_arry[i])){
+				return i;
+			}	
+		}
+
+		return 0; 
+	}
+
 
 	public void showTTXRegionDialog(TextView v){
 		final TextView info_cur = v;
-		int pos = mDTVSettings.getTeletextRegion();
+		String region = mDTVSettings.getTeletextRegion(); 
+		int pos = getTTXRegionIndex(region);
 		new SingleChoiseDialog(DTVSettingsMenu.this,ttx_region_str_arry,pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getString(R.string.ttx_region));
@@ -2031,7 +2115,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 			public void onSetPositiveButton(int which){
 				info_cur.setText(ttx_region_str_arry[which]);
-				mDTVSettings.setTeletextRegion(which);
+				mDTVSettings.setTeletextRegion(ttx_region_str_arry[which]);
 			}
 		};
 	}
@@ -2077,6 +2161,65 @@ public class DTVSettingsMenu extends DTVActivity {
 		};						
 	}
 
+	private int getIndexLanguage(String lan){
+		String item_639_2[] = getResources().getStringArray(R.array.lauguage_iso_639_2);
+		for(int i=0;i<item_639_2.length;i++){
+			if(lan.equals(item_639_2[i]))
+				return i;
+		}
+		
+		return 0;
+	}
+
+	private String getLanguage(int index){
+		String item[] = getResources().getStringArray(R.array.settings_lauguage);
+		return item[index];
+	}
+
+	public void showAudioLanguageDialog(TextView v){
+		final TextView info_cur = v;
+		String lan = mDTVSettings.getAudLanguage();
+		final String item[] = getResources().getStringArray(R.array.settings_lauguage);
+		final String item_639_2[] = getResources().getStringArray(R.array.lauguage_iso_639_2);
+		int pos = getIndexLanguage(lan);
+	
+		new SingleChoiseDialog(DTVSettingsMenu.this,item,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.audio_track));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+					mDTVSettings.setAudLanguage(item_639_2[which]);
+					info_cur.setText(item[which]);
+			}
+		};						
+	}
+	
+	public void showSubtitleLanguageDialog(TextView v){
+		final TextView info_cur = v;
+		String lan = mDTVSettings.getSubtitleLanguage();
+		final String item[] = getResources().getStringArray(R.array.settings_lauguage);
+		final String item_639_2[] = getResources().getStringArray(R.array.lauguage_iso_639_2);
+		int pos = getIndexLanguage(lan);
+	
+		new SingleChoiseDialog(DTVSettingsMenu.this,item,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.audio_track));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+					mDTVSettings.setSubtitleLanguage(item_639_2[which]);
+					info_cur.setText(item[which]);
+			}
+		};						
+	}
+	
 	public void showScreenTypeDialog(TextView v){
 		final TextView info_cur = v;
 		int mode = mDTVSettings.getScreenMode();
@@ -2136,6 +2279,29 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 		};
 	}
+
+	private void showProgramManagerPasswordDialog(){
+		new PasswordDialog(DTVSettingsMenu.this){
+			public void onCheckPasswordIsRight(){
+				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
+				DTVStartProgramManager();
+				DTVSettingsMenu.this.finish();
+			}
+			public void onCheckPasswordIsFalse(){
+				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
+				toast = Toast.makeText(
+				DTVSettingsMenu.this, 
+	    		R.string.invalid_password,
+	    		Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+			}
+			public boolean onDealUpDownKey(){
+				return false;
+			}
+		};
+	}
+
 
 	private void showPasswordDialog(){
 		new PasswordDialog(DTVSettingsMenu.this){
@@ -2256,6 +2422,50 @@ public class DTVSettingsMenu extends DTVActivity {
 		};
 
 	}	
+	
+	public void showRcallSetDialog(TextView v){
+		final TextView info_cur = v;
+		int pos = 0;
+		int n = DTVPlayergetRecallNumber();
+		switch(n){
+			case 1:
+				pos=0;
+				break;
+			case 3:
+				pos=1;
+				break;
+			case 5:
+				pos=2;
+				break;	
+		}
+
+		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "1","3","5"},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.timeshift_time_set));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				switch(which){
+					//pos = which;
+					case 0:
+						info_cur.setText("1");
+						DTVPlayerSetRecallNumber(1);
+						break;
+					case 1:
+						info_cur.setText("3");
+						DTVPlayerSetRecallNumber(3);
+						break;
+					case 2:
+						info_cur.setText("5");
+						DTVPlayerSetRecallNumber(5);
+						break;	
+				}
+			}
+		};				
+	}
 
 	private void showSetPasswordDialog(){
 		new PasswordSettingDialog(DTVSettingsMenu.this){

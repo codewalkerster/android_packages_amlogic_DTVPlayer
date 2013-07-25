@@ -32,8 +32,10 @@ import android.os.*;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.SimpleAdapter;  
 import java.lang.reflect.Field;
 
+import com.amlogic.tvsubtitle.TVSubtitleView;
 import com.amlogic.widget.PasswordDialog;
 import com.amlogic.widget.SureDialog;
 import com.amlogic.widget.SingleChoiseDialog;
@@ -46,6 +48,7 @@ public class DTVProgramEdit extends DTVActivity{
  
 	private DTVSettings mDTVSettings=null;
 	private TextView mTextview=null;
+	private TextView mTextInfo=null;
 	ListView ListView_programmanager=null;
 	TextView Text_title=null;
 	private int cur_select_item=0;
@@ -99,6 +102,10 @@ public class DTVProgramEdit extends DTVActivity{
 
 	private void getListGroupById(int id){
 		mTVProgramList=DTVProgramManagerGetProByGroup(id);
+	}
+
+	private void getProgBySatIdAndType(int sat_id,int type){
+		mTVProgramList=TVProgram.selectBySatIDAndType(this,sat_id,type);
 	}
 
 	private void deleteCurrentGroup(){
@@ -190,13 +197,15 @@ public class DTVProgramEdit extends DTVActivity{
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtv_program_edit); 
-		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
-		openVideo(video_view,true);
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
-		super.onConnected();		
+		super.onConnected();
+		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
+		   
+		TVSubtitleView mSubtitleView= (TVSubtitleView) findViewById(R.id.mSubtitleView);
+		openVideo(video_view,mSubtitleView);
 		mDTVSettings = new DTVSettings(this);
 		/*
 		LinearLayout video_position= (LinearLayout) findViewById(R.id.video_position);
@@ -233,7 +242,8 @@ public class DTVProgramEdit extends DTVActivity{
 				break;
 			case TVMessage.TYPE_PROGRAM_BLOCK:
 				Log.d(TAG,"BLOCK");
-				
+				mTextInfo.setVisibility(View.VISIBLE);
+				mTextInfo.setText("Locked");
 				switch(msg.getProgramBlockType()){
 					case TVMessage.BLOCK_BY_LOCK:
 						//showPasswordDialog(null);
@@ -247,7 +257,21 @@ public class DTVProgramEdit extends DTVActivity{
 				}
 				break;
 			case TVMessage.TYPE_PROGRAM_UNBLOCK:
+				mTextInfo.setVisibility(View.INVISIBLE);
 				Log.d(TAG,"UNBLOCK");
+			case TVMessage.TYPE_SIGNAL_RESUME:
+				mTextInfo.setVisibility(View.INVISIBLE);
+				
+				break;
+			case TVMessage.TYPE_SIGNAL_LOST:
+				mTextInfo.setVisibility(View.VISIBLE);
+				mTextInfo.setText("No Signal");
+				break;
+			case TVMessage.TYPE_PROGRAM_SWITCH:
+				mTextInfo.setVisibility(View.INVISIBLE);
+				break;
+			case TVMessage.TYPE_PROGRAM_START:	
+				break;
 			default:
 				break;
 		}
@@ -272,15 +296,44 @@ public class DTVProgramEdit extends DTVActivity{
 						String sat_name = TVSatellite.tvSatelliteSelect(DTVProgramEdit.this,sat_id).getSatelliteName();
 						
 						//info.setText(String.valueOf(fre/1000)+" "+pol+" "+String.valueOf(sym/1000)+"  "+sat_name);
-
-	 
-				        ArrayAdapter<String> adapter = new ArrayAdapter<String>(DTVProgramEdit.this,android.R.layout.simple_expandable_list_item_1);   
+	 					/*
+				        ArrayAdapter<String> adapter = new ArrayAdapter<String>(DTVProgramEdit.this,R.layout.simple_list_item);   
 				        adapter.add("Satellite Name:	"+sat_name);   
 				        adapter.add("Fre:	"+String.valueOf(fre/1000));   
 				        adapter.add("Sym:	"+String.valueOf(sym/1000));      
 						adapter.add("Pol:	"+pol);   
-				        List_detail.setAdapter(adapter);   
-				      	
+				        List_detail.setAdapter(adapter);  
+				        */
+ 
+				        ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();   
+				       
+						HashMap<String, Object> map = new HashMap<String, Object>();   
+						map.put("ItemTitle", "Satellite Name:");   
+						map.put("ItemText", sat_name);   
+						listItem.add(map);   
+
+						HashMap<String, Object> map1 = new HashMap<String, Object>();   
+						map1.put("ItemTitle", "Fre:");   
+						map1.put("ItemText", String.valueOf(fre/1000)+"MHz");   
+						listItem.add(map1); 
+
+						HashMap<String, Object> map2 = new HashMap<String, Object>();   
+						map2.put("ItemTitle", "Sym:");   
+						map2.put("ItemText", String.valueOf(sym/1000)+"KS/s");   
+						listItem.add(map2); 
+
+						HashMap<String, Object> map3 = new HashMap<String, Object>();   
+						map3.put("ItemTitle", "Pol:");   
+						map3.put("ItemText", pol);   
+						listItem.add(map3); 
+								       
+				        SimpleAdapter listItemAdapter = new SimpleAdapter(DTVProgramEdit.this,listItem,
+							R.layout.simple_list_item,
+							new String[] {"ItemTitle", "ItemText"},
+							new int[] {R.id.ItemTitle,R.id.ItemText}   
+				        );   
+
+				        List_detail.setAdapter(listItemAdapter);   
 					}
 				}
 			}
@@ -299,11 +352,21 @@ public class DTVProgramEdit extends DTVActivity{
 	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 				int db_id=mTVProgramList[position].getID();
-				Log.d(TAG,"mOnItemClickListener pos="+position);
+				int type = mTVProgramList[position].getType();
+				if(DTVPlayerGetCurrentProgramType()!=type){
+					if(type==TVProgram.TYPE_RADIO){
+						setProgramType(TVProgram.TYPE_RADIO);
+					}	
+					else{
+						setProgramType(TVProgram.TYPE_TV);
+					}
+				}	
 				
-				int serviceType = mTVProgramList[position].getType();
-				DTVPlayerPlayById(db_id);
-
+				if(DTVPlayerGetCurrentProgramID()!=db_id){
+					Log.d(TAG,"mOnItemClickListener pos="+position);	
+					int serviceType = mTVProgramList[position].getType();
+					DTVPlayerPlayById(db_id);
+				}
 		}
 	};
 
@@ -502,7 +565,7 @@ public class DTVProgramEdit extends DTVActivity{
 				break;		
 			case KeyEvent.KEYCODE_DPAD_RIGHT:
 				DTVListDealLeftAndRightKey(1);
-				break;
+				return true;
 			case KeyEvent.KEYCODE_DPAD_DOWN:
 				if(cur_select_item == ListView_channel.getCount()-1){
 					ListView_channel.setSelection(0); 	
@@ -538,7 +601,63 @@ public class DTVProgramEdit extends DTVActivity{
 						
 				break;
 			case DTVActivity.KEYCODE_RED_BUTTON:
+				new SureDialog(DTVProgramEdit.this,true){
+					public void onSetMessage(View v){
+						((TextView)v).setText(getString(R.string.sure_delete));
+					}
+
+					public void onSetNegativeButton(){
+			  
+					}
+					public void onSetPositiveButton(){
+						deleteProgramFromDB(cur_select_item);
+						myAdapter.notifyDataSetChanged();
+					}
+				};
+				break;
+			case DTVActivity.KEYCODE_GREEN_BUTTON:
+				setMoveMode(true);
+				setMoveItemPos(cur_select_item);
+				myAdapter.notifyDataSetChanged();
+				break;
+			case DTVActivity.KEYCODE_GOTO_BUTTON:
 				showSatellitesList();
+				break;
+			case DTVActivity.KEYCODE_INFO_BUTTON:
+				final CustomDialog mEditCustomDialog = new CustomDialog(DTVProgramEdit.this,R.style.MyDialog);
+				mEditCustomDialog.showDialog(R.layout.edit_dialog, new ICustomDialog(){
+					public boolean onKeyDown(int keyCode, KeyEvent event){
+						if(keyCode == KeyEvent.KEYCODE_BACK)
+							mEditCustomDialog.dismissDialog();
+						return false;
+					}
+					public void showWindowDetail(Window window){
+						TextView title = (TextView)window.findViewById(R.id.title);
+						title.setText(R.string.rename);
+						final EditText mEditText = (EditText)window.findViewById(R.id.edit);
+						mEditText.setText(mTVProgramList[cur_select_item].getName());
+						Button no = (Button)window.findViewById(R.id.no);
+						no.setText(R.string.no);
+						Button yes = (Button)window.findViewById(R.id.yes);
+						yes.setText(R.string.yes);
+						no.setOnClickListener(new OnClickListener(){
+							public void onClick(View v) {
+								mEditCustomDialog.dismissDialog();
+							}
+						});	 
+						yes.setOnClickListener(new OnClickListener(){
+							public void onClick(View v) {	
+								mTVProgramList[cur_select_item].setProgramName(mEditText.getText().toString());
+								myAdapter.notifyDataSetChanged();
+								mEditCustomDialog.dismissDialog();
+							}
+						});	    
+					}
+				});
+				break;
+			case DTVActivity.KEYCODE_FAV_BUTTON:
+				dealFav(cur_select_item);
+				myAdapter.notifyDataSetChanged();
 				break;
 			case KeyEvent.KEYCODE_BACK:
 				if(move_mode)
@@ -613,7 +732,7 @@ public class DTVProgramEdit extends DTVActivity{
 						public void onItemClick(AdapterView<?> parent, View v, int position, long id){			
 							switch(position){
 								case 0: //add
-									final CustomDialog mAddCustomDialog = new CustomDialog(mContext);
+									final CustomDialog mAddCustomDialog = new CustomDialog(mContext,R.style.MyDialog);
 										mAddCustomDialog.showDialog(R.layout.edit_dialog, new ICustomDialog(){
 											public boolean onKeyDown(int keyCode, KeyEvent event){
 												if(keyCode == KeyEvent.KEYCODE_BACK)
@@ -707,13 +826,13 @@ public class DTVProgramEdit extends DTVActivity{
 		}
 		
 		final String[] itemChoices = {
-			getString(R.string.edit),
+			getString(R.string.rename),
 			getString(R.string.delete),
 			(fav==false)?getString(R.string.add_fav):getString(R.string.del_fav),
 			//(skip==false)?getString(R.string.add_skip):getString(R.string.del_skip),
 			(lock==false)?getString(R.string.add_lock):getString(R.string.del_lock),		
 			getString(R.string.move),
-			getString(R.string.add_into_group)
+			//getString(R.string.add_into_group)
 		};
 
 		final CustomDialog mCustomDialog = new CustomDialog(mContext);
@@ -736,7 +855,7 @@ public class DTVProgramEdit extends DTVActivity{
 						public void onItemClick(AdapterView<?> parent, View v, int position, long id){			
 							switch(position){
 								case 0: //edit
-									final CustomDialog mEditCustomDialog = new CustomDialog(mContext);
+									final CustomDialog mEditCustomDialog = new CustomDialog(mContext,R.style.MyDialog);
 									mEditCustomDialog.showDialog(R.layout.edit_dialog, new ICustomDialog(){
 										public boolean onKeyDown(int keyCode, KeyEvent event){
 											if(keyCode == KeyEvent.KEYCODE_BACK)
@@ -745,7 +864,7 @@ public class DTVProgramEdit extends DTVActivity{
 										}
 										public void showWindowDetail(Window window){
 											TextView title = (TextView)window.findViewById(R.id.title);
-											title.setText(R.string.edit);
+											title.setText(R.string.rename);
 											final EditText mEditText = (EditText)window.findViewById(R.id.edit);
 											mEditText.setText(mTVProgramList[pos].getName());
 											Button no = (Button)window.findViewById(R.id.no);
@@ -769,9 +888,20 @@ public class DTVProgramEdit extends DTVActivity{
 									});
 									break;
 								case 1: //delete
-									deleteProgramFromDB(pos);
-									myAdapter.notifyDataSetChanged();
-									mCustomDialog.dismissDialog();
+									new SureDialog(DTVProgramEdit.this,true){
+										public void onSetMessage(View v){
+											((TextView)v).setText(getString(R.string.sure_delete));
+										}
+
+										public void onSetNegativeButton(){
+								  
+										}
+										public void onSetPositiveButton(){
+											deleteProgramFromDB(pos);
+											myAdapter.notifyDataSetChanged();
+											mCustomDialog.dismissDialog();
+										}
+									};
 									break;
 								case 2: //fav
 									dealFav(pos);
@@ -789,10 +919,12 @@ public class DTVProgramEdit extends DTVActivity{
 									myAdapter.notifyDataSetChanged();
 									mCustomDialog.dismissDialog();
 									break;
+								/*
 								case 5: //add into group
 									programGroupOperate(pos);
 									//mCustomDialog.dismissDialog();
 									break;
+								*/	
 								default:
 									break;
 							}
@@ -1041,6 +1173,8 @@ public class DTVProgramEdit extends DTVActivity{
 			getListData(0);
 			Text_title.setText(R.string.tv);
 		}
+
+		mTextInfo = (TextView)findViewById(R.id.text_info);
 		
 		ListView_channel = (ListView) findViewById(R.id.programListView);
 		myAdapter = new IconAdapter(this,null);
@@ -1059,6 +1193,13 @@ public class DTVProgramEdit extends DTVActivity{
 		
 		ListView_channel.setAdapter(myAdapter);
 		setFocusPosition();
+		TVProgram mTVProgram=TVProgram.selectByID(this,db_id);
+		if(mTVProgram!=null){
+			if(mTVProgram.getLockFlag()){
+				mTextInfo.setVisibility(View.VISIBLE);
+				mTextInfo.setText("Locked");
+			}
+		}
 	}
 
 	class channelListButtonClick  implements android.view.View.OnClickListener{	  
@@ -1146,6 +1287,7 @@ public class DTVProgramEdit extends DTVActivity{
 		private int selectItem;
 		
 		class ViewHolder {
+			ImageView move_icon;
 			TextView prono;
 			TextView text;	
 			ImageView icon_scrambled;
@@ -1185,9 +1327,10 @@ public class DTVProgramEdit extends DTVActivity{
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;	
 			if (convertView == null){    
-				convertView = mInflater.inflate(R.layout.epg_channellist_item, null);
+				convertView = mInflater.inflate(R.layout.program_edit_list, null);
 				
 				holder = new ViewHolder();
+				holder.move_icon = (ImageView)convertView.findViewById(R.id.move_icon);
 				holder.prono = (TextView)convertView.findViewById(R.id.prono);
 				holder.text = (TextView) convertView.findViewById(R.id.ItemText);
 				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
@@ -1242,7 +1385,16 @@ public class DTVProgramEdit extends DTVActivity{
 			}	
 			else{
 				holder.icon_scrambled.setBackgroundResource(Color.TRANSPARENT);
-			}			  
+			}	
+
+			if(getMoveItemPos()==position){
+				holder.move_icon.setBackgroundResource(R.drawable.move_flag); 
+			}	
+			else{
+				holder.move_icon.setBackgroundResource(Color.TRANSPARENT);
+			}	
+				
+			
 			return convertView;
 		}
 	}	
@@ -1318,11 +1470,48 @@ public class DTVProgramEdit extends DTVActivity{
 		
 	private AlertDialog.Builder diaBuilder;
 	private void showSatellitesList(){
-		diaBuilder = new AlertDialog.Builder(this);
-		diaBuilder.setTitle(R.string.sat_name);
 
 		getSatellitesListData();
-		ListView LimitListView = new ListView(this);
+
+		final Dialog mDialog = new AlertDialog(this){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						dismiss();
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.show();
+		mDialog.setContentView(R.layout.dvbs_show_sat_dia);
+
+		Window window = mDialog.getWindow();
+		window.setGravity(Gravity.CENTER);
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		//WindowManager m = getWindowManager();
+		//Display d = m.getDefaultDisplay();
+		lp.dimAmount=0.5f;
+		lp.x=600;	
+
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.satellites_info_list));
+		
+		ListView LimitListView =(ListView)window.findViewById(R.id.set_list);
 		
 		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
@@ -1334,49 +1523,14 @@ public class DTVProgramEdit extends DTVActivity{
 				System.out.println("onItemSelected arg2 " + arg2);
 				System.out.println("onItemSelected arg3 " + arg3);
 				Log.d(TAG,"id=="+list_sat[arg2].getSatelliteId());
-				getProgBySatellites(list_sat[arg2].getSatelliteId());
-				//Title.setText(SAT_NAME[arg2]);
+				getProgBySatIdAndType(list_sat[arg2].getSatelliteId(),getCurrentProgramType());
+				Text_title.setText(list_sat[arg2].getSatelliteName());
 				myAdapter.notifyDataSetChanged();
+				mDialog.dismiss();
 			}
         	    
         });
 		LimitListView.setAdapter(new mySatListAdapter(this,null));		
-		diaBuilder.setView(LimitListView);
-		AlertDialog alert = diaBuilder.create();
-		/*
-		alert.setOnKeyListener( new DialogInterface.OnKeyListener(){
-			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-				// TODO Auto-generated method stub
-				switch(keyCode){	
-					case KeyEvent.KEYCODE_DPAD_CENTER:
-		  			case KeyEvent.KEYCODE_ENTER:
-						dialog.cancel();
-						break;
-				}
-				return false;
-			}
-		});
-		*/
-		alert.setOnShowListener(new DialogInterface.OnShowListener(){
-							public void onShow(DialogInterface dialog) {
-								
-								}         
-								}); 	
-
-		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
-							public void onDismiss(DialogInterface dialog) {
-							}         
-							});	
-
-		alert.show();	
-		DisplayMetrics displayMetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-
-		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-		lp.x=800;	
-		lp.y=450;
-		alert.getWindow().setAttributes(lp);
-		//alert.getWindow().setLayout(displayMetrics.widthPixels / 3, -1);	
 	}
 
 

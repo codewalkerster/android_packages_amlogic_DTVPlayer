@@ -46,9 +46,7 @@ public class DTVPlayer extends DTVActivity{
 		setContentView(R.layout.dtvplayer);
 		SystemProperties.set("vplayer.hideStatusBar.enable", "true");
 		bundle = this.getIntent().getExtras();
-		openVideo();
 		
-		DTVPlayerUIInit();
 	}
 
 	public void onConnected(){
@@ -56,7 +54,9 @@ public class DTVPlayer extends DTVActivity{
 		super.onConnected();
 		//set input source on DTV
 		//setInputSource(TVConst.SourceInput.SOURCE_DTV);
-		
+		openVideo();
+
+		DTVPlayerUIInit();
 		mDTVSettings = new DTVSettings(this);
 		if(isHavePragram()==false){ 
 			showNoProgramDia(); 
@@ -147,9 +147,13 @@ public class DTVPlayer extends DTVActivity{
 				if(mAlertDialog!=null)
 					dismissDialog(2);
 				break;
+			case TVMessage.TYPE_PROGRAM_SWITCH:
+				hidePasswordDialog();
+				break;
 			case TVMessage.TYPE_PROGRAM_START:
 				RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
 				DTVPlayerGetCurrentProgramData();
+				DTVPlayerSetRecallList(mTVProgram.getID());
 				ShowControlBar();
 				updateInforbar();
 				break;
@@ -178,7 +182,6 @@ public class DTVPlayer extends DTVActivity{
 						
 						break;
 					case  TVMessage.REC_ERR_WRITE_FILE:	
-						DTVTimeShiftingStop();
 						toast = Toast.makeText(
 							DTVPlayer.this,
 				    		R.string.usbdisk_is_full,
@@ -206,16 +209,12 @@ public class DTVPlayer extends DTVActivity{
 		// TODO Auto-generated method stub
 		Log.d(TAG,">>>>>onRestart<<<<<<");
 		super.onRestart();
-
-	
 	}
 
 	@Override
 	protected void onResume(){
 		Log.d(TAG, ">>>>>>>>onResume<<<<<<<<");
 		super.onResume();
-
-
 	}
 	
 	
@@ -234,6 +233,7 @@ public class DTVPlayer extends DTVActivity{
 	public void onDestroy() {
         Log.d(TAG, "onDestroy");
 		SystemProperties.set("vplayer.hideStatusBar.enable", "false");
+		switchScreenType(0);
         super.onDestroy();
     }
 
@@ -386,6 +386,9 @@ public class DTVPlayer extends DTVActivity{
 				Log.d(TAG,"KEYCODE_ZOOM_OUT");
 				showPvrDurationTimeSetDialog(DTVPlayer.this);
 				return true;
+			case DTVActivity.KEYCODE_RECALL_BUTTON:
+				showRecallListDialog(DTVPlayer.this);
+				break;
 			case KeyEvent.KEYCODE_TV_REPEAT:
 				Log.d(TAG,"KEYCODE_TV_REPEAT");
 				showSubtitleSettingMenu(DTVPlayer.this);
@@ -395,7 +398,8 @@ public class DTVPlayer extends DTVActivity{
 				shortcut_key_deal("FAV");
 				return true;	
 			case KeyEvent.KEYCODE_TAB: //info
-				Log.d(TAG,"KEYCODE_TAB");	
+				Log.d(TAG,"KEYCODE_TAB");
+				shortcut_key_deal("AUDIOTRACK");
 				return true;
 			case KeyEvent.KEYCODE_TV_SWITCH: //tv/radio
 				Log.d(TAG,"KEYCODE_TV_SWITCH");	
@@ -404,9 +408,7 @@ public class DTVPlayer extends DTVActivity{
 				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_DISPAYMODE");
 				shortcut_key_deal("pictrue_mode");
 				return true;
-			case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
-				Log.d(TAG,"KEYCODE_MEDIA_PREVIOUS");	
-				return true;
+			
 			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: //epg
 				Log.d(TAG,"KEYCODE_MEDIA_FAST_FORWARD");
 				return true;
@@ -426,8 +428,8 @@ public class DTVPlayer extends DTVActivity{
 				//if(mainmenu_show_flag)
 					//HideMainMenu();
 				//else
+				//if(DTVPlayerInTeletextStatus==false)
 					ShowMainMenu();
-					//setVideoWindow(new Rect(200,100,500,400));
 				return true;
 		}
 		
@@ -1073,7 +1075,7 @@ public class DTVPlayer extends DTVActivity{
 		
 		mode = DTVGetAudioTrack();
 		if(mode==0){ 						
-			Text_MTS_info.setText(getString(R.string.type_16_9));			
+			Text_MTS_info.setText(getString(R.string.stereo));			
 		}
 		else  if(mode==1){
 			Text_MTS_info.setText(getString(R.string.left));			
@@ -1257,7 +1259,7 @@ public class DTVPlayer extends DTVActivity{
 
 	private int input_major = 0;
 	private int input_minor = 0;
-	private static boolean DTVPlayerInTeletextStatus=false;
+	public static boolean DTVPlayerInTeletextStatus=false;
 	private void DTVDealDigtalKey(int value){
 		int number_key_value=0;
 
@@ -1403,19 +1405,19 @@ public class DTVPlayer extends DTVActivity{
 		}
 		else if(key.equals("AUDIOTRACK")){
 			int mode = DTVGetAudioTrack();
-			if(mode==0){ 						
+			if(mode==1){ 						
 				ShowInformation(getString(R.string.right));			
-				DTVSetAudioTrack(0);
+				DTVSetAudioTrack(2);
 				Text_MTS_info.setText(getString(R.string.right));			
 			}
-			else  if(mode==1){
+			else  if(mode==2){
 				ShowInformation(getString(R.string.stereo));			
-				DTVSetAudioTrack(1);
+				DTVSetAudioTrack(0);
 				Text_MTS_info.setText(getString(R.string.stereo));			
 			}
-			else  if(mode==2){
+			else  if(mode==0){
 				ShowInformation(getString(R.string.left));				
-				DTVSetAudioTrack(2);
+				DTVSetAudioTrack(1);
 				Text_MTS_info.setText(getString(R.string.left));				
 			}	
 		}
@@ -1534,38 +1536,6 @@ public class DTVPlayer extends DTVActivity{
 		}
 	}
 
-	private boolean isHavePragram(){
-		TVProgram[]  mTVProgramList=null;
-		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,0);
-		if(mTVProgramList!=null){
-			if(mTVProgramList.length!=0){
-				Log.d(TAG,"0000000");
-				return true;
-			}	
-			else{
-				mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
-				if(mTVProgramList==null){
-					Log.d(TAG,"11111");
-					return false;
-				}	
-				else if(mTVProgramList.length!=0){
-					Log.d(TAG,"222222");
-					return true;
-				}
-			}
-			Log.d(TAG,"33333");
-		}
-		else{
-			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
-			if(mTVProgramList==null){
-				Log.d(TAG,"444444");
-				return false;
-			}	
-		}
-		Log.d(TAG,"5555555");
-		return false;
-	}
-
 	private String pronumber_string="";
 	private int pronumber=0;
 	public int dtvplayer_service_type = 0;
@@ -1633,6 +1603,7 @@ public class DTVPlayer extends DTVActivity{
 				mAudioLang[i]= mAudio[i].getLang();
 				Log.d(TAG,"Audio Lang:"+mAudioLang[i]);
 			}
+			mAudioIndex = mTVProgram.getCurrentAudio(getStringConfig("tv:audio:language"));
 		}	
 
 		mSubtitleCount=mTVProgram.getSubtitleCount();
@@ -1645,6 +1616,8 @@ public class DTVPlayer extends DTVActivity{
 				mSubtitleLang[i]= mSubtitle[i].getLang();
 				Log.d(TAG,"sub Lang:"+mSubtitleLang[i]);
 			}
+
+			mSubtitleIndex=mTVProgram.getCurrentSubtitle(getStringConfig("tv:subtitle:language"));
 		}	
 		else
 			dtvplayer_b_sub=false;
@@ -1656,6 +1629,8 @@ public class DTVPlayer extends DTVActivity{
 		}	
 		else
 			dtvplyaer_b_txt=false;
+
+		DTVPlayerInTeletextStatus=false;
 
 		dtvplayer_cur_event=null;
 		dtvplayer_event_des=null;
@@ -1718,6 +1693,151 @@ public class DTVPlayer extends DTVActivity{
 				DTVPlayerInTeletextStatus=false;
 			}	
 		}	
+	}
+
+	private class RecallListAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+		private Context cont;
+		private int selectItem;
+		TVProgram[] mTVProgramList;
+		class ViewHolder {
+			TextView prono;
+			TextView text;	
+			ImageView icon_scrambled;
+			ImageView icon_fav;
+			ImageView icon;
+		}
+		
+		public RecallListAdapter(Context context, TVProgram[] list) {
+			super();
+			cont = context;
+			mTVProgramList = list;
+			mInflater=LayoutInflater.from(context);			  
+		}
+
+		public int getCount() {
+			if(mTVProgramList==null)
+				return 0;
+			else
+				return mTVProgramList.length;
+		}
+
+		public Object getItem(int position) {
+			return position;
+		}
+		
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public void setSelectItem(int position){
+			this.selectItem = position;
+		}
+        
+        public int getSelectItem(){
+			return this.selectItem;
+        }
+		
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder;	
+			if (convertView == null){    
+				convertView = mInflater.inflate(R.layout.dtvchannellist_item, null);
+				
+				holder = new ViewHolder();
+				holder.prono = (TextView)convertView.findViewById(R.id.prono);
+				holder.text = (TextView) convertView.findViewById(R.id.ItemText);
+				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+				holder.icon_scrambled = (ImageView)convertView.findViewById(R.id.icon_scrambled);
+				holder.icon_fav = (ImageView)convertView.findViewById(R.id.icon_fav);
+				convertView.setTag(holder);
+			}
+			else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+		
+			// Bind the data efficiently with the holder.
+
+			if(mDTVSettings.getScanRegion().contains("ATSC")==false){
+				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber()));
+			}
+			else{
+				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber())+"-"+Integer.toString(mTVProgramList[position].getNumber().getMinor()));
+			}
+			
+			holder.text.setText(mTVProgramList[position].getName());
+			//convertView.setBackgroundColor(Color.TRANSPARENT); 
+			holder.text.setTextColor(Color.WHITE);
+				
+			if(mTVProgramList[position].getLockFlag()){
+				holder.icon.setBackgroundResource(R.drawable.dtvplayer_icon_lock); 
+			}	
+			else{
+				holder.icon.setBackgroundResource(Color.TRANSPARENT);
+			}
+
+			if(mTVProgramList[position].getFavoriteFlag()){
+				holder.icon_fav.setBackgroundResource(R.drawable.dtvplayer_icon_fav); 
+			}	
+			else{
+				holder.icon_fav.setBackgroundResource(Color.TRANSPARENT);
+			}	
+
+			if(mTVProgramList[position].getScrambledFlag()){
+				holder.icon_scrambled.setBackgroundResource(R.drawable.dtvplayer_icon_scrambled); 
+			}	
+			else{
+				holder.icon_scrambled.setBackgroundResource(Color.TRANSPARENT);
+			}			  
+			return convertView;
+		}
+	}
+
+	private TVProgram[] recall_tvprogram =null;
+	private void showRecallListDialog(Context context){
+		recall_tvprogram = DTVPlayerGetRecallList();
+		if(recall_tvprogram==null)
+			return;
+		
+		final Context mContext = context;
+
+		final CustomDialog mCustomDialog = new CustomDialog(mContext);
+		if(recall_tvprogram.length>=1&&DTVPlayergetRecallNumber()>1){
+			mCustomDialog.showDialog(R.layout.dtv_recall_list, new ICustomDialog(){
+					public boolean onKeyDown(int keyCode, KeyEvent event){
+						if(keyCode == KeyEvent.KEYCODE_BACK)
+							mCustomDialog.dismissDialog();
+						return false;
+					}
+					public void showWindowDetail(Window window){
+						TextView Text_title = (TextView)window.findViewById(R.id.Text_title);
+						Text_title.setTextColor(Color.YELLOW);
+						Text_title.setText(getString(R.string.recall_list));
+							
+						ListView ListView_channel = (ListView) window.findViewById(R.id.ListView_channel);
+						RecallListAdapter myAdapter = new RecallListAdapter(DTVPlayer.this,recall_tvprogram);
+
+						ListView_channel.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+								// TODO Auto-generated method stub
+								int db_id=recall_tvprogram[position].getID();	
+								DTVPlayerPlayById(db_id);
+								mCustomDialog.dismissDialog();
+							}
+				        	    
+				        });
+					
+						ListView_channel.setAdapter(myAdapter);
+
+					}
+				}
+			);
+		}	
+		else if(recall_tvprogram.length==1){
+			DTVPlayerPlayById(recall_tvprogram[0].getID());
+		}
 	}
 
 	private static Button BtnSubtitleLanguage=null;
@@ -1865,6 +1985,7 @@ public class DTVPlayer extends DTVActivity{
 					
 				}
 				public void onSetPositiveButton(int which){
+					mAudioIndex=which; 
 					((TVActivity)mContext).switchAudio(which);
 				}
 			};	
@@ -1929,7 +2050,7 @@ public class DTVPlayer extends DTVActivity{
 						public void onClick(View v) {	
 							//DTVPlayerStartRecording();
 							int dration=Integer.parseInt(mEditText.getText().toString());  
-							DTVPlayerStartRecordingWithTime(getUTCTime(),dration*60*1000);
+							DTVPlayerStartRecording(dration*60*1000);
 							showPvrIcon();
 							mCustomDialog.dismissDialog();
 						}

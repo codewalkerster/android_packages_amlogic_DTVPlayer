@@ -23,6 +23,8 @@ import com.amlogic.tvutil.TVSatelliteParams;
 import com.amlogic.widget.SureDialog;
 import com.amlogic.widget.SingleChoiseDialog;
 import com.amlogic.widget.MutipleChoiseDialog;
+import com.amlogic.widget.CustomDialog;
+import com.amlogic.widget.CustomDialog.ICustomDialog;
 
 import android.text.*;
 import android.text.method.*;
@@ -37,6 +39,7 @@ import android.graphics.*;
 import android.graphics.Color;
 import android.content.*;
 import android.util.*;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -144,58 +147,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		tsInfoTitleLayout = (LinearLayout)findViewById(R.id.ts_info_title_layout);
 		satInfoTitleLayout = (LinearLayout)findViewById(R.id.sat_info_title_layout);
 
-		sat_list.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-		public void onItemSelected(AdapterView<?> parent, View view,
-		int position, long id) {
-			Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
-
-			list_cur_pos = position;
-			if(ListStatus==0){
-				gobal_ts_cur_pos = 0;
-				gobal_sat_cur_pos = list_cur_pos;
-				TextView sat_name = (TextView) findViewById(R.id.sat_name);
-				sat_name.setTextColor(Color.YELLOW);
-				sat_name.setText(ScanSatAndtsInfoList.get(list_cur_pos).getName());
-				if(myLnbSetAdapter!=null)
-					myLnbSetAdapter.notifyDataSetChanged();
-			}	
-		}
-
-		public void onNothingSelected(AdapterView<?> parent) {
-		}
-		});
-
-		sat_list.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				// TODO Auto-generated method stub
-				System.out.println("onItemSelected arg0 " + arg0);
-				ImageView image_cur = (ImageView)arg1.findViewById(R.id.icon);
-				if(ListStatus ==0){					
-					if(((DbSat)ScanSatAndtsInfoList.get(arg2)).getSelectedFlag()==false){
-						((DbSat)ScanSatAndtsInfoList.get(arg2)).setSelectedFlag(true);
-						image_cur.setBackgroundResource(R.drawable.selected);
-					}	
-					else{
-						((DbSat)ScanSatAndtsInfoList.get(arg2)).setSelectedFlag(false);
-						image_cur.setBackgroundResource(0);
-					}
-				}
-				else{
-
-					if(((DbTransponder)tsInfoList.get(arg2)).getSelectedFlag()==false){
-						((DbTransponder)tsInfoList.get(arg2)).setSelectedFlag(true);
-						image_cur.setBackgroundResource(R.drawable.selected);
-					}	
-					else{
-						((DbTransponder)tsInfoList.get(arg2)).setSelectedFlag(false);
-						image_cur.setBackgroundResource(0);
-					}
-				}
-			}
-	        });
-
 		sat_lnb_list = (ListView)findViewById(R.id.sat_lnb_list);	
 		sat_lnb_list.setOnItemClickListener(new AdapterView.OnItemClickListener()
 	        {
@@ -256,7 +207,59 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 		/*get data*/
 		ScanSatAndtsInfoList = getScanListSatAndTsDataFromBuildDB();
- 		/*
+
+		sat_list.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+		public void onItemSelected(AdapterView<?> parent, View view,
+		int position, long id) {
+			Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
+
+			list_cur_pos = position;
+			if(ListStatus==0){
+				gobal_ts_cur_pos = 0;
+				gobal_sat_cur_pos = list_cur_pos;
+				TextView sat_name = (TextView) findViewById(R.id.sat_name);
+				sat_name.setTextColor(Color.YELLOW);
+				sat_name.setText(ScanSatAndtsInfoList.get(list_cur_pos).getName());
+				if(myLnbSetAdapter!=null)
+					myLnbSetAdapter.notifyDataSetChanged();
+			}	
+		}
+
+		public void onNothingSelected(AdapterView<?> parent) {
+		}
+		});
+
+		sat_list.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				ImageView image_cur = (ImageView)arg1.findViewById(R.id.icon);
+				if(ListStatus ==0){					
+					if(((DbSat)ScanSatAndtsInfoList.get(arg2)).getSelectedFlag()==false){
+						((DbSat)ScanSatAndtsInfoList.get(arg2)).setSelectedFlag(true);
+						image_cur.setBackgroundResource(R.drawable.selected);
+					}	
+					else{
+						((DbSat)ScanSatAndtsInfoList.get(arg2)).setSelectedFlag(false);
+						image_cur.setBackgroundResource(0);
+					}
+				}
+				else{
+
+					if(((DbTransponder)tsInfoList.get(arg2)).getSelectedFlag()==false){
+						((DbTransponder)tsInfoList.get(arg2)).setSelectedFlag(true);
+						image_cur.setBackgroundResource(R.drawable.selected);
+					}	
+					else{
+						((DbTransponder)tsInfoList.get(arg2)).setSelectedFlag(false);
+						image_cur.setBackgroundResource(0);
+					}
+				}
+			}
+	        });
+		/*
 		new Thread(){
 	            @Override
 	            public void run(){
@@ -385,6 +388,113 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	}
 
 	private void createMenuChoiceDialog(){
+		final String[] itemChoices = {getString(R.string.dish_setup_conf_button_des1_info),getString(R.string.dish_setup_conf_button_des2_info),getString(R.string.dish_setup_conf_button_des3_info),getString(R.string.dish_setup_conf_button_des4_info),getString(R.string.dish_setup_conf_button_des6_info),getString(R.string.dish_setup_conf_button_des8_info)};
+		final String[] itemChoices1 = {getString(R.string.dish_setup_conf_button_des1_info),getString(R.string.dish_setup_conf_button_des2_info),getString(R.string.dish_setup_conf_button_des3_info),getString(R.string.dish_setup_conf_button_des4_info),getString(R.string.dish_setup_conf_button_des6_info),getString(R.string.dish_setup_conf_button_des8_info),getString(R.string.dish_setup_conf_button_des7_info)};
+	
+
+		final CustomDialog mCustomDialog = new CustomDialog(mContext);
+		mCustomDialog.showDialog(R.layout.list_menu, new ICustomDialog(){
+				public boolean onKeyDown(int keyCode, KeyEvent event){
+					if(keyCode == KeyEvent.KEYCODE_BACK)
+						mCustomDialog.dismissDialog();
+					return false;
+				}
+				public void showWindowDetail(Window window){
+					TextView title = (TextView)window.findViewById(R.id.title);
+					title.setTextColor(Color.YELLOW);
+					title.setText("Operations");
+					
+					ListView list_item = (ListView)window.findViewById(R.id.list_item);
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.menu_list_item,ListStatus ==0?itemChoices:itemChoices1);
+					//ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.dtvsettings_list_item,itemChoices);
+					list_item.setAdapter(adapter);  
+					list_item.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+						public void onItemClick(AdapterView<?> parent, View v, int position, long id){			
+							switch (position) {
+								case 0:
+									if(ListStatus ==0&&ScanSatAndtsInfoList.size()>0){
+										ListStatus =1;
+										gobal_sat_cur_pos = list_cur_pos;
+										getTsData(gobal_sat_cur_pos);
+										myTsAdapter = new TsAdapter(DTVScanDvbsConfig.this,tsInfoList);
+										sat_list.setAdapter(myTsAdapter);
+										myTsAdapter.notifyDataSetChanged();
+										sat_list.requestFocus();
+										//sat_list.setSelection(gobal_ts_cur_pos);
+
+										satInfoTitleLayout.setVisibility(View.INVISIBLE);
+										satInfoTitleLayout.setVisibility(View.GONE);
+										tsInfoTitleLayout.setVisibility(View.VISIBLE);
+										show_bottom_set_limit();
+										
+										show_no_satellites_info();
+									}
+									else{
+										ListStatus=0;
+										gobal_ts_cur_pos = list_cur_pos;
+										sat_list.setAdapter(mySatAdapter);
+										mySatAdapter.notifyDataSetChanged();
+										sat_list.requestFocus();
+										sat_list.setSelection(gobal_sat_cur_pos);
+										
+										tsInfoTitleLayout.setVisibility(View.INVISIBLE);
+										tsInfoTitleLayout.setVisibility(View.GONE);
+										satInfoTitleLayout.setVisibility(View.VISIBLE);
+										hide_bottom_set_limit();
+										show_no_satellites_info();
+									}	
+									break;
+								case 1:
+									if(ListStatus ==0){
+										showSatAddDia();
+									}
+									else{
+										showTsAddDia();
+									}
+									break;
+								case 2:
+									Log.d(TAG,"KEY:KEYCODE_MEDIA_REPEAT");
+									if(ListStatus ==0){
+										showSatEditDia();
+									}
+									else{
+										showTsEditDia();
+									}
+									break;
+								case 3: 
+									Log.d(TAG,"KEY:KEYCODE_MEDIA_INFO");
+									showDeleteDia();
+									break;
+								case 4:
+									Log.d(TAG,"KEY:KEYCODE_MEDIA_RATIO");
+									if(ScanSatAndtsInfoList.size()>0)
+										showScanConfigDia();
+									break;
+								case 5:
+									Log.d(TAG,"KEY:KEYCODE_MEDIA_AUDIO");
+									showSetLocationDia();
+									
+									break;	
+								case 6:
+									Log.d(TAG,"KEY:KEYCODE_MEDIA_SUB_T");
+									if(ListStatus==1)
+										showSetLimitAndPositionDia();
+									break;
+								default:
+									break;
+								}
+								mCustomDialog.dismissDialog();
+							}
+						}	
+					);
+				}
+			}	
+		);		
+	}
+
+
+	/*
+	private void createMenuChoiceDialog(){
 	
 		String[] itemChoices = {getString(R.string.dish_setup_conf_button_des1_info),getString(R.string.dish_setup_conf_button_des2_info),getString(R.string.dish_setup_conf_button_des3_info),getString(R.string.dish_setup_conf_button_des4_info),getString(R.string.dish_setup_conf_button_des6_info),getString(R.string.dish_setup_conf_button_des8_info)};
 		String[] itemChoices1 = {getString(R.string.dish_setup_conf_button_des1_info),getString(R.string.dish_setup_conf_button_des2_info),getString(R.string.dish_setup_conf_button_des3_info),getString(R.string.dish_setup_conf_button_des4_info),getString(R.string.dish_setup_conf_button_des6_info),getString(R.string.dish_setup_conf_button_des8_info),getString(R.string.dish_setup_conf_button_des7_info)};
@@ -478,7 +588,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			mMenuChoiceDialog.getWindow().setAttributes(lp);
 			mMenuChoiceDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
-
+	*/
+	
 	protected void onStop(){
 		Log.d(TAG,"onStop");	
 		super.onStop();
@@ -516,6 +627,11 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		if(ListStatus==0&&ScanSatAndtsInfoList.size()==0){
 			 no_data_info.setText(getString(R.string.no_scan_list));
 			 no_data_info.setVisibility(View.VISIBLE);
+			 
+			 if(myLnbSetAdapter!=null)
+					myLnbSetAdapter.notifyDataSetChanged();
+			 TextView sat_name = (TextView) findViewById(R.id.sat_name);
+			 sat_name.setText("");
 		}
 		else if(ListStatus==1&&(ScanSatAndtsInfoList.get(gobal_sat_cur_pos).transponder==null||(ScanSatAndtsInfoList.get(gobal_sat_cur_pos).transponder!=null&&ScanSatAndtsInfoList.get(gobal_sat_cur_pos).transponder.size()==0))){
 			no_data_info.setText("No TP information,please add");
@@ -1669,6 +1785,42 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	}
 	*/
 
+
+	public void showLnbLOFDia(Button v){
+		final Button lof_mode = v;		
+		int pos = 0;
+
+		final String[] ItemData = new String[]{"5150","5750","9750","10050","11300","9750-10600","9750-10600","9750-10750"};
+		for(int i=0;i<ItemData.length;i++){
+			if(lof_mode.getText().equals(ItemData[i]))
+				pos=i;
+		}
+		
+		//LnbSettingItemSelected=pos;
+		
+		SingleChoiseDialog mSingleChoiseDialog = new SingleChoiseDialog(DTVScanDvbsConfig.this,ItemData,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.dish_setup_diseqc));
+			}
+			
+			public void onSetNegativeButton(){
+			}
+			public void onSetPositiveButton(int which){
+				// TODO Auto-generated method stub
+				LnbSettingItemSelected = which;
+				lof_mode.setText(ItemData[LnbSettingItemSelected]);
+				
+			}
+		};	
+
+		mSingleChoiseDialog.mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+				public void onDismiss(DialogInterface dialog) {
+				}         
+		});	
+		
+	}
+
+
 	private void showSatLnbTypeDia(){
 		if(ScanSatAndtsInfoList==null)
 			return;
@@ -1746,32 +1898,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			@Override
 			public void onClick(View arg0) {
 			// TODO Auto-generated method stub
-
-				if(lof_mode.getText().equals("5150")){
-					lof_mode.setText("5750");
-				}
-				else if(lof_mode.getText().equals("5750")){
-					lof_mode.setText("9750");
-				}
-				else if(lof_mode.getText().equals("9750")){
-					lof_mode.setText("10050");
-				}
-				else if(lof_mode.getText().equals("10050")){
-					lof_mode.setText("11300");
-				}
-				else if(lof_mode.getText().equals("11300")){
-					//lof_mode.setText("5150-5750");
-				//}
-				//else if(lof_mode.getText().equals("5150-5750")){
-					lof_mode.setText("9750-10600");
-				}
-				else if(lof_mode.getText().equals("9750-10600")){
-					lof_mode.setText("9750-10750");
-				}
-				else if(lof_mode.getText().equals("9750-10750")){
-					lof_mode.setText("5150");
-				}
-				
+				showLnbLOFDia(lof_mode);
 			}
 		});
 
@@ -1806,10 +1933,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				text_info.setText("0"+" MHz");
 			}	
 			else if(SatInfo.getLoLOF()!=SatInfo.getHiLOF()){
-				text_info.setText(String.valueOf(SatInfo.getLoLOF())+"-"+String.valueOf(SatInfo.getHiLOF())+" MHz");
+				text_info.setText(String.valueOf(SatInfo.getLoLOF()/1000)+"-"+String.valueOf(SatInfo.getHiLOF()/1000)+" MHz");
 			}
 			else if(SatInfo.getLoLOF()==SatInfo.getHiLOF()){
-				text_info.setText(String.valueOf(SatInfo.getLoLOF())+" MHz");
+				text_info.setText(String.valueOf(SatInfo.getLoLOF()/1000)+" MHz");
 			}
 			//lof_mode.setText("5150");
 
@@ -4016,7 +4143,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		public void handleMessage(Message msg) {  
 			   switch (msg.what) { 
 					case 50: 
-			   		 	//updataSignalInfo2((DVBFrontendSignalInfo)msg.obj);
+			   		 	updataSignalInfo((DVBFrontendSignalInfo)msg.obj);
 					break;
 				}  
 		}
@@ -4107,13 +4234,19 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 							break;	
 						case 50:
 							{		
-								/*
+								
 								DVBFrontendSignalInfo info = new DVBFrontendSignalInfo();
 
-								if(mLockDvb!=null)
-									mLockDvb.getFrontendSignalInfo(info);
+								info.ber = getFrontendBER();
+								info.snr = getFrontendSNR();
+								info.strength = getFrontendSignalStrength();
+								if(getFrontendStatus()==32)
+								
+								 info.lock_status = false;
+								else
+									info.lock_status=true;
 
-								Log.d(TAG, "report : ber:" + info.getBER() + " snr:" + info.getSNR() + " strength:" + info.getStrength()+"lock status:"+info.getLockStat());
+								Log.d(TAG, "report : ber:" + info.ber + " snr:" + info.snr + " strength:" + info.strength+"lock status:"+info.lock_status);
 
 								Message message=new Message();
 								message.what=50;
@@ -4121,7 +4254,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			
 								EventHandler ha =new EventHandler(Looper.getMainLooper());  
 								ha.sendMessage(message);
-								*/
 							}
 							break;
 						case LNB_CONTROL_CMD_13V:
@@ -4169,55 +4301,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		
 
 	}
-
-
-	/*
-	private void updataSignalInfo2(DVBFrontendSignalInfo info ){
-		
-		int ber = info.getBER();
-
-		int snr =  info.getSNR();
-		int strength =  info.getStrength();
-		int lock_status = info.getLockStat();
-
-
-		final CheckBox checkboxStatus = (CheckBox)dvbs_set_limit_list.findViewById(R.id.checkStatus);
-		
-		final ProgressBar ProgressBarSNR = (ProgressBar)dvbs_set_limit_list.findViewById(R.id.ProgressBarSNR);
-    		ProgressBarSNR.setMax(100);
-    		
-		final ProgressBar ProgressBarAGC = (ProgressBar)dvbs_set_limit_list.findViewById(R.id.ProgressBarAGC);
-    		ProgressBarAGC.setMax(100);
-
-		//final ProgressBar ProgressBarBER = (ProgressBar)dvbs_set_limit_list.findViewById(R.id.ProgressBarBER);
-    		//ProgressBarBER.setMax(100);
-
-		final TextView snr_value = (TextView) dvbs_set_limit_list.findViewById(R.id.snr_value);
-		final TextView agc_value = (TextView) dvbs_set_limit_list.findViewById(R.id.agc_value);
-		//final TextView ber_value = (TextView) dvbs_set_limit_list.findViewById(R.id.ber_value);	
-
-		if(strength>100)
-			strength=0;
-		
-		ProgressBarSNR.setProgress(strength);
-		ProgressBarAGC.setProgress(snr);
-		//ProgressBarBER.setProgress(info.getBER());
-
-		snr_value.setText(Integer.toString((strength>100)?100:strength));
-		agc_value.setText(Integer.toString((snr>100)?100:snr));
-		//ber_value.setText(Integer.toString((info.getBER()>100)?100:info.getBER()));
-
-		//if(info.getLockStat()==32)
-		
-		if(lock_status==32)
-			checkboxStatus.setChecked(false);
-		else
-			checkboxStatus.setChecked(true);
-
-		diaBuilder.setView(dvbs_set_limit_list); 
-		
-	}
-	*/
 
 	private AlertDialog.Builder diaBuilder;
 	private AlertDialog alert; 
@@ -4911,7 +4994,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					//dvb_sat_para.sat.lnb_num = sat_temp.getLnbNo();//lnb No.
 					dvb_sat_para.sat.sat_name = sat_temp.getName(); //satellite name
 					
-					dvb_sat_para.sat.tv_satparams.sat_longitude = (double)(sat_temp.getPosition());//satellite longitude
+					dvb_sat_para.sat.tv_satparams.sat_longitude = (double)(sat_temp.getSatLongitude());//satellite longitude
 					dvb_sat_para.sat.tv_satparams.lnb_lof_lo = sat_temp.getLoLOF(); //lof_low
 					dvb_sat_para.sat.tv_satparams.lnb_lof_hi = sat_temp.getHiLOF(); //lof_hi
 					dvb_sat_para.sat.tv_satparams.lnb_lof_threadhold = sat_temp.getLofThreshold(); //threshold
@@ -4987,7 +5070,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						//dvb_sat_para.sat.lnb_num = sat_temp.getLnbNo();//lnb No.
 						dvb_sat_para.sat.sat_name = sat_temp.getName(); //satellite name
 						
-						dvb_sat_para.sat.tv_satparams.sat_longitude = (double)(sat_temp.getPosition());//satellite longitude
+						dvb_sat_para.sat.tv_satparams.sat_longitude = (double)(sat_temp.getSatLongitude());//satellite longitude
 						dvb_sat_para.sat.tv_satparams.lnb_lof_lo = sat_temp.getLoLOF(); //lof_low
 						dvb_sat_para.sat.tv_satparams.lnb_lof_hi = sat_temp.getHiLOF(); //lof_hi
 						dvb_sat_para.sat.tv_satparams.lnb_lof_threadhold = sat_temp.getLofThreshold(); //threshold
@@ -5055,7 +5138,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			dvb_sat_para.sat.tv_satparams = new TVSatelliteParams();
 			//dvb_sat_para.sat.lnb_num = sat_temp.getLnbNo();//lnb No.
 			dvb_sat_para.sat.sat_name = sat_node.getName(); //satellite name
-			dvb_sat_para.sat.tv_satparams.sat_longitude =(double)(sat_node.getPosition());//satellite longitude
+			dvb_sat_para.sat.tv_satparams.sat_longitude =(double)(sat_node.getSatLongitude());//satellite longitude
 			dvb_sat_para.sat.tv_satparams.lnb_lof_lo = sat_node.getLoLOF(); //lof_low
 			dvb_sat_para.sat.tv_satparams.lnb_lof_hi = sat_node.getHiLOF(); //lof_hi
 			dvb_sat_para.sat.tv_satparams.lnb_lof_threadhold = sat_node.getLofThreshold(); //threshold
@@ -5592,8 +5675,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		
 		ContentValues values=null;
 
-		
-		mDialog = new AlertDialog(mContext){
+		mDialog = new Dialog(mContext,R.style.MyDialog){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
@@ -5628,6 +5710,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		lp.dimAmount=0.5f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		//mDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+		
 
 		Button no = (Button)window.findViewById(R.id.no);
 		no.setText(R.string.no);
@@ -5640,6 +5724,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	    DbSat SatInfo  = getSatInfoByPostion(gobal_sat_cur_pos);
 		
 		final EditText edittext_satname = (EditText) window.findViewById(R.id.edittext_sat_name);
+
+		final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        //imm.showSoftInput(edittext_satname,0);
 		final Button button_sat_direction = (Button)window.findViewById(R.id.edit_direction); 
 		final EditText edittext_angle0 = (EditText) window.findViewById(R.id.angle0); 
 		edittext_angle0.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(3)});
@@ -5668,6 +5755,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				}
 				else{
 					button_sat_direction.setText("East");
+					//imm.showSoftInput(edittext_satname, 0);
+					//imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);  
 				}
 			}
 		});
@@ -5852,7 +5941,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	private void showSatAddDia(){
 		ContentValues values=null;
 
-		mDialog = new AlertDialog(mContext){
+		mDialog = new Dialog(mContext,R.style.MyDialog){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
@@ -6275,45 +6364,61 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	private Runnable timer_ts_signal_info_runnable = new Runnable() {
 
 		public void run() {
-		    updataSignalInfo();
+
 			timer_ts_signal_info_handler.postDelayed(timer_ts_signal_info_runnable,500);  
 		}   
 	};
 
+	class DVBFrontendSignalInfo{
+		int ber = 0;
+		int snr = 0;
+		int strength = 0;
+		boolean lock_status = false;
+	}
 
-	private void updataSignalInfo()
-	{
-		//DVBFrontendSignalInfo info = new DVBFrontendSignalInfo();
-		//DVBPlayer.getConnect().getFrontendSignalInfo(info);
-
-		//Log.d("M"+TAG, "report : ber:" + info.getBER() + " snr:" + info.getSNR() + " strength:" + info.getStrength());
+	private void updataSignalInfo(DVBFrontendSignalInfo info ){
 		
-		final ProgressBar ProgressBarSNR = (ProgressBar)dvbs_ts_edit.findViewById(R.id.ProgressBarSNR);
-    		ProgressBarSNR.setMax(100);
-    		
-		final ProgressBar ProgressBarAGC = (ProgressBar)dvbs_ts_edit.findViewById(R.id.ProgressBarAGC);
-    		ProgressBarAGC.setMax(100);
+		int ber = info.ber;
+		int snr =  info.snr;
+		int strength =  info.strength;
+		boolean lock_status = info.lock_status;
 
-		final ProgressBar ProgressBarBER = (ProgressBar)dvbs_ts_edit.findViewById(R.id.ProgressBarBER);
-    		ProgressBarBER.setMax(100);
+		if(mDialog!=null){
+			Window window = mDialog.getWindow();
+			final CheckBox checkboxStatus = (CheckBox)window.findViewById(R.id.checkStatus);
+			
+			final ProgressBar ProgressBarSNR = (ProgressBar)window.findViewById(R.id.ProgressBarSNR);
+	    		ProgressBarSNR.setMax(100);
+	    		
+			final ProgressBar ProgressBarAGC = (ProgressBar)window.findViewById(R.id.ProgressBarAGC);
+	    		ProgressBarAGC.setMax(100);
 
-		final TextView snr_value = (TextView) dvbs_ts_edit.findViewById(R.id.snr_value);
-		final TextView agc_value = (TextView) dvbs_ts_edit.findViewById(R.id.agc_value);
-		final TextView ber_value = (TextView) dvbs_ts_edit.findViewById(R.id.ber_value);	
+			//final ProgressBar ProgressBarBER = (ProgressBar)dvbs_set_limit_list.findViewById(R.id.ProgressBarBER);
+	    		//ProgressBarBER.setMax(100);
 
-		/*
-		ProgressBarSNR.setProgress(info.getStrength());
-		ProgressBarAGC.setProgress(info.getSNR());
-		ProgressBarBER.setProgress(info.getBER());
+			final TextView snr_value = (TextView) window.findViewById(R.id.snr_value);
+			final TextView agc_value = (TextView) window.findViewById(R.id.agc_value);
+			//final TextView ber_value = (TextView) window.findViewById(R.id.ber_value);	
 
-		snr_value.setText(Integer.toString(info.getStrength()));
-		agc_value.setText(Integer.toString(info.getSNR()));
-		ber_value.setText(Integer.toString(info.getBER()));
-		*/
+			if(strength>100)
+				strength=0;
+			
+			ProgressBarSNR.setProgress(strength);
+			ProgressBarAGC.setProgress(snr);
+			//ProgressBarBER.setProgress(info.getBER());
 
-		tsEditBuilder.setView(dvbs_ts_edit); 
+			snr_value.setText(Integer.toString((strength>100)?100:strength));
+			agc_value.setText(Integer.toString((snr>100)?100:snr));
+			//ber_value.setText(Integer.toString((info.getBER()>100)?100:info.getBER()));
+
+			//if(info.getLockStat()==32)
+			
+			if(lock_status==false)
+				checkboxStatus.setChecked(false);
+			else
+				checkboxStatus.setChecked(true);
+		}
 		
-		ts_signal_info_alert.show();
 	}
 
 
@@ -6345,15 +6450,12 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		final ProgressBar ProgressBarAGC = (ProgressBar)dvbs_ts_edit.findViewById(R.id.ProgressBarAGC);
     		ProgressBarAGC.setMax(100);
 
-		final ProgressBar ProgressBarBER = (ProgressBar)dvbs_ts_edit.findViewById(R.id.ProgressBarBER);
-    		ProgressBarBER.setMax(100);
+		//final ProgressBar ProgressBarBER = (ProgressBar)dvbs_ts_edit.findViewById(R.id.ProgressBarBER);
+    		//ProgressBarBER.setMax(100);
 
 		final TextView snr_value = (TextView) dvbs_ts_edit.findViewById(R.id.snr_value);
 		final TextView agc_value = (TextView) dvbs_ts_edit.findViewById(R.id.agc_value);
-		final TextView ber_value = (TextView) dvbs_ts_edit.findViewById(R.id.ber_value);	
-
-		
-			
+		//final TextView ber_value = (TextView) dvbs_ts_edit.findViewById(R.id.ber_value);	
 
 		if(TsInfo!=null){
 			ts_number.setText(String.valueOf(list_cur_pos+1));
@@ -6367,7 +6469,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 			snr_value.setText("0%");
 			agc_value.setText("0%");
-			ber_value.setText("0%");
+			//ber_value.setText("0%");
 			
 		}
 				
@@ -6554,7 +6656,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
 	*/
-
+	
 	private void showTsAddDia(){
 		ContentValues values=null;
 
@@ -7044,13 +7146,11 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 	class TsAdapter extends BaseAdapter{
     		private LayoutInflater mInflater;
-    		
-    		
+  
     		private Context cont;
     		private List<DbTransponder> listItems=null;
     		private int selectItem;
-    		
-
+			
     		class ViewHolder {
 				ImageView icon;
 				TextView     ts_no;
@@ -7836,7 +7936,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				break;
 				*/
 		  }
-
+		  holder.icon1.setVisibility(View.INVISIBLE);
 		  holder.icon.setVisibility(View.INVISIBLE);
 		  
 		  return convertView;

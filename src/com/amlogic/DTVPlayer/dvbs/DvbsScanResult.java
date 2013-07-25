@@ -78,6 +78,7 @@ import com.amlogic.tvutil.DTVPlaybackParams;
 import com.amlogic.tvutil.DTVRecordParams;
 import com.amlogic.tvutil.TVSatellite;
 import com.amlogic.tvutil.TVSatelliteParams;
+import com.amlogic.widget.SureDialog;
 
 public class DvbsScanResult extends DTVActivity{
 
@@ -254,26 +255,30 @@ public class DvbsScanResult extends DTVActivity{
 		
 	}
 
-	private int service_get_dbId(String name, int serviceid, int serviceType)
-	   {
-	   	int dbId = -1;
+	private int service_get_dbId(String name, int serviceid, int serviceType){
+		int dbId = -1;
 
-		/*
-		Cursor cur = this.getContentResolver().query(DVBClient.TABLE_SERVICE ,
-						new String[]{"db_id"}, 
-						"name like ?  and service_id="+serviceid+" and service_type="+serviceType, new String[]{name}, null);
-			
-	      if(cur != null)
-	      {	  
-			 if( cur.moveToFirst() ) {
-				dbId=cur.getInt(0) ;
+	TVProgram mTVProgram = TVProgram.selectByNameAndServiceId(DvbsScanResult.this,name,serviceid,serviceType);
+		
+	/*
+	Cursor cur = this.getContentResolver().query(DVBClient.TABLE_SERVICE ,
+					new String[]{"db_id"}, 
+					"name like ?  and service_id="+serviceid+" and service_type="+serviceType, new String[]{name}, null);
+		
+	  if(cur != null)
+	  {	  
+		 if( cur.moveToFirst() ) {
+			dbId=cur.getInt(0) ;
 
-			}
-			cur.close();
-	      	}
-		*/
-		return dbId;
-	   }
+		}
+		cur.close();
+	  	}
+	*/
+	if(mTVProgram!=null)
+		return mTVProgram.getID();
+	else
+	 return dbId;
+	}
 
 	
 	private void playProgram(int type,int pos){
@@ -868,25 +873,26 @@ public class DvbsScanResult extends DTVActivity{
 			return ;
 		}
 
-		serviceInfo serviceinfo = new serviceInfo();
-		serviceinfo.setName(name);	
-		serviceinfo.setServiceType(service_type);
-		serviceinfo.setServiceId(service_id);
-
-		if(service_type==1){			
-			tv_list.add(serviceinfo);
-			mTvListAdapter = new ScanResultAdapter(DvbsScanResult.this,tv_list);
-			tvlistview.setAdapter(mTvListAdapter);
-			mTvListAdapter.notifyDataSetChanged();
-			tvlistview.setSelection(tv_list.size() -1);
+		if(name!=null){
+			serviceInfo serviceinfo = new serviceInfo();
+			serviceinfo.setName(name);	
+			serviceinfo.setServiceType(service_type);
+			serviceinfo.setServiceId(service_id);
+		
+			if(service_type==1){			
+				tv_list.add(serviceinfo);
+				mTvListAdapter = new ScanResultAdapter(DvbsScanResult.this,tv_list);
+				tvlistview.setAdapter(mTvListAdapter);
+				mTvListAdapter.notifyDataSetChanged();
+				tvlistview.setSelection(tv_list.size() -1);
+			}
+			else if(service_type==2){
+				radio_list.add(serviceinfo);	
+				radiolistview.setVisibility(View.VISIBLE);
+				mRadioListAdapter.notifyDataSetChanged();
+				radiolistview.setSelection(radio_list.size() -1);
+			}
 		}
-		else if(service_type==2){
-			radio_list.add(serviceinfo);	
-			radiolistview.setVisibility(View.VISIBLE);
-			mRadioListAdapter.notifyDataSetChanged();
-			radiolistview.setSelection(radio_list.size() -1);
-		}
-
 		progressBar.setProgress(msg.getScanProgress());
 		Log.d(TAG,""+msg.getScanProgress());
 		progress_value.setText(String.valueOf(msg.getScanProgress())+"%");
@@ -1062,6 +1068,8 @@ public class DvbsScanResult extends DTVActivity{
 		return super.onKeyDown(keyCode, event);
 	}
 
+
+	/*
 	private void showReturnDia(){
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(DvbsScanResult.this);
@@ -1110,7 +1118,30 @@ public class DvbsScanResult extends DTVActivity{
 
 				
 	}
+	*/
 
+	private void showReturnDia(){
+		new SureDialog(DvbsScanResult.this,true){
+			public void onSetMessage(View v){
+				((TextView)v).setText("Stop scan?");
+			}
+
+			public void onSetNegativeButton(){
+	  
+			}
+			public void onSetPositiveButton(){
+				stopScan(false);
+			
+				if(sync_flag==false){
+					//mScanDvb.syncProgram(); 
+					sync_flag=true;
+				}	
+				canplay_flag = true;
+				scan_ok_flag = true;
+				returnSettings();
+			}
+		};
+	}
 
 	private void returnSettings(){
 		Intent intent = new Intent();

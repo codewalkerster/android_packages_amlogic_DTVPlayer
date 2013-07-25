@@ -80,19 +80,30 @@ mkdir .tmp
 mkdir .tmp/SYSTEM
 mkdir .tmp/SYSTEM/app
 mkdir .tmp/SYSTEM/lib
+mkdir .tmp/SYSTEM/etc
+mkdir .tmp/META
 
 APPS="TVService DTVPlayer"
 LIBS="am_adp am_mw jnitvmboxdevice jnitvdatabase jnitvscanner jnitvsubtitle jnitvepgscanner zvbi"
+CFG_FILES="tv_default.cfg tv_default.dtd tv_default.xml"
 
 for i in $APPS; do
 	cp $ANDROID_BUILD_TOP/out/target/product/$TARGET_PRODUCT/system/app/$i.apk .tmp/SYSTEM/app/
+	echo "system/app/$i.apk 0 0 644" >> .tmp/META/filesystem_config.txt
 	if [ $TARGET_BUILD_VARIANT = 'user' ]; then
 		cp $ANDROID_BUILD_TOP/out/target/product/$TARGET_PRODUCT/system/app/$i.odex .tmp/SYSTEM/app/
+		echo "system/app/$i.odex 0 0 644" >> .tmp/META/filesystem_config.txt
 	fi
 done
 
 for i in $LIBS; do
 	cp $ANDROID_BUILD_TOP/out/target/product/$TARGET_PRODUCT/system/lib/lib$i.so .tmp/SYSTEM/lib
+	echo "system/lib/lib$i.so 0 0 644" >> .tmp/META/filesystem_config.txt
+done
+
+for i in $CFG_FILES; do
+	cp $ANDROID_BUILD_TOP/out/target/product/$TARGET_PRODUCT/system/etc/$i .tmp/SYSTEM/etc
+	echo "system/etc/$i 0 0 644" >> .tmp/META/filesystem_config.txt
 done
 
 $ANDROID_BUILD_TOP/build/tools/releasetools/aml_update_packer .tmp $PKG

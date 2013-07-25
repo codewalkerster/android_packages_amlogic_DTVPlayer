@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
-	android:gravity="center"
 	android:layout_margin="50dp"
 	android:layout_width="600dp"
-	android:layout_height="wrap_content">
+	android:layout_height="wrap_content"
+	android:id="@+id/layout_parent">
 
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
+    >
+    </LinearLayout>
+	
 	<LinearLayout
 		android:id="@+id/layout_head"
 		android:layout_width="match_parent"
@@ -13,8 +19,7 @@
 		android:orientation="vertical"
 		android:padding="14dp"
 		android:gravity="center"
-		android:background="@drawable/vchip_pin_head_bg"
-		android:layout_alignTop="@+id/layout_parent"
+		android:background="@drawable/single_dia_head"
 		>
 
 		<TextView
@@ -30,44 +35,37 @@
 		android:layout_marginBottom="10dp" />	
 	</LinearLayout> 
 
-	<LinearLayout
+    <LinearLayout
 		android:id="@+id/layout_body"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		android:padding="14px"
+		android:paddingLeft="14dp"
+		android:paddingRight="14dp"
 		android:gravity="center"
-		android:background="@drawable/vchip_pin_body_bg"
-		android:layout_above="@+id/layout_tail" 
+		android:background="@drawable/single_dia_body"
 		android:layout_below="@+id/layout_head" >
     
 		<ListView
 			android:id="@+id/set_list"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"					     				     
-			android:scrollbars="vertical"/> 		
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="36dp"
+			android:layout_marginRight="36dp" 					     				     
+			android:scrollbars="vertical"
+			android:listSelector="@drawable/list_item_bg"/> 
 
 	</LinearLayout> 
-	
 	<LinearLayout
 		android:id="@+id/layout_tail" 
 		android:layout_width="fill_parent"
-		android:layout_height="65dp"
+		android:layout_height="95dp"
 		android:orientation="vertical"
-		android:background="@drawable/vchip_pin_tail_bg"
+		android:background="@drawable/single_dia_tail"
 		android:layout_alignBottom="@+id/layout_parent"
+		android:layout_below="@+id/layout_body"
 		>
-		<RelativeLayout
-				android:id="@+id/inforbar_line" 
-				android:layout_width="fill_parent"
-				android:layout_height="2px"
-				android:layout_marginLeft="10dp"
-				android:layout_marginRight="12dp"
-				android:background="@drawable/line"
-				>	
-		</RelativeLayout>
-     
-	     	<LinearLayout
+	     <LinearLayout
     		android:layout_width="match_parent"
     		android:layout_height="match_parent"
     		android:orientation="horizontal"
@@ -75,37 +73,25 @@
     		android:layout_marginBottom="8px">
 		
     		<ImageView 
-    			android:layout_width="wrap_content"
-    			android:layout_height="wrap_content"
-				android:background="@drawable/move"
+    			android:layout_width="45dp"
+	            android:layout_height="45dp"
+				android:background="@drawable/ok_icon"
     		>
     		</ImageView>
     		<TextView
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center"
-		        android:text="@string/help_info_move"
+		        android:text="@string/help_info_select"
 		        android:textColor="#FFFFFFFF"
 		        android:textSize="20sp" 
 		        android:layout_marginRight="30px"
 		        />
+    		
     		<ImageView 
-    			android:layout_width="wrap_content"
-    			android:layout_height="wrap_content"
-				android:background="@drawable/enter"
-    		></ImageView>
-    		<TextView
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_gravity="center"
-		        android:text="@string/help_info_select"
-		        android:textColor="#FFFFFFFF"
-		        android:textSize="20sp"
-		        android:layout_marginRight="30px"
-		        />
-    		<ImageView 
-    			android:layout_width="wrap_content"
-    			android:layout_height="wrap_content"
+    			android:layout_width="45dp"
+	            android:layout_height="45dp"
+
 				android:background="@drawable/return_icon"
     		></ImageView>
     		<TextView
@@ -117,5 +103,10 @@
 		        android:textSize="20sp" />
 		</LinearLayout>
 	</LinearLayout>	
-	
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
+    >
+    </LinearLayout>
 </LinearLayout>
+
