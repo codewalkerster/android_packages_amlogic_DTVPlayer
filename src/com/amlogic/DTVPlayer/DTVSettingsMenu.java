@@ -471,9 +471,9 @@ public class DTVSettingsMenu extends DTVActivity {
 				case 2:  //audio language	
 					showAudioLanguageDialog(info_cur);
 					break;
-				case 3:
-					showAudioTrackDialog(info_cur);	
-					break;
+				//case 3:
+					//showAudioTrackDialog(info_cur);	
+					//break;
 			}
 		}
 	};
@@ -557,6 +557,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				String lan = getLanguage(getIndexLanguage(mDTVSettings.getAudLanguage()));
 				holder.info.setText(lan);
 				break;
+			/*
 			case 3://SETTINGS_AUDIO_TRACK:
 			 	
 		    	 holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
@@ -570,6 +571,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				 else if(tmp == 0)
 				 	holder.info.setText(R.string.left);
 		    	 break;
+		    */	 
 		  }
 
 		  return convertView;
@@ -584,12 +586,33 @@ public class DTVSettingsMenu extends DTVActivity {
 			if(mDTVSettings.getScanRegion().contains("DVBS")){
 				switch(position){
 					case 0:
-						DTVStartProgramManager();
-						DTVSettingsMenu.this.finish();
+						if(isHavePragram()){
+								
+							showProgramManagerPasswordDialog();
+							
+						}
+						else{
+							toast = Toast.makeText(
+							DTVSettingsMenu.this,
+							R.string.dtvplayer_no_program,
+							Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						}
 						break;
-					case 1:
-						DTVStartEPG();
-						DTVSettingsMenu.this.finish();
+					case 1:						
+						if(isHavePragram()){
+							DTVStartEPG();
+							DTVSettingsMenu.this.finish();
+						}
+						else{
+							toast = Toast.makeText(
+							DTVSettingsMenu.this,
+							R.string.dtvplayer_no_program,
+							Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						}
 						break;
 					case 2:
 						Intent Intent_record_device = new Intent();
@@ -604,10 +627,20 @@ public class DTVSettingsMenu extends DTVActivity {
 						DTVSettingsMenu.this.finish();
 						break;
 					case 4:
-						Intent Intent_timeshifting = new Intent();
-						Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
-						startActivity(Intent_timeshifting);
-						DTVSettingsMenu.this.finish();
+						if(isHavePragram()){
+							Intent Intent_timeshifting = new Intent();
+							Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
+							startActivity(Intent_timeshifting);
+							DTVSettingsMenu.this.finish();
+						}
+						else{
+							toast = Toast.makeText(
+							DTVSettingsMenu.this,
+							R.string.dtvplayer_no_program,
+							Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						}
 						break;
 				}
 			}
@@ -2246,6 +2279,29 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 		};
 	}
+
+	private void showProgramManagerPasswordDialog(){
+		new PasswordDialog(DTVSettingsMenu.this){
+			public void onCheckPasswordIsRight(){
+				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
+				DTVStartProgramManager();
+				DTVSettingsMenu.this.finish();
+			}
+			public void onCheckPasswordIsFalse(){
+				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
+				toast = Toast.makeText(
+				DTVSettingsMenu.this, 
+	    		R.string.invalid_password,
+	    		Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+			}
+			public boolean onDealUpDownKey(){
+				return false;
+			}
+		};
+	}
+
 
 	private void showPasswordDialog(){
 		new PasswordDialog(DTVSettingsMenu.this){

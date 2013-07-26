@@ -229,6 +229,19 @@ abstract public class PasswordDialog {
 		}
 	}
 
+	public void cancelDialog(){
+		if(mDialog!=null&& mDialog.isShowing()){
+			mDialog.cancel();
+		}
+	}
+
+	public void showDialog(){
+		if(mDialog!=null&& mDialog.isShowing()==false){
+			mDialog.show();
+		}
+	}
+
+
 	public boolean isShowing(){
 		if(mDialog!=null&&mDialog.isShowing()){
 			return mDialog.isShowing();

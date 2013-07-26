@@ -80,11 +80,11 @@ public class DTVSettings{
 	}
 	
 	public int getParentalRating(){
-		return mContext.getIntConfig("tv:dtv:dtbt:parent_rate");	
+		return mContext.getIntConfig("tv:dtv:dvb:parent_rate");	
 	}
 
 	public void setParentalRating(int value){
-		mContext.setConfig("tv:dtv:dtbt:parent_rate",value);
+		mContext.setConfig("tv:dtv:dvb:parent_rate",value);
 	}
 
 	public String getTeletextRegion(){
@@ -120,6 +120,10 @@ public class DTVSettings{
 
 	public void setCheckProgramLock(boolean b){
 		mContext.setConfig("tv:check_program_lock",b);
+	}
+
+	public boolean getCheckProgramLock(){
+		return mContext.getBooleanConfig("tv:check_program_lock");
 	}
 
 	public String getScanRegion(){

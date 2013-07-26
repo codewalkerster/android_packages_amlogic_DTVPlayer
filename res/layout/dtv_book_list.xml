@@ -39,7 +39,9 @@ android:background ="@drawable/bg"
 		android:layout_height="fill_parent"
 		android:orientation="vertical"
 		android:layout_marginLeft="20dp"
-		android:layout_marginRight="20dp" >
+		android:layout_marginRight="20dp"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp">
 			<LinearLayout     
 			   android:layout_width="fill_parent"       
 			   android:orientation="horizontal"  
@@ -50,7 +52,7 @@ android:background ="@drawable/bg"
 
 				 <TextView
 			  	android:text="@string/channel_name"
-			  	android:textSize="23sp"
+			  	android:textSize="24sp"
 			  	android:layout_width="80px"
 			  	android:layout_height="wrap_content"
 			  	android:gravity="center"
@@ -59,7 +61,7 @@ android:background ="@drawable/bg"
 			  	
 			  <TextView
 			  	android:text="@string/event_name"
-			  	android:textSize="23sp"
+			  	android:textSize="24sp"
 			  	android:layout_width="80px"
 			  	android:layout_height="wrap_content"
 			  	android:gravity="center"
@@ -68,7 +70,7 @@ android:background ="@drawable/bg"
 			  	
 			  	<TextView
 			  	android:text="@string/event_start_time"
-			  	android:textSize="23sp"
+			  	android:textSize="24sp"
 			  	android:layout_width="80px"
 			  	android:layout_height="wrap_content"
 			  	android:gravity="center"
@@ -77,7 +79,7 @@ android:background ="@drawable/bg"
 
 				<TextView
 			  	android:text="@string/duration"	
-			  	android:textSize="23sp"
+			  	android:textSize="24sp"
 			  	android:layout_width="80px"
 			  	android:layout_height="wrap_content"
 			  	android:gravity="center"
@@ -86,7 +88,7 @@ android:background ="@drawable/bg"
 			  	
 			    <TextView
 			  	android:text="@string/mode"
-			  	android:textSize="23sp"
+			  	android:textSize="24sp"
 			  	android:layout_width="80px"
 			  	android:layout_height="wrap_content"
 			  	android:gravity="center"
@@ -95,7 +97,7 @@ android:background ="@drawable/bg"
 
 					<TextView
 			  	android:text="@string/repeat"
-			  	android:textSize="23sp"
+			  	android:textSize="24sp"
 			  	android:layout_width="80px"
 			  	android:layout_height="wrap_content"
 			  	android:gravity="center"
@@ -104,7 +106,7 @@ android:background ="@drawable/bg"
 			  	
 			  	<TextView
 			  	android:text="@string/status"
-			  	android:textSize="23sp"
+			  	android:textSize="24sp"
 			  	android:layout_width="80px"
 			  	android:layout_height="wrap_content"
 			  	android:gravity="center"
