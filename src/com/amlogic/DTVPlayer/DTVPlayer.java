@@ -62,14 +62,19 @@ public class DTVPlayer extends DTVActivity{
 			showNoProgramDia(); 
 		}
 		mDTVSettings.setTeltextBound();
-		playValid();
+		
 		if(bundle!=null){	
 			//int db_id = DTVPlayerGetCurrentProgramID();
 			//DTVPlayerPlayById(db_id);	
 			//playValid();
+			if (! tryBookingPlay()){
+				playValid();
+			}
 			ShowControlBar();
 			updateInforbar();
 			ShowProgramNo(pronumber);
+		}else{
+			playValid();
 		}
 		
 		if(DTVPlayerIsRecording()){
@@ -251,20 +256,11 @@ public class DTVPlayer extends DTVActivity{
 		}
 	
 		if(bundle!=null){	
-			if(bundle.getString("activity_tag").equals("DTVChannelList")){			
-				int db_id = bundle.getInt("db_id");
-				int serviceType = bundle.getInt("service_type");
-				Log.d(TAG,"channel list db_id="+db_id +"---type="+serviceType );
-				hidePasswordDialog();
-				if(serviceType==TVProgram.TYPE_RADIO){
-					setProgramType(TVProgram.TYPE_RADIO);
-					Log.d(TAG,"setProgramType(TVProgram.TYPE_RADIO)");
-				}	
-				else{
-					setProgramType(TVProgram.TYPE_TV);
-					Log.d(TAG,"setProgramType(TVProgram.TYPE_TV)");
-				}
-				DTVPlayerPlayById(db_id);
+			if(tryChannelListPlay()){
+				Log.d(TAG, "channel list play started");
+			}
+			else if (tryBookingPlay()){
+				Log.d(TAG, "booking play started");
 			}
 			else{
 				int db_id = DTVPlayerGetCurrentProgramID();
@@ -624,6 +620,47 @@ public class DTVPlayer extends DTVActivity{
 		
 		init_Animation();
 		
+	}
+
+	private boolean tryBookingPlay(){
+		boolean ret = false;
+		
+		if (bundle != null && bundle.containsKey("booking_id")){
+			int bookingID = bundle.getInt("booking_id");
+
+			Log.d(TAG, "Start playing for booking " + bookingID + " ...");
+			startBooking(bookingID);
+
+			ret = true;
+		}
+
+		return ret;
+	}
+
+	private boolean tryChannelListPlay(){
+		boolean ret = false;
+		
+		if(bundle != null && bundle.containsKey("activity_tag")){
+			if (bundle.getString("activity_tag").equals("DTVChannelList")){
+				int db_id = bundle.getInt("db_id");
+				int serviceType = bundle.getInt("service_type");
+				Log.d(TAG,"channel list db_id="+db_id +"---type="+serviceType );
+				hidePasswordDialog();
+				if(serviceType==TVProgram.TYPE_RADIO){
+					setProgramType(TVProgram.TYPE_RADIO);
+					Log.d(TAG,"setProgramType(TVProgram.TYPE_RADIO)");
+				}	
+				else{
+					setProgramType(TVProgram.TYPE_TV);
+					Log.d(TAG,"setProgramType(TVProgram.TYPE_TV)");
+				}
+				DTVPlayerPlayById(db_id);
+
+				ret = true;
+			}
+		}
+
+		return ret;
 	}
 
 	private void showNoProgramDia(){
