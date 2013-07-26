@@ -101,6 +101,103 @@ abstract public class DTVActivity extends TVActivity{
 		connected = false;
 		delay_setinput_source = false;
 	}	
+
+	public void onMessage(TVMessage msg){
+		Log.d(TAG, "message "+msg.getType());
+		onDialogStatusRecord(msg);
+	}
+
+	public void onDialogStatusChanged(int status){
+	}
+	public final int STATUS_SIGNAL=0;
+	public final int STATUS_SCRAMBLED=1;
+	public final int STATUS_DATA=2;
+	public final int STATUS_LOCKED=3;
+
+	public boolean signal=true;
+	public boolean scrambled=false;
+	public boolean has_data=false;
+	public boolean locked=false;
+
+	public void RecordStatus(int status,boolean value){
+		switch(status){
+			case STATUS_SIGNAL:
+				if(signal!=value){
+					signal=value;
+					onDialogStatusChanged(STATUS_SIGNAL);
+				}
+				break;
+			case STATUS_SCRAMBLED:
+				if(scrambled!=value){
+					scrambled=value;
+					onDialogStatusChanged(STATUS_SCRAMBLED);
+				}	
+				break;
+			case STATUS_DATA:
+				if(has_data!=value){
+					has_data=value;
+					onDialogStatusChanged(STATUS_DATA);
+				}	
+				break;
+			case STATUS_LOCKED:
+				if(locked!=value){
+					locked=value;
+					onDialogStatusChanged(STATUS_LOCKED);
+				}
+
+				break;
+		}
+	}
+	
+	public boolean getDTVSignalStatus(){
+		return signal;
+	}
+
+	public boolean getDTVLockedStatus(){
+		return locked;
+	}
+	
+	
+	private void onDialogStatusRecord(TVMessage msg){
+		
+		switch(msg.getType()) {
+			case TVMessage.TYPE_PROGRAM_BLOCK:
+					Log.d(TAG,"BLOCK");
+					
+					switch(msg.getProgramBlockType()){
+						case TVMessage.BLOCK_BY_LOCK:
+							break;
+						case TVMessage.BLOCK_BY_PARENTAL_CONTROL:
+							break;
+						case TVMessage.BLOCK_BY_VCHIP:
+							break;
+					}
+					//mDialogManager.showPasswordDialog(msg.getVChipAbbrev());
+					RecordStatus(STATUS_LOCKED,true);
+					break;
+				case TVMessage.TYPE_PROGRAM_UNBLOCK:	
+					RecordStatus(STATUS_LOCKED,false);
+					break;
+				case TVMessage.TYPE_SIGNAL_LOST:
+					RecordStatus(STATUS_SIGNAL,false);
+					break;
+				case TVMessage.TYPE_SIGNAL_RESUME:
+					RecordStatus(STATUS_SIGNAL,true);
+					break;	
+				case TVMessage.TYPE_DATA_LOST:
+					RecordStatus(STATUS_DATA,false);
+					break;
+				case TVMessage.TYPE_DATA_RESUME:
+					RecordStatus(STATUS_DATA,true);
+					break;
+				case TVMessage.TYPE_PROGRAM_SWITCH:	
+					RecordStatus(STATUS_LOCKED,false);
+					break;
+			}
+
+		
+	}
+
 	
 	@Override
 	public void setContentView (int layoutResID){

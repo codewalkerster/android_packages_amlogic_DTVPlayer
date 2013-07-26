@@ -233,7 +233,7 @@ public class DvbsScanResult extends DTVActivity{
 		}
 			
 		private int getServiceId() {
-			return serviceId;
+			return this.serviceId;
 		}
 		private void setServiceId(int serviceId) {
 			this.serviceId = serviceId;
@@ -258,26 +258,13 @@ public class DvbsScanResult extends DTVActivity{
 	private int service_get_dbId(String name, int serviceid, int serviceType){
 		int dbId = -1;
 
-	TVProgram mTVProgram = TVProgram.selectByNameAndServiceId(DvbsScanResult.this,name,serviceid,serviceType);
-		
-	/*
-	Cursor cur = this.getContentResolver().query(DVBClient.TABLE_SERVICE ,
-					new String[]{"db_id"}, 
-					"name like ?  and service_id="+serviceid+" and service_type="+serviceType, new String[]{name}, null);
-		
-	  if(cur != null)
-	  {	  
-		 if( cur.moveToFirst() ) {
-			dbId=cur.getInt(0) ;
+		Log.d(TAG,"name="+name+"---serviceid="+serviceid+"-----serviceType="+serviceType);
+		TVProgram mTVProgram = TVProgram.selectByNameAndServiceId(DvbsScanResult.this,name,serviceid,serviceType);
 
-		}
-		cur.close();
-	  	}
-	*/
-	if(mTVProgram!=null)
-		return mTVProgram.getID();
-	else
-	 return dbId;
+		if(mTVProgram!=null)
+			return mTVProgram.getID();
+		else
+			return dbId;
 	}
 
 	
@@ -296,6 +283,7 @@ public class DvbsScanResult extends DTVActivity{
 
 		if (db_id == -1||((serviceinfo.getServiceType() != 2) && (serviceinfo.getServiceType() != 1))){
 			Log.d(TAG,"enter playProgram error!");
+			playValid();
 		}
 
 		Bundle bundle1 = new Bundle();  
@@ -545,6 +533,7 @@ public class DvbsScanResult extends DTVActivity{
 				Log.d(TAG, "Storing ...");
 				break;
 			case TVMessage.TYPE_SCAN_STORE_END:
+				
 				Log.d(TAG, "Store Done !");
 				break;
 			case TVMessage.TYPE_SCAN_END:

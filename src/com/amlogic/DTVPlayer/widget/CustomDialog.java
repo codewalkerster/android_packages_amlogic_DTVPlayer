@@ -25,8 +25,8 @@ public class CustomDialog {
 			}
 			
 		};
-		mDialog.setCancelable(false);
-		mDialog.setCanceledOnTouchOutside(false);
+		mDialog.setCancelable(true);
+		mDialog.setCanceledOnTouchOutside(true);
 	}
 
 	public CustomDialog(Context context,int theme) {

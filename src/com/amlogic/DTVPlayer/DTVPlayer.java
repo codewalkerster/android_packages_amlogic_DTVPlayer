@@ -19,6 +19,8 @@ import android.view.View.*;
 import android.view.animation.*;
 import android.widget.*;
 import android.app.*;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.graphics.*;
 import android.content.*;
 import android.os.*;
@@ -33,6 +35,8 @@ import com.amlogic.widget.MutipleChoiseDialog;
 import com.amlogic.widget.CustomDialog;
 import com.amlogic.widget.CustomDialog.ICustomDialog;
 
+
+
 public class DTVPlayer extends DTVActivity{
 	private static final String TAG="DTVPlayer";
 	private Toast toast=null;
@@ -46,7 +50,7 @@ public class DTVPlayer extends DTVActivity{
 		setContentView(R.layout.dtvplayer);
 		SystemProperties.set("vplayer.hideStatusBar.enable", "true");
 		bundle = this.getIntent().getExtras();
-		
+		mDialogManager = new DialogManager(DTVPlayer.this);
 	}
 
 	public void onConnected(){
@@ -96,7 +100,34 @@ public class DTVPlayer extends DTVActivity{
 		super.onDisconnected();
 	}
 
+	public void onDialogStatusChanged(int status){
+		super.onDialogStatusChanged(status);
+		switch(status){
+			case STATUS_LOCKED:
+				if(getDTVLockedStatus()){
+					mDTVSettings.setCheckProgramLock(false);
+					//mDialogManager.showPasswordDialog(msg.getVChipAbbrev());	
+					mDialogManager.showPasswordDialog(null);	
+				}
+				else{
+					mDTVSettings.setCheckProgramLock(true);
+					mDialogManager.hidePasswordDialog();
+				}
+			break;
+			case STATUS_SIGNAL:
+				if(getDTVSignalStatus()==false){
+					mDialogManager.showDia(1);
+				}
+				else{
+					mDialogManager.DismissDialog();
+				}
+				break;
+			
+		}
+	}
+
 	public void onMessage(TVMessage msg){
+		super.onMessage(msg);
 		Log.d(TAG, "message "+msg.getType());
 		switch (msg.getType()) {
 			case TVMessage.TYPE_SCAN_PROGRESS:
@@ -112,44 +143,7 @@ public class DTVPlayer extends DTVActivity{
 			case TVMessage.TYPE_SCAN_END:
 				Log.d(TAG, "Scan End");
 				break;
-			case TVMessage.TYPE_PROGRAM_BLOCK:
-				Log.d(TAG,"BLOCK");
-				
-				switch(msg.getProgramBlockType()){
-					case TVMessage.BLOCK_BY_LOCK:
-						//showPasswordDialog(null);
-						break;
-					case TVMessage.BLOCK_BY_PARENTAL_CONTROL:
-						//showPasswordDialog(null);
-						break;
-					case TVMessage.BLOCK_BY_VCHIP:
-						//showPasswordDialog(msg.getVChipAbbrev());
-						break;
-				}
-				showPasswordDialog(msg.getVChipAbbrev());
-				break;
-			case TVMessage.TYPE_PROGRAM_UNBLOCK:
-				Log.d(TAG,"UNBLOCK");
-				mDTVSettings.setCheckProgramLock(true);
-				hidePasswordDialog();
-				break;
-			case TVMessage.TYPE_SIGNAL_LOST:
-				showDia(1);
-				break;
-			case TVMessage.TYPE_SIGNAL_RESUME:
-				if(mAlertDialog!=null)
-					dismissDialog(1);
-				break;	
-			case TVMessage.TYPE_DATA_LOST:
-				showDia(2);
-				break;
-			case TVMessage.TYPE_DATA_RESUME:
-				if(mAlertDialog!=null)
-					dismissDialog(2);
-				break;
-			case TVMessage.TYPE_PROGRAM_SWITCH:
-				hidePasswordDialog();
-				break;
+
 			case TVMessage.TYPE_PROGRAM_START:
 				RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
 				DTVPlayerGetCurrentProgramData();
@@ -215,8 +209,15 @@ public class DTVPlayer extends DTVActivity{
 	protected void onResume(){
 		Log.d(TAG, ">>>>>>>>onResume<<<<<<<<");
 		super.onResume();
+		mDialogManager.resumeDialog();
 	}
-	
+
+	@Override
+	protected void onPause(){
+		Log.d(TAG, ">>>>>>>>onPause<<<<<<<<");
+		super.onPause();
+		mDialogManager.pauseDialog();
+	}
 	
 	@Override
 	protected void onStart(){
@@ -627,6 +628,134 @@ public class DTVPlayer extends DTVActivity{
 		init_Animation();
 		
 	}
+
+	public DialogManager mDialogManager=null;
+	public class DialogManager{
+		public Context mContext=null;
+		public PasswordDialog mPasswordDialog=null;
+		public Dialog mDialog=null;
+		public Toast toast=null;
+		public String passdialog_text=null;
+		
+		public DialogManager(Context context) {
+			mContext = context;
+		}
+	
+		public void resumeDialog(){
+			if(mDialog!=null)
+				mDialog.show();
+			if((mPasswordDialog!=null&&mTVProgram.getLockFlag())&&mDialog==null)
+				mPasswordDialog.showDialog();
+		}
+
+		public void pauseDialog(){
+			if(mDialog!=null)
+				mDialog.cancel();
+			if(mPasswordDialog!=null)
+				mPasswordDialog.cancelDialog();
+		}
+
+		public void showPasswordDialog(String t){
+			passdialog_text = t;
+			if(mDialog==null){
+				mPasswordDialog = new PasswordDialog(mContext){
+					public void onCheckPasswordIsRight(){
+						unblock();	
+						mPasswordDialog=null;
+					}
+
+					public void onCheckPasswordIsFalse(){
+						toast = Toast.makeText(
+						mContext, 
+			    		R.string.invalid_password,
+			    		Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+					}
+
+					public boolean onDealUpDownKey(){
+						return true;
+					}
+				};
+				mPasswordDialog.setDialogContent(t);
+			}
+		}
+
+		public void hidePasswordDialog(){
+			if(mPasswordDialog!=null){
+				mPasswordDialog.dismissDialog();
+				mPasswordDialog=null;
+			}
+		}
+
+		public void showDia(int id){
+			if(mTVProgram.getLockFlag()&&mDTVSettings.getCheckProgramLock()==false){
+				if(mPasswordDialog!=null){
+					mPasswordDialog.cancelDialog();
+				}
+			}
+			
+			//mDialog = DisplayInfo();
+			mDialog = new Dialog(mContext,R.style.MyDialog);
+			mDialog.setCancelable(false);
+			mDialog.setCanceledOnTouchOutside(false);
+			mDialog.setOnKeyListener( new DialogInterface.OnKeyListener(){
+				public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+					// TODO Auto-generated method stub
+					//dialog.cancel();
+					dispatchKeyEvent(event);
+					return true;
+				}
+			});
+			
+			if(mDialog!=null){
+				mDialog.show();
+				mDialog.setContentView(R.layout.no_signal);
+				Window window = mDialog.getWindow();
+				TextView text = (TextView)window.findViewById(R.id.title);
+				switch(id){
+					case 1:
+						text.setText(R.string.dtvplayer_no_signal);
+						text.setTextSize(27); 
+						text.setGravity(Gravity.CENTER);
+						break;
+					case 2:
+						text.setText(R.string.dtvplayer_no_program);
+						text.setText(R.string.dtvplayer_no_signal);
+						text.setTextSize(27); 
+						text.setGravity(Gravity.CENTER);
+					case 3:
+						text.setText(R.string.dtvplayer_scrambled);
+						text.setTextSize(27); 
+						text.setGravity(Gravity.CENTER);
+						break;
+				}
+			}
+		}
+
+		public void hideDia(){
+			if(mDialog!=null){
+				mDialog.cancel();
+			}
+		}
+
+		public void DismissDialog(){
+			if(mDialog!=null){
+				mDialog.dismiss();
+				mDialog=null;
+			}
+
+			if(mTVProgram.getLockFlag()&&mDTVSettings.getCheckProgramLock()==false){
+				if(mPasswordDialog!=null){
+					mPasswordDialog.showDialog();
+				}
+				else
+					showPasswordDialog(passdialog_text);
+			}
+		}
+		
+	}
+	
 
 	private void showNoProgramDia(){
 		new SureDialog(DTVPlayer.this,false){
@@ -1449,6 +1578,7 @@ public class DTVPlayer extends DTVActivity{
 	public void hidePasswordDialog(){
 		if(mPasswordDialog!=null){
 			mPasswordDialog.dismissDialog();
+			mPasswordDialog=null;
 		}
 	}
 
@@ -1521,18 +1651,64 @@ public class DTVPlayer extends DTVActivity{
         return null;
     }
 
+	private Dialog mDialog=null;
+	private Dialog DisplayInfo(){
+		mDialog = new Dialog(this,R.style.MyDialog);
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+		mDialog.setOnKeyListener( new DialogInterface.OnKeyListener(){
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				// TODO Auto-generated method stub
+				//dialog.cancel();
+				dispatchKeyEvent(event);
+				return true;
+			}
+		});
+		return mDialog;
+	}
+
+	private void DismissDialog(){
+		if(mDialog!=null){
+			mDialog.dismiss();
+			mDialog=null;
+		}
+	}
+
 	private void showDia(int id){
-		mAlertDialog = (AlertDialog)onCreateDialog(id);
-		if(mAlertDialog!=null){
-			showDialog(id);
-			mAlertDialog.getWindow().setLayout(500,100);
-			WindowManager.LayoutParams lp=mAlertDialog.getWindow().getAttributes();
+		mDialog = DisplayInfo();
+		if(mDialog!=null){
+			mDialog.show();
+			mDialog.setContentView(R.layout.no_signal);
+			Window window = mDialog.getWindow();
+			TextView text = (TextView)window.findViewById(R.id.title);
+			switch(id){
+				case 1:
+					text.setText(R.string.dtvplayer_no_signal);
+					text.setTextSize(27); 
+					text.setGravity(Gravity.CENTER);
+					break;
+				case 2:
+					
+					text.setText(R.string.dtvplayer_no_program);
+					text.setText(R.string.dtvplayer_no_signal);
+					text.setTextSize(27); 
+					text.setGravity(Gravity.CENTER);
+				case 3:
+					text.setText(R.string.dtvplayer_scrambled);
+					text.setTextSize(27); 
+					text.setGravity(Gravity.CENTER);
+					break;
+			}
+			/*
+			mDialog.getWindow().setLayout(500,100);
+			WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 			Log.d(TAG,"x="+lp.x+"y="+lp.y);
 			lp.x=0;
 			lp.y=0;
 			lp.dimAmount=0.0f;
-			mAlertDialog.getWindow().setAttributes(lp);
-			mAlertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+			mDialog.getWindow().setAttributes(lp);
+			mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+			*/
 		}
 	}
 
