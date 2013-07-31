@@ -87,6 +87,7 @@ abstract public class DTVActivity extends TVActivity{
 		mLast= PreferenceManager.getDefaultSharedPreferences(otherAppsContext);
     }
 
+	DTVSettings mDTVSettings=null;
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		connected = true;
@@ -94,6 +95,7 @@ abstract public class DTVActivity extends TVActivity{
 			delay_setinput_source = false;			
 			setInputSource(TVConst.SourceInput.SOURCE_DTV);
 		}
+		 mDTVSettings = new DTVSettings(this);
 	}
 
 	public void onDisconnected(){
@@ -157,7 +159,10 @@ abstract public class DTVActivity extends TVActivity{
 		return locked;
 	}
 	
-	
+	public boolean getDTVScrmbledStatus(){
+		return scrambled;
+	}
+
 	private void onDialogStatusRecord(TVMessage msg){
 		
 		switch(msg.getType()) {
@@ -173,10 +178,13 @@ abstract public class DTVActivity extends TVActivity{
 							break;
 					}
 					//mDialogManager.showPasswordDialog(msg.getVChipAbbrev());
+					
+					mDTVSettings.setCheckProgramLock(true);
 					RecordStatus(STATUS_LOCKED,true);
 					break;
 				case TVMessage.TYPE_PROGRAM_UNBLOCK:	
 					RecordStatus(STATUS_LOCKED,false);
+					mDTVSettings.setCheckProgramLock(false);
 					break;
 				case TVMessage.TYPE_SIGNAL_LOST:
 					RecordStatus(STATUS_SIGNAL,false);
@@ -189,10 +197,15 @@ abstract public class DTVActivity extends TVActivity{
 					break;
 				case TVMessage.TYPE_DATA_RESUME:
 					RecordStatus(STATUS_DATA,true);
+					RecordStatus(STATUS_SCRAMBLED,false);
 					break;
 				case TVMessage.TYPE_PROGRAM_SWITCH:	
 					RecordStatus(STATUS_LOCKED,false);
 					break;
+				case TVMessage.TYPE_PROGRAM_SCRAMBLED:
+					RecordStatus(STATUS_SCRAMBLED,true);
+					break;
+					
 			}
 
 		
