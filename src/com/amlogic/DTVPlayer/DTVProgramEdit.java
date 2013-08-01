@@ -249,12 +249,37 @@ public class DTVProgramEdit extends DTVActivity{
 					mTextInfo.setVisibility(View.VISIBLE);
 					mTextInfo.setText("No Signal");
 				}
+				else if(getDTVScrambledStatus()==true){
+					mTextInfo.setVisibility(View.VISIBLE);
+					mTextInfo.setText("Scrmbled");	
+				}
 				else{
 					mTextInfo.setVisibility(View.INVISIBLE);
 				}
 			break;
 			case STATUS_SIGNAL:
 				if(getDTVSignalStatus()==false){
+					mTextInfo.setVisibility(View.VISIBLE);
+					mTextInfo.setText("No Signal");
+				}
+				else if(getDTVScrambledStatus()==true){
+					mTextInfo.setVisibility(View.VISIBLE);
+					mTextInfo.setText("Scrmbled");	
+				}
+				else if(getDTVLockedStatus()){
+					mTextInfo.setVisibility(View.VISIBLE);
+					mTextInfo.setText("Locked");	
+				}
+				else {
+					mTextInfo.setVisibility(View.INVISIBLE);
+				}
+				break;
+			case STATUS_SCRAMBLED:
+				if(getDTVScrambledStatus()==true){
+					mTextInfo.setVisibility(View.VISIBLE);
+					mTextInfo.setText("Scrmbled");	
+				}
+				else if(getDTVSignalStatus()==false){
 					mTextInfo.setVisibility(View.VISIBLE);
 					mTextInfo.setText("No Signal");
 				}
@@ -266,7 +291,6 @@ public class DTVProgramEdit extends DTVActivity{
 					mTextInfo.setVisibility(View.INVISIBLE);
 				}
 				break;
-			
 		}
 	}
 
