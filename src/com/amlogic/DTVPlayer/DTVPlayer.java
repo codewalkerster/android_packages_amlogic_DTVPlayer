@@ -35,7 +35,12 @@ import com.amlogic.widget.MutipleChoiseDialog;
 import com.amlogic.widget.CustomDialog;
 import com.amlogic.widget.CustomDialog.ICustomDialog;
 
-
+import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.FileReader;
 
 public class DTVPlayer extends DTVActivity{
 	private static final String TAG="DTVPlayer";
@@ -110,12 +115,10 @@ public class DTVPlayer extends DTVActivity{
 		switch(status){
 			case STATUS_LOCKED:
 				if(getDTVLockedStatus()){
-					mDTVSettings.setCheckProgramLock(false);
 					//mDialogManager.showPasswordDialog(msg.getVChipAbbrev());	
 					mDialogManager.showPasswordDialog(null);	
 				}
 				else{
-					mDTVSettings.setCheckProgramLock(true);
 					mDialogManager.hidePasswordDialog();
 				}
 			break;
@@ -127,7 +130,14 @@ public class DTVPlayer extends DTVActivity{
 					mDialogManager.DismissDialog();
 				}
 				break;
-			
+			case STATUS_SCRAMBLED:
+				if(getDTVScrmbledStatus()==true){
+					mDialogManager.showDia(3);
+				}
+				else{
+					mDialogManager.DismissDialog();
+				}
+				break;
 		}
 	}
 
@@ -148,13 +158,16 @@ public class DTVPlayer extends DTVActivity{
 			case TVMessage.TYPE_SCAN_END:
 				Log.d(TAG, "Scan End");
 				break;
-
+			case TVMessage.TYPE_PROGRAM_STOP:
+				
+				break;
 			case TVMessage.TYPE_PROGRAM_START:
 				RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
 				DTVPlayerGetCurrentProgramData();
 				DTVPlayerSetRecallList(mTVProgram.getID());
 				ShowControlBar();
 				updateInforbar();
+				
 				break;
 			case TVMessage.TYPE_STOP_RECORD_REQUEST:
 				Log.d(TAG, "Request stop record, reason:");
@@ -208,6 +221,7 @@ public class DTVPlayer extends DTVActivity{
 		// TODO Auto-generated method stub
 		Log.d(TAG,">>>>>onRestart<<<<<<");
 		super.onRestart();
+		writeSysFile("/sys/class/video/disable_video","2");
 	}
 
 	@Override
@@ -230,10 +244,26 @@ public class DTVPlayer extends DTVActivity{
 		super.onStart();
 	}
 
+	private void writeSysFile(String path,String value){
+		try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+            try {
+                writer.write(value);
+                } finally {
+                    writer.close();
+                }
+        }catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (Exception e) {
+                Log.e(TAG,"set File ERROR!",e);
+        } 
+	}
+
 	@Override
 	protected void onStop(){
 		Log.d(TAG, "onStop");
 		super.onStop();
+		stopPlaying();
 	}
 
 	public void onDestroy() {
@@ -685,7 +715,7 @@ public class DTVPlayer extends DTVActivity{
 		public void resumeDialog(){
 			if(mDialog!=null)
 				mDialog.show();
-			if((mPasswordDialog!=null&&mTVProgram.getLockFlag())&&mDialog==null)
+			if((mPasswordDialog!=null&&mDTVSettings.getCheckProgramLock())&&mDialog==null)
 				mPasswordDialog.showDialog();
 		}
 
@@ -730,14 +760,16 @@ public class DTVPlayer extends DTVActivity{
 		}
 
 		public void showDia(int id){
-			if(mTVProgram.getLockFlag()&&mDTVSettings.getCheckProgramLock()==false){
+			if(mDTVSettings.getCheckProgramLock()){
 				if(mPasswordDialog!=null){
 					mPasswordDialog.cancelDialog();
 				}
 			}
 			
 			//mDialog = DisplayInfo();
-			mDialog = new Dialog(mContext,R.style.MyDialog);
+			if(mDialog==null){
+				mDialog = new Dialog(mContext,R.style.MyDialog);
+			}
 			mDialog.setCancelable(false);
 			mDialog.setCanceledOnTouchOutside(false);
 			mDialog.setOnKeyListener( new DialogInterface.OnKeyListener(){
@@ -786,7 +818,7 @@ public class DTVPlayer extends DTVActivity{
 				mDialog=null;
 			}
 
-			if(mTVProgram.getLockFlag()&&mDTVSettings.getCheckProgramLock()==false){
+			if(mDTVSettings.getCheckProgramLock()==true){
 				if(mPasswordDialog!=null){
 					mPasswordDialog.showDialog();
 				}
