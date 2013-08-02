@@ -247,6 +247,7 @@ public class DTVPlayer extends DTVActivity{
 		Log.d(TAG, ">>>>>onNewIntent<<<<<");
 		super.onNewIntent(intent);
 	    setIntent(intent);
+		
 		boolean bHasPro = false;
 		if(isHavePragram()==false){ 
 			showNoProgramDia(); 
@@ -630,6 +631,9 @@ public class DTVPlayer extends DTVActivity{
 		
 		if (bundle != null && bundle.containsKey("booking_id")){
 			int bookingID = bundle.getInt("booking_id");
+
+			Log.d(TAG, "Try to set input source to DTV.");
+			setInputSource(TVConst.SourceInput.SOURCE_DTV);
 
 			Log.d(TAG, "Start playing for booking " + bookingID + " ...");
 			startBooking(bookingID);
