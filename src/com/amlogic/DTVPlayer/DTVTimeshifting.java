@@ -70,6 +70,7 @@ public class DTVTimeshifting extends DTVActivity{
 		super.onStop();
 		timeshiftingHandler.removeCallbacks(timeshiftingTimer);
 		playValid();
+		this.finish();
 	}
 
 	public void onDisconnected(){

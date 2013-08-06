@@ -61,10 +61,7 @@ public class DTVPlayer extends DTVActivity{
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
-		//set input source on DTV
-		//setInputSource(TVConst.SourceInput.SOURCE_DTV);
 		openVideo();
-
 		DTVPlayerUIInit();
 		mDTVSettings = new DTVSettings(this);
 		if(isHavePragram()==false){ 
@@ -73,9 +70,6 @@ public class DTVPlayer extends DTVActivity{
 		mDTVSettings.setTeltextBound();
 		
 		if(bundle!=null){	
-			//int db_id = DTVPlayerGetCurrentProgramID();
-			//DTVPlayerPlayById(db_id);	
-			//playValid();
 			if (! tryBookingPlay()){
 				playValid();
 			}
@@ -131,7 +125,7 @@ public class DTVPlayer extends DTVActivity{
 				}
 				break;
 			case STATUS_SCRAMBLED:
-				if(getDTVScrmbledStatus()==true){
+				if(getDTVScrambledStatus()==true){
 					mDialogManager.showDia(3);
 				}
 				else{
@@ -244,21 +238,6 @@ public class DTVPlayer extends DTVActivity{
 	protected void onStart(){
 		Log.d(TAG, "onStart");
 		super.onStart();
-	}
-
-	private void writeSysFile(String path,String value){
-		try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-            try {
-                writer.write(value);
-                } finally {
-                    writer.close();
-                }
-        }catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }catch (Exception e) {
-                Log.e(TAG,"set File ERROR!",e);
-        } 
 	}
 
 	@Override
@@ -2356,6 +2335,21 @@ public class DTVPlayer extends DTVActivity{
 	private void finishPlayer(){
 		DTVPlayerStopPlay();
 		finish();
+	}
+
+	private void writeSysFile(String path,String value){
+		try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+            try {
+                writer.write(value);
+                } finally {
+                    writer.close();
+                }
+        }catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (Exception e) {
+                Log.e(TAG,"set File ERROR!",e);
+        } 
 	}
 
 }

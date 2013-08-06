@@ -159,12 +159,11 @@ abstract public class DTVActivity extends TVActivity{
 		return locked;
 	}
 	
-	public boolean getDTVScrmbledStatus(){
+	public boolean getDTVScrambledStatus(){
 		return scrambled;
 	}
 
 	private void onDialogStatusRecord(TVMessage msg){
-		
 		switch(msg.getType()) {
 			case TVMessage.TYPE_PROGRAM_BLOCK:
 					Log.d(TAG,"BLOCK");
@@ -176,9 +175,7 @@ abstract public class DTVActivity extends TVActivity{
 							break;
 						case TVMessage.BLOCK_BY_VCHIP:
 							break;
-					}
-					//mDialogManager.showPasswordDialog(msg.getVChipAbbrev());
-					
+					}					
 					mDTVSettings.setCheckProgramLock(true);
 					RecordStatus(STATUS_LOCKED,true);
 					break;
@@ -201,6 +198,7 @@ abstract public class DTVActivity extends TVActivity{
 					break;
 				case TVMessage.TYPE_PROGRAM_SWITCH:	
 					RecordStatus(STATUS_LOCKED,false);
+					mDTVSettings.setCheckProgramLock(false);
 					break;
 				case TVMessage.TYPE_PROGRAM_SCRAMBLED:
 					RecordStatus(STATUS_SCRAMBLED,true);
@@ -208,7 +206,6 @@ abstract public class DTVActivity extends TVActivity{
 					
 			}
 
-		
 	}
 
 	
