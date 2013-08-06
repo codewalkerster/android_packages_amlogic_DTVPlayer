@@ -169,17 +169,19 @@ public class DTVPlayer extends DTVActivity{
 				updateInforbar();
 				
 				break;
-			case TVMessage.TYPE_STOP_RECORD_REQUEST:
-				Log.d(TAG, "Request stop record, reason:");
-				if (msg.getStopRecordRequestType() == TVMessage.REQ_TYPE_RECORD_CURRENT){
-					Log.d(TAG, "Stop record for recording the current program");
-					showStopPVRDialog();
-
-				}else if (msg.getStopRecordRequestType() == TVMessage.REQ_TYPE_SWITCH_PROGRAM){
+			case TVMessage.TYPE_RECORD_CONFLICT:
+				int recordConflict = msg.getRecordConflict();
+				
+				Log.d(TAG, "Record conflict:");
+				if (recordConflict == TVMessage.REC_CFLT_START_NEW){
+					Log.d(TAG, "Stop record for new recording");
+				}else if (recordConflict == TVMessage.REC_CFLT_SWITCH_PROGRAM){
 					Log.d(TAG, "Stop record for switching to new program");
-					showStopPVRDialog();
-					playProgram(msg.getStopRecordRequestProgramID());
+				}else{
+					break;
 				}
+
+				showStopPVRDialog(recordConflict, msg.getProgramID());
 				break;
 			case TVMessage.TYPE_RECORD_END:	
 				switch(msg.getErrorCode()){
@@ -1787,6 +1789,7 @@ public class DTVPlayer extends DTVActivity{
 
 	private String pronumber_string="";
 	private int pronumber=0;
+	private int recordDurationMin=1;
 	public int dtvplayer_service_type = 0;
 	public static int dtvplayer_pronumber=0;
 	public static int dtvplayer_pronumber_major=0;
@@ -2299,6 +2302,7 @@ public class DTVPlayer extends DTVActivity{
 						public void onClick(View v) {	
 							//DTVPlayerStartRecording();
 							int dration=Integer.parseInt(mEditText.getText().toString());  
+							recordDurationMin = dration;
 							DTVPlayerStartRecording(dration*60*1000);
 							showPvrIcon();
 							mCustomDialog.dismissDialog();
@@ -2311,11 +2315,23 @@ public class DTVPlayer extends DTVActivity{
 	
 	private void showToolsMenu(){
 	}
-	
+
 	private void showStopPVRDialog(){
+		showStopPVRDialog(-1, -1);
+	}
+	
+	private void showStopPVRDialog(final int conflict, final int programID){
 		new SureDialog(DTVPlayer.this){
 			public void onSetMessage(View v){
-				((TextView)v).setText(getString(R.string.dtvplayer_change_channel));
+				String strMsg = "";
+				
+				if (conflict == TVMessage.REC_CFLT_SWITCH_PROGRAM){
+					strMsg = getString(R.string.dtvplayer_change_channel);
+				}else{
+					strMsg = getString(R.string.dtvplayer_pvr_is_running);
+				}
+					
+				((TextView)v).setText(strMsg);
 			}
 			public void onSetNegativeButton(){
 				 
@@ -2323,6 +2339,16 @@ public class DTVPlayer extends DTVActivity{
 			public void onSetPositiveButton(){
 				DTVPlayerStopRecording();
 				hidePvrIcon();
+
+				if (conflict == TVMessage.REC_CFLT_START_NEW){
+					if (getCurrentProgramID() != programID){
+						playProgram(programID);
+					}
+					DTVPlayerStartRecording(recordDurationMin*60*1000);
+					showPvrIcon();
+				}else if (conflict == TVMessage.REC_CFLT_SWITCH_PROGRAM){
+					playProgram(programID);
+				}
 			}
 		};
 	}
