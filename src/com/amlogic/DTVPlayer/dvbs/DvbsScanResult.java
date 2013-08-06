@@ -1114,7 +1114,6 @@ public class DvbsScanResult extends DTVActivity{
 			public void onSetMessage(View v){
 				((TextView)v).setText("Stop scan?");
 			}
-
 			public void onSetNegativeButton(){
 	  
 			}

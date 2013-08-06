@@ -290,6 +290,7 @@ public class DTVProgramEdit extends DTVActivity{
 				else {
 					mTextInfo.setVisibility(View.INVISIBLE);
 				}
+
 				break;
 		}
 	}
@@ -1209,7 +1210,6 @@ public class DTVProgramEdit extends DTVActivity{
 		
 		ListView_channel.setAdapter(myAdapter);
 		setFocusPosition();
-		
 	}
 
 	class channelListButtonClick  implements android.view.View.OnClickListener{	  

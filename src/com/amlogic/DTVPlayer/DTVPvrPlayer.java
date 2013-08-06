@@ -684,7 +684,6 @@ public class DTVPvrPlayer extends DTVActivity{
 		if(program_name!=null)	
 			Text_proname.setText(/*Integer.toString(DTVPlayer.dtvplayer_pronumber)+*/"  "+program_name);
 
-		
 		//if(DTVPlayer.dtvplayer_pronumber>=0)	
 			//Text_proname.setText(Integer.toString(DTVPlayer.dtvplayer_pronumber)+"  "+DTVPlayer.dtvplayer_name);
 

@@ -87,6 +87,7 @@ public class DTVPvrManager extends DTVActivity{
 			*/	
 			case TVMessage.TYPE_PLAYBACK_START:
 				Log.d(TAG, "Playback start, media info:");
+
 				DTVRecordParams mediaInfo = msg.getPlaybackMediaInfo();
 				TVProgram.Audio[] audios = mediaInfo.getAllAudio();
 				if (audios != null){

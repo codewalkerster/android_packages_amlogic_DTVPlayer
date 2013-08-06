@@ -131,7 +131,6 @@ public class DTVTimeshifting extends DTVActivity{
 						showStopRecordingDialog();
 					}
 				}
-				
 				break;
 			default:
 				break;

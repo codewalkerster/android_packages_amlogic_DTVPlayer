@@ -157,6 +157,9 @@ public class DTVPlayer extends DTVActivity{
 			case TVMessage.TYPE_PROGRAM_STOP:
 				
 				break;
+			case TVMessage.TYPE_PROGRAM_SWITCH:
+				hidePasswordDialog();
+				break;
 			case TVMessage.TYPE_PROGRAM_START:
 				RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
 				DTVPlayerGetCurrentProgramData();
