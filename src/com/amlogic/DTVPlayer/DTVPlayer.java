@@ -110,9 +110,7 @@ public class DTVPlayer extends DTVActivity{
 			case STATUS_LOCKED:
 				if(getDTVLockedStatus()){
 					//mDialogManager.showPasswordDialog(msg.getVChipAbbrev());	
-					if (!isFinishing()){
-						mDialogManager.showPasswordDialog(null);
-					}
+					mDialogManager.showPasswordDialog(null);
 				}
 				else{
 					mDialogManager.hidePasswordDialog();
@@ -713,6 +711,9 @@ public class DTVPlayer extends DTVActivity{
 		}
 
 		public void showPasswordDialog(String t){
+			if (isFinishing()){
+				return;
+			}
 			passdialog_text = t;
 			if(mDialog==null){
 				mPasswordDialog = new PasswordDialog(mContext){
@@ -750,6 +751,10 @@ public class DTVPlayer extends DTVActivity{
 				if(mPasswordDialog!=null){
 					mPasswordDialog.cancelDialog();
 				}
+			}
+
+			if (isFinishing()){
+				return;
 			}
 			
 			//mDialog = DisplayInfo();
