@@ -43,6 +43,9 @@ public class DTVTimeshifting extends DTVActivity{
 		Log.d(TAG, "connected");
 		super.onConnected();
 		openVideo();
+		/* there may be a conflict in startTimeshifting, so
+		 * we need to sovle the RECORD_CONFLICT message.
+		 */
 		startTimeshifting();
 		timeshiftingHandler.postDelayed(timeshiftingTimer, 1000);
 	}
@@ -116,8 +119,17 @@ public class DTVTimeshifting extends DTVActivity{
 						DTVTimeshifting.this.finish();							
 						break;
 					case  TVMessage.REC_ERR_SYSTEM:
-						
+						DTVTimeshifting.this.finish();
 						break;							
+				}
+				
+				break;
+			case TVMessage.TYPE_RECORD_CONFLICT:
+				if (msg.getRecordConflict() == TVMessage.REC_CFLT_START_TIMESHIFT){
+					if (!isFinishing()){
+						/* solve this conflict */
+						showStopRecordingDialog();
+					}
 				}
 				
 				break;
@@ -344,6 +356,22 @@ public class DTVTimeshifting extends DTVActivity{
 				intent.setClass(DTVTimeshifting.this, DTVPlayer.class);
 				startActivity(intent);
 				finish();	
+			}
+		};
+	}
+
+	private void showStopRecordingDialog(){
+		new SureDialog(DTVTimeshifting.this){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.timeshift_when_recording));
+			}
+			public void onSetNegativeButton(){
+				 DTVTimeshifting.this.finish();
+			}
+			public void onSetPositiveButton(){
+				DTVPlayerStopRecording();
+
+				startTimeshifting();
 			}
 		};
 	}
