@@ -9,7 +9,6 @@
     android:id="@+id/layout_parent"
     > 
   
-
 	<LinearLayout
    		android:id="@+id/layout_head"
 		android:layout_width="match_parent"

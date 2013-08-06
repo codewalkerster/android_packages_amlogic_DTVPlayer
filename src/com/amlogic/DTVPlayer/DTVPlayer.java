@@ -110,7 +110,9 @@ public class DTVPlayer extends DTVActivity{
 			case STATUS_LOCKED:
 				if(getDTVLockedStatus()){
 					//mDialogManager.showPasswordDialog(msg.getVChipAbbrev());	
-					mDialogManager.showPasswordDialog(null);	
+					if (!isFinishing()){
+						mDialogManager.showPasswordDialog(null);
+					}
 				}
 				else{
 					mDialogManager.hidePasswordDialog();
@@ -688,7 +690,7 @@ public class DTVPlayer extends DTVActivity{
 		public String passdialog_text=null;
 		
 		public DialogManager(Context context) {
-			mContext = context;
+			this.mContext = context;
 		}
 	
 		public void resumeDialog(){

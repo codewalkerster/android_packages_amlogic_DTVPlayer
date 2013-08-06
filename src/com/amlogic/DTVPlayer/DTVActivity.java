@@ -50,18 +50,17 @@ abstract public class DTVActivity extends TVActivity{
 	final public static int KEYCODE_GREEN_BUTTON=KeyEvent.KEYCODE_TAB;
 	
 	final public static int KEYCODE_GOTO_BUTTON=KeyEvent.KEYCODE_MEDIA_REWIND;
-	final public static int KEYCODE_REC=KeyEvent.KEYCODE_MEDIA_FAST_FORWARD;
-	
+	final public static int KEYCODE_REC=KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE;
 	final public static int KEYCODE_TIMESHIFTING=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
-	final public static int KEYCODE_AUDIO=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
 	
+	final public static int KEYCODE_AUDIO=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
 	final public static int KEYCODE_EPG=KeyEvent.KEYCODE_TV_SWITCH;
 	final public static int KEYCODE_TTX=KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE;	
-	final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_TV_REPEAT;
-	final public static int KEYCODE_INFO=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
-	final public static int KEYCODE_RECALL_BUTTON=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
-	final public static int KEYCODE_INFO_BUTTON=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
-	final public static int KEYCODE_FAV_BUTTON=KeyEvent.KEYCODE_TV_SUBTITLE;
+	final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_TV_SUBTITLE;
+	
+	final public static int KEYCODE_RECALL_BUTTON=KeyEvent.KEYCODE_C;
+	final public static int KEYCODE_INFO_BUTTON=KeyEvent.KEYCODE_F10;
+	final public static int KEYCODE_FAV_BUTTON=KeyEvent.KEYCODE_D;
 
 	private TVProgram TVProgram=null;
 	private static int dtvactivity_actived_num = 0;

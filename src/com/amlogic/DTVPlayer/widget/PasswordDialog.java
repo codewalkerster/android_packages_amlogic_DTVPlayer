@@ -33,10 +33,10 @@ abstract public class PasswordDialog {
        
     private static int cur_button_position=0;
     
-    private static String pin_char_0=null;
-    private static String pin_char_1=null;
-    private static String pin_char_2=null;
-    private static String pin_char_3=null;
+    private  String pin_char_0=null;
+    private  String pin_char_1=null;
+    private  String pin_char_2=null;
+    private  String pin_char_3=null;
 	
 	public PasswordDialog(Context context) {
 		mContext = context;
@@ -101,8 +101,7 @@ abstract public class PasswordDialog {
 						}
 						break;
 					case KeyEvent.KEYCODE_DPAD_UP:	
-					case KeyEvent.KEYCODE_DPAD_DOWN:
-						
+					case KeyEvent.KEYCODE_DPAD_DOWN:					
 						if(onDealUpDownKey()){
 							((Activity)mContext).onKeyDown(keyCode,event);
 							dismissDialog();
@@ -139,12 +138,7 @@ abstract public class PasswordDialog {
 		pin1 = (ImageButton)window.findViewById(R.id.pin_button1);
 		pin2 = (ImageButton)window.findViewById(R.id.pin_button2);
 		pin3 = (ImageButton)window.findViewById(R.id.pin_button3);
-
-		pin_char_0=null;
-		pin_char_1=null;
-		pin_char_2=null;
-		pin_char_3=null;
-	  	    	
+  	    	
      	pin0.setFocusable(true);   
      	pin0.requestFocus();   
      	pin0.setFocusableInTouchMode(true);   
@@ -242,6 +236,10 @@ abstract public class PasswordDialog {
 
 	public void showDialog(){
 		if(mDialog!=null&& mDialog.isShowing()==false){
+			pin_char_0=null;
+			pin_char_1=null;
+			pin_char_2=null;
+			pin_char_3=null;
 			mDialog.show();
 		}
 	}

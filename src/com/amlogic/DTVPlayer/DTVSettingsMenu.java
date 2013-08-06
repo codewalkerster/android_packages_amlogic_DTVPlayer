@@ -621,17 +621,19 @@ public class DTVSettingsMenu extends DTVActivity {
 						//DTVSettingsMenu.this.finish();
 						break;
 					case 3:
-						Intent Intent_pvr_manager = new Intent();
-						Intent_pvr_manager.setClass(DTVSettingsMenu.this,DTVPvrManager.class);
-						startActivity(Intent_pvr_manager);
-						DTVSettingsMenu.this.finish();
+						showPvrManagerPasswordDialog();
 						break;
 					case 4:
 						if(isHavePragram()){
-							Intent Intent_timeshifting = new Intent();
-							Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
-							startActivity(Intent_timeshifting);
-							DTVSettingsMenu.this.finish();
+							if(mDTVSettings.getCheckProgramLock()==false){
+								Intent Intent_timeshifting = new Intent();
+								Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
+								startActivity(Intent_timeshifting);
+								DTVSettingsMenu.this.finish();
+							}
+							else{
+								showTimeshiftingPasswordDialog();
+							}
 						}
 						else{
 							toast = Toast.makeText(
@@ -2323,6 +2325,39 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 		};
 	}
+
+	private void showPvrManagerPasswordDialog(){
+		Intent Intent_pvr_manager = new Intent();
+		Intent_pvr_manager.setClass(DTVSettingsMenu.this,DTVPvrManager.class);
+		startActivity(Intent_pvr_manager);
+		DTVSettingsMenu.this.finish();	
+	}
+
+
+	private void showTimeshiftingPasswordDialog(){
+		new PasswordDialog(DTVSettingsMenu.this){
+			public void onCheckPasswordIsRight(){
+				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
+				Intent Intent_timeshifting = new Intent();
+				Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
+				startActivity(Intent_timeshifting);
+				DTVSettingsMenu.this.finish();
+			}
+			public void onCheckPasswordIsFalse(){
+				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
+				toast = Toast.makeText(
+				DTVSettingsMenu.this, 
+	    		R.string.invalid_password,
+	    		Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+			}
+			public boolean onDealUpDownKey(){
+				return false;
+			}
+		};
+	}
+	
 
 	private void parentalrating_set(TextView v){
 		final TextView info_cur = v;
