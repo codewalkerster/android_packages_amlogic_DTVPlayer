@@ -960,6 +960,7 @@ abstract public class DTVActivity extends TVActivity{
 			}	
 			else{
 				mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
+				
 				if(mTVProgramList==null){
 					return false;
 				}	
@@ -974,6 +975,9 @@ abstract public class DTVActivity extends TVActivity{
 			if(mTVProgramList==null){
 				return false;
 			}	
+			else if(mTVProgramList.length!=0){
+				return true;
+			}
 		}
 		
 		return false;

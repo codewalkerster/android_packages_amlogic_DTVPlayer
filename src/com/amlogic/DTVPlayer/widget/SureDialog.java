@@ -109,9 +109,9 @@ abstract public class SureDialog {
 		content = (TextView)window.findViewById(R.id.content);
 		onSetMessage(content);
 		
-     	no.setFocusable(true);   
-     	no.requestFocus();   
-     	no.setFocusableInTouchMode(true);   
+     	yes.setFocusable(true);   
+     	yes.requestFocus();   
+     	yes.setFocusableInTouchMode(true);   
  
 		no.setOnClickListener(new OnClickListener(){
 		          public void onClick(View v) {				  	 

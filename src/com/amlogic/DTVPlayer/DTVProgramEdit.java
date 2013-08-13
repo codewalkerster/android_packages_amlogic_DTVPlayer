@@ -191,8 +191,6 @@ public class DTVProgramEdit extends DTVActivity{
 
 	}
 
-
-
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
@@ -361,7 +359,6 @@ public class DTVProgramEdit extends DTVActivity{
 	};
 	
 
-	private boolean needUpdate = false;
 	private boolean move_mode=false;
 	private int moveItemPos = -1;
 	private int cur_pos = -1;
@@ -403,11 +400,26 @@ public class DTVProgramEdit extends DTVActivity{
 		return this.moveItemPos;
 	}
 
+	int order[]=null;
 	public void exchageItem(int first, int second){
 		Log.d(TAG,"cur_pos="+first+"-----"+"temp_pos="+second);
-		TVProgram mTemp = mTVProgramList[second];
-		mTVProgramList[second]=mTVProgramList[first];
-		mTVProgramList[first]=mTemp;
+		TVProgram mTemp;
+		
+		if(first<second){
+			mTemp = mTVProgramList[first];
+			System.arraycopy(mTVProgramList,first+1,mTVProgramList,first,second-first);
+			mTVProgramList[second]=mTemp;
+		}
+		else if(first>second) {
+			mTemp = mTVProgramList[first];
+			System.arraycopy(mTVProgramList,second,mTVProgramList,second+1,first-second);
+			mTVProgramList[second]=mTemp;
+		}
+		
+		order = new int[mTVProgramList.length];
+		for(int i=0;i<mTVProgramList.length;i++){
+			//order[i]=mTVProgramList[i].getNumber();
+		}
 	}
 
 	class listOnKeyListener implements OnKeyListener{
@@ -421,49 +433,26 @@ public class DTVProgramEdit extends DTVActivity{
 					case KeyEvent.KEYCODE_DPAD_CENTER:
 					case KeyEvent.KEYCODE_ENTER:
 						if (getMoveMode()){	
-							Log.d(TAG,"switch itme " + getMoveItemPos() + "   "+myAdapter.getSelectItem());
+							Log.d(TAG,"switch itme " + getMoveItemPos() + "   "+cur_select_item);
 							//saveChange();
-							setMoveItemPos(-1);
-							setMoveMode(false);
+
+							exchageItem(getMoveItemPos(), cur_select_item);
+							setMoveItemPos(cur_select_item);
+							//setMoveItemPos(myAdapter.getSelectItem());
+							//myAdapter.setSelectItem(getMoveItemPos());
+							//setMoveMode(false);
 							myAdapter.notifyDataSetChanged();
+							return true;
+						}
+						else{
+
 						}
 						break;
 					case KeyEvent.KEYCODE_DPAD_UP:
-						if (getMoveMode() && getMoveItemPos() > 0){
-							needUpdate = false;
-							exchageItem(getMoveItemPos(), getMoveItemPos() - 1);
-							setMoveItemPos(getMoveItemPos() - 1);
-							myAdapter.setSelectItem(getMoveItemPos());
-							myAdapter.notifyDataSetChanged();
-							Log.d(TAG, "press up");
-						}
-						else if (!getMoveMode() && myAdapter.getSelectItem()== 0){
-							needUpdate = true;
-							Log.d(TAG, "press up to last item");
-						}
-						else{
-					 		needUpdate = false;
-					 	}
+						
 						break;
 					case KeyEvent.KEYCODE_DPAD_DOWN:
-						if (getMoveMode() && getMoveItemPos() < (mTVProgramList.length - 1))
-						{
-							needUpdate = false;
-							exchageItem(getMoveItemPos(), getMoveItemPos() + 1);
-							setMoveItemPos(getMoveItemPos() + 1);
-							myAdapter.setSelectItem(getMoveItemPos());
-							myAdapter.notifyDataSetChanged();
-							Log.d(TAG, "press down");
-						}
-						else if (!getMoveMode() && myAdapter.getSelectItem() == (mTVProgramList.length - 1))
-						{
-							needUpdate = true;
-							Log.d(TAG, "press down to first item");
-						}
-						 else
-					 	{
-					 		needUpdate = false;
-					 	}
+						
 						break;
 				}
 			}
@@ -497,24 +486,10 @@ public class DTVProgramEdit extends DTVActivity{
 						break;
 						/*
 					case KeyEvent.KEYCODE_DPAD_UP:
-						if (needUpdate)
-						{
-							needUpdate = false;
-							myAdapter.setSelectItem(mTVProgramList.length - 1);
-							ListView_programmanager.setSelection(mTVProgramList.length - 1);
-							myAdapter.notifyDataSetChanged();
-							Log.d(TAG, "press up to last item");
-						}
+						
 						 break;
 					case KeyEvent.KEYCODE_DPAD_DOWN:
-						if (needUpdate)
-						{
-							needUpdate = false;
-							myAdapter.setSelectItem(0);
-							ListView_programmanager.setSelection(0);
-							myAdapter.notifyDataSetChanged();
- 							Log.d(TAG, "###ss up to last item");
-						}
+						
 						break;
 						*/
 				   }
@@ -628,6 +603,7 @@ public class DTVProgramEdit extends DTVActivity{
 					}
 					public void onSetPositiveButton(){
 						deleteProgramFromDB(cur_select_item);
+						stopPlaying();
 						myAdapter.notifyDataSetChanged();
 					}
 				};
@@ -677,8 +653,21 @@ public class DTVProgramEdit extends DTVActivity{
 				myAdapter.notifyDataSetChanged();
 				break;
 			case KeyEvent.KEYCODE_BACK:
-				if(move_mode)
+				if(move_mode){
 					move_mode=false;
+					//savechanges();
+					setMoveItemPos(-1);
+					myAdapter.notifyDataSetChanged();
+					return true;
+				}
+				else{
+					//if(isHavePragram()==false){ 
+						Intent in = new Intent();
+						in.setClass(DTVProgramEdit.this, DTVPlayer.class);
+						DTVProgramEdit.this.startActivity(in);	
+						DTVProgramEdit.this.finish();
+					//}
+				}
 				break;
 		}
 		return super.onKeyDown(keyCode, event);
@@ -915,6 +904,7 @@ public class DTVProgramEdit extends DTVActivity{
 										}
 										public void onSetPositiveButton(){
 											deleteProgramFromDB(pos);
+											stopPlaying();
 											myAdapter.notifyDataSetChanged();
 											mCustomDialog.dismissDialog();
 										}

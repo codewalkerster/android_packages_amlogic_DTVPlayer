@@ -77,6 +77,7 @@ public class DTVPlayer extends DTVActivity{
 			updateInforbar();
 			ShowProgramNo(pronumber);
 		}else{
+			Log.d(TAG,"--playValid--");
 			playValid();
 		}
 		
@@ -97,6 +98,7 @@ public class DTVPlayer extends DTVActivity{
 		else if(mode==3){
 			DTVSetScreenMode(3);
 		}
+
 	}
 
 	public void onDisconnected(){
