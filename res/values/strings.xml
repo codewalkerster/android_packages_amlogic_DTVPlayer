@@ -52,7 +52,7 @@
 	<string name="dtvplayer_skip_channel">Are you sure hide this channel</string>
 	<string name="dtvplayer_enter_pvr">Are you sure enter pvr</string>
 	<string name="dtvplayer_stop_pvr">Are you sure stop pvr</string>
-	<string name="dtvplayer_change_channel">Pvr is recording,Do you sure change current channel</string>
+	<string name="dtvplayer_change_channel">Pvr is recording,are you sure change current channel</string>
 	<string name="dtvplayer_pvr_is_running">Pvr is recording,please stop pvr recording first.</string>
 	<string name="dtvplayer_no_teletext">No Teletext</string>
 	<string name="dtvplayer_channel_is_hided">"Invalid Input,the program is hided</string>

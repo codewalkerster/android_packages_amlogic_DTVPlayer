@@ -198,24 +198,26 @@ public class DTVChannelList extends DTVActivity{
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 			int db_id=mTVProgramList[position].getID();	
 			int serviceType = mTVProgramList[position].getType();
-			/*
-			if(serviceType==TVProgram.TYPE_RADIO){
-				setProgramType(TVProgram.TYPE_RADIO);
-				Log.d(TAG,"setProgramType(TVProgram.TYPE_RADIO)");
+
+			if(DTVPlayerGetCurrentProgramType()!=serviceType){
+				if(serviceType==TVProgram.TYPE_RADIO){
+					setProgramType(TVProgram.TYPE_RADIO);
+				}	
+				else{
+					setProgramType(TVProgram.TYPE_TV);
+				}
 			}	
-			else{
-				setProgramType(TVProgram.TYPE_TV);
-				Log.d(TAG,"setProgramType(TVProgram.TYPE_TV)");
+			
+			if(DTVPlayerGetCurrentProgramID()!=db_id){
+				Bundle bundle = new Bundle();
+				bundle.putInt("db_id",db_id);
+				bundle.putInt("service_type",serviceType);
+				bundle.putString("activity_tag","DTVChannelList");
+				Intent in = new Intent();
+				in.setClass(DTVChannelList.this, DTVPlayer.class);
+				in.putExtras(bundle);
+				startActivity(in);
 			}
-			*/
-			Bundle bundle = new Bundle();
-			bundle.putInt("db_id",db_id);
-			bundle.putInt("service_type",serviceType);
-			bundle.putString("activity_tag","DTVChannelList");
-			Intent in = new Intent();
-			in.setClass(DTVChannelList.this, DTVPlayer.class);
-			in.putExtras(bundle);
-			startActivity(in);
 			DTVChannelList.this.finish();
 
 		}
@@ -928,6 +930,8 @@ public class DTVChannelList extends DTVActivity{
 					if(mDialog!=null&& mDialog.isShowing()){
 						mDialog.dismiss();
 					}
+
+					DTVChannelList.this.finish();
 			}});
 		
 

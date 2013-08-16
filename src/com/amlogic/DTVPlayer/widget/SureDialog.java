@@ -46,13 +46,25 @@ abstract public class SureDialog {
 			
 		};
 		
-		mDialog.setCancelable(true);
+		mDialog.setCancelable(false);
 		mDialog.setCanceledOnTouchOutside(false);
 
 		if(mDialog == null){
 			return;
 		}
 
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				onShowEvent();
+			}         
+		}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							onDismissEvent();
+						}         
+						});		
+		
 		mDialog.show();
 		mDialog.setContentView(R.layout.sure_dialog);
 		Window window = mDialog.getWindow();
@@ -86,6 +98,18 @@ abstract public class SureDialog {
 			return;
 		}
 
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				onShowEvent();
+			}         
+		}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							onDismissEvent();
+						}         
+						});	
+
 		mDialog.show();
 		mDialog.setContentView(R.layout.sure_dialog);
 		Window window = mDialog.getWindow();
@@ -109,9 +133,9 @@ abstract public class SureDialog {
 		content = (TextView)window.findViewById(R.id.content);
 		onSetMessage(content);
 		
-     	no.setFocusable(true);   
-     	no.requestFocus();   
-     	no.setFocusableInTouchMode(true);   
+     	yes.setFocusable(true);   
+     	yes.requestFocus();   
+     	yes.setFocusableInTouchMode(true);   
  
 		no.setOnClickListener(new OnClickListener(){
 		          public void onClick(View v) {				  	 
@@ -125,6 +149,9 @@ abstract public class SureDialog {
 					 dismissDialog();
 		          }});	    
 	}
+	
+	public void onShowEvent(){}
+	public void onDismissEvent(){}
 	
 	public void dismissDialog(){
 		if(mDialog!=null&& mDialog.isShowing()){

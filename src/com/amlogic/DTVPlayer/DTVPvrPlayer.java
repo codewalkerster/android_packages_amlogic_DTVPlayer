@@ -681,10 +681,9 @@ public class DTVPvrPlayer extends DTVActivity{
 		TextView Text_proname = (TextView) findViewById(R.id.Text_proname);
 		Text_proname.setTextColor(Color.YELLOW);
 
-		if(proname!=null)	
+		if(program_name!=null)	
 			Text_proname.setText(/*Integer.toString(DTVPlayer.dtvplayer_pronumber)+*/"  "+program_name);
 
-		
 		//if(DTVPlayer.dtvplayer_pronumber>=0)	
 			//Text_proname.setText(Integer.toString(DTVPlayer.dtvplayer_pronumber)+"  "+DTVPlayer.dtvplayer_name);
 

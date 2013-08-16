@@ -8,8 +8,6 @@
     android:orientation="vertical"
     android:id="@+id/layout_parent"
     > 
-  
-
 	<LinearLayout
    		android:id="@+id/layout_head"
 		android:layout_width="match_parent"
@@ -37,10 +35,10 @@
 	<LinearLayout
 		android:id="@+id/layout_body"
 		android:layout_width="match_parent"
-		android:layout_height="50dp"
+		android:layout_height="wrap_content"
 		android:orientation="horizontal"
-		android:paddingLeft="14dp"
-		android:paddingRight="14dp"
+		android:paddingLeft="58dp"
+		android:paddingRight="58dp"
 		android:gravity="center_vertical"
 		android:background="@drawable/single_dia_body"
 		android:layout_above="@+id/layout_tail" 
@@ -48,7 +46,7 @@
 		<TextView
         android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="@string/enter_password"
         android:textColor="#FFFFFFFF"

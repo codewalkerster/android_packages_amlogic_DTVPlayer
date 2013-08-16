@@ -176,30 +176,6 @@
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
 				    android:layout_gravity="center"
-					android:background="@drawable/move_icon"
-					android:contentDescription="@string/app_name"
-				    ></ImageView>
-				    <TextView
-				    android:layout_marginLeft="20sp"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-				    android:layout_gravity="center"
-					android:text="@string/epg_ok"
-					android:textColor="#FFFFFFFF"
-					android:textSize="20sp"
-					android:layout_marginRight="30dp"
-					/>
-				</LinearLayout>
-				<LinearLayout
-				android:layout_weight="1"    
-				android:gravity="center_horizontal"
-				android:layout_width="wrap_content"
-				android:layout_height="fill_parent"
-				> 
-					<ImageView 
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_gravity="center"
 					android:background="@drawable/ok_icon"
 					android:contentDescription="@string/app_name"
 				    ></ImageView>
@@ -208,7 +184,7 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 				    android:layout_gravity="center"
-					android:text="@string/epg_info"
+					android:text="@string/play"
 					android:textColor="#FFFFFFFF"
 					android:textSize="20sp"
 					android:layout_marginRight="30dp"

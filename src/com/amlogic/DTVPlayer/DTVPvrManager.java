@@ -85,8 +85,9 @@ public class DTVPvrManager extends DTVActivity{
 			/*case DVBEvent.EVENT_RECORDS_CHANGED:
 				refresh_data();
 			*/	
-			case TVMessage.TYPE_PLAYBACK_MEDIA_INFO:
-				Log.d(TAG, "Got playback media info.");
+			case TVMessage.TYPE_PLAYBACK_START:
+				Log.d(TAG, "Playback start, media info:");
+
 				DTVRecordParams mediaInfo = msg.getPlaybackMediaInfo();
 				TVProgram.Audio[] audios = mediaInfo.getAllAudio();
 				if (audios != null){
@@ -161,6 +162,14 @@ public class DTVPvrManager extends DTVActivity{
 			}			
 		}	
 
+	}
+
+	private int getFileListCount(){
+		if(filenameList == null){
+			return 0;
+		}		
+		else 
+			return filenameList.size();
 	}
 	
 	private void DTVPvrManagerUIInit(){
@@ -303,35 +312,41 @@ public class DTVPvrManager extends DTVActivity{
 						
 				return true;	
 			case DTVActivity.KEYCODE_YELLOW_BUTTON:
-				filename = getServiceInfoByPostion(cur_select_item);
-				Bundle bundle_pvr_player = new Bundle();										           
-				bundle_pvr_player.putString("file_name", filename); 	
-				Intent Intent_pvrplayer = new Intent();
-				Intent_pvrplayer.setClass(DTVPvrManager.this, DTVPvrPlayer.class);
-				Intent_pvrplayer.putExtras(bundle_pvr_player);
-                startActivity(Intent_pvrplayer);
-				DTVPvrManager.this.finish();
+				if(getFileListCount()>0){
+					filename = getServiceInfoByPostion(cur_select_item);
+					Bundle bundle_pvr_player = new Bundle();										           
+					bundle_pvr_player.putString("file_name", filename); 	
+					Intent Intent_pvrplayer = new Intent();
+					Intent_pvrplayer.setClass(DTVPvrManager.this, DTVPvrPlayer.class);
+					Intent_pvrplayer.putExtras(bundle_pvr_player);
+	                startActivity(Intent_pvrplayer);
+					DTVPvrManager.this.finish();
+				}	
 				return true;	
 			case DTVActivity.KEYCODE_RED_BUTTON:
-				stopPlaying();
-				String file_name = getServiceInfoByPostion(cur_select_item);	
-				if(file_name!=null)
-					startPlayback(file_name);
+				if(getFileListCount()>0){
+					stopPlaying();
+					String file_name = getServiceInfoByPostion(cur_select_item);	
+					if(file_name!=null)
+						startPlayback(file_name);
+				}	
 				return true;
 			case DTVActivity.KEYCODE_BLUE_BUTTON:
-				new SureDialog(DTVPvrManager.this){
-					public void onSetMessage(View v){
-						((TextView)v).setText(getString(R.string.sure_delete));
-					}
+				if(getFileListCount()>0){
+					new SureDialog(DTVPvrManager.this){
+						public void onSetMessage(View v){
+							((TextView)v).setText(getString(R.string.sure_delete));
+						}
 
-					public void onSetNegativeButton(){
-						
-					}
-					public void onSetPositiveButton(){
-						deletePvrData(cur_select_item);
-						refresh_data();
-					}
-				};	
+						public void onSetNegativeButton(){
+							
+						}
+						public void onSetPositiveButton(){
+							deletePvrData(cur_select_item);
+							refresh_data();
+						}
+					};	
+				}	
 				return true;		
 			case KeyEvent.KEYCODE_BACK:
 				DTVPvrPlayerStop();

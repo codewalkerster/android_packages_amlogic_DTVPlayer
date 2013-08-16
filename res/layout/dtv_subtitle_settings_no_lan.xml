@@ -51,10 +51,10 @@
 			<TextView 
 	         	 android:layout_width="250px" 
 	         	 android:gravity="left"
-	             android:layout_height="wrap_content" 
+	             android:layout_height="34px"
 	             android:text="@string/subtitle_switch" 
 	             android:layout_marginLeft = "30px"
-	             android.textSize="20sp"
+	             android.textSize="22px"
 			/>  
 			<CheckBox
 				android:id="@+id/checkSubtitleSwitch"

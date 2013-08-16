@@ -122,6 +122,10 @@ public class DTVSettings{
 		mContext.setConfig("tv:check_program_lock",b);
 	}
 
+	public boolean getCheckProgramLock(){
+		return mContext.getBooleanConfig("tv:check_program_lock");
+	}
+
 	public String getScanRegion(){
 		String region = mContext.getStringConfig("tv:scan:dtv:region");	
 		return region;

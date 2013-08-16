@@ -233,7 +233,7 @@ public class DvbsScanResult extends DTVActivity{
 		}
 			
 		private int getServiceId() {
-			return serviceId;
+			return this.serviceId;
 		}
 		private void setServiceId(int serviceId) {
 			this.serviceId = serviceId;
@@ -258,26 +258,13 @@ public class DvbsScanResult extends DTVActivity{
 	private int service_get_dbId(String name, int serviceid, int serviceType){
 		int dbId = -1;
 
-	TVProgram mTVProgram = TVProgram.selectByNameAndServiceId(DvbsScanResult.this,name,serviceid,serviceType);
-		
-	/*
-	Cursor cur = this.getContentResolver().query(DVBClient.TABLE_SERVICE ,
-					new String[]{"db_id"}, 
-					"name like ?  and service_id="+serviceid+" and service_type="+serviceType, new String[]{name}, null);
-		
-	  if(cur != null)
-	  {	  
-		 if( cur.moveToFirst() ) {
-			dbId=cur.getInt(0) ;
+		Log.d(TAG,"name="+name+"---serviceid="+serviceid+"-----serviceType="+serviceType);
+		TVProgram mTVProgram = TVProgram.selectByNameAndServiceId(DvbsScanResult.this,name,serviceid,serviceType);
 
-		}
-		cur.close();
-	  	}
-	*/
-	if(mTVProgram!=null)
-		return mTVProgram.getID();
-	else
-	 return dbId;
+		if(mTVProgram!=null)
+			return mTVProgram.getID();
+		else
+			return dbId;
 	}
 
 	
@@ -296,6 +283,7 @@ public class DvbsScanResult extends DTVActivity{
 
 		if (db_id == -1||((serviceinfo.getServiceType() != 2) && (serviceinfo.getServiceType() != 1))){
 			Log.d(TAG,"enter playProgram error!");
+			playValid();
 		}
 
 		Bundle bundle1 = new Bundle();  
@@ -396,145 +384,6 @@ public class DvbsScanResult extends DTVActivity{
 		super.onDisconnected();
 	}
 
-	/*
-	private void ResultOnEvent(DVBEvent evt) {
-		Log.d( TAG , "EVT: " + Integer.toString(evt.type,10) + "msg" + evt.msg);
-		switch(evt.type){
-			case DVBEvent.EVENT_SCAN_SERVICE:
-				  process_event_scan_service(evt);
-				break;
-			case DVBEvent.EVENT_SCAN_PROGRESS:
-				progressBar.setProgress(evt.value);
-				Log.d(TAG,""+evt.msg);
-				progress_value.setText(String.valueOf(evt.value)+"%");
-				ts_info.setText(evt.msg);
-				if(evt.value==100){
-					ts_info.setText(getString(R.string.tv)+" : "+String.valueOf(tv_list.size())+"        "+getString(R.string.radio)+" : "+String.valueOf(radio_list.size()));
-						
-				}
-				break;
-
-	      		case DVBEvent.EVENT_SCAN_SIGNAL_INFO:	
-			  	{
-					System.out.println("ResultOnEvent msg " + evt.msg);
-					String s = evt.msg;
-					String array[]=s.split(" ");
-					System.out.println("ResultOnEvent msg array " + array[3]);
-					System.out.println("ResultOnEvent msg int " + Integer.parseInt(array[3]));
-					int fre = Integer.parseInt(array[3]);
-					//process_event_scan_signal_info(evt);
-	          		}
-	      			break;
-			case DVBEvent.EVENT_SCAN_ERROR:	
-			case DVBEvent.EVENT_SCAN_OK:
-				
-	       			mScanDvb.stopScan(true);
-				TextView help_info = (TextView)this.findViewById(R.id.helpinfo);
-				mSatScanCount++;
-				if(mSatScanCount <ScanConfigActivity.getDefaultList().size()){
-					
-						progressBar.setProgress(0);
-					
-						 if(mLast.getString("scan_mode","default").equals("blind")){	
-						 	int smode = DVBClient.SCAN_SAT_BLIND|DVBClient.SCAN_DVBS;
-						 	if (mLast.getString("scan_mode_crypted","all").equals("fta")) {
-						 		smode |= DVBClient.SCAN_FTA;
-						 	}				
-							mScanDvb.startScan(DVBClient.SCAN_STD_DVB, smode,ScanConfigActivity.getDefaultList().get(mSatScanCount).ts_list, false,ScanConfigActivity.getDefaultList().get(mSatScanCount).sat);
-
-							tv_list_temp = tp_list;
-							//mTvListAdapter = new ScanResultAdapter(this,tv_list_temp);
-							mTvListAdapter = new ScanResultAdapter(this,tv_list_temp);
-							tvlistview.setAdapter(mTvListAdapter);
-							mTvListAdapter.notifyDataSetChanged();
-							help_info.setVisibility(View.INVISIBLE);
-							tv_title.setText(R.string.scan_ts);	
-							tv_title.setVisibility(View.VISIBLE);
-							radio_title.setVisibility(View.INVISIBLE);
-							radiolistview.setVisibility(View.INVISIBLE);
-						 }
-						else if(mLast.getString("scan_mode","default").equals("default")){
-							int smode = DVBClient.SCAN_DVBS| DVBClient.SCAN_ALLBAND|(isUnicableOn()?DVBClient.SCAN_SAT_UNICABLE:0);
-						 	if (mLast.getString("scan_mode_crypted","all").equals("fta")) {
-						 		smode |= DVBClient.SCAN_FTA;
-						 	}
-							while(mSatScanCount<ScanConfigActivity.getDefaultList().size()){
-								if(ScanConfigActivity.getDefaultList().get(mSatScanCount).ts_list!=null)
-									break;
-								else
-									mSatScanCount++;
-							}
-
-							if(mSatScanCount<ScanConfigActivity.getDefaultList().size())
-								mScanDvb.startScan(DVBClient.SCAN_STD_DVB, smode, ScanConfigActivity.getDefaultList().get(mSatScanCount).ts_list, false,ScanConfigActivity.getDefaultList().get(mSatScanCount).sat);
-							
-						}
-						else if(mLast.getString("scan_mode","default").equals("network")){
-							int smode = DVBClient.SCAN_DVBS|DVBClient.SCAN_AUTO|(isUnicableOn()?DVBClient.SCAN_SAT_UNICABLE:0);
-						 	if (mLast.getString("scan_mode_crypted","all").equals("fta")) {
-						 		smode |= DVBClient.SCAN_FTA;
-						 	}
-							while(mSatScanCount<ScanConfigActivity.getDefaultList().size()){
-								if(ScanConfigActivity.getDefaultList().get(mSatScanCount).ts_list!=null)
-									break;
-								else
-									mSatScanCount++;
-							}
-
-							if(mSatScanCount<ScanConfigActivity.getDefaultList().size())
-								mScanDvb.startScan(DVBClient.SCAN_STD_DVB, smode, ScanConfigActivity.getDefaultList().get(mSatScanCount).ts_list, false,ScanConfigActivity.getDefaultList().get(mSatScanCount).sat);
-						}
-						sat_info.setText(String.valueOf(mSatScanCount+1)+"/"+String.valueOf(ScanConfigActivity.getDefaultList().size())+"	              "+ScanConfigActivity.getDefaultList().get(mSatScanCount).sat.name);
-				}
-				else{
-										
-				}
-				
-				scan_ok_flag = true;
-				canplay_flag = true;
-				
-				help_info.setText(getString(R.string.scan_result_help));
-				help_info.setVisibility(View.VISIBLE);
-				break;
-			case DVBEvent.EVENT_SCAN_BS_END:
-				tv_list_temp=tv_list;
-				mTvListAdapter = new ScanResultAdapter(DvbsScanResult.this,tv_list);
-				tvlistview.setAdapter(mTvListAdapter);
-				mTvListAdapter.notifyDataSetChanged();
-				radiolistview.setVisibility(View.VISIBLE);
-				mRadioListAdapter.notifyDataSetChanged();
-				tv_title.setText(R.string.tv);
-				tv_title.setVisibility(View.VISIBLE);
-				radio_title.setVisibility(View.VISIBLE);
-				break;
-			case DVBEvent.EVENT_SCAN_BS_NEW_TP:
-				System.out.println("ResultOnEvent msg " + evt.msg);
-				String s = evt.msg;
-				String array[]=s.split(" ", 3);
-				if (array.length >= 3) {
-					String strMsg = "" + Integer.parseInt(array[0])/1000 + "MHz    ";
-					strMsg += "" + Integer.parseInt(array[1])/1000 + "kS/s    ";
-					strMsg += Integer.parseInt(array[2])==0 ? "H" : "V";
-
-					serviceInfo serviceinfo = new serviceInfo();
-					serviceinfo.setName(strMsg);	
-					tp_list.add(serviceinfo);
-				}
-				
-				tvlistview.setSelection(tp_list.size() -1);
-							
-				mTvListAdapter.notifyDataSetChanged();
-				break;
-			case DVBEvent.EVENT_FEND_ROTOR_MOVING:
-				ShowInformation(evt.msg);
-				break;
-			case DVBEvent.EVENT_FEND_ROTOR_STOP:
-				HideInformation();
-				break;		
-		}
-	}
-	*/
-
 	public void onMessage(TVMessage msg){
 		Log.d(TAG, "message "+msg.getType());
 		switch (msg.getType()) {
@@ -545,6 +394,7 @@ public class DvbsScanResult extends DTVActivity{
 				Log.d(TAG, "Storing ...");
 				break;
 			case TVMessage.TYPE_SCAN_STORE_END:
+				
 				Log.d(TAG, "Store Done !");
 				break;
 			case TVMessage.TYPE_SCAN_END:
@@ -1125,7 +975,6 @@ public class DvbsScanResult extends DTVActivity{
 			public void onSetMessage(View v){
 				((TextView)v).setText("Stop scan?");
 			}
-
 			public void onSetNegativeButton(){
 	  
 			}

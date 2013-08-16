@@ -50,18 +50,18 @@ abstract public class DTVActivity extends TVActivity{
 	final public static int KEYCODE_GREEN_BUTTON=KeyEvent.KEYCODE_TAB;
 	
 	final public static int KEYCODE_GOTO_BUTTON=KeyEvent.KEYCODE_MEDIA_REWIND;
-	final public static int KEYCODE_REC=KeyEvent.KEYCODE_MEDIA_FAST_FORWARD;
-	
+	final public static int KEYCODE_REC=KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE;
 	final public static int KEYCODE_TIMESHIFTING=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
-	final public static int KEYCODE_AUDIO=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
 	
+	final public static int KEYCODE_AUDIO=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
 	final public static int KEYCODE_EPG=KeyEvent.KEYCODE_TV_SWITCH;
 	final public static int KEYCODE_TTX=KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE;	
-	final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_TV_REPEAT;
-	final public static int KEYCODE_INFO=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
-	final public static int KEYCODE_RECALL_BUTTON=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
-	final public static int KEYCODE_INFO_BUTTON=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
-	final public static int KEYCODE_FAV_BUTTON=KeyEvent.KEYCODE_TV_SUBTITLE;
+
+	final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_TV_SUBTITLE;
+	final public static int KEYCODE_RECALL_BUTTON=KeyEvent.KEYCODE_C;
+	final public static int KEYCODE_INFO_BUTTON=KeyEvent.KEYCODE_F10;
+	final public static int KEYCODE_FAV_BUTTON=KeyEvent.KEYCODE_D;
+
 
 	private TVProgram TVProgram=null;
 	private static int dtvactivity_actived_num = 0;
@@ -87,6 +87,7 @@ abstract public class DTVActivity extends TVActivity{
 		mLast= PreferenceManager.getDefaultSharedPreferences(otherAppsContext);
     }
 
+	DTVSettings mDTVSettings=null;
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		connected = true;
@@ -94,6 +95,7 @@ abstract public class DTVActivity extends TVActivity{
 			delay_setinput_source = false;			
 			setInputSource(TVConst.SourceInput.SOURCE_DTV);
 		}
+		 mDTVSettings = new DTVSettings(this);
 	}
 
 	public void onDisconnected(){
@@ -101,6 +103,111 @@ abstract public class DTVActivity extends TVActivity{
 		connected = false;
 		delay_setinput_source = false;
 	}	
+
+	public void onMessage(TVMessage msg){
+		Log.d(TAG, "message "+msg.getType());
+		onDialogStatusRecord(msg);
+	}
+
+	public void onDialogStatusChanged(int status){
+	}
+	public final int STATUS_SIGNAL=0;
+	public final int STATUS_SCRAMBLED=1;
+	public final int STATUS_DATA=2;
+	public final int STATUS_LOCKED=3;
+
+	public static boolean signal=true;
+	public static boolean scrambled=false;
+	public static boolean has_data=false;
+	public static boolean locked=false;
+
+	public void RecordStatus(int status,boolean value){
+		switch(status){
+			case STATUS_SIGNAL:
+				if(signal!=value){
+					signal=value;
+					onDialogStatusChanged(STATUS_SIGNAL);
+				}
+				break;
+			case STATUS_SCRAMBLED:
+				if(scrambled!=value){
+					scrambled=value;
+					onDialogStatusChanged(STATUS_SCRAMBLED);
+				}	
+				break;
+			case STATUS_DATA:
+				if(has_data!=value){
+					has_data=value;
+					onDialogStatusChanged(STATUS_DATA);
+				}	
+				break;
+			case STATUS_LOCKED:
+				if(locked!=value){
+					locked=value;
+					onDialogStatusChanged(STATUS_LOCKED);
+				}
+
+				break;
+		}
+	}
+	
+	public boolean getDTVSignalStatus(){
+		return signal;
+	}
+
+	public boolean getDTVLockedStatus(){
+		return locked;
+	}
+	
+	public boolean getDTVScrambledStatus(){
+		return scrambled;
+	}
+
+	private void onDialogStatusRecord(TVMessage msg){
+		switch(msg.getType()) {
+			case TVMessage.TYPE_PROGRAM_BLOCK:
+					Log.d(TAG,"BLOCK");
+					
+					switch(msg.getProgramBlockType()){
+						case TVMessage.BLOCK_BY_LOCK:
+							break;
+						case TVMessage.BLOCK_BY_PARENTAL_CONTROL:
+							break;
+						case TVMessage.BLOCK_BY_VCHIP:
+							break;
+					}					
+					mDTVSettings.setCheckProgramLock(true);
+					RecordStatus(STATUS_LOCKED,true);
+					break;
+				case TVMessage.TYPE_PROGRAM_UNBLOCK:	
+					RecordStatus(STATUS_LOCKED,false);
+					mDTVSettings.setCheckProgramLock(false);
+					break;
+				case TVMessage.TYPE_SIGNAL_LOST:
+					RecordStatus(STATUS_SIGNAL,false);
+					break;
+				case TVMessage.TYPE_SIGNAL_RESUME:
+					RecordStatus(STATUS_SIGNAL,true);
+					break;	
+				case TVMessage.TYPE_DATA_LOST:
+					RecordStatus(STATUS_DATA,false);
+					break;
+				case TVMessage.TYPE_DATA_RESUME:
+					RecordStatus(STATUS_DATA,true);
+					RecordStatus(STATUS_SCRAMBLED,false);
+					break;
+				case TVMessage.TYPE_PROGRAM_SWITCH:	
+					RecordStatus(STATUS_LOCKED,false);
+					mDTVSettings.setCheckProgramLock(false);
+					break;
+				case TVMessage.TYPE_PROGRAM_SCRAMBLED:
+					RecordStatus(STATUS_SCRAMBLED,true);
+					break;
+					
+			}
+
+	}
+
 	
 	@Override
 	public void setContentView (int layoutResID){
@@ -167,8 +274,51 @@ abstract public class DTVActivity extends TVActivity{
 				y = Integer.parseInt(y_s);
 				w = Integer.parseInt(w_s);
 				h = Integer.parseInt(h_s);
+
+				if(outputmode.contains("1080p") == true){
+					x=x*1280/1920;
+					y=y*720/1080;
+					w=w*1280/1920;
+					h=h*720/1080;
+				}
+				else if(outputmode.contains("1080i") == true){
+					x=x*1280/1920;
+					y=y*720/1080;
+					w=w*1280/1920;
+					h=h*720/1080;	
+				}
+				else if(outputmode.contains("720p") == true){
+					
+				}
+				else if(outputmode.contains("576p") == true){
+					x=x*1280/720;
+					y=y*720/576;
+					w=w*1280/720;
+					h=h*720/576;			
+				}
+				else if(outputmode.contains("576i") == true){
+					x=x*1280/720;
+					y=y*720/576;
+					w=w*1280/720;
+					h=h*720/576;				
+				}
+				else if(outputmode.contains("480p") == true){
+					x=x*1280/720;
+					y=y*720/480;
+					w=w*1280/720;
+					h=h*720/480;			
+				}
+				else if(outputmode.contains("480i") == true){
+					x=x*1280/1920;
+					y=y*720/1080;
+					w=w*1280/1920;
+					h=h*720/1080;			
+				}
+	
 			}
 		}
+
+
 		
 /*
 		AbsoluteLayout root = new AbsoluteLayout(this);
@@ -203,7 +353,9 @@ abstract public class DTVActivity extends TVActivity{
 		RelativeLayout root2 = new RelativeLayout(this);
 		
 		LayoutParams params1 = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
+		//LayoutParams params1 = new LayoutParams(1080, 720);
 		//root1.setLayoutParams(params1);
+		
 		LayoutParams params2 = new LayoutParams(w, h);
 		//root2.setLayoutParams(params2);
 		//root2.setGravity(dtvlayout_gravity); 
@@ -223,7 +375,7 @@ abstract public class DTVActivity extends TVActivity{
 			super.setContentView(root1, params1);
 
 			root1.addView(root2, params2);
-
+			
 			root2.setX(x);
 			root2.setY(y);
 			
@@ -853,6 +1005,7 @@ abstract public class DTVActivity extends TVActivity{
 			}	
 			else{
 				mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
+				
 				if(mTVProgramList==null){
 					return false;
 				}	
@@ -867,6 +1020,9 @@ abstract public class DTVActivity extends TVActivity{
 			if(mTVProgramList==null){
 				return false;
 			}	
+			else if(mTVProgramList.length!=0){
+				return true;
+			}
 		}
 		
 		return false;

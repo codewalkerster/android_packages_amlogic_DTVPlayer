@@ -1,10 +1,30 @@
 package com.amlogic.widget;
 
+import java.util.*;
+import android.util.Log;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.view.KeyEvent;
 import android.view.Window;
+
+
+import android.view.*;
+import android.view.View.*;
+import android.view.animation.*;
+import android.widget.*;
+import android.widget.SimpleAdapter;
+import android.widget.AdapterView.OnItemClickListener;
+import android.app.*;
+import android.content.*;
+import android.os.*;
+import android.text.*;
+import android.text.method.*;
+import android.graphics.Color;
+import com.amlogic.DTVPlayer.R;
+import com.amlogic.DTVPlayer.DTVActivity;
+
 	
 public class CustomDialog {
 	Dialog mDialog = null;
@@ -25,8 +45,21 @@ public class CustomDialog {
 			}
 			
 		};
-		mDialog.setCancelable(false);
-		mDialog.setCanceledOnTouchOutside(false);
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				onShowEvent();
+			}         
+		}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							onDismissEvent();
+						}         
+						});	
+		
+		mDialog.setCancelable(true);
+		mDialog.setCanceledOnTouchOutside(true);
 	}
 
 	public CustomDialog(Context context,int theme) {
@@ -43,11 +76,26 @@ public class CustomDialog {
 			}
 			
 		};
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				onShowEvent();
+			}         
+		}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							onDismissEvent();
+						}         
+						});	
+		
 		mDialog.setCancelable(false);
 		mDialog.setCanceledOnTouchOutside(false);
 	}
-	
 
+	public void onShowEvent(){}
+	public void onDismissEvent(){}
+	
 	public void showDialog(int iLayoutResId,ICustomDialog interfaceInstance){
 		if(mDialog == null||iLayoutResId == 0){
 			return;
