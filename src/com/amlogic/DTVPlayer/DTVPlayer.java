@@ -669,7 +669,6 @@ public class DTVPlayer extends DTVActivity{
 	private Handler dialogManagerHandler = new Handler();
 	private Runnable dialogManagerTimer = new Runnable() {
 		public void run() {
-			Log.d(TAG,"----dialogManagerHandler----");
 			if(mDialogManager!=null)
 				mDialogManager.checkDialogDisplay();
 			dialogManagerHandler.postDelayed(this, 2000);

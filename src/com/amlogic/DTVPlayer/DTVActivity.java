@@ -274,8 +274,51 @@ abstract public class DTVActivity extends TVActivity{
 				y = Integer.parseInt(y_s);
 				w = Integer.parseInt(w_s);
 				h = Integer.parseInt(h_s);
+
+				if(outputmode.contains("1080p") == true){
+					x=x*1280/1920;
+					y=y*720/1080;
+					w=w*1280/1920;
+					h=h*720/1080;
+				}
+				else if(outputmode.contains("1080i") == true){
+					x=x*1280/1920;
+					y=y*720/1080;
+					w=w*1280/1920;
+					h=h*720/1080;	
+				}
+				else if(outputmode.contains("720p") == true){
+					
+				}
+				else if(outputmode.contains("576p") == true){
+					x=x*1280/720;
+					y=y*720/576;
+					w=w*1280/720;
+					h=h*720/576;			
+				}
+				else if(outputmode.contains("576i") == true){
+					x=x*1280/720;
+					y=y*720/576;
+					w=w*1280/720;
+					h=h*720/576;				
+				}
+				else if(outputmode.contains("480p") == true){
+					x=x*1280/720;
+					y=y*720/480;
+					w=w*1280/720;
+					h=h*720/480;			
+				}
+				else if(outputmode.contains("480i") == true){
+					x=x*1280/1920;
+					y=y*720/1080;
+					w=w*1280/1920;
+					h=h*720/1080;			
+				}
+	
 			}
 		}
+
+
 		
 /*
 		AbsoluteLayout root = new AbsoluteLayout(this);
@@ -310,7 +353,9 @@ abstract public class DTVActivity extends TVActivity{
 		RelativeLayout root2 = new RelativeLayout(this);
 		
 		LayoutParams params1 = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
+		//LayoutParams params1 = new LayoutParams(1080, 720);
 		//root1.setLayoutParams(params1);
+		
 		LayoutParams params2 = new LayoutParams(w, h);
 		//root2.setLayoutParams(params2);
 		//root2.setGravity(dtvlayout_gravity); 
@@ -330,7 +375,7 @@ abstract public class DTVActivity extends TVActivity{
 			super.setContentView(root1, params1);
 
 			root1.addView(root2, params2);
-
+			
 			root2.setX(x);
 			root2.setY(y);
 			
