@@ -53,6 +53,18 @@ abstract public class SureDialog {
 			return;
 		}
 
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				onShowEvent();
+			}         
+		}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							onDismissEvent();
+						}         
+						});		
+		
 		mDialog.show();
 		mDialog.setContentView(R.layout.sure_dialog);
 		Window window = mDialog.getWindow();
@@ -85,6 +97,18 @@ abstract public class SureDialog {
 		if(mDialog == null){
 			return;
 		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				onShowEvent();
+			}         
+		}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							onDismissEvent();
+						}         
+						});	
 
 		mDialog.show();
 		mDialog.setContentView(R.layout.sure_dialog);
@@ -125,6 +149,9 @@ abstract public class SureDialog {
 					 dismissDialog();
 		          }});	    
 	}
+	
+	public void onShowEvent(){}
+	public void onDismissEvent(){}
 	
 	public void dismissDialog(){
 		if(mDialog!=null&& mDialog.isShowing()){

@@ -116,10 +116,10 @@ abstract public class DTVActivity extends TVActivity{
 	public final int STATUS_DATA=2;
 	public final int STATUS_LOCKED=3;
 
-	public boolean signal=true;
-	public boolean scrambled=false;
-	public boolean has_data=false;
-	public boolean locked=false;
+	public static boolean signal=true;
+	public static boolean scrambled=false;
+	public static boolean has_data=false;
+	public static boolean locked=false;
 
 	public void RecordStatus(int status,boolean value){
 		switch(status){

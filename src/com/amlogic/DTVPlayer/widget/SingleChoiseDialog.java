@@ -71,9 +71,16 @@ abstract public class SingleChoiseDialog {
 
 		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
 			public void onShow(DialogInterface dialog) {
-				
+				onShowEvent();
 			}         
 		}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							onDismissEvent();
+						}         
+						});	
+		
 		mDialog.show();
 		mDialog.setContentView(R.layout.single_choise_dialog);
 		Window window = mDialog.getWindow();
@@ -87,6 +94,9 @@ abstract public class SingleChoiseDialog {
 		
 	}
 
+	public void onShowEvent(){}
+	public void onDismissEvent(){}
+	
 	private void dialogInit(Window window,String[] item,int pos){
 		no = (Button)window.findViewById(R.id.no);
 		no.setText(R.string.no);
