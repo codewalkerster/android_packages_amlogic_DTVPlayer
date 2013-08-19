@@ -69,7 +69,8 @@ public class DTVTimeshifting extends DTVActivity{
 		Log.d(TAG, "onStop");
 		super.onStop();
 		timeshiftingHandler.removeCallbacks(timeshiftingTimer);
-		playValid();
+		unblock();
+		//playValid();
 		this.finish();
 	}
 
