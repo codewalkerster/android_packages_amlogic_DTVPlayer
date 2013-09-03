@@ -142,7 +142,20 @@ android:background ="@drawable/bg"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent"
 						android:id="@+id/VideoView">
-						</VideoView>  
+						</VideoView> 
+					
+						<RelativeLayout android:id="@+id/RelativeLayoutRadioBg"
+									android:layout_width="fill_parent" 
+					    			android:layout_height="fill_parent"
+									android:visibility="invisible"
+									>
+							<ImageView android:layout_width="fill_parent" 
+					    			android:layout_height="fill_parent"
+									android:id="@+id/ImageViewRadioBg"
+									android:scaleType="fitXY"
+									android:src="@drawable/dtvplayer_radio_bg"/>		
+						</RelativeLayout>	
+
 						<com.amlogic.tvsubtitle.TVSubtitleView 
 							android:layout_height="fill_parent"
 							android:layout_width="fill_parent"

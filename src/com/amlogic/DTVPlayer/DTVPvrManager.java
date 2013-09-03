@@ -202,11 +202,30 @@ public class DTVPvrManager extends DTVActivity{
 		}
 	};
 
-
+	private String getIsRecordingFileName(){
+		DTVRecordParams recPara = getRecordingParams();
+		if (recPara != null) {	
+		  return recPara.getRecordFilePath();
+		}  
+		else return null;
+	}
 
 	private void deletePvrData(int pos){
 		String file_name = getServiceInfoByPostion(pos);
 		if(file_name!=null){
+			if(getIsRecordingFileName()!=null){
+				if(getIsRecordingFileName().equals(file_name)){
+					toast = Toast.makeText(
+					DTVPvrManager.this,
+					R.string.dtvplayer_pvr_is_running,
+					Toast.LENGTH_SHORT);
+					toast.setGravity(Gravity.CENTER, 0, 0);
+					toast.show();
+					return;
+				}
+			}
+			
+			
 			File file = new File(file_name);
 			if (file.exists()) { 
 				if (file.isFile()) { 
@@ -351,10 +370,10 @@ public class DTVPvrManager extends DTVActivity{
 			case KeyEvent.KEYCODE_BACK:
 				DTVPvrPlayerStop();
 				Intent intent = new Intent();
-				intent.setClass(DTVPvrManager.this, DTVPlayer.class);
+				intent.setClass(DTVPvrManager.this, DTVSettingsMenu.class);
 				startActivity(intent);
 				DTVPvrManager.this.finish();
-				break;
+				return true;	
 		}
 		
 		return super.onKeyDown(keyCode, event);
@@ -465,7 +484,8 @@ public class DTVPvrManager extends DTVActivity{
 				}
 				public void onSetPositiveButton(int which){
 					switch(which){
-						case 0:														
+						case 0:		
+							
 							Bundle bundle_pvr_player = new Bundle();
 							filename = getServiceInfoByPostion(pos);
 							bundle_pvr_player.putString("file_name", filename); 	

@@ -108,7 +108,7 @@ public class DTVPvrPlayer extends DTVActivity{
 				    		Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
 							toast.show();
-						DTVPvrPlayer.this.finish();	
+						
 						break;
 					case  TVMessage.REC_ERR_WRITE_FILE:	
 						DTVRecordingStop();
@@ -118,21 +118,23 @@ public class DTVPvrPlayer extends DTVActivity{
 				    		Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
 							toast.show();
-						DTVPvrPlayer.this.finish();					
+									
 					break;
 					case  TVMessage.REC_ERR_ACCESS_FILE:
-						DTVPvrPlayer.this.finish();	
+							
 						break;
 					case  TVMessage.REC_ERR_SYSTEM:
-						DTVPvrPlayer.this.finish();	
+						
 						break;							
 				}
+				if(isTopActivity(DTVPvrPlayer.this))
+						gotoBack();
 				break;
 			case TVMessage.TYPE_PLAYBACK_STOP:
 				if(current_playback_flag){
 					current_playback_flag=false;
-					DTVPvrPlayer.this.finish();	
-					
+					if(isTopActivity(DTVPvrPlayer.this))
+						gotoBack();
 				}	
 				break;
 			case TVMessage.TYPE_PLAYBACK_START:
@@ -169,6 +171,11 @@ public class DTVPvrPlayer extends DTVActivity{
 	int myProgressBar_pos=0;
 	private Toast toast=null;
 	private boolean teletext_bar_flag=false;
+
+	/*Infor bar*/
+	TextView Text_screentype_info=null;
+	TextView Text_parent_control_info_icon=null;
+	TextView Text_MTS_info=null;
 	
 	void DTVPvrPlayerUIInit(){
 		findViewById(R.id.RelativeLayout_video).setOnClickListener(new MouseClick());
@@ -177,6 +184,40 @@ public class DTVPvrPlayer extends DTVActivity{
 		infoLayout = (RelativeLayout)findViewById(R.id.RelativeLayoutInforbar);
 		TimeshiftingIcon = (ImageView) findViewById(R.id.ImageViewTimeshiftIcon);
 		Timeshifting_icon_layout = (RelativeLayout)findViewById(R.id.RelativeLayoutTimeshiftIcon);
+
+		Text_MTS_info = (TextView) findViewById(R.id.Text_MTS_info);
+		Text_screentype_info = (TextView) findViewById(R.id.Text_screentype_info);
+		Text_parent_control_info_icon = (TextView) findViewById(R.id.Text_parent_control_info_icon);
+
+		int mode = DTVGetScreenMode();
+		if(mode==0){
+			Text_screentype_info.setText(getString(R.string.auto));
+		}
+		else  if(mode==2){
+			Text_screentype_info.setText(getString(R.string.type_4_3));
+		}
+		else  if(mode==3){
+			Text_screentype_info.setText(getString(R.string.type_16_9));
+		}
+		
+		
+		mode = DTVGetAudioTrack();
+		if(mode==0){ 						
+			Text_MTS_info.setText(getString(R.string.stereo));			
+		}
+		else  if(mode==1){
+			Text_MTS_info.setText(getString(R.string.left));			
+		}
+		else  if(mode==2){
+			Text_MTS_info.setText(getString(R.string.right));				
+		}	
+		
+		if(DTVGetSubtitleStatus()){
+			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.on));	
+		}
+		else{
+			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
+		}
 	
         more = (ImageButton)findViewById(R.id.moreBtn);
         play = (ImageButton)findViewById(R.id.PlayBtn);
@@ -361,6 +402,15 @@ public class DTVPvrPlayer extends DTVActivity{
 		}
     }
 
+	private void gotoBack(){
+			
+		Intent intent = new Intent();
+		intent.setClass(DTVPvrPlayer.this, DTVPvrManager.class);
+		startActivity(intent);
+		//setResult(RESULT_OK,intent); 
+		DTVPvrPlayer.this.finish();
+	}
+
 	private void showTimeshiftDialog(){
 		new SureDialog(DTVPvrPlayer.this){
 			public void onSetMessage(View v){
@@ -373,10 +423,7 @@ public class DTVPvrPlayer extends DTVActivity{
 
 				pvrHandler.removeCallbacks(pvrTimer);
 				stopPlayback();
-				Intent intent = new Intent();
-				intent.setClass(DTVPvrPlayer.this, DTVPlayer.class);
-				startActivity(intent);
-				finish();	
+				//gotoBack();
 			}
 		};
 	}
@@ -483,7 +530,6 @@ public class DTVPvrPlayer extends DTVActivity{
 				}
 				return true;
 			case KeyEvent.KEYCODE_MEDIA_REWIND:
-			case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
 				fastreverse.requestFocus();
 				if (play_status == STAT_FB)
 				{
@@ -515,7 +561,7 @@ public class DTVPvrPlayer extends DTVActivity{
 				}
 
 				return true;
-			case KeyEvent.KEYCODE_MEDIA_NEXT:
+			
 			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: 
 				fastforword.requestFocus();
 				if (play_status == STAT_FF)
@@ -545,10 +591,77 @@ public class DTVPvrPlayer extends DTVActivity{
 						break;	
 				}
 				return true;
+			case DTVActivity.KEYCODE_AUDIO_TRACK:
+				Log.d(TAG,"KEYCODE_AUDIO_TRACK");
+				shortcut_key_deal("AUDIOTRACK");
+				return true;
 			
+			case DTVActivity.KEYCODE_RED_BUTTON: //16:9/4:3
+				Log.d(TAG,"KEYCODE_RED_BUTTON");
+				shortcut_key_deal("pictrue_mode");
+				return true;
+			/*	
+			case DTVActivity.KEYCODE_SUBTITLE:
+				Log.d(TAG,"KEYCODE_SUBTITLE");
+				shortcut_key_deal("SUBTITLE");
+				return true;	
+			*/	
 		}
 		
 		return super.onKeyDown(keyCode, event);
+	}
+
+	private void shortcut_key_deal(String key){
+		if(key.equals("pictrue_mode")){
+			
+			int mode = DTVGetScreenMode();
+			if(mode==0){
+				//ShowInformation(getString(R.string.type_4_3));
+				DTVSetScreenMode(2);
+				Text_screentype_info.setText(getString(R.string.type_4_3));
+			}
+			else  if(mode==2){
+				//ShowInformation(getString(R.string.type_16_9));		
+				DTVSetScreenMode(3);
+				Text_screentype_info.setText(getString(R.string.type_16_9));
+			}
+			else  if(mode==3){
+				//ShowInformation(getString(R.string.auto));		
+				DTVSetScreenMode(0);
+				Text_screentype_info.setText(getString(R.string.auto));
+			}
+		}
+		else if(key.equals("AUDIOTRACK")){
+			int mode = DTVGetAudioTrack();
+			if(mode==1){ 						
+				//ShowInformation(getString(R.string.right));			
+				DTVSetAudioTrack(2);
+				Text_MTS_info.setText(getString(R.string.right));			
+			}
+			else  if(mode==2){
+				//ShowInformation(getString(R.string.stereo));			
+				DTVSetAudioTrack(0);
+				Text_MTS_info.setText(getString(R.string.stereo));			
+			}
+			else  if(mode==0){
+				//ShowInformation(getString(R.string.left));				
+				DTVSetAudioTrack(1);
+				Text_MTS_info.setText(getString(R.string.left));				
+			}	
+		}
+		else if(key.equals("SUBTITLE")){
+			if(DTVGetSubtitleStatus()){
+				DTVSetSubtitleStatus(false);
+				//ShowInformation(getString(R.string.off));	
+				Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));	
+			}
+			else{
+				DTVSetSubtitleStatus(true);
+				//ShowInformation(getString(R.string.on));
+				Text_parent_control_info_icon.setText("SUB:"+getString(R.string.on));	
+			}
+		}
+		
 	}
 	
 	private void showTimeshiftingIcon(){
@@ -732,7 +845,7 @@ public class DTVPvrPlayer extends DTVActivity{
 		
 		mode = DTVGetAudioTrack();
 		if(mode==0){ 						
-			Text_MTS_info.setText(getString(R.string.type_16_9));			
+			Text_MTS_info.setText(getString(R.string.stereo));			
 		}
 		else  if(mode==1){
 			Text_MTS_info.setText(getString(R.string.left));			
@@ -747,7 +860,6 @@ public class DTVPvrPlayer extends DTVActivity{
 		else{
 			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
 		}
-
 
 
 	}

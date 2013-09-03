@@ -35,8 +35,6 @@ public class DTVTimeshifting extends DTVActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtvtimeshiftplayer); 
 		mDTVSettings= new DTVSettings(this);
-		DTVTimeshiftingUIInit();
-		
 	}
 
 	public void onConnected(){
@@ -47,6 +45,7 @@ public class DTVTimeshifting extends DTVActivity{
 		 * we need to sovle the RECORD_CONFLICT message.
 		 */
 		startTimeshifting();
+		DTVTimeshiftingUIInit();
 		timeshiftingHandler.postDelayed(timeshiftingTimer, 1000);
 	}
 
@@ -55,13 +54,7 @@ public class DTVTimeshifting extends DTVActivity{
 		Log.d(TAG, "onStart");
 		super.onStart();
 		
-		bufferLayout.setVisibility(View.INVISIBLE);
-		infoLayout.setVisibility(View.VISIBLE);
-		play.setEnabled(true);
-		play.setBackgroundResource(R.drawable.play_button);
-		play_status = STAT_PLAY;
-		play.requestFocus();
-		showTimeshiftingIcon();
+		
 	}
 
 	@Override
@@ -71,6 +64,8 @@ public class DTVTimeshifting extends DTVActivity{
 		timeshiftingHandler.removeCallbacks(timeshiftingTimer);
 		unblock();
 		//playValid();
+		if(toast!=null)
+			toast.cancel(); 
 		this.finish();
 	}
 
@@ -95,32 +90,37 @@ public class DTVTimeshifting extends DTVActivity{
 				Log.d(TAG, "Scan End");
 				break;
 			case TVMessage.TYPE_RECORD_END:	
+				Log.d(TAG, "getErrorCode--"+msg.getErrorCode());
 				switch(msg.getErrorCode()){
 					case  TVMessage.REC_ERR_OPEN_FILE:
 						DTVTimeShiftingStop();
+						if(toast!=null)
+							toast.cancel(); 
 						toast = Toast.makeText(
 							DTVTimeshifting.this,
 				    		R.string.check_usb_device,
 				    		Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
 							toast.show();
-						DTVTimeshifting.this.finish();	
+						gotoDTVPlayer();
 						break;
 					case  TVMessage.REC_ERR_WRITE_FILE:	
 						DTVTimeShiftingStop();
+						if(toast!=null)
+							toast.cancel(); 
 						toast = Toast.makeText(
 							DTVTimeshifting.this,
 				    		R.string.usbdisk_is_full,
 				    		Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
 							toast.show();
-						DTVTimeshifting.this.finish();							
+						gotoDTVPlayer();							
 					break;
 					case  TVMessage.REC_ERR_ACCESS_FILE:
-						DTVTimeshifting.this.finish();							
+						gotoDTVPlayer();					
 						break;
 					case  TVMessage.REC_ERR_SYSTEM:
-						DTVTimeshifting.this.finish();
+						gotoDTVPlayer();
 						break;							
 				}
 				
@@ -137,6 +137,13 @@ public class DTVTimeshifting extends DTVActivity{
 				break;
 	
 		}
+	}
+
+	private void gotoDTVPlayer(){
+		Intent intent = new Intent();
+		intent.setClass(DTVTimeshifting.this, DTVPlayer.class);
+		startActivity(intent);
+		DTVTimeshifting.this.finish();
 	}
 
 	private static final int STAT_PLAY= 1;
@@ -162,6 +169,11 @@ public class DTVTimeshifting extends DTVActivity{
 	int myProgressBar_pos=0;
 	private Toast toast=null;
 	private boolean teletext_bar_flag=false;
+
+	/*Infor bar*/
+	TextView Text_screentype_info=null;
+	TextView Text_parent_control_info_icon=null;
+	TextView Text_MTS_info=null;
 	
 	void DTVTimeshiftingUIInit(){
 		findViewById(R.id.RelativeLayout_video).setOnClickListener(new MouseClick());
@@ -180,6 +192,41 @@ public class DTVTimeshifting extends DTVActivity{
         myProgressBar = (SeekBar)findViewById(R.id.SeekBar02);
 		cur_time = (TextView)findViewById(R.id.TextView03);
         total_time = (TextView)findViewById(R.id.TextView04);
+
+		Text_MTS_info = (TextView) findViewById(R.id.Text_MTS_info);
+		Text_screentype_info = (TextView) findViewById(R.id.Text_screentype_info);
+		Text_parent_control_info_icon = (TextView) findViewById(R.id.Text_parent_control_info_icon);
+
+		int mode = DTVGetScreenMode();
+		if(mode==0){
+			Text_screentype_info.setText(getString(R.string.auto));
+		}
+		else  if(mode==2){
+			Text_screentype_info.setText(getString(R.string.type_4_3));
+		}
+		else  if(mode==3){
+			Text_screentype_info.setText(getString(R.string.type_16_9));
+		}
+		
+		
+		mode = DTVGetAudioTrack();
+		if(mode==0){ 						
+			Text_MTS_info.setText(getString(R.string.stereo));			
+		}
+		else  if(mode==1){
+			Text_MTS_info.setText(getString(R.string.left));			
+		}
+		else  if(mode==2){
+			Text_MTS_info.setText(getString(R.string.right));				
+		}	
+		
+		if(DTVGetSubtitleStatus()){
+			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.on));	
+		}
+		else{
+			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
+		}
+
 
 		more.setOnClickListener(new Button.OnClickListener(){
 			public void onClick(View v) {
@@ -325,6 +372,15 @@ public class DTVTimeshifting extends DTVActivity{
 		});
 	     
 	    infoLayout.setVisibility(View.INVISIBLE);
+
+		bufferLayout.setVisibility(View.INVISIBLE);
+		infoLayout.setVisibility(View.VISIBLE);
+		play.setEnabled(true);
+		play.setBackgroundResource(R.drawable.play_button);
+		play_status = STAT_PLAY;
+		play.requestFocus();
+		showTimeshiftingIcon();
+		
 		updateInforbar();
 	}
 
@@ -420,8 +476,8 @@ public class DTVTimeshifting extends DTVActivity{
 					DTVTTGotoPreviousPage();
 				}	
 				return true;
-			case DTVActivity.KEYCODE_AUDIO:
-				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_VOICEMODE");
+			case DTVActivity.KEYCODE_AUDIO_LANGUAGE:
+				Log.d(TAG,"KEYCODE_AUDIO_LANGUAGE");
 				DTVPlayer.showAudioLanguageDialog(DTVTimeshifting.this);
 				return true;		
 			case KeyEvent.KEYCODE_TAB: //info
@@ -477,7 +533,6 @@ public class DTVTimeshifting extends DTVActivity{
 				}
 				return true;
 			case KeyEvent.KEYCODE_MEDIA_REWIND:
-			case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
 				fastreverse.requestFocus();
 				if (play_status == STAT_FB)
 				{
@@ -509,7 +564,6 @@ public class DTVTimeshifting extends DTVActivity{
 				}
 
 				return true;
-			case KeyEvent.KEYCODE_MEDIA_NEXT:
 			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: 
 				fastforword.requestFocus();
 				if (play_status == STAT_FF)
@@ -539,9 +593,78 @@ public class DTVTimeshifting extends DTVActivity{
 						break;	
 				}
 				return true;
+				
+			case DTVActivity.KEYCODE_AUDIO_TRACK:
+				Log.d(TAG,"KEYCODE_AUDIO_TRACK");
+				shortcut_key_deal("AUDIOTRACK");
+				return true;
+			
+			case DTVActivity.KEYCODE_RED_BUTTON: //16:9/4:3
+				Log.d(TAG,"KEYCODE_RED_BUTTON");
+				shortcut_key_deal("pictrue_mode");
+				return true;
+			/*	
+			case DTVActivity.KEYCODE_SUBTITLE:
+				Log.d(TAG,"KEYCODE_SUBTITLE");
+				shortcut_key_deal("SUBTITLE");
+				return true;	
+			*/	
 		}
 		
 		return super.onKeyDown(keyCode, event);
+	}
+
+	private void shortcut_key_deal(String key){
+		if(key.equals("pictrue_mode")){
+			
+			int mode = DTVGetScreenMode();
+			if(mode==0){
+				//ShowInformation(getString(R.string.type_4_3));
+				DTVSetScreenMode(2);
+				Text_screentype_info.setText(getString(R.string.type_4_3));
+			}
+			else  if(mode==2){
+				//ShowInformation(getString(R.string.type_16_9));		
+				DTVSetScreenMode(3);
+				Text_screentype_info.setText(getString(R.string.type_16_9));
+			}
+			else  if(mode==3){
+				//ShowInformation(getString(R.string.auto));		
+				DTVSetScreenMode(0);
+				Text_screentype_info.setText(getString(R.string.auto));
+			}
+		}
+		else if(key.equals("AUDIOTRACK")){
+			int mode = DTVGetAudioTrack();
+			if(mode==1){ 						
+				//ShowInformation(getString(R.string.right));			
+				DTVSetAudioTrack(2);
+				Text_MTS_info.setText(getString(R.string.right));			
+			}
+			else  if(mode==2){
+				//ShowInformation(getString(R.string.stereo));			
+				DTVSetAudioTrack(0);
+				Text_MTS_info.setText(getString(R.string.stereo));			
+			}
+			else  if(mode==0){
+				//ShowInformation(getString(R.string.left));				
+				DTVSetAudioTrack(1);
+				Text_MTS_info.setText(getString(R.string.left));				
+			}	
+		}
+		else if(key.equals("SUBTITLE")){
+			if(DTVGetSubtitleStatus()){
+				DTVSetSubtitleStatus(false);
+				//ShowInformation(getString(R.string.off));	
+				Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));	
+			}
+			else{
+				DTVSetSubtitleStatus(true);
+				//ShowInformation(getString(R.string.on));
+				Text_parent_control_info_icon.setText("SUB:"+getString(R.string.on));	
+			}
+		}
+		
 	}
 
 	private void showTimeshiftingIcon(){
@@ -653,7 +776,7 @@ public class DTVTimeshifting extends DTVActivity{
 		
 		mode = DTVGetAudioTrack();
 		if(mode==0){ 						
-			Text_MTS_info.setText(getString(R.string.type_16_9));			
+			Text_MTS_info.setText(getString(R.string.stereo));			
 		}
 		else  if(mode==1){
 			Text_MTS_info.setText(getString(R.string.left));			
@@ -663,11 +786,14 @@ public class DTVTimeshifting extends DTVActivity{
 		}	
 		
 		if(DTVGetSubtitleStatus()){
+			Log.d(TAG,"subtitle is on");
 			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.on));	
 		}
 		else{
+			Log.d(TAG,"subtitle is off");
 			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
 		}
+
 		
 	}
 

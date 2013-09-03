@@ -24,6 +24,7 @@ import android.app.Dialog;
 import android.graphics.*;
 import android.content.*;
 import android.os.*;
+import android.os.PowerManager;
 import android.text.*;
 import android.text.method.*;
 import android.graphics.Color;
@@ -37,18 +38,21 @@ import com.amlogic.widget.CustomDialog.ICustomDialog;
 
 import java.io.BufferedWriter;
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.FileReader;
+import java.lang.Process; 
 
 public class DTVPlayer extends DTVActivity{
 	private static final String TAG="DTVPlayer";
 	private Toast toast=null;
 	private Bundle bundle;	
 	AlertDialog mAlertDialog=null;  //no signal or no data
-	DTVSettings mDTVSettings=null;
-	/**channel data**/
+	DTVSettings mDTVSettings=null;	
+	private PowerManager.WakeLock wakeLock = null;
+	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
@@ -56,6 +60,12 @@ public class DTVPlayer extends DTVActivity{
 		SystemProperties.set("vplayer.hideStatusBar.enable", "true");
 		bundle = this.getIntent().getExtras();
 		mDialogManager = new DialogManager(DTVPlayer.this);
+
+		PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
+		wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK |
+			PowerManager.ACQUIRE_CAUSES_WAKEUP |
+			PowerManager.ON_AFTER_RELEASE, TAG);
+		wakeLock.acquire();
 	}
 
 	public void onConnected(){
@@ -99,6 +109,7 @@ public class DTVPlayer extends DTVActivity{
 			DTVSetScreenMode(3);
 		}
 
+		
 	}
 
 	public void onDisconnected(){
@@ -148,13 +159,14 @@ public class DTVPlayer extends DTVActivity{
 				}else{
 					break;
 				}
-
-				showStopPVRDialog(recordConflict, msg.getProgramID());
+				if(isTopActivity(this))
+					showStopPVRDialog(recordConflict, msg.getProgramID());
 				break;
 			case TVMessage.TYPE_RECORD_END:	
 				switch(msg.getErrorCode()){
 					case  TVMessage.REC_ERR_OPEN_FILE:
-						
+						if(toast!=null)
+							toast.cancel(); 
 						toast = Toast.makeText(
 							DTVPlayer.this,
 				    		R.string.check_usb_device,
@@ -164,6 +176,8 @@ public class DTVPlayer extends DTVActivity{
 						
 						break;
 					case  TVMessage.REC_ERR_WRITE_FILE:	
+						if(toast!=null)
+							toast.cancel(); 
 						toast = Toast.makeText(
 							DTVPlayer.this,
 				    		R.string.usbdisk_is_full,
@@ -208,25 +222,44 @@ public class DTVPlayer extends DTVActivity{
 		super.onPause();
 		mDialogManager.setActive(false);
 		mDialogManager.pauseDialog();
+
+		
+
+
+
+		
 	}
 	
 	@Override
 	protected void onStart(){
 		Log.d(TAG, "onStart");
 		super.onStart();
+		//writeSysFile("/sys/class/graphics/fb0/free_scale","0");
+		//writeSysFile("/sys/class/graphics/fb0/request2XScale","8");
 	}
 
 	@Override
 	protected void onStop(){
 		Log.d(TAG, "onStop");
+		switchScreenType(0);
 		super.onStop();
 		stopPlaying();
+		if(toast!=null)
+			toast.cancel(); 
+		//writeSysFile("/sys/class/graphics/fb0/free_scale","1");
+		//writeSysFile("/sys/class/graphics/fb0/request2XScale","2");
 	}
 
 	public void onDestroy() {
         Log.d(TAG, "onDestroy");
 		SystemProperties.set("vplayer.hideStatusBar.enable", "false");
-		switchScreenType(0);
+		if (wakeLock != null){
+			wakeLock.release();
+			wakeLock = null;
+		}
+
+		mDTVSettings.setCheckProgramLock(false);
+
 		if(mDialogManager!=null)
 			mDialogManager.dialogManagerDestroy();
         super.onDestroy();
@@ -239,6 +272,7 @@ public class DTVPlayer extends DTVActivity{
 		
 		boolean bHasPro = false;
 		if(isHavePragram()==false){ 
+			hideRadioBg();
 			showNoProgramDia(); 
 			bHasPro = true;
 		}
@@ -264,11 +298,16 @@ public class DTVPlayer extends DTVActivity{
 			playValid();
 		}
 
-		if(bHasPro==false){
-			ShowControlBar();
-			updateInforbar();
-			ShowProgramNo(pronumber);
-		}	
+		int mode = DTVGetScreenMode();
+		if(mode==0){
+			DTVSetScreenMode(0);
+		}
+		else if(mode==2){
+			DTVSetScreenMode(2);
+		}
+		else if(mode==3){
+			DTVSetScreenMode(3);
+		}
 	}
 
 	@Override
@@ -351,6 +390,13 @@ public class DTVPlayer extends DTVActivity{
 				}	
 				Log.d(TAG,"KEYCODE_BACK");
 				return true;
+			case KeyEvent.KEYCODE_MENU:
+				//if(mainmenu_show_flag)
+					//HideMainMenu();
+				//else
+				//if(DTVPlayerInTeletextStatus==false)
+					ShowMainMenu();
+				return true;	
 			case KeyEvent.KEYCODE_DPAD_CENTER:
 				Log.d(TAG,"KEYCODE_DPAD_CENTER");
 				if(inforbar_show_flag==false){
@@ -364,8 +410,9 @@ public class DTVPlayer extends DTVActivity{
 				return true;
 			case KeyEvent.KEYCODE_ENTER:
 				Log.d(TAG,"KEYCODE_ENTER");
-				break;		 
-			case DTVActivity.KEYCODE_RED_BUTTON:	
+				break;	
+				
+			case DTVActivity.KEYCODE_TTX:	
 				Log.d(TAG,"KEYCODE_ZOOM_IN");
 				showTeltext(DTVPlayer.this);
 				return true;
@@ -376,53 +423,59 @@ public class DTVPlayer extends DTVActivity{
 			case DTVActivity.KEYCODE_RECALL_BUTTON:
 				showRecallListDialog(DTVPlayer.this);
 				break;
-			case KeyEvent.KEYCODE_TV_REPEAT:
-				Log.d(TAG,"KEYCODE_TV_REPEAT");
+			case DTVActivity.KEYCODE_SUBTITLE:
+				Log.d(TAG,"KEYCODE_SUBTITLE");
 				showSubtitleSettingMenu(DTVPlayer.this);
 				return true;
-			case KeyEvent.KEYCODE_MEDIA_REWIND:
-				Log.d(TAG,"KEYCODE_MEDIA_REWIND");
+			case DTVActivity.KEYCODE_FAV_BUTTON:
+				Log.d(TAG,"KEYCODE_FAV_BUTTON");
 				shortcut_key_deal("FAV");
 				return true;	
-			case KeyEvent.KEYCODE_TAB: //info
-				Log.d(TAG,"KEYCODE_TAB");
+			case DTVActivity.KEYCODE_AUDIO_TRACK:
+				Log.d(TAG,"KEYCODE_AUDIO_TRACK");
 				shortcut_key_deal("AUDIOTRACK");
 				return true;
-			case KeyEvent.KEYCODE_TV_SWITCH: //tv/radio
-				Log.d(TAG,"KEYCODE_TV_SWITCH");	
+			case DTVActivity.KEYCODE_GREEN_BUTTON: //tv/radio
+				Log.d(TAG,"KEYCODE_GREEN_BUTTON");	
 				return true;	
-			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE: //16:9/4:3
-				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_DISPAYMODE");
+			case DTVActivity.KEYCODE_RED_BUTTON: //16:9/4:3
+				Log.d(TAG,"KEYCODE_RED_BUTTON");
 				shortcut_key_deal("pictrue_mode");
 				return true;
-			
-			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: //epg
+			case DTVActivity.KEYCODE_EPG: //epg
 				Log.d(TAG,"KEYCODE_MEDIA_FAST_FORWARD");
 				return true;
-			case KeyEvent.KEYCODE_MEDIA_NEXT: //pvr manager
-				Log.d(TAG,"KEYCODE_MEDIA_NEXT");
-				DTVDealDigtalKey(keyCode);
+			case DTVActivity.KEYCODE_BLUE_BUTTON: //pvr manager
+				Log.d(TAG,"KEYCODE_BLUE_BUTTON");
+				
 				return true;
-			case KeyEvent.KEYCODE_TV_SUBTITLE:
-				Log.d(TAG,"KEYCODE_TV_SUBTITLE");
+			case DTVActivity.KEYCODE_SUBTITLE_SWITCH:
+				Log.d(TAG,"KEYCODE_SUBTITLE");
 				shortcut_key_deal("SUBTITLE");
 				return true;	
-			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
-				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_VOICEMODE");
+			case DTVActivity.KEYCODE_AUDIO_LANGUAGE:
+				Log.d(TAG,"KEYCODE_AUDIO_LANGUAGE");
 				showAudioLanguageDialog(DTVPlayer.this);
 				break;	
-			case KeyEvent.KEYCODE_MENU:
-				//if(mainmenu_show_flag)
-					//HideMainMenu();
-				//else
-				//if(DTVPlayerInTeletextStatus==false)
-					ShowMainMenu();
-				return true;
 			case DTVActivity.KEYCODE_TIMESHIFTING:
 				if(mDTVSettings.getCheckProgramLock()==false){
-					Intent Intent_timeshifting = new Intent();
-					Intent_timeshifting.setClass(DTVPlayer.this,DTVTimeshifting.class);
-					startActivity(Intent_timeshifting);
+					if(isHaveExternalStorage()){
+						
+						Intent Intent_timeshifting = new Intent();
+						Intent_timeshifting.setClass(DTVPlayer.this,DTVTimeshifting.class);
+						startActivity(Intent_timeshifting);
+						HideControlBar();
+					}
+					else{
+						if(toast!=null)
+							toast.cancel(); 
+						toast = Toast.makeText(
+						DTVPlayer.this,
+						R.string.check_usb_device,
+						Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+					}	
 				}
 				break;
 		}
@@ -705,7 +758,9 @@ public class DTVPlayer extends DTVActivity{
 					if(getDTVSignalStatus()==false){
 						showDia(1);
 					}
-					
+					else if(getDTVAVDataStatus()==false){
+						showDia(2);
+					}
 					else if(getDTVLockedStatus()){
 						DismissDialog();
 						showPasswordDialog(null);
@@ -730,8 +785,9 @@ public class DTVPlayer extends DTVActivity{
 				dialogManagerHandler.postDelayed(dialogManagerTimer, 2000);
 			if(mDialog!=null)
 				mDialog.show();
-			if((mPasswordDialog!=null&&mDTVSettings.getCheckProgramLock())&&mDialog==null)
+			if((mPasswordDialog!=null&&mDTVSettings.getCheckProgramLock())&&mDialog==null){
 				mPasswordDialog.showDialog();
+			}	
 		}
 
 		public void pauseDialog(){
@@ -749,7 +805,7 @@ public class DTVPlayer extends DTVActivity{
 			}
 			passdialog_text = t;
 			if(mDialog==null){
-				if(mPasswordDialog==null){
+				if(mPasswordDialog==null&&mDTVSettings.getCheckProgramLock()==true){
 					mPasswordDialog = new PasswordDialog(mContext){
 						public void onCheckPasswordIsRight(){
 							unblock();	
@@ -820,9 +876,9 @@ public class DTVPlayer extends DTVActivity{
 						break;
 					case 2:
 						text.setText(R.string.dtvplayer_no_program);
-						text.setText(R.string.dtvplayer_no_signal);
 						text.setTextSize(27); 
 						text.setGravity(Gravity.CENTER);
+						break;
 					case 3:
 						text.setText(R.string.dtvplayer_scrambled);
 						text.setTextSize(27); 
@@ -844,12 +900,15 @@ public class DTVPlayer extends DTVActivity{
 				mDialog=null;
 			}
 
-			if(mDTVSettings.getCheckProgramLock()==true){
-				if(mPasswordDialog!=null){
-					mPasswordDialog.showDialog();
+
+			if(mDTVSettings!=null){
+				if(mDTVSettings.getCheckProgramLock()==true){
+					if(mPasswordDialog!=null){
+						mPasswordDialog.showDialog();
+					}
+					else
+						showPasswordDialog(passdialog_text);
 				}
-				else
-					showPasswordDialog(passdialog_text);
 			}
 		}
 		
@@ -951,11 +1010,21 @@ public class DTVPlayer extends DTVActivity{
 					showProgramManagerDialog();				
 					break;
 				case R.id.Button_mainmenu_timeshift:
-					Intent Intent_timeshift = new Intent();
-					Intent_timeshift.setClass(DTVPlayer.this, DTVTimeshifting.class);
-					startActivity(Intent_timeshift);
-					HideMainMenu();
-					HideControlBar();
+					if(isHaveExternalStorage()){
+						Intent Intent_timeshift = new Intent();
+						Intent_timeshift.setClass(DTVPlayer.this, DTVTimeshifting.class);
+						startActivity(Intent_timeshift);
+						HideMainMenu();
+						HideControlBar();
+					}
+					else{
+						toast = Toast.makeText(
+						DTVPlayer.this,
+						R.string.check_usb_device,
+						Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+					}
 					break;
 				case R.id.Button_mainmenu_prv:	
 					Intent Intent_rec = new Intent();
@@ -2325,7 +2394,7 @@ public class DTVPlayer extends DTVActivity{
 
 	private void showPvrDurationTimeSetDialog(Context context){
 		final Context mContext = context;
-		final CustomDialog mCustomDialog = new CustomDialog(mContext){
+		final CustomDialog mCustomDialog = new CustomDialog(mContext,R.style.MyDialog){
 			public void onShowEvent(){
 				if(mDialogManager!=null)
 					mDialogManager.setActive(false);
@@ -2354,6 +2423,7 @@ public class DTVPlayer extends DTVActivity{
 
 					final EditText mEditText = (EditText)window.findViewById(R.id.edit);
 					mEditText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(5)});
+					mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
 					mEditText.setText(null);
 					Button no = (Button)window.findViewById(R.id.no);
 					no.setText(R.string.no);
@@ -2367,11 +2437,31 @@ public class DTVPlayer extends DTVActivity{
 					yes.setOnClickListener(new OnClickListener(){
 						public void onClick(View v) {	
 							//DTVPlayerStartRecording();
-							int dration=Integer.parseInt(mEditText.getText().toString());  
-							recordDurationMin = dration;
-							DTVPlayerStartRecording(dration*60*1000);
-							showPvrIcon();
-							mCustomDialog.dismissDialog();
+							if(mEditText.getText().toString().equals("")){
+								toast = Toast.makeText(
+								DTVPlayer.this, 
+					    		R.string.invalid_input,
+					    		Toast.LENGTH_SHORT);
+								toast.setGravity(Gravity.CENTER, 0, 0);
+								toast.show();
+							}
+							else{
+								int dration=Integer.parseInt(mEditText.getText().toString());  
+								if(dration==0){
+									toast = Toast.makeText(
+									DTVPlayer.this, 
+						    		R.string.invalid_input,
+						    		Toast.LENGTH_SHORT);
+									toast.setGravity(Gravity.CENTER, 0, 0);
+									toast.show();
+								}
+								else{
+									recordDurationMin = dration;
+									DTVPlayerStartRecording(dration*60*1000);
+									showPvrIcon();
+									mCustomDialog.dismissDialog();
+								}
+							}
 						}
 					});	    
 				}
@@ -2434,6 +2524,7 @@ public class DTVPlayer extends DTVActivity{
 	}
 	
 	private void finishPlayer(){
+		switchScreenType(0);
 		DTVPlayerStopPlay();
 		finish();
 	}
@@ -2452,6 +2543,41 @@ public class DTVPlayer extends DTVActivity{
                 Log.e(TAG,"set File ERROR!",e);
         } 
 	}
+
+	private void dealHomeKey(){
+		new Thread(new Runnable(){
+			@Override
+			public void run()
+			{
+			
+			BufferedReader bufferedReader = null;
+			try
+			{
+			
+				Process logcatProcess = Runtime.getRuntime().exec(new String[] {"logcat","ActivityManager:I *:S"});
+				bufferedReader = new BufferedReader(new InputStreamReader(logcatProcess.getInputStream()));
+
+				String line;
+
+				while ((line = bufferedReader.readLine()) != null)
+				{
+				if (line.indexOf("cat=[android.intent.category.HOME]") > 0)
+				{
+					
+					DTVSetScreenMode(0);
+				}
+				}
+
+			}
+			catch (Exception e)
+			{
+
+			e.printStackTrace();
+			}
+			}
+		}).start();
+
+	}	
 
 }
 

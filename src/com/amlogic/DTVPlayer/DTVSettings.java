@@ -134,6 +134,10 @@ public class DTVSettings{
 	public void setRecordStoragePath(String path){
 		mContext.setConfig("tv:dtv:record_storage_path",path);
 	}
+
+	public String getRecordStoragePath(){
+	 	return mContext.getStringConfig("tv:dtv:record_storage_path");
+	}
 		
 	public void factoryReset(){
 		mContext.restoreFactorySetting();

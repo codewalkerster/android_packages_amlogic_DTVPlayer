@@ -40,6 +40,7 @@ abstract public class SingleChoiseDialog {
 	public SingleChoiseDialog(Context context,String[] item,int pos) {
 		mContext = context;
 		item_string = item;
+		cur_choise_index = pos;
 		mDialog = new AlertDialog(mContext){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){

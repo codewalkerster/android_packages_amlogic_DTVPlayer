@@ -372,7 +372,7 @@ public class DTVChannelList extends DTVActivity{
 					return true;
 				}	
 				break;
-			case DTVActivity.KEYCODE_AUDIO:
+			case DTVActivity.KEYCODE_AUDIO_LANGUAGE:
 				
 				if(ListView_channel.getChildCount()>cur_select_item)
 					ListView_channel.setSelection(0);
@@ -747,7 +747,8 @@ public class DTVChannelList extends DTVActivity{
 					//holder.info.setText(str_start);
 					//break;
 				case 1:
-					holder.info.setText("0 "+getString(R.string.dtvplayer_pvr_rec_min));
+					//holder.info.setText("0 "+getString(R.string.dtvplayer_pvr_rec_min));
+					holder.info.setText("");
 					break;
 				case 2:
 					holder.info.setText(cont.getResources().getString(R.string.once));
@@ -1133,7 +1134,7 @@ public class DTVChannelList extends DTVActivity{
 		
 		final EditText editText = new EditText(this);
 		editText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(4)});
-
+		editText.setInputType(InputType.TYPE_CLASS_NUMBER);
 		builder.setTitle(R.string.edit_title);
 		final TextView text_time =(TextView) v;
 		editText.setText("");
@@ -1151,20 +1152,29 @@ public class DTVChannelList extends DTVActivity{
 						String time = editText.getText().toString();
 						if(time==null||time.equals("")){
 							editText.setText(null);
+							/*
 							toast = Toast.makeText(DTVChannelList.this, 
 						    	R.string.invalid_input,
 						    	Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
 							toast.show();
+							*/
+							if(mBookAdd!=null)
+									mBookAdd.duration=0;	
+							text_time.setText("");
 						}
 						else{
 							if(Integer.parseInt(time)==0){
 								editText.setText(null);
+								
 								toast = Toast.makeText(DTVChannelList.this, 
 							    	R.string.invalid_input,
 							    	Toast.LENGTH_SHORT);
 								toast.setGravity(Gravity.CENTER, 0, 0);
 								toast.show();
+								
+								mBookAdd.duration=0;
+								text_time.setText("");
 							}
 							else{
 								text_time.setText(editText.getText().toString()+getString(R.string.dtvplayer_pvr_rec_min));
@@ -1173,6 +1183,7 @@ public class DTVChannelList extends DTVActivity{
 								dialog.cancel();
 							}	
 						}
+						dialog.cancel();
 						return true;
 					case  KeyEvent.KEYCODE_BACK:
 						dialog.cancel();

@@ -15,6 +15,7 @@ import com.amlogic.tvutil.TVGroup;
 import com.amlogic.tvutil.TVBooking;
 import com.amlogic.tvutil.DTVPlaybackParams;
 import com.amlogic.tvutil.DTVRecordParams;
+import com.amlogic.widget.CheckUsbdevice;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -44,7 +45,9 @@ import java.lang.reflect.Field;
 abstract public class DTVActivity extends TVActivity{
     private static final String TAG="DTVActivity";
 
-	final public static int KEYCODE_RED_BUTTON=KeyEvent.KEYCODE_ZOOM_IN;
+	
+
+	final public static int KEYCODE_TTX=KeyEvent.KEYCODE_ZOOM_IN;
 	final public static int KEYCODE_YELLOW_BUTTON=KeyEvent.KEYCODE_ZOOM_OUT;
 	final public static int KEYCODE_BLUE_BUTTON=KeyEvent.KEYCODE_TV_REPEAT;
 	final public static int KEYCODE_GREEN_BUTTON=KeyEvent.KEYCODE_TAB;
@@ -53,11 +56,14 @@ abstract public class DTVActivity extends TVActivity{
 	final public static int KEYCODE_REC=KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE;
 	final public static int KEYCODE_TIMESHIFTING=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
 	
-	final public static int KEYCODE_AUDIO=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
+	final public static int KEYCODE_AUDIO_TRACK=KeyEvent.KEYCODE_MEDIA_NEXT;
+	
+	final public static int KEYCODE_AUDIO_LANGUAGE=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
 	final public static int KEYCODE_EPG=KeyEvent.KEYCODE_TV_SWITCH;
-	final public static int KEYCODE_TTX=KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE;	
-
+		
+	final public static int KEYCODE_RED_BUTTON=KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE;
 	final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_TV_SUBTITLE;
+	final public static int KEYCODE_SUBTITLE_SWITCH=KeyEvent.KEYCODE_E;	
 	final public static int KEYCODE_RECALL_BUTTON=KeyEvent.KEYCODE_C;
 	final public static int KEYCODE_INFO_BUTTON=KeyEvent.KEYCODE_F10;
 	final public static int KEYCODE_FAV_BUTTON=KeyEvent.KEYCODE_D;
@@ -95,7 +101,7 @@ abstract public class DTVActivity extends TVActivity{
 			delay_setinput_source = false;			
 			setInputSource(TVConst.SourceInput.SOURCE_DTV);
 		}
-		 mDTVSettings = new DTVSettings(this);
+		mDTVSettings = new DTVSettings(this); 
 	}
 
 	public void onDisconnected(){
@@ -118,7 +124,7 @@ abstract public class DTVActivity extends TVActivity{
 
 	public static boolean signal=true;
 	public static boolean scrambled=false;
-	public static boolean has_data=false;
+	public static boolean has_data=true;
 	public static boolean locked=false;
 
 	public void RecordStatus(int status,boolean value){
@@ -163,6 +169,10 @@ abstract public class DTVActivity extends TVActivity{
 		return scrambled;
 	}
 
+	public boolean getDTVAVDataStatus(){
+		return has_data;
+	}
+
 	private void onDialogStatusRecord(TVMessage msg){
 		switch(msg.getType()) {
 			case TVMessage.TYPE_PROGRAM_BLOCK:
@@ -188,6 +198,7 @@ abstract public class DTVActivity extends TVActivity{
 					break;
 				case TVMessage.TYPE_SIGNAL_RESUME:
 					RecordStatus(STATUS_SIGNAL,true);
+					RecordStatus(STATUS_DATA,true);
 					break;	
 				case TVMessage.TYPE_DATA_LOST:
 					RecordStatus(STATUS_DATA,false);
@@ -365,7 +376,12 @@ abstract public class DTVActivity extends TVActivity{
 
 		LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
 		//Log.d(TAG, "########## w=" + params.width + "h=" + params.height);
-
+		
+		x=0;
+		y=0;
+		w=0;
+		h=0;
+		
 		if(x == 0 && y == 0 && w == 0 && h == 0){
 			Log.e(TAG, "reproduction error");
 			super.setContentView(layoutResID);
@@ -854,10 +870,16 @@ abstract public class DTVActivity extends TVActivity{
 	}
 
 	public int DTVGetScreenMode(){
-		return getScreenType();
+		int mode = 0;
+		if(mLast!=null)
+			mode = mLast.getInt("screen_mode",0);
+		return mode;
+		//return getScreenType();
 	}
 
 	public void DTVSetScreenMode(int mode){
+		if(mLast!=null)
+			mLast.edit().putInt("screen_mode",mode).commit();
 		switchScreenType(mode);
 	}
 
@@ -1027,6 +1049,37 @@ abstract public class DTVActivity extends TVActivity{
 		
 		return false;
 	}
+
+	public boolean isTopActivity(Context mContext){  
+		boolean isTop = false;  
+		ActivityManager am = (ActivityManager)getSystemService(ACTIVITY_SERVICE);  
+		ComponentName cn = am.getRunningTasks(1).get(0).topActivity;  
+		
+		Log.d(TAG, "isTopActivity = " + cn.getClassName());  
+		
+		if (cn.getClassName().contains(mContext.getClass().getName()))  {  
+			isTop = true;  
+		}  
+		Log.d(TAG, "isTop = " + isTop);  
+		return isTop;  
+    } 
+
+	public boolean isHaveExternalStorage(){
+		
+		CheckUsbdevice Usbdevice = new CheckUsbdevice(this);
+		String path = getStringConfig("tv:dtv:record_storage_path");
+		if(path!=null){
+			if(Usbdevice.findSdcardString(path)==false){
+				return false;
+			}
+			else{
+				return true;
+			}	
+		}
+		else
+			return false;
+	}
+
 	
 }
 	

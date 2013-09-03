@@ -168,7 +168,7 @@ public class CheckUsbdevice
 		return item;
 	 }
 
-	private boolean findSdcardString(String path){ 	
+	public boolean findSdcardString(String path){ 	
 		 Runtime runtime = Runtime.getRuntime();  
             
             	String cmd = "mount";

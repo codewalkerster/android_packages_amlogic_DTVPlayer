@@ -38,6 +38,7 @@ import com.amlogic.widget.Rotate3D;
 import com.amlogic.widget.CustomDialog;
 import com.amlogic.widget.CustomDialog.ICustomDialog;
 import com.amlogic.widget.SingleChoiseDialog;
+import com.amlogic.widget.SureDialog;
 
 public class DTVEpg extends DTVActivity{
 	private static final String TAG="DTVEpg";
@@ -174,12 +175,69 @@ public class DTVEpg extends DTVActivity{
 				}.start(); 
 				myAdapter.notifyDataSetChanged();
 				break;
+			case TVMessage.TYPE_RECORD_CONFLICT:
+				int recordConflict = msg.getRecordConflict();
+				Log.d(TAG, "Record conflict:");
+				if (recordConflict == TVMessage.REC_CFLT_START_NEW){
+					Log.d(TAG, "Stop record for new recording");
+				}else if (recordConflict == TVMessage.REC_CFLT_SWITCH_PROGRAM){
+					Log.d(TAG, "Stop record for switching to new program");
+				}else{
+					break;
+				}
+				if(isTopActivity(this))
+					showStopPVRDialog(recordConflict, msg.getProgramID());
+				break;	
 			default:
 				break;
-	
 		}
 	}
 
+	private void showStopPVRDialog(){
+		if(!isFinishing()){
+			showStopPVRDialog(-1, -1);
+		}
+	}
+	
+	private void showStopPVRDialog(final int conflict, final int programID){
+		new SureDialog(DTVEpg.this){
+			public void onSetMessage(View v){
+				String strMsg = "";
+				
+				if (conflict == TVMessage.REC_CFLT_SWITCH_PROGRAM){
+					strMsg = getString(R.string.dtvplayer_change_channel);
+				}else{
+					strMsg = getString(R.string.dtvplayer_pvr_is_running);
+				}
+					
+				((TextView)v).setText(strMsg);
+			}
+			public void onSetNegativeButton(){
+				 
+			}
+			public void onSetPositiveButton(){
+				DTVPlayerStopRecording();
+				
+
+				if (conflict == TVMessage.REC_CFLT_START_NEW){
+					if (getCurrentProgramID() != programID){
+						playProgram(programID);
+					}
+
+				}else if (conflict == TVMessage.REC_CFLT_SWITCH_PROGRAM){
+					playProgram(programID);
+				}
+				
+			}
+			
+			public void onShowEvent(){				
+			}
+
+			public void onDismissEvent(){
+			}
+		};
+	}
+	
 	private int eit_list_cur_pos=0;
 	
 	private void DTVEpgUIInit(){	

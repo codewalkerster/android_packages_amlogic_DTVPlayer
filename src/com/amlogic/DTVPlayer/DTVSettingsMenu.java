@@ -2327,10 +2327,28 @@ public class DTVSettingsMenu extends DTVActivity {
 	}
 
 	private void showPvrManagerPasswordDialog(){
-		Intent Intent_pvr_manager = new Intent();
-		Intent_pvr_manager.setClass(DTVSettingsMenu.this,DTVPvrManager.class);
-		startActivity(Intent_pvr_manager);
-		DTVSettingsMenu.this.finish();	
+		new PasswordDialog(DTVSettingsMenu.this){
+			public void onCheckPasswordIsRight(){
+				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
+					Intent Intent_pvr_manager = new Intent();
+					Intent_pvr_manager.setClass(DTVSettingsMenu.this,DTVPvrManager.class);
+					startActivity(Intent_pvr_manager);
+					DTVSettingsMenu.this.finish();	
+			}
+			public void onCheckPasswordIsFalse(){
+				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
+				toast = Toast.makeText(
+				DTVSettingsMenu.this, 
+	    		R.string.invalid_password,
+	    		Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+			}
+			public boolean onDealUpDownKey(){
+				return false;
+			}
+		};
+
 	}
 
 
