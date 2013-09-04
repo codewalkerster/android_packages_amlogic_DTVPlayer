@@ -46,7 +46,11 @@ cd $BUILD_TOPDIR
 
 mmm ../../../external/libzvbi || clean || return 1
 
+if [ -d ../../../external/dvb ]; then
 mmm ../../../external/dvb || clean || return 1
+else
+mmm ../../../vendor/amlogic/dvb || clean || return 1
+fi
 
 mm clean-DTVPlayer
 cd ../TvMiddleware; mm ; cd ../DTVPlayer
