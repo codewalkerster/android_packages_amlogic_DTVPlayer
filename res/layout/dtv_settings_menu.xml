@@ -107,6 +107,7 @@
 					android:layout_height="148dp"
 						android:layout_centerHorizontal="true"
 						android:background="@drawable/button_av"
+						android:nextFocusRight="@+id/button_program"
 						android:nextFocusLeft="@+id/button_system"/>
 		         <TextView 
 			             android:layout_width="wrap_content"

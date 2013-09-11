@@ -235,7 +235,7 @@ public class DTVRecordDevice extends DTVActivity {
 					mDTVSettings.setRecordStoragePath(item.Path);
 					holder.info.setText(item.Path);
 
-					disk_type.setText(item.format);
+					//disk_type.setText(item.format);
 					disk_total.setText(item.total);
 					disk_space.setText(item.spare);
 				}
@@ -437,7 +437,7 @@ public class DTVRecordDevice extends DTVActivity {
 				Log.d(TAG,"path="+item.Path);
 				info_cur.setText(item.Path);
 				mDTVSettings.setRecordStoragePath(item.Path);
-				disk_type.setText(item.format);
+				//disk_type.setText(item.format);
 				disk_total.setText(item.total);
 				disk_space.setText(item.spare);
 			}

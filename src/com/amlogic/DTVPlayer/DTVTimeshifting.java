@@ -22,6 +22,7 @@ import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
 import android.app.*;
 import android.content.*;
+import android.net.*;
 import android.graphics.*;
 import android.text.*;
 import android.text.method.*;
@@ -49,14 +50,18 @@ public class DTVTimeshifting extends DTVActivity{
 		timeshiftingHandler.postDelayed(timeshiftingTimer, 1000);
 	}
 
+	private MountEventReceiver mount_receiver=null;
 	@Override
 	protected void onStart(){
 		Log.d(TAG, "onStart");
 		super.onStart();
-		
-		
+		mount_receiver = new MountEventReceiver();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(Intent.ACTION_MEDIA_EJECT);
+		filter.addDataScheme("file");
+		registerReceiver(mount_receiver, filter);
 	}
-
+	
 	@Override
 	protected void onStop(){
 		Log.d(TAG, "onStop");
@@ -66,6 +71,8 @@ public class DTVTimeshifting extends DTVActivity{
 		//playValid();
 		if(toast!=null)
 			toast.cancel(); 
+		if(mount_receiver != null)
+			unregisterReceiver(mount_receiver);
 		this.finish();
 	}
 
@@ -138,6 +145,44 @@ public class DTVTimeshifting extends DTVActivity{
 	
 		}
 	}
+
+	class MountEventReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+	        String action = intent.getAction();
+	        Uri uri = intent.getData();
+	
+	        if (uri.getScheme().equals("file")) {
+	        	String path = uri.getPath();
+	        	
+	        	if (action.equals(Intent.ACTION_MEDIA_EJECT)){
+    				Log.d(TAG,"---------------Intent.ACTION_MEDIA_EJECT--------------------"+path);
+					if(uri!=null){
+						String storage_path = getStringConfig("tv:dtv:record_storage_path");
+						if(storage_path!=null){
+							if(path.contains(storage_path)){
+								try{
+				        			DTVTimeShiftingStop();
+									if(toast!=null)
+										toast.cancel(); 
+									toast = Toast.makeText(
+										DTVTimeshifting.this,
+							    		R.string.check_usb_device,
+							    		Toast.LENGTH_SHORT);
+										toast.setGravity(Gravity.CENTER, 0, 0);
+										toast.show();
+									gotoDTVPlayer();
+				        		}catch(IllegalArgumentException e){
+				        			
+				        		}
+							}	
+						}	
+					}
+    			}
+	        }
+		}
+    }
 
 	private void gotoDTVPlayer(){
 		Intent intent = new Intent();

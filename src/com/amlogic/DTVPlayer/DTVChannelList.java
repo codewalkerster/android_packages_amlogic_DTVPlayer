@@ -85,6 +85,7 @@ public class DTVChannelList extends DTVActivity{
 	    //LinearLayoutListView = (LinearLayout)findViewById(R.id.LinearLayoutListView);
 		//initAnimation();
 
+
 		Text_title=(TextView)findViewById(R.id.Text_title);
 		Text_title.setTextColor(Color.YELLOW);
 		class_total = getListProgramClass();
@@ -814,7 +815,7 @@ public class DTVChannelList extends DTVActivity{
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -1208,7 +1209,7 @@ public class DTVChannelList extends DTVActivity{
 		alert.show();	
 		alert.getWindow().setLayout(500, -200);
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
@@ -1316,7 +1317,7 @@ public class DTVChannelList extends DTVActivity{
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		//WindowManager m = getWindowManager();
 		//Display d = m.getDefaultDisplay();
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		lp.x=600;	
 
 		mDialog.getWindow().setAttributes(lp);

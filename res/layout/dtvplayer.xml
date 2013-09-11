@@ -108,7 +108,7 @@
 		>
 
 		<RelativeLayout android:id="@+id/RelativeLayoutNextprogram" 
-			android:layout_height="26dp" 
+			android:layout_height="36dp" 
 			android:layout_marginRight="5dp" 
 			android:layout_width="fill_parent" 
 			android:layout_marginLeft="5dp"
@@ -125,7 +125,7 @@
 				      android:id="@+id/Text_nextevent"
 				      android:text="@string/dtvplayer_no_next_event"
 				      android:layout_width="fill_parent"
-				      android:layout_height="40dp"
+				      android:layout_height="36dp"
 				      android:textSize="26sp"  
 				      android:paddingLeft="30dp"
 				      android:singleLine="true" 

@@ -261,7 +261,7 @@ public class DTVScanDvbsUnicableConfig extends DTVActivity{
 		alert.show();	
 		alert.getWindow().setLayout(500, -200);
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}

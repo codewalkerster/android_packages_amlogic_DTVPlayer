@@ -126,6 +126,7 @@ public class DTVPlayer extends DTVActivity{
 				break;
 			case TVMessage.TYPE_SCAN_STORE_BEGIN:
 				Log.d(TAG, "Storing ...");
+				showTeltext(this);
 				break;
 			case TVMessage.TYPE_SCAN_STORE_END:
 				Log.d(TAG, "Store Done !");
@@ -194,6 +195,19 @@ public class DTVPlayer extends DTVActivity{
 				}
 
 				hidePvrIcon();
+				break;	
+			case TVMessage.TYPE_SCREEN_ON:
+				Log.d(TAG,"---TYPE_SCREEN_ON---");
+				int mode = DTVGetScreenMode();
+				if(mode==0){
+					DTVSetScreenMode(0);
+				}
+				else if(mode==2){
+					DTVSetScreenMode(2);
+				}
+				else if(mode==3){
+					DTVSetScreenMode(3);
+				}
 				break;	
 			default:
 				break;
@@ -456,7 +470,7 @@ public class DTVPlayer extends DTVActivity{
 			case DTVActivity.KEYCODE_AUDIO_LANGUAGE:
 				Log.d(TAG,"KEYCODE_AUDIO_LANGUAGE");
 				showAudioLanguageDialog(DTVPlayer.this);
-				break;	
+				return true;
 			case DTVActivity.KEYCODE_TIMESHIFTING:
 				if(mDTVSettings.getCheckProgramLock()==false){
 					if(isHaveExternalStorage()){
@@ -477,7 +491,7 @@ public class DTVPlayer extends DTVActivity{
 						toast.show();
 					}	
 				}
-				break;
+				return true;
 		}
 		
 		return super.onKeyDown(keyCode, event);
@@ -2040,6 +2054,13 @@ public class DTVPlayer extends DTVActivity{
 		}	
 	}
 
+	public static void hideTeltext(Context c){
+		Context mContext = c;
+		((DTVActivity)mContext).DTVTTHide();
+		DTVPlayerInTeletextStatus=false;
+	
+	}
+
 	private class RecallListAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Context cont;
@@ -2294,6 +2315,8 @@ public class DTVPlayer extends DTVActivity{
 		else{
 			mCustomDialog.showDialog(R.layout.dtv_subtitle_settings_no_lan, new ICustomDialog(){
 					public boolean onKeyDown(int keyCode, KeyEvent event){
+						if(keyCode == KeyEvent.KEYCODE_BACK)
+							mCustomDialog.dismissDialog();
 						return false;
 					}
 					public void showWindowDetail(Window window){
@@ -2313,7 +2336,7 @@ public class DTVPlayer extends DTVActivity{
 						yes.setText(R.string.yes);
 						no.setOnClickListener(new OnClickListener(){
 							public void onClick(View v) {
-								
+								mCustomDialog.dismissDialog();
 							}
 						});	 
 						yes.setOnClickListener(new OnClickListener(){

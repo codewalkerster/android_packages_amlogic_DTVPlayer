@@ -625,17 +625,28 @@ public class DTVSettingsMenu extends DTVActivity {
 						break;
 					case 4:
 						if(isHavePragram()){
-							if(mDTVSettings.getCheckProgramLock()==false){
-								Intent Intent_timeshifting = new Intent();
-								Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
-								startActivity(Intent_timeshifting);
-								DTVSettingsMenu.this.finish();
+							if(mDTVSettings.getCheckProgramLock()==false){					
+								if(isHaveExternalStorage()){
+									Intent Intent_timeshifting = new Intent();
+									Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
+									startActivity(Intent_timeshifting);
+									DTVSettingsMenu.this.finish();
+								}
+								else{
+									if(toast!=null)
+										toast.cancel(); 
+									toast = Toast.makeText(
+									DTVSettingsMenu.this,
+									R.string.check_usb_device,
+									Toast.LENGTH_SHORT);
+									toast.setGravity(Gravity.CENTER, 0, 0);
+									toast.show();
+								}	
 							}
 							else{
 								showTimeshiftingPasswordDialog();
 							}
-						}
-						else{
+						}else{
 							toast = Toast.makeText(
 							DTVSettingsMenu.this,
 							R.string.dtvplayer_no_program,
@@ -1168,7 +1179,7 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -1619,6 +1630,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		builder = new AlertDialog.Builder(this);	
 		final EditText editText = new EditText(this);
 		editText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(4)});
+		
 		//editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
 		builder.setTitle(R.string.edit_title);
@@ -1688,7 +1700,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		alert.show();	
 		alert.getWindow().setLayout(500, -200);
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
@@ -1798,7 +1810,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -2187,7 +2199,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	
 		new SingleChoiseDialog(DTVSettingsMenu.this,item,pos){
 			public void onSetMessage(View v){
-				((TextView)v).setText(getString(R.string.audio_track));
+				((TextView)v).setText(getResources().getStringArray(R.array.av_settings_content)[2]);
 			}
 
 			public void onSetNegativeButton(){
@@ -2209,7 +2221,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	
 		new SingleChoiseDialog(DTVSettingsMenu.this,item,pos){
 			public void onSetMessage(View v){
-				((TextView)v).setText(getString(R.string.audio_track));
+				((TextView)v).setText(getResources().getStringArray(R.array.av_settings_content)[1]);
 			}
 
 			public void onSetNegativeButton(){
@@ -2356,10 +2368,22 @@ public class DTVSettingsMenu extends DTVActivity {
 		new PasswordDialog(DTVSettingsMenu.this){
 			public void onCheckPasswordIsRight(){
 				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
-				Intent Intent_timeshifting = new Intent();
-				Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
-				startActivity(Intent_timeshifting);
-				DTVSettingsMenu.this.finish();
+				if(isHaveExternalStorage()){
+					Intent Intent_timeshifting = new Intent();
+					Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
+					startActivity(Intent_timeshifting);
+					DTVSettingsMenu.this.finish();
+				}
+				else{
+					if(toast!=null)
+						toast.cancel(); 
+					toast = Toast.makeText(
+					DTVSettingsMenu.this,
+					R.string.check_usb_device,
+					Toast.LENGTH_SHORT);
+					toast.setGravity(Gravity.CENTER, 0, 0);
+					toast.show();
+				}	
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
@@ -2494,7 +2518,7 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "1","3","5"},pos){
 			public void onSetMessage(View v){
-				((TextView)v).setText(getString(R.string.timeshift_time_set));
+				((TextView)v).setText(getResources().getStringArray(R.array.system_settings_content)[0]);
 			}
 
 			public void onSetNegativeButton(){

@@ -105,6 +105,10 @@ public class CustomDialog {
 		mDialog.show();
 		mDialog.setContentView(iLayoutResId);
 		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		lp.dimAmount=0.0f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		if(mIDialogInstance!= null){
 			mIDialogInstance.showWindowDetail(window);
 		}

@@ -459,7 +459,10 @@ abstract public class DTVActivity extends TVActivity{
 				break;	
 			case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //pre/next
 				Log.d(TAG,"KEYCODE_MEDIA_PREVIOUS");	
-				break;	
+				return true;
+			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+
+				return true;
 			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: //epg
 				Log.d(TAG,"KEYCODE_MEDIA_FAST_FORWARD");
 				break;	

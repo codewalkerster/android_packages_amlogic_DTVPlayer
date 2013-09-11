@@ -498,7 +498,7 @@ public class DTVBookList extends DTVActivity{
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -766,7 +766,7 @@ public class DTVBookList extends DTVActivity{
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -1074,7 +1074,7 @@ public class DTVBookList extends DTVActivity{
 		alert.show();	
 		alert.getWindow().setLayout(500, -200);
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}	

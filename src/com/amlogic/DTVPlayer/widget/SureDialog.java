@@ -69,7 +69,7 @@ abstract public class SureDialog {
 		mDialog.setContentView(R.layout.sure_dialog);
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		dialogInit(window);
@@ -114,7 +114,7 @@ abstract public class SureDialog {
 		mDialog.setContentView(R.layout.sure_dialog);
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		dialogInit(window);

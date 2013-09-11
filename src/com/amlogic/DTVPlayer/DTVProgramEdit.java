@@ -234,6 +234,9 @@ public class DTVProgramEdit extends DTVActivity{
 					showRadioBg();
 				else
 					hideRadioBg();	
+
+				db_id = getCurrentProgramID();
+				myAdapter.notifyDataSetChanged();
 				break;
 			case TVMessage.TYPE_RECORD_CONFLICT:
 				int recordConflict = msg.getRecordConflict();
@@ -444,6 +447,7 @@ public class DTVProgramEdit extends DTVActivity{
 					int serviceType = mTVProgramList[position].getType();
 					DTVPlayerPlayById(db_id);
 				}
+				
 		}
 	};
 
@@ -1583,7 +1587,7 @@ public class DTVProgramEdit extends DTVActivity{
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		//WindowManager m = getWindowManager();
 		//Display d = m.getDefaultDisplay();
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		lp.x=600;	
 
 		mDialog.getWindow().setAttributes(lp);

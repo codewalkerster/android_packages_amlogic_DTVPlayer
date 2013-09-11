@@ -1790,7 +1790,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		final Button lof_mode = v;		
 		int pos = 0;
 
-		final String[] ItemData = new String[]{"5150","5750","9750","10050","11300","9750-10600","9750-10600","9750-10750"};
+		final String[] ItemData = new String[]{"5150","5750","9750","10050","11300","9750-10600","9750-10750"};
 		for(int i=0;i<ItemData.length;i++){
 			if(lof_mode.getText().equals(ItemData[i]))
 				pos=i;
@@ -1859,7 +1859,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -1878,9 +1878,9 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		final EditText edittext_low = (EditText) window.findViewById(R.id.edittext_lnb_low);
 		final EditText edittext_high = (EditText) window.findViewById(R.id.edittext_lnb_high); 
 		final EditText edittext_threshold = (EditText)window.findViewById(R.id.edittext_lnb_threshold);
-		edittext_low.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(6)});
-		edittext_high.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(6)});
-		edittext_threshold.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(6)});
+		edittext_low.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(7)});
+		edittext_high.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(7)});
+		edittext_threshold.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(7)});
 
 		final CheckBox checkboxSwitch = (CheckBox)window.findViewById(R.id.checkSwitch);
 		final LinearLayout user_mode_layout = (LinearLayout)window.findViewById(R.id.user_mode_layout);
@@ -3785,7 +3785,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -4634,7 +4634,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	
@@ -5384,7 +5384,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -5707,7 +5707,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		//mDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -5973,7 +5973,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -6251,7 +6251,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -6692,7 +6692,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 

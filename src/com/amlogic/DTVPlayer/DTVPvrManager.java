@@ -48,6 +48,13 @@ public class DTVPvrManager extends DTVActivity{
 		openVideo(video_view,null);
 	}
 
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		Log.d(TAG,"-------onRestart--------");
+		super.onRestart();
+		
+	}
+
 	@Override
 	protected void onStop(){
 		Log.d(TAG, "onStop");
@@ -119,6 +126,7 @@ public class DTVPvrManager extends DTVActivity{
 					}
 				}
 				break;
+			
 			default:
 				break;
 	
@@ -186,6 +194,8 @@ public class DTVPvrManager extends DTVActivity{
 
 		list.setAdapter(myAdapter);
 		list.requestFocus();
+
+		stopPlaying();
 	}
 
 	private AdapterView.OnItemSelectedListener mOnSelectedListener = new AdapterView.OnItemSelectedListener(){

@@ -162,7 +162,7 @@ abstract public class PasswordSettingDialog {
 		mDialog.setContentView(R.layout.password_setting);
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
-		lp.dimAmount=0.5f;
+		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		pin_button_init(window);
