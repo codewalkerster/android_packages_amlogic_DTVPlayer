@@ -138,8 +138,13 @@ public class DTVProgramEdit extends DTVActivity{
 	}
 
 	private void deleteProgramFromDB(int index){
+		int cur_db_id = -1;
+		cur_db_id = mTVProgramList[index].getID();
 		mTVProgramList[index].deleteFromDb();
 		mTVProgramList = removeProgramFromList(mTVProgramList,index);
+
+		if(db_id==cur_db_id)
+			stopPlaying();
 	}
 
 	private TVProgram[] removeProgramFromList(TVProgram[] a,int index){
@@ -670,7 +675,6 @@ public class DTVProgramEdit extends DTVActivity{
 					}
 					public void onSetPositiveButton(){
 						deleteProgramFromDB(cur_select_item);
-						stopPlaying();
 						myAdapter.notifyDataSetChanged();
 					}
 				};
@@ -971,7 +975,6 @@ public class DTVProgramEdit extends DTVActivity{
 										}
 										public void onSetPositiveButton(){
 											deleteProgramFromDB(pos);
-											stopPlaying();
 											myAdapter.notifyDataSetChanged();
 											mCustomDialog.dismissDialog();
 										}

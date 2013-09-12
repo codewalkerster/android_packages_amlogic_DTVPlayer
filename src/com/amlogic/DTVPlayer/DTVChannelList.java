@@ -362,19 +362,22 @@ public class DTVChannelList extends DTVActivity{
 				DTVListDealLeftAndRightKey(1);
 				break;
 			case KeyEvent.KEYCODE_DPAD_DOWN:
-				if(cur_select_item== ListView_channel.getCount()-1){
-			    	ListView_channel.setSelection(0); 	
-					return true;
+				if(ListView_channel!=null){
+					if(cur_select_item== ListView_channel.getCount()-1){
+				    	ListView_channel.setSelection(0); 	
+						return true;
+					}	
 				}	
 				break;
 			case KeyEvent.KEYCODE_DPAD_UP:
-				if(cur_select_item== 0){
-					ListView_channel.setSelection(ListView_channel.getCount()-1); 
-					return true;
+				if(ListView_channel!=null){
+					if(cur_select_item== 0){
+						ListView_channel.setSelection(ListView_channel.getCount()-1); 
+						return true;
+					}	
 				}	
 				break;
 			case DTVActivity.KEYCODE_AUDIO_LANGUAGE:
-				
 				if(ListView_channel.getChildCount()>cur_select_item)
 					ListView_channel.setSelection(0);
 				else{
