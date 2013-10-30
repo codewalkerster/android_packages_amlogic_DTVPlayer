@@ -9,49 +9,48 @@
 		android:layout_height="wrap_content"
 		android:layout_centerInParent="true"  
 		android:orientation="vertical"> 
-
+		
 		<LinearLayout
+   		android:id="@+id/layout_head"
+		android:layout_width="match_parent"
+		android:layout_height="90dp"
+		android:orientation="vertical"
+		android:padding="14dp"
+		android:gravity="center"
+		android:background="@drawable/single_dia_head"
+		android:layout_alignTop="@+id/layout_parent"
+		>
+		
+		<TextView
+			android:id="@+id/title"
 			android:layout_width="match_parent"
-			android:layout_height="80px"
-			android:orientation="vertical"
-			android:padding="14px"
+			android:layout_height="34dp"
+			android:layout_gravity="center_horizontal"
+			android:text="@string/parent_control_Canada_French"
+			android:textColor="#FFFFFFFF"
 			android:gravity="center"
-			android:background="@drawable/vchip_pin_head_bg">
-			<TextView
-				android:id="@+id/title"
-				android:layout_width="match_parent"
-				android:layout_height="35px"
-				android:layout_gravity="center_horizontal"
-				android:text="@string/parent_control_Canada_French"
-				android:textColor="#FFFFFFFF"
-				android:gravity="center"
-				android:textSize="25px" 
-				android:layout_marginTop="20px"
-				android:layout_marginBottom="20px"/>
-			<RelativeLayout
-				android:layout_width="fill_parent"
-				android:layout_height="3px"
-				android:background="@drawable/line"
-				android:layout_marginRight="15px"
-				android:layout_marginLeft="15px"
-				android:layout_below="@+id/title"
-				/>		
+			android:textSize="24sp" 
+			android:layout_marginTop="20dp"
+			android:layout_marginBottom="10dp" />	
 		</LinearLayout> 
 
 		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			android:paddingTop="20px"
-			android:paddingBottom="20px"
-			android:background="@drawable/vchip_pin_body_bg"
-			>		  
-	        
+			android:id="@+id/layout_body"
+	    		android:layout_width="match_parent"
+	    		android:layout_height="wrap_content"
+	    		android:orientation="horizontal"
+	    		android:paddingLeft="14dp"
+	    		android:paddingRight="14dp"
+	    		android:gravity="center"
+	    		android:background="@drawable/single_dia_body"
+	    		android:layout_above="@+id/layout_tail" 
+	    		android:layout_below="@+id/layout_head" >
+	    
 			<RelativeLayout
 				android:layout_width="422px"
 				android:layout_height="195px"
 				android:layout_centerVertical="true"
-				android:layout_marginLeft="135px"
+				android:layout_marginLeft="70dp"
 				android:background="@drawable/cf"
 				android:id="@+id/rating_bg_layout"
 			>
@@ -98,73 +97,68 @@
 				android:layout_alignTop="@+id/rating_bg_layout"
 				>	
 			</RelativeLayout>
+		  	
 		</LinearLayout>  	  	
+
 		<LinearLayout
+			android:id="@+id/layout_tail" 
 			android:layout_width="fill_parent"
-			android:layout_height="60px"
+			android:layout_height="90dp"
 			android:orientation="vertical"
-			android:background="@drawable/vchip_pin_tail_bg">
- 
-			<RelativeLayout
-				android:id="@+id/inforbar_line" 
-				android:layout_width="fill_parent"
-				android:layout_height="3px"
-				android:layout_marginRight="18px"
-				android:layout_marginLeft="15px"
-				android:background="@drawable/line">
-			</RelativeLayout>
-  	     
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:orientation="horizontal"
-				android:gravity="center"
-				>
+			android:background="@drawable/single_dia_tail"
+			android:layout_alignBottom="@+id/layout_parent"
+			>	     
+	  	     	<LinearLayout
+	    		android:layout_width="match_parent"
+	    		android:layout_height="match_parent"
+	    		android:orientation="horizontal"
+	    		android:gravity="center">
 	    		
-	    		<ImageView 
-	    			android:layout_width="wrap_content"
-	    			android:layout_height="wrap_content"
-					android:background="@drawable/move"
-	    		>
-	    		</ImageView>
-	    		<TextView
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_gravity="center"
-			        android:text="@string/help_info_move"
-			        android:textColor="#FFFFFFFF"
-			        android:textSize="20sp" 
-			        android:layout_marginRight="22px"
-			        />
-	    		<ImageView 
-	    			android:layout_width="wrap_content"
-	    			android:layout_height="wrap_content"
-					android:background="@drawable/enter"
-	    		></ImageView>
-	    		<TextView
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_gravity="center"
-			        android:text="@string/help_info_select"
-			        android:textColor="#FFFFFFFF"
-			        android:textSize="20sp"
-			        android:layout_marginRight="22px"
-			        />
-	    		<ImageView 
-	    			android:layout_width="wrap_content"
-	    			android:layout_height="wrap_content"
-					android:background="@drawable/return_icon"
-	    		></ImageView>
-	    		<TextView
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_gravity="center"
-			        android:text="@string/help_info_return"
-			        android:textColor="#FFFFFFFF"
-			        android:textSize="20sp" />
-			</LinearLayout>
+		    		<ImageView 
+		    			android:layout_width="wrap_content"
+		    			android:layout_height="wrap_content"
+						android:background="@drawable/move"
+		    		>
+		    		</ImageView>
+		    		<TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:text="@string/help_info_move"
+				        android:textColor="#FFFFFFFF"
+				        android:textSize="20sp" 
+				        android:layout_marginRight="22px"
+				        />
+		    		<ImageView 
+		    			android:layout_width="wrap_content"
+		    			android:layout_height="wrap_content"
+						android:background="@drawable/enter"
+		    		></ImageView>
+		    		<TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:text="@string/help_info_select"
+				        android:textColor="#FFFFFFFF"
+				        android:textSize="20sp"
+				        android:layout_marginRight="22px"
+				        />
+		    		<ImageView 
+		    			android:layout_width="wrap_content"
+		    			android:layout_height="wrap_content"
+						android:background="@drawable/return_icon"
+		    		></ImageView>
+		    		<TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:text="@string/help_info_return"
+				        android:textColor="#FFFFFFFF"
+				        android:textSize="20sp" />
+			</LinearLayout>	
 		</LinearLayout>
 	</LinearLayout>
+
 </RelativeLayout>
 
 

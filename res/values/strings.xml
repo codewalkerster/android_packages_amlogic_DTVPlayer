@@ -146,12 +146,11 @@
 	</array>
 
 	<array name="system_settings_content_atsc" translatable="false">	
+		<item>Recall List</item>	
 		<item>Subtitle Switch</item>	    
 		<item>Factory data reset</item>	
 		<item>Set password</item>	
-		<item>Select storage device</item>
-		<item>Timeshifting setting</item>
-		<item>V-Chip</item>
+		<item>Parental rating age</item>
 		<item>TTX Region</item>
 		<item>Closed Caption</item>
 		<item>Antenna Source</item>
@@ -161,6 +160,30 @@
 		<item>Dish Setup</item>	
 		<item>DB Management</item>
 		<item>Unicable Configure</item>
+	</array>
+
+	<array name="search_settings_content_dvbt" translatable="false">
+		<item>Auto Scan</item>	
+		<item>Manual Scan</item>
+		<item>Area</item>
+		<item>LCN</item>
+	</array>
+
+	
+	<array name="search_settings_content_atsc" translatable="false">
+		<item>Auto Scan</item>	
+		<item>Manual Scan</item>
+		<item>Area</item>
+		<item>Antenna Power</item>	
+	</array>
+
+	<array name="search_settings_content_dvbt_manual" translatable="false">
+		<item>Scan Mode</item>	
+		<item>Scan Band</item>
+		<item>Channel</item>
+		<item>Frequency(KHz)</item>
+		<item>Bandwidth(M)</item>
+		<item>Search</item>
 	</array>
 
 	<array name="Program_settings_content" translatable="false">

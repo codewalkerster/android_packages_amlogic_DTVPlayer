@@ -33,8 +33,8 @@ public class DTVVChip extends DTVActivity{
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dtvvchip_settings);
-		
+		//setContentView(R.layout.dtvvchip_settings);
+		setContentView(R.layout.dtv_vchip_settings);
 	}
 
 	public void onConnected(){
@@ -127,27 +127,27 @@ public class DTVVChip extends DTVActivity{
  				case 1:
  					intent.setClass(DTVVChip.this,DTVVchipTv.class);
  					startActivityForResult(intent, 111);
-					onHide();
+					//onHide();
 					break;
  				case 2:
  					intent.setClass(DTVVChip.this,DTVVchipMpaa.class);
  					startActivityForResult(intent, 112);
-					onHide();
+					//onHide();
  					break;
  				case 3:
  					intent.setClass(DTVVChip.this,VchipCanadaEnglishActivity.class);
  					startActivityForResult(intent, 113);
-					onHide();
+					//onHide();
 					break;
  				case 4:
  					intent.setClass(DTVVChip.this,VchipCanadaFrenchActivity.class);
  					startActivityForResult(intent, 114);
-					onHide();
+					//onHide();
  					break;
 				case 5:
 					intent.setClass(DTVVChip.this,RRTDimensions.class);
  					startActivityForResult(intent, 115);
-					onHide();
+					//onHide();
  					break;
 				case 6:
  					break;	
@@ -329,7 +329,7 @@ public class DTVVChip extends DTVActivity{
 				case 113:
 				case 114:	
 				case 115:
-					onShow();
+					//onShow();
 					break;
 			}
 		}	

@@ -33,7 +33,7 @@ abstract public class SureDialog {
 	
 	public SureDialog(Context context) {
 		mContext = context;
-		mDialog = new AlertDialog(mContext){
+		mDialog = new Dialog(mContext,R.style.MyDialog){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
@@ -78,7 +78,7 @@ abstract public class SureDialog {
 
 	public SureDialog(Context context,boolean b) {
 		mContext = context;
-		mDialog = new AlertDialog(mContext){
+		mDialog = new Dialog(mContext,R.style.MyDialog){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {

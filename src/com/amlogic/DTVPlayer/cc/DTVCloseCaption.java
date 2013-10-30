@@ -40,7 +40,8 @@ public class DTVCloseCaption extends DTVActivity{
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dtvvchip_settings);
+		//setContentView(R.layout.dtvvchip_settings);
+		setContentView(R.layout.dtv_vchip_settings);
 	}
 
 	public void onConnected(){
@@ -114,7 +115,7 @@ public class DTVCloseCaption extends DTVActivity{
 				case 3:
  					intent.setClass(DTVCloseCaption.this,DTVCaptionOptions.class);
  					startActivityForResult(intent, 14);	
-					onHide();
+					//onHide();
 					break;
  			}
 			
@@ -337,7 +338,7 @@ public class DTVCloseCaption extends DTVActivity{
 		if(resultCode == RESULT_OK){
 			switch(requestCode){
 				case 14:
-					onShow();
+					//onShow();
 					break;
 			}
 		}	

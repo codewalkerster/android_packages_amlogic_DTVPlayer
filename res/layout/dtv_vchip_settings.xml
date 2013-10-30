@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background ="@drawable/bg"
+	android:orientation="vertical"
+	>	
+
+	<LinearLayout	android:id="@+id/layout_top"	
+		android:layout_width="fill_parent"	
+		android:layout_height="wrap_content" 
+		android:layout_weight="1"	
+		android:gravity="center"	>	
+		 <TextView android:id="@+id/title"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content" 
+	            android:layout_gravity="center"
+	            android:text="@string/title_record_device"
+	            android:layout_marginLeft = "80dp"
+	            android:textSize="40sp"/>
+	</LinearLayout>	
+
+	<LinearLayout 
+		android:layout_width="fill_parent"
+		android:layout_height="356dp"
+		android:background ="@drawable/epg_content_bg3"  
+		android:layout_marginLeft="20dp"
+		android:layout_marginRight="20dp"
+		android:padding="5dp"
+		android:layout_weight="3"
+		android:orientation="vertical">
+		
+		<ListView 
+				android:id="@+id/settings_list"
+				android:layout_width="fill_parent" 
+				android:layout_height="fill_parent">
+				</ListView>
+		
+	</LinearLayout>
+
+	<LinearLayout 
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="2"
+		android:orientation="horizontal">
+		<LinearLayout
+			android:layout_weight="1"    
+			android:gravity="center_horizontal"
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/ok_icon"
+			android:contentDescription="@string/app_name"
+		    ></ImageView>
+		    <TextView
+		      android:layout_marginLeft="20sp"    
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/confirm"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>
+		<LinearLayout
+		android:layout_weight="1"    
+		android:gravity="center_horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		> 
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:background="@drawable/return_icon"
+			android:contentDescription="@string/app_name"
+		    ></ImageView>
+		    <TextView
+		    android:layout_marginLeft="20sp"     
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+			android:text="@string/exit"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:layout_marginRight="30dp"
+			/>
+		</LinearLayout>	
+	</LinearLayout>
+
+
+	<!--	
+	<LinearLayout 
+		android:id="@+id/RelativeLayoutBG"
+		android:layout_centerInParent="true"
+		android:layout_marginTop="100px" 
+		android:layout_width="644px" 
+		android:layout_height="458px"
+		android:background="@drawable/settings_bg"
+		android:orientation="vertical">  
+ 
+		<RelativeLayout android:id="@+id/RelativeLayoutList"
+    		android:layout_alignParentBottom="true"	
+			android:layout_centerInParent="true"  
+			android:layout_width="fill_parent" 
+			android:layout_height="356px"
+			android:paddingLeft="10px"
+			android:paddingRight="13px"
+			>
+			
+			 <com.amlogic.widget.FocusScrollListView 
+		        android:id="@+id/settings_list"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:padding="0dip"
+		        android:layout_margin="0dip"
+		        android:listSelector="#00000000">
+		    </com.amlogic.widget.FocusScrollListView>
+		   
+		</RelativeLayout>
+	</LinearLayout>
+	-->
+</LinearLayout>

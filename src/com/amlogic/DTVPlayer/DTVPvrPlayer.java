@@ -130,17 +130,13 @@ public class DTVPvrPlayer extends DTVActivity{
 				if(isTopActivity(DTVPvrPlayer.this))
 						gotoBack();
 				break;
-			case TVMessage.TYPE_PLAYBACK_STOP:
-				if(current_playback_flag){
-					current_playback_flag=false;
-					if(isTopActivity(DTVPvrPlayer.this))
-						gotoBack();
-				}	
-				break;
 			case TVMessage.TYPE_PLAYBACK_START:
-				current_playback_flag = true;
 				PvrPlayerGetCurrentProgramData();
 				updateInforbar();
+				break;
+			case TVMessage.TYPE_PLAYBACK_STOP:
+				if(isTopActivity(DTVPvrPlayer.this))
+					gotoBack();
 				break;
 			default:
 				break;
@@ -423,7 +419,7 @@ public class DTVPvrPlayer extends DTVActivity{
 
 				pvrHandler.removeCallbacks(pvrTimer);
 				stopPlayback();
-				//gotoBack();
+				gotoBack();
 			}
 		};
 	}

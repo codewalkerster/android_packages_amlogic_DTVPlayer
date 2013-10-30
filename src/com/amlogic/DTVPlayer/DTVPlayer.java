@@ -77,7 +77,6 @@ public class DTVPlayer extends DTVActivity{
 		if(isHavePragram()==false){ 
 			showNoProgramDia(); 
 		}
-		mDTVSettings.setTeltextBound();
 		
 		if(bundle!=null){	
 			if (! tryBookingPlay()){
@@ -108,7 +107,6 @@ public class DTVPlayer extends DTVActivity{
 		else if(mode==3){
 			DTVSetScreenMode(3);
 		}
-
 		
 	}
 
@@ -208,7 +206,19 @@ public class DTVPlayer extends DTVActivity{
 				else if(mode==3){
 					DTVSetScreenMode(3);
 				}
-				break;	
+				break;
+			case TVMessage.TYPE_PLAYBACK_STOP:
+				break;
+			case TVMessage.TYPE_PLAYBACK_START:
+				TVProgram pvrTVProgram=null;
+				pvrTVProgram=DTVPlayerGetDataByCurrentID();
+				if(pvrTVProgram.getVideo().getPID()<0x1fff){
+					hideRadioBg();
+				}
+				else{
+					showRadioBg();
+				}
+				break;
 			default:
 				break;
 		}
@@ -236,12 +246,6 @@ public class DTVPlayer extends DTVActivity{
 		super.onPause();
 		mDialogManager.setActive(false);
 		mDialogManager.pauseDialog();
-
-		
-
-
-
-		
 	}
 	
 	@Override
@@ -283,14 +287,13 @@ public class DTVPlayer extends DTVActivity{
 		Log.d(TAG, ">>>>>onNewIntent<<<<<");
 		super.onNewIntent(intent);
 	    setIntent(intent);
-		
 		boolean bHasPro = false;
 		if(isHavePragram()==false){ 
 			hideRadioBg();
 			showNoProgramDia(); 
 			bHasPro = true;
 		}
-		
+
 		if(intent!=null){
 			bundle = intent.getExtras();
 		}
@@ -361,7 +364,7 @@ public class DTVPlayer extends DTVActivity{
 					//break;
 				//}
 				//else
-					{
+				{
 					if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){
 						DTVTTGotoNextPage();
 					}	
@@ -473,8 +476,7 @@ public class DTVPlayer extends DTVActivity{
 				return true;
 			case DTVActivity.KEYCODE_TIMESHIFTING:
 				if(mDTVSettings.getCheckProgramLock()==false){
-					if(isHaveExternalStorage()){
-						
+					if(isHaveExternalStorage()){						
 						Intent Intent_timeshifting = new Intent();
 						Intent_timeshifting.setClass(DTVPlayer.this,DTVTimeshifting.class);
 						startActivity(Intent_timeshifting);
@@ -957,12 +959,12 @@ public class DTVPlayer extends DTVActivity{
 				if(region.contains("DVB-T"))
 				{
 					Log.d(TAG, "goto DTVScanDVBT");
-					Intent_scan.setClass(DTVPlayer.this, DTVScanDVBT.class);
+					Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
 				}
 				else if(region.contains("ATSC"))
 				{
 					Log.d(TAG, "goto DTVScanATSC");
-					Intent_scan.setClass(DTVPlayer.this, DTVScanATSC.class);
+					Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
 				}
 				else if(region.contains("DVBS"))
 				{

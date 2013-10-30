@@ -350,6 +350,7 @@ android:background ="@drawable/bg"
 			android:layout_marginRight="30dp"
 			/>
 		</LinearLayout>
+		<!--
 		<LinearLayout
 		android:layout_weight="1"    
 		android:gravity="center_horizontal"
@@ -357,23 +358,24 @@ android:background ="@drawable/bg"
 		android:layout_height="fill_parent"
 		> 
 			<ImageView 
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_gravity="center"
-			android:background="@drawable/green_button"
-			android:contentDescription="@string/app"
-		    ></ImageView>
-		    <TextView
-		    android:layout_marginLeft="20sp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-		    android:layout_gravity="center"
+			android:layout_gravity="center"
+			android:background="@drawable/green_button"
+			android:contentDescription="@string/app"
+			></ImageView>
+			<TextView
+			android:layout_marginLeft="20sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
 			android:text="@string/move"
 			android:textColor="#FFFFFFFF"
 			android:textSize="20sp"
 			android:layout_marginRight="30dp"
 			/>
 		</LinearLayout>
+		-->
 	</LinearLayout>
 </LinearLayout>	
 

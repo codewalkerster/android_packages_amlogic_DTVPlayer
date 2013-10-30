@@ -45,9 +45,8 @@ import java.lang.reflect.Field;
 abstract public class DTVActivity extends TVActivity{
     private static final String TAG="DTVActivity";
 
-	
-
 	final public static int KEYCODE_TTX=KeyEvent.KEYCODE_ZOOM_IN;
+	final public static int KEYCODE_RED_BUTTON=KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE;
 	final public static int KEYCODE_YELLOW_BUTTON=KeyEvent.KEYCODE_ZOOM_OUT;
 	final public static int KEYCODE_BLUE_BUTTON=KeyEvent.KEYCODE_TV_REPEAT;
 	final public static int KEYCODE_GREEN_BUTTON=KeyEvent.KEYCODE_TAB;
@@ -55,13 +54,11 @@ abstract public class DTVActivity extends TVActivity{
 	final public static int KEYCODE_GOTO_BUTTON=KeyEvent.KEYCODE_MEDIA_REWIND;
 	final public static int KEYCODE_REC=KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE;
 	final public static int KEYCODE_TIMESHIFTING=KeyEvent.KEYCODE_MEDIA_PREVIOUS;
+	final public static int KEYCODE_EPG=KeyEvent.KEYCODE_TV_SWITCH;
 	
 	final public static int KEYCODE_AUDIO_TRACK=KeyEvent.KEYCODE_MEDIA_NEXT;
-	
 	final public static int KEYCODE_AUDIO_LANGUAGE=KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE;
-	final public static int KEYCODE_EPG=KeyEvent.KEYCODE_TV_SWITCH;
-		
-	final public static int KEYCODE_RED_BUTTON=KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE;
+	
 	final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_TV_SUBTITLE;
 	final public static int KEYCODE_SUBTITLE_SWITCH=KeyEvent.KEYCODE_E;	
 	final public static int KEYCODE_RECALL_BUTTON=KeyEvent.KEYCODE_C;
@@ -102,6 +99,7 @@ abstract public class DTVActivity extends TVActivity{
 			setInputSource(TVConst.SourceInput.SOURCE_DTV);
 		}
 		mDTVSettings = new DTVSettings(this); 
+		mDTVSettings.setTeltextBound();
 	}
 
 	public void onDisconnected(){

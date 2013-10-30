@@ -48,7 +48,7 @@ public class DTVCaptionOptions extends DTVActivity {
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dtvvchip_settings);
+		setContentView(R.layout.dtv_vchip_settings);
 	}
 
 	public void onConnected(){

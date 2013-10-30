@@ -415,6 +415,7 @@ public class DTVRecordDevice extends DTVActivity {
 	private void showUsbDeviceListDialog(TextView v){
 		final TextView info_cur = v;
 		int pos = 0;
+		pos = dev_list_sel;
 		
 		String[] list_content=null;
 		if(deviceList!=null){
@@ -433,6 +434,7 @@ public class DTVRecordDevice extends DTVActivity {
 				
 			}
 			public void onSetPositiveButton(int which){
+				dev_list_sel = which;
 				DeviceItem item = deviceList.get(which);  
 				Log.d(TAG,"path="+item.Path);
 				info_cur.setText(item.Path);
@@ -572,6 +574,18 @@ public class DTVRecordDevice extends DTVActivity {
 		}
 
 		sdcard_deal(sd_path);
+
+		String cur_record_path=mDTVSettings.getRecordStoragePath();
+		if(deviceList!=null){
+			for(int i=0;i<deviceList.size();i++){
+				DeviceItem item = deviceList.get(i);  
+				if(cur_record_path!=null)
+				  if(cur_record_path.equals(item.Path)){
+					 dev_list_sel=i;
+					 break;
+				  }
+			}
+		}
 
 		//if(t!=null)
 			//t.onGetDiskInfo();

@@ -36,7 +36,7 @@
 	    
 	    <activity android:name=".DTVMainMenu"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVSettingsUI"	android:theme="@style/Transparent"/> 
-		<activity android:name=".DTVChannelList" android:theme="@style/Transparent"/> 
+		<activity android:name=".DTVChannelList" android:theme="@style/transparentDialog"/> 
 		<activity android:name=".DTVEpg" android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVTimeshifting" android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVPvrPlayer"	android:theme="@style/Transparent"/> 
@@ -52,7 +52,9 @@
 		<activity android:name=".DTVScanDvbsUnicableConfig" android:theme="@style/Transparent"/>
 		<activity android:name=".DTVScanDvbsConfig" android:theme="@style/Transparent"/>
 		<activity android:name=".DvbsScanResult" android:theme="@style/Transparent"/>
-
+		<activity android:name=".DvbtScanResult" android:theme="@style/Transparent"/>
+		<activity android:name=".ATSCScanResult" android:theme="@style/Transparent"/>
+	
 		<activity android:name=".DTVSettingsMenu" android:theme="@style/Transparent" />	
 
 		<activity android:name=".DTVScanATSC" android:theme="@style/Transparent"/> 
@@ -63,8 +65,8 @@
 		<activity android:name=".DTVCaptionOptions"	android:theme="@style/Transparent"/> 
 		<activity android:name=".DTVBookingManager" android:theme="@style/Transparent" />
 	
-		<activity android:name=".DTVVchipTv"	android:theme="@style/Transparent"/> 
-		<activity android:name=".DTVVchipMpaa"	android:theme="@style/Transparent"/>
+		<activity android:name=".DTVVchipTv"	android:theme="@style/transparentDialog"/> 
+		<activity android:name=".DTVVchipMpaa"	android:theme="@style/transparentDialog"/>
 
 		<activity android:name=".VchipCanadaEnglishActivity" android:theme="@style/transparentDialog" />
 		<activity android:name=".VchipCanadaFrenchActivity" android:theme="@style/transparentDialog" />

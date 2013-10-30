@@ -10,6 +10,7 @@ import com.amlogic.tvactivity.TVActivity;
 import com.amlogic.tvutil.TVChannelParams;
 import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVConst;
+import com.amlogic.tvutil.TVRegion;
 
 import java.util.*;
 import java.text.*;
@@ -248,11 +249,6 @@ public class DTVSettingsMenu extends DTVActivity {
 	public static final int SETTINGS_SUBTILE_SWITCH = 1;
 	public static final int SETTINGS_DEFAULT = 2;
 	public static final int SETTINGS_SET_PASSWORD = 3;
-
-	/*
-	public static final int SETTINGS_SELECT_STORAGE=4;
-	public static final int SETTINGS_TIMESHIFT_TIME_SET=5;
-	*/
 	public static final int SETTINGS_PARENTAL_RATING_SET=4; //and vchip
 	public static final int SETTINGS_TTX_REGION=5;
 	public static final int SETTINGS_CC=6;
@@ -265,6 +261,8 @@ public class DTVSettingsMenu extends DTVActivity {
 	private ListView ListView_settings=null;
 	private ProgramItemAdapter myProgramAdapter=null;
 	private SearchItemAdapter mySearchAdapter=null;
+	private SearchDvbtItemAdapter mySearchDvbtItemAdapter=null;
+	private SearchATSCItemAdapter mySearchATSCItemAdapter=null;
 	private SystemItemAdapter mySystemAdapter=null;
 	private AvItemAdapter myAvAdapter=null;
 	
@@ -327,18 +325,80 @@ public class DTVSettingsMenu extends DTVActivity {
 	}
 
 	private void SearchItem_Init(){
-		Log.d(TAG,"scan region="+mDTVSettings.getScanRegion());
-		button_status = BUTTON_SEARCH;  
-		DATA = getResources().getStringArray(R.array.search_settings_content_dvbs);
+		String region = null;
+		
+		
+		try {
+			region = mDTVSettings.getScanRegion();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.d(TAG, "Cannot read dtv region !!!");
+			return;
+		}
 
-		//listview
-		ListView_settings = (ListView)findViewById(R.id.settings_list);
-		mySearchAdapter = new SearchItemAdapter(this,DATA);
-		ListView_settings.setOnItemSelectedListener(mOnSelectedListener);
-		ListView_settings.setOnKeyListener(new listOnKeyListener());
-		ListView_settings.setOnItemClickListener(mSearchOnItemClickListener);
-		ListView_settings.setAdapter(mySearchAdapter);
-		//ListView_settings.requestFocus();
+		Log.d(TAG, "region = " + region);
+		
+		if(region.contains("DVB-T")){
+			Log.d(TAG, "goto DTVScanDVBT");
+			button_status = BUTTON_SEARCH;  
+			DATA = getResources().getStringArray(R.array.search_settings_content_dvbt);
+			//listview
+			ListView_settings = (ListView)findViewById(R.id.settings_list);
+			mySearchDvbtItemAdapter = new SearchDvbtItemAdapter(this,DATA);
+			ListView_settings.setOnItemSelectedListener(mOnSelectedListener);
+			ListView_settings.setOnKeyListener(new listOnKeyListener());
+			ListView_settings.setOnItemClickListener(mSearchDvbtOnItemClickListener);
+			ListView_settings.setAdapter(mySearchDvbtItemAdapter);
+		}
+		else if(region.contains("ATSC")){
+			Log.d(TAG, "goto DTVScanATSC");
+
+			button_status = BUTTON_SEARCH;  
+			DATA = getResources().getStringArray(R.array.search_settings_content_atsc);
+			//listview
+			ListView_settings = (ListView)findViewById(R.id.settings_list);
+			mySearchATSCItemAdapter = new SearchATSCItemAdapter(this,DATA);
+			ListView_settings.setOnItemSelectedListener(mOnSelectedListener);
+			ListView_settings.setOnKeyListener(new OnKeyListener(){
+			public boolean onKey(View v, int keyCode, KeyEvent event) {					
+				switch(keyCode){
+					case KeyEvent.KEYCODE_BACK:
+						if (event.getAction() == KeyEvent.ACTION_DOWN){
+							if(dtvscanatsc_scan_mode==DTVSCANATSC_SETTING_MANU_SCAN_MODE){
+								dtvscanatsc_scan_mode = DTVSCANATSC_SETTING_SCAN_MODE;
+								SearchItem_Init();
+								return true;
+							}
+						}
+				} 
+				return false;
+			}
+		});
+			ListView_settings.setOnItemClickListener(mSearchATSCOnItemClickListener);
+			ListView_settings.setAdapter(mySearchATSCItemAdapter);
+		}
+		else if(region.contains("DVBS"))
+		{
+			Log.d(TAG, "goto DTVScanDVBS");
+			button_status = BUTTON_SEARCH;  
+			DATA = getResources().getStringArray(R.array.search_settings_content_dvbs);
+			//listview
+			ListView_settings = (ListView)findViewById(R.id.settings_list);
+			mySearchAdapter = new SearchItemAdapter(this,DATA);
+			ListView_settings.setOnItemSelectedListener(mOnSelectedListener);
+			ListView_settings.setOnKeyListener(new listOnKeyListener());
+			ListView_settings.setOnItemClickListener(mSearchOnItemClickListener);
+			ListView_settings.setAdapter(mySearchAdapter);
+			//ListView_settings.requestFocus();
+		}	
+		else if(region.contains("DVB-C"))
+		{
+			Log.d(TAG, "goto DTVScanDVBC");
+						
+		}	
+
+		
+		
 	}
 	private void AVItem_Init(){
 		Log.d(TAG,"scan region="+mDTVSettings.getScanRegion());
@@ -355,8 +415,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		//ListView_settings.requestFocus();
 
 	}
-
-		
+	
 	private AnimationSet listItemFocus ;
 	private void UIAnimationInit(){
 		listItemFocus = new AnimationSet(true);
@@ -443,13 +502,13 @@ public class DTVSettingsMenu extends DTVActivity {
 		if(resultCode == RESULT_OK){
 			switch(requestCode){
 			  case 11:
-			  	 onShow();
+			  	 //onShow();
 				 switch(p){	
 				    case 0:
-				 		onShow();   	
+				 	//onShow();   	
 				    	break;
 				    case 1:
-				    	onShow();
+				    	//onShow();
 				    	break;
 				  }
 				  break;
@@ -768,7 +827,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					{	
 						Intent intent_dish_setup = new Intent();
 						intent_dish_setup.setClass(DTVSettingsMenu.this, DTVScanDvbsConfig.class);
-							startActivity(intent_dish_setup);
+						startActivity(intent_dish_setup);
 						DTVSettingsMenu.this.finish();
 					}	
 					break;
@@ -795,6 +854,878 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 		}
 	};
+
+	/*****************DVBT SCAN***********************/
+
+	private DvbtManualScanAdapter myDvbtManualScanAdapter=null;
+	private void DTVDvbtManualScanConfig_UIInit(){
+		ListView_settings = (ListView)findViewById(R.id.settings_list);
+		myDvbtManualScanAdapter = new DvbtManualScanAdapter(this);
+		ListView_settings.setAdapter(myDvbtManualScanAdapter);
+		ListView_settings.setOnKeyListener(new OnKeyListener(){
+			public boolean onKey(View v, int keyCode, KeyEvent event) {					
+				switch(keyCode){
+					case KeyEvent.KEYCODE_BACK:
+						if (event.getAction() == KeyEvent.ACTION_DOWN)
+							SearchItem_Init();
+						return true;
+				} 
+				return false;
+			}
+		});
+		ListView_settings.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				TextView info = (TextView)arg1.findViewById(R.id.info);
+
+				System.out.println("onItemSelected arg3 " + arg3);
+
+				/*
+				DVBUnicableSetting setting = getUnicableSetting();
+				if (setting == null) {
+					Log.d(TAG, "Cannot get unicable setting from service");
+					return;
+				}
+				*/
+				switch(arg2){
+					case 0:    //scan mode
+						showDvbtScanModeDialog(info);
+						//refreshDvbtManualScanList();
+						break;
+					case 1: 	//scan band				
+						showDvbtScanBandDialog(info);
+						break;
+					case 2:  //channle number
+						showDvbtScanChannelNumberDialog(info);
+						break;
+					case 3:  //fre
+						showDvbtEditFreDialog(info,0);
+						break;
+					case 4:  //bandwidth
+						showDvbtScanBandwidthDialog(info);	
+						break;
+					case 5:
+						Intent intent_scan= new Intent();
+						intent_scan.setClass(DTVSettingsMenu.this,DvbtScanResult.class);
+
+						Bundle bundle_scan_dvbt = new Bundle();	
+						bundle_scan_dvbt.putString("scan-mode","dvbt-manual-scan");
+						bundle_scan_dvbt.putInt("scan-fre",mDTVSettings.getDvbtScanFrequency());
+						bundle_scan_dvbt.putInt("scan-band-width",mDTVSettings.getDvbtScanBandwidth());
+							
+						intent_scan.putExtras(bundle_scan_dvbt);
+						//startActivityForResult(intent_scan,1);	
+						startActivity(intent_scan);	
+						break;
+				}
+			}	
+		});	
+	}
+
+	
+	TVChannelParams[] dvbsandvbt_channelallbandlist=null;
+	TVChannelParams[] dvbsandvbt_channel_number_list=null; 
+
+	public void DTVDvbtManualScanConfig_Data_Init(){
+		String region;
+		try {
+			region = getConfig("tv:scan:dtv:region").getString();
+			//region = mDTVSettings.getCurrentRegion();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.d(TAG, "Cannot read dtv region !!!");
+			return;
+		}
+
+		TVRegion mTVRegion = TVRegion.selectByName(this, region);
+		if(mTVRegion == null){
+			Log.d(TAG,"***mTVRegion is NULL***");
+			return;
+		}
+		dvbsandvbt_channelallbandlist = mTVRegion.getChannelParams();
+
+		if(dvbsandvbt_channelallbandlist != null)
+		{
+			mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channelallbandlist[0].frequency/1000);
+			mDTVSettings.setDvbtScanBandwidth(dvbsandvbt_channelallbandlist[0].bandwidth);
+			mDTVSettings.setDvbtScanBand(0);
+			
+			int channel_count=0;
+			//dvbsandvbt_channel_number_list = new String[dvbsandvbt_channelallbandlist.length];
+			if(mDTVSettings.getDvbtScanBand()==0){
+				
+				for(int m=0;m<dvbsandvbt_channelallbandlist.length;m++){
+					if(dvbsandvbt_channelallbandlist[m].frequency/1000<300000){
+						channel_count++;
+					}
+				}
+				if(channel_count==0){
+					return;
+				}
+				
+				dvbsandvbt_channel_number_list = new TVChannelParams[channel_count];
+				int temp = 0;
+				for(int i=0;i<dvbsandvbt_channelallbandlist.length;i++){
+					if(dvbsandvbt_channelallbandlist[i].frequency/1000<300000){
+						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].bandwidth);			
+					}
+					
+				}
+			}
+			else{
+				channel_count=0;
+				for(int n=0;n<dvbsandvbt_channelallbandlist.length;n++){
+					if(dvbsandvbt_channelallbandlist[n].frequency/1000>=300000){
+						channel_count++;
+					}
+				}
+
+				if(channel_count==0){
+					mDTVSettings.setDvbtScanBand(0);
+					DTVDvbtManualScanConfig_Data_Init();
+				}
+				else{
+					dvbsandvbt_channel_number_list = new TVChannelParams[channel_count];
+					int temp = 0;
+					for(int i=0;i<dvbsandvbt_channelallbandlist.length;i++){
+						if(dvbsandvbt_channelallbandlist[i].frequency/1000>=300000){
+						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].bandwidth);			
+						temp++;
+						}					
+					}
+				}
+			}	
+			
+		}
+	}	
+
+	public void refreshDvbtManualScanList(){
+		((DvbtManualScanAdapter)ListView_settings.getAdapter()).notifyDataSetChanged();
+	}
+
+	private AdapterView.OnItemClickListener mSearchDvbtOnItemClickListener =new AdapterView.OnItemClickListener(){
+		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
+			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
+			final TextView info_cur = (TextView)v.findViewById(R.id.info);
+			switch(position){
+				case 0:   //auto scan
+					{	
+						Intent intent_scan= new Intent();
+						intent_scan.setClass(DTVSettingsMenu.this,DvbtScanResult.class);
+
+						Bundle bundle_scan_dvbs = new Bundle();	
+						bundle_scan_dvbs.putString("scan-mode","dvbt-auto-scan");
+						intent_scan.putExtras(bundle_scan_dvbs);
+						//startActivityForResult(intent_scan,1);	
+						startActivity(intent_scan);	
+					}	
+					break;
+				case 1:   //manual scan
+					{
+						DTVDvbtManualScanConfig_UIInit();
+						DTVDvbtManualScanConfig_Data_Init();
+					}
+					break;
+				case 2:  //area
+					{
+						showRegionsDialog(info_cur);
+					}
+					break;
+				case 3:  //lcn
+					if(mDTVSettings.getLCNStatus()==false)
+				    	{
+				    		image_cur.setBackgroundResource(R.drawable.select_round_2);
+				    		info_cur.setText(R.string.on);
+						mDTVSettings.setLCNStatus(true);
+				    	}
+				    	else
+				    	{
+				    		image_cur.setBackgroundResource(R.drawable.select_round_1);
+				    		info_cur.setText(R.string.off);
+						mDTVSettings.setLCNStatus(false);
+				    	}		
+					break;
+			}
+		}
+	};
+	
+	private class SearchDvbtItemAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+		private Bitmap mIcon1;
+	
+		private Context cont;
+		private String[] listItems;
+
+	 	class ViewHolder {
+			TextView text;
+			ImageView icon;
+		    TextView   info; 
+		    ImageButton  iboolean;
+		    ImageView icon1;
+		}
+	
+		public SearchDvbtItemAdapter(Context context, String[] list) {
+			super();
+			cont = context;
+			listItems = list;
+			mInflater=LayoutInflater.from(context);
+			mIcon1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_channel_search);
+			
+		}
+
+		public int getCount() {
+			return listItems.length;
+		}
+
+		public Object getItem(int position) {
+			return position;
+		}
+	
+		public long getItemId(int position) {
+			return position;
+		}
+	
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder=null;
+
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.dtvsettings_list_item, null);
+				holder = new ViewHolder();
+				holder.text = (TextView) convertView.findViewById(R.id.text);
+				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+				holder.info = (TextView)convertView.findViewById(R.id.info);
+				holder.icon1 = (ImageView)convertView.findViewById(R.id.icon1);
+				convertView.setTag(holder);
+			}else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			// Bind the data efficiently with the holder.
+			holder.text.setText(listItems[position]);
+			holder.icon.setVisibility(View.INVISIBLE);
+			holder.info.setTextColor(Color.YELLOW);
+			switch(position){				
+			     case 0:
+				 	holder.info.setVisibility(View.INVISIBLE);
+					 holder.icon1.setVisibility(View.INVISIBLE);
+					 holder.icon.setImageBitmap(mIcon1);
+					 break;		 
+			     case 1:
+				 	 holder.info.setVisibility(View.INVISIBLE);
+					 holder.icon1.setVisibility(View.INVISIBLE);
+			    	 	break;	
+			     case 2:
+					/////int n = DTVPlayergetRecallNumber();
+					holder.icon.setImageBitmap(mIcon1);
+					holder.info.setVisibility(View.VISIBLE);
+					holder.icon1.setVisibility(View.INVISIBLE);
+					//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+					//////////holder.info.setText(String.valueOf(n));
+					String regions[]=mDTVSettings.getRegions();
+					if(regions!=null){
+						holder.info.setText(regions[mDTVSettings.getRegionsIndex()]);
+					}
+					break;
+				case 3:
+					{
+						holder.icon.setImageBitmap(mIcon1);
+						holder.info.setVisibility(View.VISIBLE);
+						holder.icon1.setVisibility(View.INVISIBLE);
+						if (mDTVSettings.getLCNStatus()){			   
+							//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+							holder.info.setText(R.string.on);
+						}
+						else{
+							//holder.icon1.setBackgroundResource(R.drawable.select_round_1); 
+							holder.info.setText(R.string.off);
+						}	  
+					}
+			    	break;	 
+			  }
+
+			return convertView;
+		}
+
+	}
+
+
+	/*******************************ATSC*********************************/
+	public static final int DTVSCANATSC_SETTING_SCAN_MODE = 0;
+	public static final int DTVSCANATSC_SETTING_MANU_SCAN_MODE = 1;
+	public static final int DTVSCANATSC_SCAN_MODE = 2;
+
+	/*in DTVSCANATSC_SETTING_SCAN_MODE*/
+	public static final int SETTINGS_AUTO_SCAN = 0;
+	public static final int SETTINGS_MANU_SCAN = 1;
+	public static final int SETTINGS_AREA = 2;
+	public static final int SETTINGS_ANTENNA_POWER = 3;
+	public static final int SETTINGS_SIGNAL_TYPE = 4;
+	public static final int SETTINGS_MAX = 5;
+
+	/*in DTVSCANATSC_SETTING_MANU_SCAN_MODE*/
+	public static final int SETTINGS_MANU_SCANMODE = 0;
+	public static final int SETTINGS_SCAN_BAND = 1;
+	public static final int SETTINGS_CHNO = 2;
+	public static final int SETTINGS_FREQUENCY = 3;
+	/*not use now. if use atsc demod need set modulation, SETTINGS_MODULATION = 4;SETTINGS_SCAN = 5;SETTINGS_MANU_MAX = 6;*/
+	
+	public static final int SETTINGS_SCAN = 4;
+	public static final int SETTINGS_MANU_MAX = 5;
+	public static final int SETTINGS_MODULATION = 6;
+
+	/*atsc area*/
+	public static final int SETTINGS_AREA_USA = 0;
+	public static final int SETTINGS_AREA_CANADA = 1;
+	public static final int SETTINGS_AREA_MEXICO = 2;
+	public static final int SETTINGS_AREA_MAX = 3;
+
+	/*atsc signal type*/
+	public static final int SETTINGS_SIGNAL_CABLE = 0;
+	public static final int SETTINGS_SIGNAL_AIR = 1;
+
+	/*atsc manual scan mode*/
+	public static final int SETTINGS_MANU_SCANMODE_FREQ = 0;
+	public static final int SETTINGS_MANU_SCANMODE_CHAN = 1;
+
+	/*atsc manual band*/
+	public static final int SETTINGS_MANU_SCANBAND_VHF = 0;
+	public static final int SETTINGS_MANU_SCANBAND_UHF = 1;
+	public static final int SETTINGS_MANU_SCANBAND_MAX = 2;
+
+	/*atsc modulation*/
+	public static final int SETTINGS_MODULATION_QAM_AUTO= 0;
+	public static final int SETTINGS_MODULATION_QAM_16  = 1;
+	public static final int SETTINGS_MODULATION_QAM_32  = 2;
+	public static final int SETTINGS_MODULATION_QAM_64  = 3;
+	public static final int SETTINGS_MODULATION_QAM_128 = 4;
+	public static final int SETTINGS_MODULATION_QAM_256 = 5;
+	public static final int SETTINGS_MODULATION_VSB_8   = 6;
+	public static final int SETTINGS_MODULATION_VSB_16  = 7;
+	
+	private int dtvscanatsc_scan_mode = DTVSCANATSC_SETTING_SCAN_MODE;	
+	private int dvbscanatsc_area = SETTINGS_AREA_USA;
+	private boolean dvbscanatsc_antennapwoer = false;
+	private int dfbscanatsc_signaltype = SETTINGS_SIGNAL_CABLE;
+	private int dvbscanatsc_manu_scanmode = SETTINGS_MANU_SCANMODE_FREQ;
+	private int dvbscanatsc_manu_scanband = SETTINGS_MANU_SCANBAND_VHF;
+	private int dvbscanatsc_manu_chno = 0;
+	/*unit KHz*/
+	private int dvbscanatsc_manu_freq = 474000;
+	private int dvbscanatsc_manu_modulation = SETTINGS_MODULATION_QAM_AUTO;
+	private int ui_dvbsanatsc_setting_list_count = SETTINGS_MAX;
+	
+	private AdapterView.OnItemClickListener mSearchATSCOnItemClickListener =new AdapterView.OnItemClickListener(){
+		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
+			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
+			final TextView info_cur = (TextView)v.findViewById(R.id.info);
+			DTVScanATSC_SettingListItemClicked(info_cur,position);
+		}
+	};
+
+	private void DTVScanATSC_SettingListItemClicked(TextView v,int position)
+	{
+		switch(dtvscanatsc_scan_mode)
+		{
+			case DTVSCANATSC_SETTING_SCAN_MODE:
+				{
+					switch(position)
+					{
+						case SETTINGS_AUTO_SCAN:
+							DTVScanATSCUiScan();
+							break;
+						case SETTINGS_MANU_SCAN:
+							DTVScanATSC_SettingListItemClickedManuScan();
+							break;
+						case SETTINGS_AREA:
+							showATSCRegionsDialog(v);
+							break;
+						case SETTINGS_ANTENNA_POWER:
+							break;
+						case SETTINGS_SIGNAL_TYPE:
+							break;								
+						default:
+							break;
+					}
+				}
+				break;
+			case DTVSCANATSC_SETTING_MANU_SCAN_MODE:
+				{
+					switch(position)
+					{
+						case SETTINGS_MANU_SCANMODE:	
+							break;
+						case SETTINGS_SCAN_BAND:	
+							break;
+						case SETTINGS_CHNO:	
+							break;
+						case SETTINGS_FREQUENCY:
+							DTVScanATSC_SettingListItemClickedManuFreqEdit();
+							break;
+						case SETTINGS_MODULATION:
+							break;
+						case SETTINGS_SCAN:
+							DTVScanATSCUiScan();
+							break;
+						default:
+							break;
+					}						
+				}
+				break;
+			default:
+				break;
+		}		
+	}
+
+	private void DTVScanATSCUiScan(){
+		Log.d(TAG, "DTVScanATSCUiScan");
+		
+		//DTVScanATSC_ScanList();
+		
+		if(dtvscanatsc_scan_mode == DTVSCANATSC_SETTING_SCAN_MODE)
+		{
+			//ui_dvbsanatsc_scan_title.setText(R.string.dtvscan_scan_auto);
+
+			DTVScanATSC_StartAutoScan();
+		}
+		else if(dtvscanatsc_scan_mode == DTVSCANATSC_SETTING_MANU_SCAN_MODE)
+		{
+			//ui_dvbsanatsc_scan_title.setText(R.string.dtvscan_scan_manual);
+
+			DTVScanATSC_StartManuScan();
+		}
+	}	
+
+	private void DTVScanATSC_StartAutoScan()
+	{
+		Log.d(TAG, "DTVScanATSC_StartAutoScan");
+		
+		Intent intent_scan= new Intent();
+		intent_scan.setClass(DTVSettingsMenu.this,ATSCScanResult.class);
+
+		Bundle bundle_scan_atsc = new Bundle();	
+		bundle_scan_atsc.putString("scan-mode","atsc-auto-scan");
+		intent_scan.putExtras(bundle_scan_atsc);
+		startActivity(intent_scan);	
+	}
+
+	private void DTVScanATSC_StartManuScan()
+	{
+		Log.d(TAG, "DTVScanATSC_StartManuScan" + dvbscanatsc_manu_freq);
+		
+		Intent intent_scan= new Intent();
+		intent_scan.setClass(DTVSettingsMenu.this,ATSCScanResult.class);
+		Bundle bundle_scan_atsc = new Bundle();	
+		bundle_scan_atsc.putString("scan-mode","atsc-manual-scan");
+		bundle_scan_atsc.putInt("scan-fre",dvbscanatsc_manu_freq);
+		bundle_scan_atsc.putInt("scan-atsc-mod",dvbscanatsc_manu_modulation);
+		intent_scan.putExtras(bundle_scan_atsc);
+		startActivity(intent_scan);	
+	}
+	
+	private void DTVScanATSC_SettingListItemClickedManuFreqEdit()
+	{
+		LinearLayout dtvscanatsc_edit_freq_layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dtvscan_edit_freq, null);      
+		final EditText dtvscanatsc_edit_freq_text = (EditText)dtvscanatsc_edit_freq_layout.findViewById(R.id.dvbscan_edit_freq);
+
+		/*  
+		dvbscanatsc_editfreqbuilder.setTitle(R.string.dtvscan_edit_freq);
+		dvbscanatsc_editfreqbuilder.setView(dtvscanatsc_edit_freq_layout);
+
+		dtvscanatsc_edit_freq_text.setText("");
+		dvbscanatsc_editfreqbuilder.setPositiveButton(R.string.dtvscan_confirm, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				if (!dtvscanatsc_edit_freq_text.getText().toString().equals(""))
+				{
+					dvbscanatsc_manu_freq = Integer.valueOf(dtvscanatsc_edit_freq_text.getText().toString());
+					ui_dvbsanatsc_setting_list_adapt.notifyDataSetChanged();
+				}
+			}
+		});
+		   	
+		dvbscanatsc_editfreqbuilder.setNegativeButton(R.string.dtvscan_cancel, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+			// TODO Auto-generated method stub
+			}
+		});
+
+		AlertDialog alert = dvbscanatsc_editfreqbuilder.create();
+		alert.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+			}         
+		}); 	
+
+		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
+			public void onDismiss(DialogInterface dialog) {
+			}         
+		}); 	
+		
+
+		alert.show();
+			  
+		WindowManager m = getWindowManager();   
+		Display d = m.getDefaultDisplay();  	
+		WindowManager.LayoutParams lp = alert.getWindow().getAttributes();
+		lp.dimAmount = 0.0f;
+		lp.width = (int) (d.getWidth() * 0.65);
+		alert.getWindow().setAttributes(lp);
+		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		*/
+	}
+	
+	private TVChannelParams[] dvbsanatsc_channelallbandlist = null;
+	private void DTVScanATSCUiSettingManualScan(){
+		Log.d(TAG, "DTVScanATSCUiSettingManualScan");
+		
+		dtvscanatsc_scan_mode = DTVSCANATSC_SETTING_MANU_SCAN_MODE;
+		ui_dvbsanatsc_setting_list_count = SETTINGS_MANU_MAX;
+		
+		((SearchATSCItemAdapter)ListView_settings.getAdapter()).notifyDataSetChanged();
+
+		String region;
+		try {
+			region = getConfig("tv:scan:dtv:region").getString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.d(TAG, "Cannot read dtv region !!!");
+			return;
+		}
+
+		TVRegion mTVRegion = TVRegion.selectByName(this, region);
+		if(mTVRegion==null)
+			return;
+
+		dvbsanatsc_channelallbandlist = mTVRegion.getChannelParams();
+
+		if(dvbsanatsc_channelallbandlist != null)
+		{
+			dvbscanatsc_manu_freq = dvbsanatsc_channelallbandlist[0].frequency/1000;
+			dvbscanatsc_manu_modulation = dvbsanatsc_channelallbandlist[0].modulation;
+		}
+	}
+
+	private void DTVScanATSC_SettingListItemClickedManuScan()
+	{
+		DTVScanATSCUiSettingManualScan();
+	}	
+	
+	private class SearchATSCItemAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+		private Bitmap mIcon1;
+	
+		private Context cont;
+		private String[] listItems;
+
+	 	class ViewHolder {
+			TextView text;
+			ImageView icon;
+		    TextView   info; 
+		    ImageButton  iboolean;
+		    ImageView icon1;
+		}
+	
+		public SearchATSCItemAdapter(Context context, String[] list) {
+			super();
+			cont = context;
+			listItems = list;
+			mInflater=LayoutInflater.from(context);
+			mIcon1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_channel_search);
+			
+		}
+
+		public int getCount() {
+			return ui_dvbsanatsc_setting_list_count;
+		}
+
+		public Object getItem(int position) {
+			return position;
+		}
+	
+		public long getItemId(int position) {
+			return position;
+		}
+	
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder=null;
+
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.dtvsettings_list_item, null);
+				holder = new ViewHolder();
+				holder.text = (TextView) convertView.findViewById(R.id.text);
+				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+				holder.info = (TextView)convertView.findViewById(R.id.info);
+				holder.icon1 = (ImageView)convertView.findViewById(R.id.icon1);
+				convertView.setTag(holder);
+			}else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			// Bind the data efficiently with the holder.
+			holder.icon.setVisibility(View.INVISIBLE);
+			holder.info.setTextColor(Color.YELLOW);
+
+		displaytext(holder,position);
+		
+		switch(dtvscanatsc_scan_mode){
+			case DTVSCANATSC_SETTING_SCAN_MODE:
+			switch(position){
+			
+		     case 0:
+			 	holder.info.setVisibility(View.INVISIBLE);
+				 holder.icon1.setVisibility(View.INVISIBLE);
+				 holder.icon.setImageBitmap(mIcon1);
+				 break;		 
+		     case 1:
+			 	 holder.info.setVisibility(View.INVISIBLE);
+				 holder.icon1.setVisibility(View.INVISIBLE);
+		    	 break;	
+			 case 2:
+				/////int n = DTVPlayergetRecallNumber();
+				holder.icon.setImageBitmap(mIcon1);
+				holder.info.setVisibility(View.VISIBLE);
+				holder.icon1.setVisibility(View.INVISIBLE);
+				//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+				//////////holder.info.setText(String.valueOf(n));
+				String regions[]=mDTVSettings.getATSCRegions();
+				if(regions!=null){
+					holder.info.setText(regions[mDTVSettings.getATSCRegionsIndex()]);
+				}
+				break;
+			case 3:
+				{
+					holder.icon.setImageBitmap(mIcon1);
+					holder.info.setVisibility(View.VISIBLE);
+					holder.icon1.setVisibility(View.INVISIBLE);
+					
+				}
+		    	break;
+		  }
+			break;
+		case DTVSCANATSC_SETTING_MANU_SCAN_MODE:
+				switch(position){
+					case SETTINGS_MANU_SCANMODE:
+						holder.info.setVisibility(View.VISIBLE);
+						displayinfoscanmode(holder);
+						break;
+
+					case SETTINGS_SCAN_BAND:
+						holder.info.setVisibility(View.VISIBLE);								
+						displayinfoscanband(holder);
+
+						if (dvbscanatsc_manu_scanmode == SETTINGS_MANU_SCANMODE_CHAN)
+						{
+							
+							holder.info.setTextColor(Color.YELLOW);
+						}
+						else if (dvbscanatsc_manu_scanmode == SETTINGS_MANU_SCANMODE_FREQ)
+						{
+							holder.info.setTextColor(Color.DKGRAY);
+						}
+						break;
+					case SETTINGS_CHNO:
+						holder.info.setVisibility(View.VISIBLE);
+						displayinfoch(holder);
+
+						if (dvbscanatsc_manu_scanmode == SETTINGS_MANU_SCANMODE_CHAN)
+						{
+							
+							holder.info.setTextColor(Color.WHITE);
+						}
+						else if (dvbscanatsc_manu_scanmode == SETTINGS_MANU_SCANMODE_FREQ)
+						{
+							holder.info.setTextColor(Color.DKGRAY);
+						}
+						break;
+					case SETTINGS_FREQUENCY:
+						holder.info.setVisibility(View.VISIBLE);
+						displayinfofreq(holder);
+						
+						if (dvbscanatsc_manu_scanmode == SETTINGS_MANU_SCANMODE_FREQ)
+						{
+							holder.info.setTextColor(Color.WHITE);
+						}
+						else if(dvbscanatsc_manu_scanmode == SETTINGS_MANU_SCANMODE_CHAN)
+						{
+							holder.info.setTextColor(Color.DKGRAY);
+						}
+
+						break;
+					case SETTINGS_MODULATION:
+						holder.info.setVisibility(View.VISIBLE);
+						displayinfomodulation(holder);
+							 
+						if (dvbscanatsc_manu_scanmode == SETTINGS_MANU_SCANMODE_FREQ)
+						{
+							
+							holder.info.setTextColor(Color.WHITE);
+						}
+						else if(dvbscanatsc_manu_scanmode == SETTINGS_MANU_SCANMODE_CHAN)
+						{
+							holder.info.setTextColor(Color.DKGRAY);
+						}
+						break;
+					case SETTINGS_SCAN:
+						holder.info.setVisibility(View.GONE);
+
+						break;
+					default:
+						break; 
+				}
+				break;
+		   }
+
+		  return convertView;
+		}
+
+		private void displaytext(ViewHolder vh, int position)
+		{
+			switch(dtvscanatsc_scan_mode)
+			{
+				case DTVSCANATSC_SETTING_SCAN_MODE:
+					{
+						switch(position)
+						{
+							case SETTINGS_AUTO_SCAN:
+								vh.text.setText(R.string.dtvscan_scan_auto);
+								break;
+							case SETTINGS_MANU_SCAN:
+								vh.text.setText(R.string.dtvscan_scan_manual);
+								break;
+							case SETTINGS_AREA:
+								vh.text.setText(R.string.dtvscan_erea);
+								break;
+							/*	
+							case SETTINGS_ANTENNA_POWER:
+								vh.text.setText(R.string.dtvscanatsc_antennapower);
+								break;
+							case SETTINGS_SIGNAL_TYPE:
+								vh.text.setText(R.string.dtvscanatsc_signaltype);
+								break;	
+							*/	
+							default:
+								break;
+						}
+					}
+					break;
+					
+				case DTVSCANATSC_SETTING_MANU_SCAN_MODE:
+					{
+						switch(position)
+						{
+							case SETTINGS_MANU_SCANMODE:	
+								vh.text.setText(R.string.dtvscan_scan_mode);
+								break;
+							case SETTINGS_SCAN_BAND:	
+								vh.text.setText(R.string.dtvscan_scan_band);
+								break;
+							case SETTINGS_CHNO:	
+								vh.text.setText(R.string.dtvscan_channel_no);
+								break;
+							case SETTINGS_FREQUENCY:	
+								vh.text.setText(R.string.dtvscan_base_frequence);
+								break;
+							case SETTINGS_MODULATION:
+								vh.text.setText(R.string.dtvscanatsc_modulation);
+								break;
+							case SETTINGS_SCAN:
+								vh.text.setText(R.string.dtvscan_begain_search);
+								break;
+							default:
+								break;
+						}						
+					}
+					break;
+					
+				default:
+					break;
+			}
+					
+		}
+
+
+		private void displayinfoscanmode(ViewHolder vh){
+		switch(dvbscanatsc_manu_scanmode)
+		{
+			case SETTINGS_MANU_SCANMODE_FREQ:	
+				vh.info.setText(R.string.dtvscan_by_frequence);
+				break;			
+			
+			case SETTINGS_MANU_SCANMODE_CHAN:	
+				vh.info.setText(R.string.dtvscan_by_channel);
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	private void displayinfoscanband(ViewHolder vh){
+		/*refresh dvbscanatsc_manu_scanband*/
+		
+		switch(dvbscanatsc_manu_scanband)
+		{
+			case SETTINGS_MANU_SCANBAND_VHF:	
+				vh.info.setText(R.string.dtvscan_scan_band_vhf);
+				break;			
+			
+			case SETTINGS_MANU_SCANBAND_UHF:	
+				vh.info.setText(R.string.dtvscan_scan_band_uhf);
+				break;
+
+			default:
+				break;
+		}
+	}	
+
+	private void displayinfoch(ViewHolder vh){
+		/*refresh dvbscanatsc_manu_chno and dvbscanatsc_manu_freq*/
+		vh.info.setText("CH" + dvbscanatsc_manu_chno + "(" + dvbscanatsc_manu_freq + "KHZ)");
+	}
+
+	private void displayinfofreq(ViewHolder vh){			
+		vh.info.setText(dvbscanatsc_manu_freq + "");
+	}		
+
+	private void displayinfomodulation(ViewHolder vh){
+		switch(dvbscanatsc_manu_modulation)
+		{
+			case SETTINGS_MODULATION_QAM_AUTO:
+				vh.info.setText(R.string.dtvscanatsc_modulation_qamauto);
+				break;
+			case SETTINGS_MODULATION_QAM_16:
+				vh.info.setText(R.string.dtvscanatsc_modulation_qam16);
+				break;
+			case SETTINGS_MODULATION_QAM_32:
+				vh.info.setText(R.string.dtvscanatsc_modulation_qam32);
+				break;			
+			case SETTINGS_MODULATION_QAM_64:
+				vh.info.setText(R.string.dtvscanatsc_modulation_qam64);
+				break;	
+			case SETTINGS_MODULATION_QAM_128:
+				vh.info.setText(R.string.dtvscanatsc_modulation_qam128);
+				break;	
+			case SETTINGS_MODULATION_QAM_256:
+				vh.info.setText(R.string.dtvscanatsc_modulation_qam256);
+				break;					
+			case SETTINGS_MODULATION_VSB_8:	
+				vh.info.setText(R.string.dtvscanatsc_modulation_vsb8);
+				break;
+			case SETTINGS_MODULATION_VSB_16:	
+				vh.info.setText(R.string.dtvscanatsc_modulation_vsb16);
+				break;
+			default:
+				break;
+		}
+		
+	}
+	}
+
+
+    /*****************************************************************/
+	
 	
 	private class SearchItemAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
@@ -1120,6 +2051,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					holder.info.setText(ttx_region_str_arry[pos]);
 
 				break;
+
 			case SETTINGS_CC:
 				if(mDTVSettings.getScanRegion().contains("ATSC")){
 					 holder.info.setVisibility(View.INVISIBLE);
@@ -1885,6 +2817,190 @@ public class DTVSettingsMenu extends DTVActivity {
 		((DvbsUnicableAdapter)ListView_settings.getAdapter()).notifyDataSetChanged();
 	}
 
+	private class DvbtManualScanAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+		private Bitmap mIcon1;
+		private Bitmap mIcon2;
+		private Bitmap mIcon3;
+		
+		private Context cont;
+		private String[] listItems;
+
+	 	class ViewHolder {
+			ImageView icon;
+			TextView text;
+			ImageButton  iboolean;
+			ImageView icon1;
+			TextView   info; 
+		}
+	
+		public DvbtManualScanAdapter(Context context) {
+			super();
+			cont = context;
+			mInflater=LayoutInflater.from(context);
+		    	listItems = context.getResources().getStringArray(R.array.search_settings_content_dvbt_manual);
+			mIcon1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_channel_search);
+			mIcon2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_picture_size);
+			mIcon3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_channel_search);
+		}
+
+		public int getCount() {
+			//return listItems.length;
+			return listItems.length;
+		}
+
+		public Object getItem(int position) {
+
+			return position;
+		}
+	
+		public long getItemId(int position) {
+			return position;
+		}
+		
+		public boolean isEnabled(int position) {
+			
+			if (mDTVSettings.getDvbtScanMode()==0){    
+				if (position==3||position==4) {
+					return false;
+				}
+			}
+			else if(mDTVSettings.getDvbtScanMode()==1){
+				if (position==1||position==2) {
+					return false;
+				}
+			}
+			
+			return super.isEnabled(position);
+		}
+	
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder=null;
+
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.dtvsettings_list_item, null);
+				holder = new ViewHolder();
+				holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+				holder.text = (TextView) convertView.findViewById(R.id.text);
+				holder.icon1 = (ImageView)convertView.findViewById(R.id.icon1);
+				holder.info = (TextView)convertView.findViewById(R.id.info);
+				convertView.setTag(holder);
+			}else {
+				// Get the ViewHolder back to get fast access to the TextView
+				// and the ImageView.
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			holder.info.setTextColor(Color.YELLOW);			
+			holder.text.setTextColor(Color.WHITE);
+					
+			holder.text.setText(listItems[position]);
+			switch(position){
+				 case 0:    //scan mode
+				 	holder.icon.setImageBitmap(mIcon1);
+					holder.icon.setVisibility(View.INVISIBLE);
+					holder.info.setVisibility(View.VISIBLE);
+					holder.icon1.setVisibility(View.INVISIBLE);
+
+					int mode = mDTVSettings.getDvbtScanMode();
+					if(mode==0){
+						holder.info.setText(R.string.dtvscan_by_channel);
+					}
+					else  if(mode==1){
+						holder.info.setText(R.string.dtvscan_by_frequence);
+					}
+					
+					break;
+				case 1:  //scan band
+					holder.icon.setImageBitmap(mIcon2);				
+					int value = mDTVSettings.getDvbtScanBand();
+					if(value==0){
+						holder.info.setText(R.string.dtvscan_scan_band_vhf);
+					}
+					else  if(value==1){
+						holder.info.setText(R.string.dtvscan_scan_band_uhf);
+					}
+					if(mDTVSettings.getDvbtScanMode()==1){
+						holder.text.setTextColor(Color.DKGRAY);
+						holder.info.setTextColor(Color.DKGRAY);
+						holder.info.setVisibility(View.INVISIBLE);	
+					}
+					else{
+						holder.text.setTextColor(Color.WHITE);
+						holder.info.setTextColor(Color.YELLOW);
+						holder.info.setVisibility(View.VISIBLE);	
+					}	
+					break;
+				case 2:     //channel number
+					holder.icon.setImageBitmap(mIcon3);				
+					int fre = mDTVSettings.getDvbtScanFrequency();
+					holder.info.setText(String.valueOf(fre)+"KHZ");
+					if(mDTVSettings.getDvbtScanMode()==1){
+						holder.text.setTextColor(Color.DKGRAY);
+						holder.info.setTextColor(Color.DKGRAY);
+						holder.info.setVisibility(View.INVISIBLE);
+					}
+					else{
+						holder.text.setTextColor(Color.WHITE);
+						holder.info.setTextColor(Color.YELLOW);
+						holder.info.setVisibility(View.VISIBLE);
+					}	
+						
+					break;
+				case 3: //frequency
+					holder.icon.setImageBitmap(mIcon3);				
+					int frequency=mDTVSettings.getDvbtScanFrequency();
+
+					holder.info.setText(String.valueOf(frequency));
+					if(mDTVSettings.getDvbtScanMode()==0){
+						holder.text.setTextColor(Color.DKGRAY);
+						holder.info.setTextColor(Color.DKGRAY);
+						holder.info.setVisibility(View.INVISIBLE);
+					}
+					else{
+						holder.text.setTextColor(Color.WHITE);
+						holder.info.setTextColor(Color.YELLOW);
+						holder.info.setVisibility(View.VISIBLE);
+					}	
+					break;
+				case 4:   //band width
+					holder.icon.setImageBitmap(mIcon3);				
+					holder.info.setVisibility(View.VISIBLE);
+					int bandwidth=mDTVSettings.getDvbtScanBandwidth();
+					switch(bandwidth){
+						case TVChannelParams.BANDWIDTH_8_MHZ:
+							holder.info.setText("8M");
+							break;
+						case TVChannelParams.BANDWIDTH_7_MHZ:
+							holder.info.setText("7M");	
+							break;
+						case TVChannelParams.BANDWIDTH_6_MHZ:
+							holder.info.setText("6M");	
+							break;			
+						case TVChannelParams.BANDWIDTH_AUTO:
+							holder.info.setText("Auto");	
+							break;
+						default:
+							holder.info.setText("Auto");	
+							break;
+					}
+
+					if(mDTVSettings.getDvbtScanMode()==0){
+						holder.text.setTextColor(Color.DKGRAY);
+						holder.info.setTextColor(Color.DKGRAY);
+					}
+					else{
+						holder.text.setTextColor(Color.WHITE);
+						holder.info.setTextColor(Color.YELLOW);
+					}	
+	
+					break;
+			}
+			  
+			return convertView;
+		}
+	}
+
 	private class DvbsUnicableAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Bitmap mIcon1;
@@ -2134,6 +3250,369 @@ public class DTVSettingsMenu extends DTVActivity {
 		};
 	}
 
+	public void showRegionsDialog(TextView v){
+		final TextView info_cur = v;
+		final String regions[] = mDTVSettings.getRegions();
+		final int index = mDTVSettings.getRegionsIndex();
+	
+		new SingleChoiseDialog(DTVSettingsMenu.this,regions,index){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt)[2]);
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+					mDTVSettings.setRegion(regions[which]);
+					mDTVSettings.setDvbtScanChannelIndex(0);
+					info_cur.setText(regions[which]);
+			}
+		};						
+	}
+
+	public void showATSCRegionsDialog(TextView v){
+		final TextView info_cur = v;
+		final String regions[] = mDTVSettings.getATSCRegions();
+		final int index = mDTVSettings.getATSCRegionsIndex();
+	
+		new SingleChoiseDialog(DTVSettingsMenu.this,regions,index){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt)[2]);
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+					mDTVSettings.setRegion(regions[which]);
+					mDTVSettings.setDvbtScanChannelIndex(0);
+					info_cur.setText(regions[which]);
+			}
+		};						
+	}
+
+	public void showDvbtScanModeDialog(TextView v){
+		final TextView info_cur = v;
+		int mode = mDTVSettings.getDvbtScanMode();
+		int pos = 0;
+		if(mode==0){
+			pos = 0;
+		}
+		else {
+			pos = 1;
+		}
+		
+		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ getResources().getString(R.string.dtvscan_by_channel), getResources().getString(R.string.dtvscan_by_frequence)},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt_manual)[0]);
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				switch(which){
+				case 0:
+					info_cur.setText(R.string.dtvscan_by_channel);
+					mDTVSettings.setDvbtScanMode(0);
+					break;
+				case 1:
+					info_cur.setText(R.string.dtvscan_by_frequence);
+					mDTVSettings.setDvbtScanMode(1);
+					break;
+				
+				}	
+				refreshDvbtManualScanList();
+			}
+		};						
+	}							
+
+	public void showDvbtScanBandDialog(TextView v){
+		final TextView info_cur = v;
+		int mode = mDTVSettings.getDvbtScanBand();
+		int pos = 0;
+		if(mode==0){
+			pos = 0;
+		}
+		else  if(mode==1){
+			pos = 1;
+		}
+		
+		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ getResources().getString(R.string.dtvscan_scan_band_vhf), getResources().getString(R.string.dtvscan_scan_band_uhf)},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt_manual)[1]);
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				switch(which){
+				case 0:
+					info_cur.setText(R.string.dtvscan_scan_band_vhf);
+					mDTVSettings.setDvbtScanBand(0);
+					break;
+				case 1:
+					info_cur.setText(R.string.dtvscan_scan_band_uhf);
+					mDTVSettings.setDvbtScanBand(1);
+					break;
+				}	
+				DTVScanDVBT_UpdateChInfoByband(which);
+				refreshDvbtManualScanList();
+			}
+		};						
+	}
+
+	private boolean DTVScanDVBT_UpdateChInfoByband(int scanband)
+	{
+		boolean ret = false;
+
+		if(dvbsandvbt_channelallbandlist == null)
+			return ret;
+		
+		if(scanband == 0)
+		{
+			for (int i = 0; i < dvbsandvbt_channelallbandlist.length; i++)
+			{
+				if((dvbsandvbt_channelallbandlist[i].frequency/1000) < 300000)
+				{
+					mDTVSettings.setDvbtScanChannelIndex(i); 
+					mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channelallbandlist[i].frequency/1000);
+					mDTVSettings.setDvbtScanBandwidth(dvbsandvbt_channelallbandlist[i].bandwidth);
+					ret = true;
+					break;
+				}				
+			}	
+		}
+		else if(scanband == 1)
+		{
+			for (int i = 0; i < dvbsandvbt_channelallbandlist.length; i++)
+			{
+				if((dvbsandvbt_channelallbandlist[i].frequency/1000) >= 300000)
+				{
+					mDTVSettings.setDvbtScanChannelIndex(i); 
+					mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channelallbandlist[i].frequency/1000);
+					mDTVSettings.setDvbtScanBandwidth(dvbsandvbt_channelallbandlist[i].bandwidth);
+					ret = true;
+					break;
+				}				
+			}		
+		}
+
+		mDTVSettings.setDvbtScanChannelIndex(0);
+	
+		return ret;
+	}
+
+	public void DTVDvbtManualScanChannel_Data_Init(){
+		int channel_count=0;
+		if(dvbsandvbt_channelallbandlist != null){
+			if(mDTVSettings.getDvbtScanBand()==0){		
+				for(int m=0;m<dvbsandvbt_channelallbandlist.length;m++){
+					if(dvbsandvbt_channelallbandlist[m].frequency/1000<300000){
+						channel_count++;
+					}
+				}
+				dvbsandvbt_channel_number_list = new TVChannelParams[channel_count];
+				int temp = 0;
+				for(int i=0;i<dvbsandvbt_channelallbandlist.length;i++){
+					if(dvbsandvbt_channelallbandlist[i].frequency/1000<300000){
+						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].bandwidth);			
+						temp++;
+					}
+					
+				}
+			}
+			else{
+				channel_count = 0;
+				for(int n=0;n<dvbsandvbt_channelallbandlist.length;n++){
+					if(dvbsandvbt_channelallbandlist[n].frequency/1000>=300000){
+						channel_count++;
+					}
+				}
+
+				if(channel_count==0){
+					mDTVSettings.setDvbtScanBand(0);
+					DTVDvbtManualScanChannel_Data_Init();
+				}
+				else{
+				
+					dvbsandvbt_channel_number_list = new TVChannelParams[channel_count];
+					int temp = 0;
+					for(int i=0;i<dvbsandvbt_channelallbandlist.length;i++){
+						if(dvbsandvbt_channelallbandlist[i].frequency/1000>=300000){
+						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].bandwidth);			
+							temp++;
+						}	
+					}
+				}	
+			}	
+			
+		}
+
+	}
+
+					
+	public void showDvbtScanChannelNumberDialog(TextView v){
+		final TextView info_cur = v;
+		int pos = mDTVSettings.getDvbtScanChannelIndex();
+		DTVDvbtManualScanChannel_Data_Init();
+
+		String list[] = new String[dvbsandvbt_channel_number_list.length];
+		for(int i=0;i<dvbsandvbt_channel_number_list.length;i++){
+			list[i]= dvbsandvbt_channel_number_list[i].frequency/1000+"KHZ";	
+		}
+		
+		new SingleChoiseDialog(DTVSettingsMenu.this,list,pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt_manual)[2]);
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				DTVScanDVBT_UpdateChInfoByChNo(which);
+				refreshDvbtManualScanList();
+			}
+		};						
+	}
+
+	private void DTVScanDVBT_UpdateChInfoByChNo(int index)
+	{
+		if(dvbsandvbt_channelallbandlist == null)
+			return;
+		if(dvbsandvbt_channel_number_list.length==0)
+			return;
+		mDTVSettings.setDvbtScanChannelIndex(index); 
+		mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channel_number_list[index].frequency/1000);
+		mDTVSettings.setDvbtScanBandwidth(dvbsandvbt_channel_number_list[index].bandwidth);
+	}
+						
+	public void showDvbtEditFreDialog(View v,int pos){
+		final View view = v;
+		final int position = pos;
+		builder = new AlertDialog.Builder(this);	
+		final EditText editText = new EditText(this);
+		editText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(6)});
+		
+		//editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+		builder.setTitle(R.string.edit_title);
+		TextView desFreText = (TextView) view;
+		editText.setText(desFreText.getText().toString());
+		builder.setView(editText); 
+
+		AlertDialog alert = builder.create();
+
+		alert.setOnKeyListener( new DialogInterface.OnKeyListener(){
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				// TODO Auto-generated method stub
+				switch(keyCode)
+				{	
+					case KeyEvent.KEYCODE_DPAD_CENTER:
+					case KeyEvent.KEYCODE_ENTER:
+						String fre = editText.getText().toString();
+						if(fre==null||fre.equals("")){
+							editText.setText(null);
+							toast = Toast.makeText(
+							DTVSettingsMenu.this, 
+						    	R.string.invalid_input,
+						    	Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						}
+						else{
+							if(Integer.parseInt(fre)==0){
+								editText.setText(null);
+								toast = Toast.makeText(
+								DTVSettingsMenu.this, 
+							    	R.string.invalid_input,
+							    	Toast.LENGTH_SHORT);
+								toast.setGravity(Gravity.CENTER, 0, 0);
+								toast.show();
+							}
+							else{
+								TextView des = (TextView)view;
+								des.setText(editText.getText().toString());
+								/*
+								Log.d(TAG,"Old usf"+usfs[position]);
+								usfs[position]= Integer.parseInt(editText.getText().toString());
+								Log.d(TAG,"New usf"+usfs[position]);
+								*/
+								mDTVSettings.setDvbtScanFrequency(Integer.parseInt(editText.getText().toString()));
+								dialog.cancel();
+							}	
+						}
+						return true;
+					case  KeyEvent.KEYCODE_BACK:
+						dialog.cancel();
+						return true;
+				}
+				
+				return false;
+			}
+		});	
+
+		
+		alert.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+			
+							}         
+							}); 	
+
+		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {	
+						}         
+						});	
+		alert.show();	
+		alert.getWindow().setLayout(500, -200);
+		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
+		lp.dimAmount=0.0f;
+		alert.getWindow().setAttributes(lp);
+		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+	}
+				
+	public void showDvbtScanBandwidthDialog(TextView v){
+		final TextView info_cur = v;
+		int pos = mDTVSettings.getDvbtScanBandwidth();
+		
+		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "8M", "7M","6M","Auto"},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt_manual)[4]);
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				switch(which){
+				case 0:
+					info_cur.setText("8M");
+					mDTVSettings.setDvbtScanBandwidth(TVChannelParams.BANDWIDTH_8_MHZ);
+					break;
+				case 1:
+					info_cur.setText("7M");
+					mDTVSettings.setDvbtScanBandwidth(TVChannelParams.BANDWIDTH_7_MHZ);
+					break;
+				case 2:
+					info_cur.setText("6M");
+					mDTVSettings.setDvbtScanBandwidth(TVChannelParams.BANDWIDTH_6_MHZ);
+					break;	
+				case 3:
+					info_cur.setText("Auto");
+					mDTVSettings.setDvbtScanBandwidth(TVChannelParams.BANDWIDTH_AUTO);
+					break;
+				default:
+					info_cur.setText("8M");
+					mDTVSettings.setDvbtScanBandwidth(TVChannelParams.BANDWIDTH_8_MHZ);
+					break;
+				}	
+			}
+		};						
+	}
+	
 	public void showAudioTrackDialog(TextView v){
 		final TextView info_cur = v;
 		int mode = mDTVSettings.getAudioTrack();
@@ -2769,7 +4248,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		Intent intent = new Intent();
 		intent.setClass(this, DTVVChip.class);
 		startActivityForResult(intent, 11);	
-		onHide();	
+		//onHide();	
 	}
 	private void DTVSetting_GotoDTVVChip(){
 		new PasswordDialog(DTVSettingsMenu.this){
@@ -2797,7 +4276,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		Intent intent = new Intent();
 		intent.setClass(this, DTVCloseCaption.class);
 		startActivityForResult(intent, 11);	
-		onHide();
+		//onHide();
 	}
 
 	private  void onHide(){

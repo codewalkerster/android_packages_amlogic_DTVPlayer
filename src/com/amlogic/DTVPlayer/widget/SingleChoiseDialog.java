@@ -47,7 +47,7 @@ abstract public class SingleChoiseDialog {
 				 switch (keyCode) {
 					case KeyEvent.KEYCODE_BACK:	
 						dismissDialog();
-						break;
+						return true;
 					case KeyEvent.KEYCODE_DPAD_LEFT:
 						if(no!=null)
 							no.requestFocus();

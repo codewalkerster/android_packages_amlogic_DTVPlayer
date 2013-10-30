@@ -35,6 +35,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.SimpleAdapter;  
 import java.lang.reflect.Field;
 
+import com.amlogic.tvutil.DTVRecordParams;
 import com.amlogic.tvsubtitle.TVSubtitleView;
 import com.amlogic.widget.PasswordDialog;
 import com.amlogic.widget.SureDialog;
@@ -140,11 +141,20 @@ public class DTVProgramEdit extends DTVActivity{
 	private void deleteProgramFromDB(int index){
 		int cur_db_id = -1;
 		cur_db_id = mTVProgramList[index].getID();
-		mTVProgramList[index].deleteFromDb();
-		mTVProgramList = removeProgramFromList(mTVProgramList,index);
-
-		if(db_id==cur_db_id)
-			stopPlaying();
+		if(getIsRecordingProgramID()==cur_db_id){
+		    Toast toast = Toast.makeText(
+					DTVProgramEdit.this,
+					R.string.dtvplayer_pvr_is_running,
+					Toast.LENGTH_SHORT);
+					toast.setGravity(Gravity.CENTER, 0, 0);
+					toast.show();
+		}
+		else{	
+			mTVProgramList[index].deleteFromDb();
+			mTVProgramList = removeProgramFromList(mTVProgramList,index);
+			if(db_id==cur_db_id)
+				stopPlaying();
+		}
 	}
 
 	private TVProgram[] removeProgramFromList(TVProgram[] a,int index){
@@ -674,6 +684,9 @@ public class DTVProgramEdit extends DTVActivity{
 			  
 					}
 					public void onSetPositiveButton(){
+						
+
+						
 						deleteProgramFromDB(cur_select_item);
 						myAdapter.notifyDataSetChanged();
 					}
@@ -908,7 +921,7 @@ public class DTVProgramEdit extends DTVActivity{
 			(fav==false)?getString(R.string.add_fav):getString(R.string.del_fav),
 			//(skip==false)?getString(R.string.add_skip):getString(R.string.del_skip),
 			(lock==false)?getString(R.string.add_lock):getString(R.string.del_lock),		
-			getString(R.string.move),
+			//getString(R.string.move),
 			//getString(R.string.add_into_group)
 		};
 
@@ -990,13 +1003,14 @@ public class DTVProgramEdit extends DTVActivity{
 									myAdapter.notifyDataSetChanged();
 									mCustomDialog.dismissDialog();
 									break;
+								/*	
 								case 4: //move
 									setMoveMode(true);
 									setMoveItemPos(pos);
 									myAdapter.notifyDataSetChanged();
 									mCustomDialog.dismissDialog();
 									break;
-								/*
+								
 								case 5: //add into group
 									programGroupOperate(pos);
 									//mCustomDialog.dismissDialog();
@@ -1631,5 +1645,15 @@ public class DTVProgramEdit extends DTVActivity{
 	private void getProgBySatellites(int sat_id){
 		mTVProgramList=TVProgram.selectBySatID(this,sat_id);
 	}
+
+	private int getIsRecordingProgramID(){
+		DTVRecordParams recPara = getRecordingParams();
+		if (recPara != null) {	
+		  return recPara.getProgramID();
+		}  
+		else return -1;
+	}
+
+	
 }
 
