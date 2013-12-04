@@ -189,7 +189,7 @@
 	<array name="Program_settings_content" translatable="false">
 		<item>Program Edit</item>	
 		<item>EPG</item>
-		<item>Sort By</item>
+		<!--<item>Sort By</item>-->
 		<item>PVR Configure</item>
 		<item>PVR Manager</item>
 		<item>TimeShifting</item>
@@ -480,6 +480,8 @@
 	<string name="ts_frequency">Frequency</string>
 	<string name="ts_polarity">Polarity</string>
 	<string name="ts_symbol">Symbol</string>
+	<string name="program_operation">Program Operations</string>
+	
 	
 	<string name="dish_setup_lnb_no">LNB No.</string>
 	<string name="dish_setup_lnb_type">LNB Type</string>

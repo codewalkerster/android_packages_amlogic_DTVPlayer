@@ -69,7 +69,7 @@ abstract public class DTVActivity extends TVActivity{
 	private TVProgram TVProgram=null;
 	private static int dtvactivity_actived_num = 0;
 	//private static int dtvlayout_gravity = Gravity.CENTER;
-	private boolean connected = false;
+	public boolean connected = false;
 	private boolean delay_setinput_source = false;
 	
     public void onCreate(Bundle savedInstanceState) {
@@ -830,8 +830,10 @@ abstract public class DTVActivity extends TVActivity{
 	public TVEvent[] DTVEpg_getDateEIT(long start,long duration){
 
 		TVProgram mTVProgram=TVProgram.selectByID(this,DTVEpgGetID());
-		return  mTVProgram.getScheduleEvents(this,start,duration);
-		
+		if(mTVProgram!=null)
+			return  mTVProgram.getScheduleEvents(this,start,duration);
+		else
+			return null;
 	}
 
 	public String DTVEpg_get_detailinfo(int srv_id){
@@ -984,36 +986,45 @@ abstract public class DTVActivity extends TVActivity{
 			for(i=0;i<recall_list.size();i++){
 				Log.d(TAG,"--"+recall_list.get(i));
 			}
-			
 		}
 
 		TVProgram[] mTVProgram = null;
+		TVProgram mTemp = null;
 		int RecallNumber = DTVPlayergetRecallNumber();
 		int len = recall_list.size();
 	
 		if(RecallNumber==1){
-			
-			mTVProgram = new TVProgram[1];
-			mTVProgram[0]= TVProgram.selectByID(this,recall_list.get(0));
-			
+			mTemp = TVProgram.selectByID(this,recall_list.get(0));
+			if(mTemp!=null){
+				mTVProgram = new TVProgram[1];
+				mTVProgram[0]= mTemp;
+			}
 		}	
 		else if(recall_list.size() <= RecallNumber+1) {
 			int pos = 0;
 			if(recall_list.size()<=1){
 				pos = 0;
-				mTVProgram = new TVProgram[recall_list.size()];
 			}
 			else{
 				pos = recall_list.size()-2;
-				mTVProgram = new TVProgram[recall_list.size()-1];
 			}
 			int n=0;
 			for(int i=pos;i>=0;i--){
-				mTVProgram[n]= TVProgram.selectByID(this,recall_list.get(i));
-				n++;
+				mTemp = TVProgram.selectByID(this,recall_list.get(i));
+				if(mTemp!=null)
+					n++;
+			}
+			mTVProgram = new TVProgram[n];
+			n=0;
+			for(int i=pos;i>=0;i--){
+				
+				mTemp = TVProgram.selectByID(this,recall_list.get(i));
+				if(mTemp!=null){
+					mTVProgram[n]=mTemp;
+					n++;
+				}	
 			}
 		}
-		
 		
 		return mTVProgram;
 	}

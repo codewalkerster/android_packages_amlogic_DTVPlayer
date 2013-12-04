@@ -18,6 +18,7 @@ import android.os.*;
 import android.text.*;
 import android.text.method.*;
 import android.graphics.Color;
+import android.view.inputmethod.InputMethodManager;
 import com.amlogic.DTVPlayer.R;
 import com.amlogic.DTVPlayer.DTVSettings;
 
@@ -41,7 +42,7 @@ abstract public class PasswordDialog {
 	public PasswordDialog(Context context) {
 		mContext = context;
 		cur_button_position=0;	
-		mDialog = new AlertDialog(mContext){
+		mDialog = new Dialog(mContext,R.style.MyDialog){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
@@ -116,7 +117,7 @@ abstract public class PasswordDialog {
 		
 		
 		//mDialog.setCancelable(false);
-		mDialog.setCanceledOnTouchOutside(false);
+		mDialog.setCanceledOnTouchOutside(true);
 
 		if(mDialog == null){
 			return;
@@ -139,58 +140,94 @@ abstract public class PasswordDialog {
 		pin2 = (ImageButton)window.findViewById(R.id.pin_button2);
 		pin3 = (ImageButton)window.findViewById(R.id.pin_button3);
   	    	
-     	pin0.setFocusable(true);   
-     	pin0.requestFocus();   
-     	pin0.setFocusableInTouchMode(true);   
+	     	pin0.setFocusable(true);   
+	     	pin0.requestFocus();   
+	     	pin0.setFocusableInTouchMode(true);   
+
+		pin0.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {				  	 
+				pin0.requestFocus(); 
+		}});
+
+		pin1.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {
+				pin1.requestFocus(); 
+		}});
+
+		pin2.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {
+				cur_button_position=2;
+				pin2.requestFocus(); 
+		}});	
+
+		pin3.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {				  	 
+				pin3.requestFocus(); 
+		}});	
+
+	
             
-     	pin0.setOnFocusChangeListener(new ImageButton.OnFocusChangeListener(){   
-             public void onFocusChange(View v, boolean hasFocus) {   
-                 ImageButton imageButton = (ImageButton) v;   
-                 if (hasFocus) {   
-                 	cur_button_position=0;
-                      
-                 } else {   
-                     
-                 }   
-             }});   
+	     	pin0.setOnFocusChangeListener(new ImageButton.OnFocusChangeListener(){   
+	             public void onFocusChange(View v, boolean hasFocus) {   
+	                 ImageButton imageButton = (ImageButton) v;   
+	                 if (hasFocus) {   
+	                 	cur_button_position=0;
+	                      
+	                 } else {   
+	                     
+	                 }   
+	             }});   
     	
-    	pin1.setOnFocusChangeListener(new ImageButton.OnFocusChangeListener(){   
-           public void onFocusChange(View v, boolean hasFocus) {   
-                ImageButton imageButton = (ImageButton) v;   
-                if (hasFocus) {   
-                    //imageButton.setImageResource(R.drawable.button_pin_in); 
-                	cur_button_position=1;
-                     
-                } else {   
-                    
-                }   
-            }});   
+	    	pin1.setOnFocusChangeListener(new ImageButton.OnFocusChangeListener(){   
+	           public void onFocusChange(View v, boolean hasFocus) {   
+	                ImageButton imageButton = (ImageButton) v;   
+	                if (hasFocus) {   
+	                	cur_button_position=1;                     
+	                } else {
+	                }   
+	            }});   
      	
-     	pin2.setOnFocusChangeListener(new ImageButton.OnFocusChangeListener(){   
-            public void onFocusChange(View v, boolean hasFocus) {   
-                ImageButton imageButton = (ImageButton) v;   
-                if (hasFocus) {   
-                    //imageButton.setImageResource(R.drawable.button_pin_in); 
-                	cur_button_position=2;
-                     
-                } else {   
-                    
-                }   
-            }});  
+	     	pin2.setOnFocusChangeListener(new ImageButton.OnFocusChangeListener(){   
+	            public void onFocusChange(View v, boolean hasFocus) {   
+	                ImageButton imageButton = (ImageButton) v;   
+	                if (hasFocus) {   
+	                	cur_button_position=2;
+	                     
+	                } else {   
+	                    
+	                }   
+	            }});  
      	
-     	pin3.setOnFocusChangeListener(new ImageButton.OnFocusChangeListener(){   
-            public void onFocusChange(View v, boolean hasFocus) {   
-                ImageButton imageButton = (ImageButton) v;   
-                if (hasFocus) {   
-                    //imageButton.setImageResource(R.drawable.button_pin_in); 
-                	cur_button_position=3;
-                     
-                } else {   
-                    
-                }   
-            }});   
-    	
-    }
+		pin3.setOnFocusChangeListener(new ImageButton.OnFocusChangeListener(){   
+			public void onFocusChange(View v, boolean hasFocus) {   
+				ImageButton imageButton = (ImageButton) v;   
+				if (hasFocus) {   				 
+				cur_button_position=3;
+				 
+				} else {   
+
+				}   
+			}});   
+
+		ImageView number = (ImageView)window.findViewById(R.id.number);
+		number.setFocusable(false);     
+ 		number.setFocusableInTouchMode(false);   
+		number.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {				  	 
+				InputMethodManager imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);  	
+				imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
+				//imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);  
+		}});
+
+		window.findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					dismissDialog();
+				}
+			}
+		);
+	}
 
 	public void setDialogContent(String c){
 		if(mDialog!=null){

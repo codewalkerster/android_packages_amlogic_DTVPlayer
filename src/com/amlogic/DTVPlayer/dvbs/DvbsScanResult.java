@@ -118,100 +118,111 @@ public class DvbsScanResult extends DTVActivity{
 	
 	@Override
   	public void onCreate(Bundle savedInstanceState) {
-	  		super.onCreate(savedInstanceState);
-			setContentView(R.layout.dvbs_scan_result_main);
+  		super.onCreate(savedInstanceState);
+		setContentView(R.layout.dvbs_scan_result_main);
+		
+		Context otherAppsContext = null;
+		try
+		{
+			otherAppsContext = createPackageContext(
+			"com.amlogic.DTVPlayer", Context.MODE_WORLD_WRITEABLE|Context.MODE_WORLD_READABLE);
+		}
+		catch (NameNotFoundException e)
+		{
+		}
+		mLast= PreferenceManager.getDefaultSharedPreferences(otherAppsContext);
+
+		tv_title= (TextView)this.findViewById(R.id.tv);
+		radio_title=(TextView)this.findViewById(R.id.radio);
+
+		Bundle bundle = this.getIntent().getExtras();
+		if(bundle!=null)
+		{
+	    		if(bundle.getString("scan_mode").equals("blind")){
+				tv_title.setText(R.string.scan_ts);	
+				tv_title.setVisibility(View.VISIBLE);
+				radio_title.setVisibility(View.INVISIBLE);
+			}		
+		}	
+
+		sat_info = (TextView)this.findViewById(R.id.sat_info);
+		ts_info = (TextView)this.findViewById(R.id.ts_info);
+		progressBar = (ProgressBar)this.findViewById(R.id.ProgressBar);
+		progress_value = (TextView)this.findViewById(R.id.progress_value);
+		
+		tvlistview = (ListView)this.findViewById(R.id.tv_list);
+ 		radiolistview =  (ListView)this.findViewById(R.id.radio_list);
+
+		if(tv_list==null){
+			tv_list = new ArrayList<Object>();
+			tv_list_temp = tv_list;
+		}
+
+		if(tp_list==null){
+			tp_list = new ArrayList<Object>();
+		}	
+
+		if(radio_list==null)
+			radio_list = new ArrayList<Object>();
+
+		mTvListAdapter = new ScanResultAdapter(this,tv_list_temp);
+		mRadioListAdapter = new ScanResultAdapter(this,radio_list);
+
+		tvlistview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				System.out.println("onItemSelected arg1 " + arg1);
+				System.out.println("onItemSelected arg2 " + arg2);
+				System.out.println("onItemSelected arg3 " + arg3);
+				/*	
+				if(((DbSat)tv_list.get(arg2)).getSelectedFlag()==false){
+					((DbSat)satAndtsInfoList.get(arg2)).setSelectedFlag(true);
+					image_cur.setBackgroundResource(R.drawable.set_channel_search);
 			
-			Context otherAppsContext = null;
-			try
-			{
-				otherAppsContext = createPackageContext(
-				"com.amlogic.DTVPlayer", Context.MODE_WORLD_WRITEABLE|Context.MODE_WORLD_READABLE);
-			}
-			catch (NameNotFoundException e)
-			{
-			}
-			mLast= PreferenceManager.getDefaultSharedPreferences(otherAppsContext);
-
-			tv_title= (TextView)this.findViewById(R.id.tv);
-			radio_title=(TextView)this.findViewById(R.id.radio);
-
-			Bundle bundle = this.getIntent().getExtras();
-			if(bundle!=null)
-			{
-		    		if(bundle.getString("scan_mode").equals("blind")){
-					tv_title.setText(R.string.scan_ts);	
-					tv_title.setVisibility(View.VISIBLE);
-					radio_title.setVisibility(View.INVISIBLE);
-				}		
-			}	
-
-			sat_info = (TextView)this.findViewById(R.id.sat_info);
-			ts_info = (TextView)this.findViewById(R.id.ts_info);
-			progressBar = (ProgressBar)this.findViewById(R.id.ProgressBar);
-			progress_value = (TextView)this.findViewById(R.id.progress_value);
-			
-			tvlistview = (ListView)this.findViewById(R.id.tv_list);
-	 		radiolistview =  (ListView)this.findViewById(R.id.radio_list);
-
-			if(tv_list==null){
-				tv_list = new ArrayList<Object>();
-				tv_list_temp = tv_list;
-			}
-
-			if(tp_list==null){
-				tp_list = new ArrayList<Object>();
-			}	
-
-			if(radio_list==null)
-				radio_list = new ArrayList<Object>();
-
-			mTvListAdapter = new ScanResultAdapter(this,tv_list_temp);
-			mRadioListAdapter = new ScanResultAdapter(this,radio_list);
-
-			tvlistview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-				public void onItemClick(AdapterView<?> arg0, View arg1,
-						int arg2, long arg3) {
-					// TODO Auto-generated method stub
-					System.out.println("onItemSelected arg0 " + arg0);
-					System.out.println("onItemSelected arg1 " + arg1);
-					System.out.println("onItemSelected arg2 " + arg2);
-					System.out.println("onItemSelected arg3 " + arg3);
-					/*	
-					if(((DbSat)tv_list.get(arg2)).getSelectedFlag()==false){
-						((DbSat)satAndtsInfoList.get(arg2)).setSelectedFlag(true);
-						image_cur.setBackgroundResource(R.drawable.set_channel_search);
+				}	
+				else{
+					((DbSat)satAndtsInfoList.get(arg2)).setSelectedFlag(false);
+					image_cur.setBackgroundResource(0);
+				}
+				*/
+				if(canplay_flag==true)
+					playProgram(1,arg2);
 				
-					}	
-					else{
-						((DbSat)satAndtsInfoList.get(arg2)).setSelectedFlag(false);
-						image_cur.setBackgroundResource(0);
-					}
-					*/
-					if(canplay_flag==true)
-						playProgram(1,arg2);
-					
+			}
+        	    
+        	});
+
+		radiolistview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				System.out.println("onItemSelected arg1 " + arg1);
+				System.out.println("onItemSelected arg2 " + arg2);
+				System.out.println("onItemSelected arg3 " + arg3);
+				if(canplay_flag==true)
+					playProgram(2,arg2);
+			}
+        	    
+        	});	
+		tvlistview.setAdapter(mTvListAdapter);
+		radiolistview.setAdapter(mRadioListAdapter);
+
+		mSatScanCount = 0;
+
+		findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					if(scan_ok_flag==false)
+						showReturnDia();
+					else
+						returnSettings();
 				}
-	        	    
-	        	});
-
-			radiolistview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-				public void onItemClick(AdapterView<?> arg0, View arg1,
-						int arg2, long arg3) {
-					// TODO Auto-generated method stub
-					System.out.println("onItemSelected arg0 " + arg0);
-					System.out.println("onItemSelected arg1 " + arg1);
-					System.out.println("onItemSelected arg2 " + arg2);
-					System.out.println("onItemSelected arg3 " + arg3);
-					if(canplay_flag==true)
-						playProgram(2,arg2);
-				}
-	        	    
-	        	});	
-			tvlistview.setAdapter(mTvListAdapter);
-			radiolistview.setAdapter(mRadioListAdapter);
-
-			mSatScanCount = 0;
-
+			}
+		);
  	 }
 
 
@@ -390,7 +401,10 @@ public class DvbsScanResult extends DTVActivity{
 		Log.d(TAG, "message "+msg.getType());
 		switch (msg.getType()) {
 			case TVMessage.TYPE_SCAN_PROGRESS:
-				process_event_scan_service(msg);
+				if (msg.getScanProgramName() != null) {
+					Log.d(TAG, "Scan update: new program >> "+ msg.getScanProgramName());
+					process_event_scan_service(msg);
+				}
 				break;
 			case TVMessage.TYPE_SCAN_STORE_BEGIN:
 				Log.d(TAG, "Storing ...");

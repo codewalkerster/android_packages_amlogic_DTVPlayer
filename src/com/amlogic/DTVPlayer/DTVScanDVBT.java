@@ -185,7 +185,9 @@ public class DTVScanDVBT extends DTVActivity{
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{    	
 		boolean ret = false;
-		
+		if(!connected){
+			return true;
+			}
 		switch (keyCode)
 		{     
 			case KeyEvent.KEYCODE_DPAD_DOWN:	

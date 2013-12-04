@@ -172,7 +172,9 @@ public class CheckUsbdevice
 		 Runtime runtime = Runtime.getRuntime();  
             
             	String cmd = "mount";
-            
+		if(path.equals(" "))
+			return false;
+			
     		try {
 			Process proc = runtime.exec(cmd);
 			InputStream input = proc.getInputStream();

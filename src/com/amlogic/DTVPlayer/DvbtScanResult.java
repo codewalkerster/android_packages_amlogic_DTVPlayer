@@ -118,81 +118,89 @@ public class DvbtScanResult extends DTVActivity{
 	
 	@Override
   	public void onCreate(Bundle savedInstanceState) {
-	  		super.onCreate(savedInstanceState);
-			setContentView(R.layout.dvbs_scan_result_main);
-			
-			Context otherAppsContext = null;
-			try
-			{
-				otherAppsContext = createPackageContext(
-				"com.amlogic.DTVPlayer", Context.MODE_WORLD_WRITEABLE|Context.MODE_WORLD_READABLE);
+  		super.onCreate(savedInstanceState);
+		setContentView(R.layout.dvbs_scan_result_main);
+		
+		Context otherAppsContext = null;
+		try
+		{
+			otherAppsContext = createPackageContext(
+			"com.amlogic.DTVPlayer", Context.MODE_WORLD_WRITEABLE|Context.MODE_WORLD_READABLE);
+		}
+		catch (NameNotFoundException e)
+		{
+		}
+		mLast= PreferenceManager.getDefaultSharedPreferences(otherAppsContext);
+
+		tv_title= (TextView)this.findViewById(R.id.tv);
+		radio_title=(TextView)this.findViewById(R.id.radio);
+		sat_info = (TextView)this.findViewById(R.id.sat_info);
+		ts_info = (TextView)this.findViewById(R.id.ts_info);
+		progressBar = (ProgressBar)this.findViewById(R.id.ProgressBar);
+		progress_value = (TextView)this.findViewById(R.id.progress_value);
+		
+		tvlistview = (ListView)this.findViewById(R.id.tv_list);
+ 		radiolistview =  (ListView)this.findViewById(R.id.radio_list);
+
+		if(tv_list==null){
+			tv_list = new ArrayList<Object>();
+			tv_list_temp = tv_list;
+		}
+
+		if(tp_list==null){
+			tp_list = new ArrayList<Object>();
+		}	
+
+		if(radio_list==null)
+			radio_list = new ArrayList<Object>();
+
+		mTvListAdapter = new ScanResultAdapter(this,tv_list_temp);
+		mRadioListAdapter = new ScanResultAdapter(this,radio_list);
+
+		tvlistview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				System.out.println("onItemSelected arg1 " + arg1);
+				System.out.println("onItemSelected arg2 " + arg2);
+				System.out.println("onItemSelected arg3 " + arg3);
+				
+				if(canplay_flag==true)
+					playProgram(1,arg2);
+				
 			}
-			catch (NameNotFoundException e)
-			{
+        	    
+        	});
+
+		radiolistview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				System.out.println("onItemSelected arg0 " + arg0);
+				System.out.println("onItemSelected arg1 " + arg1);
+				System.out.println("onItemSelected arg2 " + arg2);
+				System.out.println("onItemSelected arg3 " + arg3);
+				if(canplay_flag==true)
+					playProgram(2,arg2);
 			}
-			mLast= PreferenceManager.getDefaultSharedPreferences(otherAppsContext);
+        	    
+        	});	
+		tvlistview.setAdapter(mTvListAdapter);
+		radiolistview.setAdapter(mRadioListAdapter);
+		mSatScanCount = 0;
 
-			tv_title= (TextView)this.findViewById(R.id.tv);
-			radio_title=(TextView)this.findViewById(R.id.radio);
-
-			
-
-			sat_info = (TextView)this.findViewById(R.id.sat_info);
-			ts_info = (TextView)this.findViewById(R.id.ts_info);
-			progressBar = (ProgressBar)this.findViewById(R.id.ProgressBar);
-			progress_value = (TextView)this.findViewById(R.id.progress_value);
-			
-			tvlistview = (ListView)this.findViewById(R.id.tv_list);
-	 		radiolistview =  (ListView)this.findViewById(R.id.radio_list);
-
-			if(tv_list==null){
-				tv_list = new ArrayList<Object>();
-				tv_list_temp = tv_list;
-			}
-
-			if(tp_list==null){
-				tp_list = new ArrayList<Object>();
-			}	
-
-			if(radio_list==null)
-				radio_list = new ArrayList<Object>();
-
-			mTvListAdapter = new ScanResultAdapter(this,tv_list_temp);
-			mRadioListAdapter = new ScanResultAdapter(this,radio_list);
-
-			tvlistview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-				public void onItemClick(AdapterView<?> arg0, View arg1,
-						int arg2, long arg3) {
-					// TODO Auto-generated method stub
-					System.out.println("onItemSelected arg0 " + arg0);
-					System.out.println("onItemSelected arg1 " + arg1);
-					System.out.println("onItemSelected arg2 " + arg2);
-					System.out.println("onItemSelected arg3 " + arg3);
-					
-					if(canplay_flag==true)
-						playProgram(1,arg2);
-					
+		findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					if(scan_ok_flag==false)
+						showReturnDia();
+					else
+						returnSettings();
 				}
-	        	    
-	        	});
-
-			radiolistview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-				public void onItemClick(AdapterView<?> arg0, View arg1,
-						int arg2, long arg3) {
-					// TODO Auto-generated method stub
-					System.out.println("onItemSelected arg0 " + arg0);
-					System.out.println("onItemSelected arg1 " + arg1);
-					System.out.println("onItemSelected arg2 " + arg2);
-					System.out.println("onItemSelected arg3 " + arg3);
-					if(canplay_flag==true)
-						playProgram(2,arg2);
-				}
-	        	    
-	        	});	
-			tvlistview.setAdapter(mTvListAdapter);
-			radiolistview.setAdapter(mRadioListAdapter);
-
-			mSatScanCount = 0;
+			}
+		);
 
  	 }
 
@@ -355,9 +363,14 @@ public class DvbtScanResult extends DTVActivity{
 	{
 		Log.d(TAG, "DTVScanDVBT_StartAutoScan");
 
-		TVScanParams sp;	
+		TVScanParams sp=null;	
 
-		sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_OFDM);
+		if(mDTVSettings.getScanRegion().contains("DVB-T")){	
+			sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_OFDM);
+		}
+		else if (mDTVSettings.getScanRegion().contains("ISDBT")){
+			sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_ISDBT);
+		}
 
 		startScan(sp);
 	}
@@ -366,28 +379,53 @@ public class DvbtScanResult extends DTVActivity{
 	{
 		Log.d(TAG, "DTVScanDVBT_StartManuScan");
 	
-		TVScanParams sp;	
+		TVScanParams sp=null;	
 
 		switch(band_width)
 		{
 			case DTVScanDVBT.SETTINGS_BANDWIDTH_8_MHZ:
-				sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.dvbt2Params(fre * 1000, TVChannelParams.BANDWIDTH_8_MHZ));
+				if (mDTVSettings.getScanRegion().contains("DVB-T")){
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.dvbt2Params(fre * 1000, TVChannelParams.BANDWIDTH_8_MHZ));
+				}
+				else if(mDTVSettings.getScanRegion().contains("ISDBT")){
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.isdbtParams(fre * 1000, TVChannelParams.BANDWIDTH_8_MHZ));
+				}
 				break;
 				
 			case DTVScanDVBT.SETTINGS_BANDWIDTH_7_MHZ:
-				sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.dvbt2Params(fre * 1000, TVChannelParams.BANDWIDTH_7_MHZ));
+				if (mDTVSettings.getScanRegion().contains("DVB-T")){
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.dvbt2Params(fre * 1000, TVChannelParams.BANDWIDTH_7_MHZ));
+				}
+				else if(mDTVSettings.getScanRegion().contains("ISDBT")){
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.isdbtParams(fre * 1000, TVChannelParams.BANDWIDTH_7_MHZ));
+				}
 				break;
 				
 			case DTVScanDVBT.SETTINGS_BANDWIDTH_6_MHZ:
-				sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.dvbt2Params(fre * 1000, TVChannelParams.BANDWIDTH_6_MHZ));
+				if (mDTVSettings.getScanRegion().contains("DVB-T")){
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.dvbt2Params(fre * 1000, TVChannelParams.BANDWIDTH_6_MHZ));
+				}
+				else if(mDTVSettings.getScanRegion().contains("ISDBT")){
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.isdbtParams(fre * 1000, TVChannelParams.BANDWIDTH_6_MHZ));
+				}			
 				break;			
 			
 			case DTVScanDVBT.SETTINGS_BANDWIDTH_AUTO:	
-				sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.dvbt2Params(fre * 1000, TVChannelParams.BANDWIDTH_AUTO));
+				if (mDTVSettings.getScanRegion().contains("DVB-T")){
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.dvbt2Params(fre * 1000, TVChannelParams.BANDWIDTH_AUTO));
+				}
+				else if(mDTVSettings.getScanRegion().contains("ISDBT")){
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.isdbtParams(fre * 1000, TVChannelParams.BANDWIDTH_AUTO));
+				}		
 				break;
 
 			default:
-				sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.dvbt2Params(fre * 1000, TVChannelParams.BANDWIDTH_8_MHZ));
+				if (mDTVSettings.getScanRegion().contains("DVB-T")){
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.dvbt2Params(fre * 1000, TVChannelParams.BANDWIDTH_8_MHZ));
+				}
+				else if(mDTVSettings.getScanRegion().contains("ISDBT")){
+					sp = TVScanParams.dtvManualScanParams(0, TVChannelParams.isdbtParams(fre * 1000, TVChannelParams.BANDWIDTH_8_MHZ));
+				}		
 				break;
 		}
 		

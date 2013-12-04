@@ -428,6 +428,9 @@ public class DTVPvrPlayer extends DTVActivity{
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
    		//showInforbar();
+		if(!connected){
+			return true;
+			}
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_DPAD_LEFT:
 			case KeyEvent.KEYCODE_DPAD_RIGHT:

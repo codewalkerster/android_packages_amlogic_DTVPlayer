@@ -145,16 +145,25 @@ public class DTVRecordDevice extends DTVActivity {
 		}
 	}
 	private void DTVRecordDeviceUIInit(){
-         
-    	deviceList = new ArrayList<DeviceItem>();
-    	getDevice();
-        
-        ListView itemListView = (ListView) findViewById(R.id.itemListView);
+
+		findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					 finish();
+				}
+			}
+		);
+		
+		deviceList = new ArrayList<DeviceItem>();
+		getDevice();
+
+		ListView itemListView = (ListView) findViewById(R.id.itemListView);
 		String[] DATA = getResources().getStringArray(R.array.record_device_content);
 		mDeviceItemAdapter = new ItemAdapter(DTVRecordDevice.this,DATA);
-        itemListView.setAdapter(mDeviceItemAdapter);
-      
-        itemListView.setOnItemClickListener(mOnItemClickListener); 
+		itemListView.setAdapter(mDeviceItemAdapter);
+
+		itemListView.setOnItemClickListener(mOnItemClickListener); 
 
 		disk_type = (TextView) findViewById(R.id.type);
 		disk_total = (TextView) findViewById(R.id.total);
@@ -511,6 +520,9 @@ public class DTVRecordDevice extends DTVActivity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if(!connected){
+			return true;
+			}
 		switch(keyCode){
 		
 			case KeyEvent.KEYCODE_BACK:

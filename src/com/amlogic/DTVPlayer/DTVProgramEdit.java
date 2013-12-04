@@ -164,7 +164,7 @@ public class DTVProgramEdit extends DTVActivity{
 	    }
 	    TVProgram[] result=new TVProgram[len-1];
 	    System.arraycopy(a,0,result,0,index);
-	    System.arraycopy(a,index+1,result,index,len-index-1);
+	    System.arraycopy(a,index+1,result,index,len-index-1);		
 	    return result;
 	}
 
@@ -265,7 +265,7 @@ public class DTVProgramEdit extends DTVActivity{
 				}
 				if(isTopActivity(this))
 					showStopPVRDialog(recordConflict, msg.getProgramID());
-				break;	
+				break;
 			default:
 				break;
 		}
@@ -321,8 +321,8 @@ public class DTVProgramEdit extends DTVActivity{
 		switch(status){
 			case STATUS_LOCKED:
 				if(getDTVLockedStatus()){
-					mTextInfo.setVisibility(View.VISIBLE);
-					mTextInfo.setText("Locked");	
+					mTextInfo.setVisibility(View.INVISIBLE);
+					//mTextInfo.setText("Locked");	
 				}
 				else if(getDTVSignalStatus()==false){
 					mTextInfo.setVisibility(View.VISIBLE);
@@ -461,6 +461,8 @@ public class DTVProgramEdit extends DTVActivity{
 					Log.d(TAG,"mOnItemClickListener pos="+position);	
 					int serviceType = mTVProgramList[position].getType();
 					DTVPlayerPlayById(db_id);
+					if(mTVProgramList[position].getLockFlag())
+						unblock();
 				}
 				
 		}
@@ -633,6 +635,9 @@ public class DTVProgramEdit extends DTVActivity{
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
+		if(!connected){
+			return true;
+			}
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_DPAD_LEFT:
 				DTVListDealLeftAndRightKey(0);
@@ -935,7 +940,7 @@ public class DTVProgramEdit extends DTVActivity{
 				public void showWindowDetail(Window window){
 					TextView title = (TextView)window.findViewById(R.id.title);
 					title.setTextColor(Color.YELLOW);
-					title.setText("Program Operations");
+					title.setText(R.string.program_operation);
 					
 					ListView list_item = (ListView)window.findViewById(R.id.list_item);
 					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.menu_list_item,itemChoices);
@@ -1287,6 +1292,25 @@ public class DTVProgramEdit extends DTVActivity{
 		
 		ListView_channel.setAdapter(myAdapter);
 		setFocusPosition();
+
+		findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					 finish();
+				}
+			}
+		);
+
+		findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					 finish();
+				}
+			}
+		);
+		
 	}
 
 	private RelativeLayout RelativeLayout_radio_bg=null;
@@ -1373,8 +1397,10 @@ public class DTVProgramEdit extends DTVActivity{
 				if(db_id == mTVProgramList[i].getID()){
 					ListView_channel.setFocusableInTouchMode(true);
 	   			  	
-	        		ListView_channel.setSelection(i);
+	        			ListView_channel.setSelection(i);
 					cur_select_item = i;
+					if (mTVProgramList[i].getLockFlag())
+						unblock();
 					break;
 				}
 			}	

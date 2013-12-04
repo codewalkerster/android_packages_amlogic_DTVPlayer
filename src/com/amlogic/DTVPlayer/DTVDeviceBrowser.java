@@ -374,6 +374,9 @@ public class DTVDeviceBrowser extends DTVActivity implements OnItemClickListener
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if(!connected){
+			return true;
+			}
 		switch(keyCode){
 			case KeyEvent.KEYCODE_DPAD_CENTER:
 			//case KeyEvent.KEYCODE_A:

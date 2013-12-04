@@ -95,11 +95,19 @@ public class DTVBookList extends DTVActivity{
 
 	private void DTVBookListUIInit(){
 		setup_db();
-        setup_views();
+        	setup_views();
+			
 	}
 
 	private void setup_views(){
-		
+		findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					finish();
+				}
+			}
+		);
 		listview = (ListView)findViewById(R.id.list_content);
 		myAdapter = new MyAdapter(DTVBookList.this, serviceList);
 		listview.setOnItemClickListener(new listOnItemClick());
@@ -595,7 +603,7 @@ public class DTVBookList extends DTVActivity{
         });
 
 		no.setFocusable(true);     
-     	no.setFocusableInTouchMode(true);   
+     		no.setFocusableInTouchMode(true);   
 		no.setOnClickListener(new OnClickListener(){
 		          public void onClick(View v) {				  	 
 		        	 //onSetNegativeButton();

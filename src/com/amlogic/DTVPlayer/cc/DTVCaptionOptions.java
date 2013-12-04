@@ -279,6 +279,9 @@ public class DTVCaptionOptions extends DTVActivity {
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
+		if(!connected){
+			return true;
+			}
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_DPAD_LEFT:
 				Log.d(TAG,"KEYCODE_DPAD_LEFT");

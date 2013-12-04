@@ -335,6 +335,9 @@ public class DTVRecManager extends DTVActivity{
    @Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
+		if(!connected){
+			return true;
+			}
 	   switch (keyCode) {
 			
 			case KeyEvent.KEYCODE_DPAD_DOWN:			
@@ -511,7 +514,7 @@ public class DTVRecManager extends DTVActivity{
 									Intent Intent_pvrplayer = new Intent();
 									Intent_pvrplayer.setClass(DTVRecManager.this, DTVPvrPlayer.class);
 									Intent_pvrplayer.putExtras(bundle_pvr_player);
-				                    startActivity(Intent_pvrplayer);
+				                   			startActivity(Intent_pvrplayer);
 									DTVRecManager.this.finish();
 									break;
 								case 1:

@@ -82,7 +82,7 @@ public class DTVChannelList extends DTVActivity{
 			service_type=getCurrentProgramType();
 		}	
 
-	    //LinearLayoutListView = (LinearLayout)findViewById(R.id.LinearLayoutListView);
+	    	//LinearLayoutListView = (LinearLayout)findViewById(R.id.LinearLayoutListView);
 		//initAnimation();
 
 
@@ -106,6 +106,25 @@ public class DTVChannelList extends DTVActivity{
 		ListView_channel.setOnItemClickListener(mOnItemClickListener);
 		ListView_channel.setAdapter(myAdapter);
 		setFocusPosition();
+
+		findViewById(R.id.arrow_left).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					DTVListDealLeftAndRightKey(0);
+				}
+			}
+		);
+
+		findViewById(R.id.arrow_right).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					DTVListDealLeftAndRightKey(1);
+				}
+			}
+		);
+		
 	}
 
 	public void setFocusPosition(){
@@ -354,6 +373,9 @@ public class DTVChannelList extends DTVActivity{
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		//reset_timer();
+		if(!connected){
+			return true;
+			}
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_DPAD_LEFT:
 				DTVListDealLeftAndRightKey(0);

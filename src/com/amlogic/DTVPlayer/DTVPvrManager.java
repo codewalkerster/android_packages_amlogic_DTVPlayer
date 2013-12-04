@@ -181,11 +181,23 @@ public class DTVPvrManager extends DTVActivity{
 	}
 	
 	private void DTVPvrManagerUIInit(){
-
-        list = (ListView)findViewById(R.id.listview_recmanager);
-	    list.setOnItemSelectedListener(mOnSelectedListener);
+		findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub		
+					DTVPvrPlayerStop();
+					Intent intent = new Intent();
+					intent.setClass(DTVPvrManager.this, DTVSettingsMenu.class);
+					startActivity(intent);
+					DTVPvrManager.this.finish();
+				}
+			}
+		);
+		
+		list = (ListView)findViewById(R.id.listview_recmanager);
+		list.setOnItemSelectedListener(mOnSelectedListener);
 		list.setOnItemClickListener(mOnItemClickListener);
-	    list.setOnScrollListener(new listOnScroll()); 
+		list.setOnScrollListener(new listOnScroll()); 
 		getFileList();
 		if (null == myAdapter){
 			myAdapter = new MyAdapter(DTVPvrManager.this,filenameList);
@@ -327,6 +339,9 @@ public class DTVPvrManager extends DTVActivity{
    @Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
+		if(!connected){
+			return true;
+			}
 	   switch (keyCode) {
 			
 			case KeyEvent.KEYCODE_DPAD_DOWN:			
@@ -348,7 +363,7 @@ public class DTVPvrManager extends DTVActivity{
 					Intent Intent_pvrplayer = new Intent();
 					Intent_pvrplayer.setClass(DTVPvrManager.this, DTVPvrPlayer.class);
 					Intent_pvrplayer.putExtras(bundle_pvr_player);
-	                startActivity(Intent_pvrplayer);
+	                		startActivity(Intent_pvrplayer);
 					DTVPvrManager.this.finish();
 				}	
 				return true;	

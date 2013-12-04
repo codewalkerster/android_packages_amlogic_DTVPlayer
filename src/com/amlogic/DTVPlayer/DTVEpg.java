@@ -59,8 +59,6 @@ public class DTVEpg extends DTVActivity{
 
 	private Handler  currenttimer_handler;
 	private Runnable currenttimer_runnable;
-	
-	private Handler  waiting_handler;
 	private ProgressDialog progressDialog;  
 	
 	/********ctrl var *************/
@@ -87,6 +85,8 @@ public class DTVEpg extends DTVActivity{
 	ImageButton date_button4 = null;
 	ImageButton date_button5 = null;
 	ImageButton date_button6 = null;
+
+	private EitUpdateThread t=null;
 	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
@@ -94,27 +94,40 @@ public class DTVEpg extends DTVActivity{
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.dtvepg);
-		
+		if(t==null){
+			t =new EitUpdateThread();  
+			t.start();
+		}
 	}
 
 	public void onStart(){
 		super.onStart();
 	}
 
+	public void onStop(){
+		super.onStop();
+		if(t!=null){
+			t.quitLoop();
+			t=null;
+		}
+	}
+
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
 		DTVEpgUIInit();
-
 		//channel list
 		mDTVSettings = new DTVSettings(this);
 		DTVChannelList_UI_Init();
-		myAdapter.notifyDataSetChanged();
 	}
 
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
 		super.onDisconnected();
+		if(t!=null){
+			t.quitLoop();
+			t=null;
+		}
 	}
 
 	public void onMessage(TVMessage msg){
@@ -137,43 +150,18 @@ public class DTVEpg extends DTVActivity{
 				eit_notify ++ ;
 				break;	
 			case TVMessage.TYPE_PROGRAM_START:	
-				Log.d(TAG,"New program start!");
-				cur_service_id = DTVEpgGetID();
-		        db_id = cur_service_id;
-				Log.d(TAG,"db_id="+db_id);
-				new Thread(){     
-		            public void run(){   
-		         		Message msg;
-		                try{
-		                	Thread.sleep(1000);
-		                	setup_db();
-		                }
-		                catch (Exception e){
-		                 	
-		                }
-
-		                try{
-		                    msg = waiting_handler.obtainMessage();
-		                    msg.arg1 = 2;
-		                	waiting_handler.sendMessage(msg);
-		                	Thread.sleep(1000);
-		                }
-		                catch (Exception e){
-		                 		
-		                } 
-
-		                try{
-		                    msg = waiting_handler.obtainMessage();
-		                    msg.arg1 = 3;
-		                	waiting_handler.sendMessage(msg);
-		                	//Thread.sleep(1000);
-		                }
-		                catch (Exception e){
-		                 	
-						} 
+				if(isTopActivity(this)){
+					Log.d(TAG,"New program start!");
+					cur_service_id = DTVEpgGetID();
+					db_id = cur_service_id;
+					Log.d(TAG,"db_id="+db_id);
+					if(mEitListDBAdapter!=null)
+						mEitListDBAdapter.notifyDataSetChanged();
+					if(t!=null){						
+						t.onSetupCmd(EitUpdateThread.EIT_UPDATE,null);
+						t.onSetupCmd(1,null);
 					}
-				}.start(); 
-				myAdapter.notifyDataSetChanged();
+				}
 				break;
 			case TVMessage.TYPE_RECORD_CONFLICT:
 				int recordConflict = msg.getRecordConflict();
@@ -239,12 +227,22 @@ public class DTVEpg extends DTVActivity{
 	}
 	
 	private int eit_list_cur_pos=0;
-	
 	private void DTVEpgUIInit(){	
 		/*setup view*/
-        
-        EitListView  = (ListView)findViewById(R.id.EitListView);
-        EitListView.setItemsCanFocus(true);
+		findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					Intent in = new Intent();
+					in.setClass(DTVEpg.this, DTVPlayer.class);
+					DTVEpg.this.startActivity(in);	
+					DTVEpg.this.finish();
+				}
+			}
+		);
+		
+	        EitListView  = (ListView)findViewById(R.id.EitListView);
+	        EitListView.setItemsCanFocus(true);
 
 		EitListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view,
@@ -257,7 +255,6 @@ public class DTVEpg extends DTVActivity{
 			public void onNothingSelected(AdapterView<?> parent) {
 			}
 		});
-
 		
 		EitListView.setOnKeyListener(new OnKeyListener() { 
 			public boolean onKey(View v, int keyCode, KeyEvent event) {		
@@ -280,9 +277,10 @@ public class DTVEpg extends DTVActivity{
 
 						break;
 				} 
+				
 				return false;
 		}}); 
-					
+		
 		EitListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 				// TODO Auto-generated method stub				
@@ -290,119 +288,10 @@ public class DTVEpg extends DTVActivity{
 				showEventAddDialog(v, current_date_index,position);
 			}
 		});
-		
-     	    
-	    progressDialog = ProgressDialog.show(DTVEpg.this, getString(R.string.epg_loading), getString(R.string.epg_waiting), true, false);   
-		WindowManager.LayoutParams lp=progressDialog.getWindow().getAttributes();
-		lp.dimAmount=0.0f;
-		progressDialog.getWindow().setAttributes(lp);
-		progressDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);	
-
-        waiting_handler = new Handler(){     
-            public void handleMessage(Message msg) {   
-            	switch (msg.arg1)
-            	{
-					case 0:
-						try{
-							create_proganddate();
-		                }
-		                catch (Exception e){
-		                }
-
-						try{
-							create_eventnameanddetailinfo();
-		                }
-		                catch (Exception e){
-		                }  
-						
-						try{
-							create_hours();
-		                }
-		                catch (Exception e){
-		                }  
-			                    
-						try{
-							create_dates();
-		                }
-		                catch (Exception e){
-		                }  
-	            	break;
-	            	
-	            	case 1:
-	                    refresh_progname();
-        				refresh_currenttime();
-	                    refresh_dates(0);
-	                    setup_timeupdatethread();
-	            	break;
-	            	
-	            	case 2:
-						refresh_Eitlistview(0);
-	            	break;
-
-					case 3:
-	                    //EPG_parent_linearlayout.setVisibility(View.VISIBLE);
-	                    progressDialog.dismiss();  
-						if (TempFlag == 0){
-							TempFlag = 1;
-							moveto_currentevent();
-						}
-	            	break;
-					case 4:
-						update_new_eit();
-						break;
-            	}
-            }
-        };  
-
-        new Thread(){     
-            public void run() {   
-         		Message msg;
-                try{
-                	Thread.sleep(1000);
-                	setup_db();
-                }
-                catch (Exception e){
-                }
-                
-                try{
-                    msg = waiting_handler.obtainMessage();
-                    msg.arg1 = 0;
-                	waiting_handler.sendMessage(msg); 
-                	Thread.sleep(200);
-                }
-                catch (Exception e){
-                }
-
-                try{
-                    msg = waiting_handler.obtainMessage();
-                    msg.arg1 = 1;
-                	waiting_handler.sendMessage(msg);
-                	Thread.sleep(200);
-                }
-                catch (Exception e){
-                }    	
-                
-                try{
-                    msg = waiting_handler.obtainMessage();
-                    msg.arg1 = 2;
-                	waiting_handler.sendMessage(msg);
-                	Thread.sleep(1000);
-                }
-                catch (Exception e){
-                } 
-
-                try{
-                    msg = waiting_handler.obtainMessage();
-                    msg.arg1 = 3;
-                	waiting_handler.sendMessage(msg);
-                	//Thread.sleep(1000);
-                }
-                catch (Exception e){
-                } 
-				
-            }
-         }.start(); 
-
+	
+		mEitListDBAdapter = new EitListDBAdapter(this,mTVEvent,0);
+		if(EitListView!=null)
+        		EitListView.setAdapter(mEitListDBAdapter); 
 
 		date_button0 = (ImageButton)findViewById(R.id.date_button0);
 		date_button1 = (ImageButton)findViewById(R.id.date_button1); 
@@ -428,14 +317,83 @@ public class DTVEpg extends DTVActivity{
 		date_button5.setOnFocusChangeListener(new dateButtonFocusChange()); 	
 		date_button6.setOnFocusChangeListener(new dateButtonFocusChange()); 
 
+		/*for touch mode*/
+		
+		ImageView red_button = (ImageView)findViewById(R.id.red_button);
+		red_button.setFocusable(false);     
+     		red_button.setFocusableInTouchMode(false);   
+		red_button.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {				  	 
+				Intent Intent_booklist = new Intent();
+				Intent_booklist.setClass(DTVEpg.this, DTVBookList.class);
+				startActivityForResult(Intent_booklist,22);			        	
+		}});
+
+		ImageView yellow_button = (ImageView)findViewById(R.id.yellow_button);
+		yellow_button.setFocusable(false);     
+     		yellow_button.setFocusableInTouchMode(false);   
+		yellow_button.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {				  	 
+				if(list_status==1){
+					EitListView.requestFocus();
+					if(EitListView.getChildCount()>eit_list_cur_pos)
+						EitListView.setSelection(0);
+					else{
+						EitListView.setSelection(eit_list_cur_pos-EitListView.getChildCount());
+					}
+					mEitListDBAdapter.notifyDataSetChanged();
+				}
+				else if(list_status==0){
+					ListView_channel.requestFocus();
+					if(ListView_channel.getChildCount()>cur_select_item)
+						ListView_channel.setSelection(0);
+					else{
+						ListView_channel.setSelection(cur_select_item-ListView_channel.getChildCount());
+					}
+					myAdapter.notifyDataSetChanged();
+				}		        	
+		}});	
+
+		ImageView blue_button = (ImageView)findViewById(R.id.blue_button);
+		blue_button.setFocusable(false);     
+     		blue_button.setFocusableInTouchMode(false);   
+		blue_button.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {				  	 
+				int p=0;
+				if(list_status==1){					
+					p = eit_list_cur_pos+EitListView.getChildCount();
+					if(p<EitListView.getCount())
+						EitListView.setSelection(p-1);
+					else{
+						EitListView.setSelection(EitListView.getCount()-1);
+					}
+					mEitListDBAdapter.notifyDataSetChanged();
+					EitListView.requestFocus();
+				}
+				else if(list_status==0){					
+					p = cur_select_item+ListView_channel.getChildCount();
+					if(p<ListView_channel.getCount())
+						ListView_channel.setSelection(p-1);
+					else{
+						ListView_channel.setSelection(ListView_channel.getCount()-1);
+					}
+					myAdapter.notifyDataSetChanged();
+					ListView_channel.requestFocus();
+				}		        	
+		}});	
+
 		//refresh time
-		refresh_time_thread();		
+		refresh_time_thread();	
+		if(t!=null){	
+			t.onSetupCmd(1,null);
+			t.onSetupCmd(2,null);
+			t.onSetupCmd(EitUpdateThread.EIT_UPDATE,null);
+		}
 	}
 
-	private void refresh_time_thread()
-	{
-	    currenttimer_handler = new Handler();
-	    currenttimer_runnable = new Runnable() 
+	private void refresh_time_thread(){
+		currenttimer_handler = new Handler();
+		currenttimer_runnable = new Runnable() 
 		{
 			public void run() 
 			{
@@ -443,9 +401,8 @@ public class DTVEpg extends DTVActivity{
 				currenttimer_handler.postDelayed(currenttimer_runnable, 1000);
 			}   
 		};
-	    currenttimer_handler.postDelayed(currenttimer_runnable, 1000);
+		currenttimer_handler.postDelayed(currenttimer_runnable, 1000);
 	}
-
 
 	private void refresh_currenttime()
 	{		
@@ -457,8 +414,6 @@ public class DTVEpg extends DTVActivity{
 		TempTexView = (TextView)findViewById(R.id.current_time);
 		TempTexView.setText((""+today));
 	}
-
-
 
 	private long get_firstmillisofcurrentday(){
 		Date date1 = new Date(get_current_datetime());
@@ -559,10 +514,6 @@ public class DTVEpg extends DTVActivity{
     	*/
 	}
 	
-	private void create_proganddate(){
-		
-	}
-	
 	/******************used after connect service*******************/
 
 	private long get_current_datetime(){
@@ -570,57 +521,81 @@ public class DTVEpg extends DTVActivity{
 		//return date;
 		return getUTCTime();
 	}
-		
-	private void refresh_progname(){		
-		
+
+	private TVEvent[][] mTempTVEvent=new TVEvent[7][];
+	private void sync_date(){
+		for(int i=0;i<7;i++){
+			if(mTempTVEvent[i]!=null){
+				mTVEvent[i]=new TVEvent[mTempTVEvent[i].length];
+				System.arraycopy(mTempTVEvent[i],0,mTVEvent[i],0,mTempTVEvent[i].length);
+			}
+			else{
+				mTVEvent[i]=null;
+				continue;
+			}	
+		}
 	}
-	
-	private void setup_db(){
-	     
-        mTVEvent[0] = DTVEpg_getDateEIT(get_current_datetime()
-        						,get_firstmillisofcurrentday()+ 1 * 24 * 60 * 60*1000-get_current_datetime());
-		Log.d("mTVEvent[0]:",""+mTVEvent[0].length);
-		
-        mTVEvent[1] = DTVEpg_getDateEIT(get_firstmillisofcurrentday()+ 1 * 24 * 60 * 60*1000,
-        						 1 * 24 * 60 * 60*1000);
-		Log.d("mTVEvent[1]:",""+mTVEvent[1].length);
-        mTVEvent[2] = DTVEpg_getDateEIT(get_firstmillisofcurrentday()+ 2 * 24 * 60 * 60*1000,
-        						1 * 24 * 60 * 60*1000);
-		Log.d("mTVEvent[2]:",""+mTVEvent[2].length);
-        mTVEvent[3] = DTVEpg_getDateEIT( get_firstmillisofcurrentday()+ 3 * 24 * 60 * 60*1000,
-        						1 * 24 * 60 * 60*1000);
-		Log.d("mTVEvent[3]:",""+mTVEvent[3].length);
-        mTVEvent[4] = DTVEpg_getDateEIT( get_firstmillisofcurrentday()+ 4 * 24 * 60 * 60*1000,
-        						1 * 24 * 60 * 60*1000);
-		Log.d("mTVEvent[4]:",""+mTVEvent[4].length);
-        mTVEvent[5] = DTVEpg_getDateEIT( get_firstmillisofcurrentday()+ 5 * 24 * 60 * 60*1000,
-        						1 * 24 * 60 * 60*1000);
-		Log.d("mTVEvent[5]:",""+mTVEvent[5].length);
-        mTVEvent[6] = DTVEpg_getDateEIT( get_firstmillisofcurrentday()+ 6 * 24 * 60 * 60*1000,
-        						1 * 24 * 60 * 60*1000);
-		Log.d("mTVEvent[6]:",""+mTVEvent[6].length);
+
+	private static Object lock = new Object();
+	private  void setup_db(){
+	     synchronized(lock){
+
+	        mTempTVEvent[0] = DTVEpg_getDateEIT(get_current_datetime()
+	        						,get_firstmillisofcurrentday()+ 1 * 24 * 60 * 60*1000-get_current_datetime());
+			if(mTempTVEvent[0]!=null)
+			Log.d("mTVEvent[0]:",""+mTempTVEvent[0].length);
+			
+	        mTempTVEvent[1] = DTVEpg_getDateEIT(get_firstmillisofcurrentday()+ 1 * 24 * 60 * 60*1000,
+	        						 1 * 24 * 60 * 60*1000);
+			if(mTempTVEvent[1]!=null)
+			Log.d("mTVEvent[1]:",""+mTempTVEvent[1].length);
+	        mTempTVEvent[2] = DTVEpg_getDateEIT(get_firstmillisofcurrentday()+ 2 * 24 * 60 * 60*1000,
+	        						1 * 24 * 60 * 60*1000);
+			if(mTempTVEvent[2]!=null)
+			Log.d("mTVEvent[2]:",""+mTempTVEvent[2].length);
+	        mTempTVEvent[3] = DTVEpg_getDateEIT( get_firstmillisofcurrentday()+ 3 * 24 * 60 * 60*1000,
+	        						1 * 24 * 60 * 60*1000);
+			if(mTempTVEvent[3]!=null)
+			Log.d("mTVEvent[3]:",""+mTempTVEvent[3].length);
+	        mTempTVEvent[4] = DTVEpg_getDateEIT( get_firstmillisofcurrentday()+ 4 * 24 * 60 * 60*1000,
+	        						1 * 24 * 60 * 60*1000);
+			if(mTempTVEvent[4]!=null)
+			Log.d("mTVEvent[4]:",""+mTempTVEvent[4].length);
+	        mTempTVEvent[5] = DTVEpg_getDateEIT( get_firstmillisofcurrentday()+ 5 * 24 * 60 * 60*1000,
+	        						1 * 24 * 60 * 60*1000);
+			if(mTempTVEvent[5]!=null)
+			Log.d("mTVEvent[5]:",""+mTempTVEvent[5].length);
+	        mTempTVEvent[6] = DTVEpg_getDateEIT( get_firstmillisofcurrentday()+ 6 * 24 * 60 * 60*1000,
+	        						1 * 24 * 60 * 60*1000);
+			if(mTempTVEvent[6]!=null)
+			Log.d("mTVEvent[6]:",""+mTempTVEvent[6].length);
 		
 		//if (mTVEvent[0].length > 0)
 			//HelpInfoTextView.setText(R.string.epg_operate_des01);
 		//else
 			//HelpInfoTextView.setText(R.string.epg_no_epg_info);
+	     	}	
 	}
 
 	EitListDBAdapter mEitListDBAdapter =null;
 	private void refresh_Eitlistview(int date){
-		mEitListDBAdapter = new EitListDBAdapter(this,date);
-        EitListView.setAdapter(mEitListDBAdapter); 
-		mEitListDBAdapter.notifyDataSetChanged();
+		if(EitListView!=null){
+			EitListDBAdapter mAdapter = (EitListDBAdapter)EitListView.getAdapter();    
+			if(mAdapter!=null){
+				mAdapter.setDateIndex(date);			
+				mAdapter.notifyDataSetChanged();
+			}	
+		}
+		if(t!=null)
+			t.onSetupCmd(3,null);
 	}
 
 	private  void SetAlarm(long time){
-			
 		//Intent intent = new Intent(this, AlarmReceiver.class);
 		Intent intent = new Intent(this, AlarmReceiver.class);
 		PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent ,Intent.FLAG_ACTIVITY_NEW_TASK);
 		AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
-		am.set(AlarmManager.RTC_WAKEUP, time*1000, pi);	
-		
+		am.set(AlarmManager.RTC_WAKEUP, time*1000, pi);		
 		//am.set(AlarmManager.POWER_OFF_WAKEUP, time*1000, pi);		
 	}
 
@@ -671,23 +646,14 @@ public class DTVEpg extends DTVActivity{
 				refresh_currenttime();
 				currenttimer_handler.postDelayed(currenttimer_runnable, 1000);
 				if (((tickcount % EIT_NEW_CHECKTIME) == 0)&&(eit_notify >0)){
-					update_new_eit();
+					if(t!=null){
+						t.onSetupCmd(EitUpdateThread.EIT_UPDATE,null);
+					}
+					eit_notify = 0;
 				}
 			}   
 		};
 	    currenttimer_handler.postDelayed(currenttimer_runnable, 1000);
-	}
-	
-	private void create_eventnameanddetailinfo(){
-		
-	}
-	
-	
-
-	
-	
-	private void create_dates(){
-		
 	}
 
 	private void refresh_dates(int focusindex){
@@ -736,10 +702,6 @@ public class DTVEpg extends DTVActivity{
 		}
 	}
 	
-	private void create_hours(){
-		
-	}
-	
 	/*disable HOME key*/
 	@Override 
 	public void onAttachedToWindow(){  
@@ -753,6 +715,7 @@ public class DTVEpg extends DTVActivity{
 		private Context cont;
 		private int selectItem;
 		private int date;
+		private TVEvent[][] mEvent = null;
 		
 		
 		class ViewHolder {
@@ -761,17 +724,33 @@ public class DTVEpg extends DTVActivity{
 			ImageView icon_book;
 			ImageView icon_pvr;
 		}
-		
+
+		/*
 		public EitListDBAdapter(Context context, int index) {
 			super();
 			cont = context;
 			mInflater=LayoutInflater.from(context);	
 			date = index;
 		}
+		*/
+
+		public EitListDBAdapter(Context context, TVEvent[][] event, int index) {
+			super();
+			cont = context;
+			mInflater=LayoutInflater.from(context);	
+			mEvent = event;
+			date = index;
+		}
+
+		public void setDateIndex(int index){
+			this.date = index;
+		}
 
 		public int getCount() {
-			if(mTVEvent[date]!=null){
-				return mTVEvent[date].length;
+			if(mEvent==null){
+				return 0;	
+			}else if(mEvent[date]!=null){
+				return mEvent[date].length;
 			}	
 			else
 				return 0;
@@ -789,9 +768,9 @@ public class DTVEpg extends DTVActivity{
 			this.selectItem = position;
 		}
         
-        public int getSelectItem(){
-			return this.selectItem;
-        }
+	        public int getSelectItem(){
+				return this.selectItem;
+	        }
 		
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;	
@@ -814,31 +793,15 @@ public class DTVEpg extends DTVActivity{
 			// Bind the data efficiently with the holder.
 			
 			
-			if(mTVEvent[date]!=null){
-				if (mTVEvent[date].length>0){	
-					/*
-					if (
-						(position == 0 ) && 
-						(
-						        mTVEvent[date][position].getStartTime() 
-								> 
-						        (get_firstmillisofcurrentday()/1000+ date * 24 * 60 * 60))
-						)
-					{
-						
-						holder.eit_name.setText("N/A");
-
-					}
-					else
-					*/
-						holder.eit_name.setText(mTVEvent[date][position].getName());
-					Date dt_start =  new Date(mTVEvent[date][position].getStartTime());
-		    		Date dt_end   =  new Date(mTVEvent[date][position].getEndTime());
-		    		
-		    		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
-		    		String str_start = sdf.format(dt_start); 
-		    		String str_end   = sdf.format(dt_end); 
-					
+			if(mEvent[date]!=null){
+				if (mEvent[date].length>0){		
+					holder.eit_name.setText(mEvent[date][position].getName());
+					Date dt_start =  new Date(mEvent[date][position].getStartTime());
+			    		Date dt_end   =  new Date(mEvent[date][position].getEndTime());
+			    		
+			    		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
+			    		String str_start = sdf.format(dt_start); 
+			    		String str_end   = sdf.format(dt_end); 
 					holder.time.setText(""+str_start + "--" + str_end);	
 
 					/*			
@@ -846,14 +809,13 @@ public class DTVEpg extends DTVActivity{
 						case 0:
 							holder.icon_book.setBackgroundResource(Color.TRANSPARENT);
 							holder.icon_pvr.setBackgroundResource(Color.TRANSPARENT);
-							
-						break;
+							break;
 						case 1:
 							holder.icon_book.setBackgroundResource(R.drawable.epg_event_book_1); 
-						break;
+							break;
 						case 2:
 							holder.icon_book.setBackgroundResource(R.drawable.epg_event_book_2); 
-						break;
+							break;
 					}
 					*/
 					
@@ -1065,7 +1027,7 @@ public class DTVEpg extends DTVActivity{
 						//if(mDialog!=null&& mDialog.isShowing()){
 							dismiss();
 						//}
-						break;
+						return true;
 				}
 				return super.onKeyDown(keyCode, event);
 			}
@@ -1502,53 +1464,37 @@ public class DTVEpg extends DTVActivity{
 				}	
 		    }
 			else{
-				clear_eventnameanddetailinfo();
+			clear_eventnameanddetailinfo();
 			}
 			*/
         }
 	}
 	
 	private void update_new_eit(){
-		progressDialog.show();
-		WindowManager.LayoutParams lp=progressDialog.getWindow().getAttributes();
-		lp.dimAmount=0.0f;
-		progressDialog.getWindow().setAttributes(lp);
-		progressDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		/*
+		if(!isFinishing()){
+			progressDialog.show();
+			WindowManager.LayoutParams lp=progressDialog.getWindow().getAttributes();
+			lp.dimAmount=0.0f;
+			progressDialog.getWindow().setAttributes(lp);
+			progressDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		}
+		*/
+	}
 
-		new Thread(){     
-            public void run(){   
-         		Message msg;
-                try{
-                	Thread.sleep(1000);
-                	setup_db();
-                }
-                catch (Exception e){
-                 	
-                }
+	private void showUpdateDialog(){
+		if(!isFinishing()){	
+			progressDialog = ProgressDialog.show(DTVEpg.this, getString(R.string.epg_loading), getString(R.string.epg_waiting), true, false);   
+			WindowManager.LayoutParams lp=progressDialog.getWindow().getAttributes();
+			lp.dimAmount=0.0f;
+			progressDialog.getWindow().setAttributes(lp);
+			progressDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);	
+		}
+	}
 
-                try{
-                    msg = waiting_handler.obtainMessage();
-                    msg.arg1 = 2;
-                	waiting_handler.sendMessage(msg);
-                	Thread.sleep(1000);
-                }
-                catch (Exception e){
-                 		
-                } 
-
-                try{
-                    msg = waiting_handler.obtainMessage();
-                    msg.arg1 = 3;
-                	waiting_handler.sendMessage(msg);
-                	//Thread.sleep(1000);
-                }
-                catch (Exception e){
-                 	
-				} 
-			}
-		}.start(); 
-		
-		eit_notify = 0;
+	private void dismissUpdateDialog(){
+		if(progressDialog!=null)
+			progressDialog.dismiss();  
 	}
 	
 	
@@ -1627,6 +1573,7 @@ public class DTVEpg extends DTVActivity{
 		ListView_channel.setOnItemClickListener(mOnItemClickListener);
 		ListView_channel.setAdapter(myAdapter);
 		setFocusPosition();
+		myAdapter.notifyDataSetChanged();
 	}
 
 	public void setFocusPosition(){
@@ -1847,11 +1794,19 @@ public class DTVEpg extends DTVActivity{
 			}
 		}
      }
+
+	@Override
+       public void onBackPressed() {
+		super.onBackPressed();
+	}
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		//reset_timer();
+		if(!connected){
+			return true;
+			}
 		switch (keyCode) {
 			/*
 			case KeyEvent.KEYCODE_DPAD_LEFT:
@@ -1859,7 +1814,7 @@ public class DTVEpg extends DTVActivity{
 				break;		
 			case KeyEvent.KEYCODE_DPAD_RIGHT:	
 				DTVListDealLeftAndRightKey(1);
-				break;
+				break;	
 			*/	
 			case KeyEvent.KEYCODE_DPAD_DOWN:
 				Log.d(TAG,"list_status="+list_status+"---cur_select_item="+cur_select_item);
@@ -1874,6 +1829,13 @@ public class DTVEpg extends DTVActivity{
 					if(eit_list_cur_pos == EitListView.getCount()-1){
 						EitListView.requestFocus();
 						EitListView.setSelection(0); 	
+						return true;
+					}	
+				}
+				else if(list_status==-1){
+					if(EitListView.getCount()>0){
+						EitListView.requestFocus();
+						EitListView.setSelection(0); 
 						return true;
 					}	
 				}
@@ -1915,7 +1877,7 @@ public class DTVEpg extends DTVActivity{
 				break;
 			case KeyEvent.KEYCODE_BACK:	
 				DTVEpg.this.finish();
-				break;
+				return true;
 			case DTVActivity.KEYCODE_YELLOW_BUTTON:
 				if(list_status==1){
 					if(EitListView.getChildCount()>eit_list_cur_pos)
@@ -2163,6 +2125,7 @@ public class DTVEpg extends DTVActivity{
 						date_button6.setBackgroundResource(R.drawable.epg_date_button);
 						refresh_Eitlistview(1);
 						current_date_index = 1;
+						list_status=-1;
 						break;
 					case R.id.date_button2:
 						date_button0.setBackgroundResource(R.drawable.epg_date_button);		
@@ -2174,6 +2137,7 @@ public class DTVEpg extends DTVActivity{
 						date_button6.setBackgroundResource(R.drawable.epg_date_button);
 						refresh_Eitlistview(2);
 						current_date_index = 2;
+						list_status=-1;
 						break;	
 					case R.id.date_button3:
 						date_button0.setBackgroundResource(R.drawable.epg_date_button);		
@@ -2185,6 +2149,7 @@ public class DTVEpg extends DTVActivity{
 						date_button6.setBackgroundResource(R.drawable.epg_date_button);
 						refresh_Eitlistview(3);
 						current_date_index = 3;
+						list_status=-1;
 						break;
 					case R.id.date_button4:
 						date_button0.setBackgroundResource(R.drawable.epg_date_button);		
@@ -2196,6 +2161,7 @@ public class DTVEpg extends DTVActivity{
 						date_button6.setBackgroundResource(R.drawable.epg_date_button);
 						refresh_Eitlistview(4);
 						current_date_index = 4;
+						list_status=-1;
 						break;
 					case R.id.date_button5:
 						date_button0.setBackgroundResource(R.drawable.epg_date_button);		
@@ -2207,6 +2173,7 @@ public class DTVEpg extends DTVActivity{
 						date_button6.setBackgroundResource(R.drawable.epg_date_button);
 						refresh_Eitlistview(5);
 						current_date_index = 5;
+						list_status=-1;
 						break;
 					case R.id.date_button6:
 						date_button0.setBackgroundResource(R.drawable.epg_date_button);		
@@ -2218,10 +2185,97 @@ public class DTVEpg extends DTVActivity{
 						date_button6.setBackgroundResource(R.drawable.epg_date_button_press);
 						refresh_Eitlistview(6);
 						current_date_index = 6;
+						list_status=-1;
 						break;
 				}		
 			}
 		}	
+	}
+
+	public class EventHandler extends Handler {  
+		public EventHandler(Looper looper) {  
+		     super(looper);  
+		}  
+
+		@Override  
+		public void handleMessage(Message msg) {  
+			   switch (msg.what) {
+			   	case 0:
+					sync_date();
+					refresh_Eitlistview(0);
+					if(myAdapter!=null)
+						myAdapter.notifyDataSetChanged();
+					break;
+				case 1:
+					setup_timeupdatethread();
+					refresh_currenttime();
+					refresh_dates(0);
+					break;
+				case 2:
+					showUpdateDialog();
+					break;
+				case 3:				        
+					dismissUpdateDialog();
+					break;
+			}
+		}
+	}  
+	
+	class EitUpdateThread extends Thread {
+		private Handler mHandler = null;
+		private static final int EIT_UPDATE = 0;
+		public void run() {
+			Looper.prepare();
+
+			mHandler = new Handler() {
+				public void handleMessage(Message msg) {
+					//Log.d(TAG,"------------------------EitUpdateThread---------------");
+					Message message=new Message();
+					EventHandler ha =new EventHandler(Looper.getMainLooper());
+					switch (msg.what) { 
+						case EIT_UPDATE:
+							{		
+								setup_db();
+								message.what=0;
+								ha.sendMessage(message);
+							}
+							break;
+						case 1:
+								message.what=1;
+								ha.sendMessage(message);
+							break;
+						case 2:
+								message.what=2;
+								ha.sendMessage(message);
+							break;
+						case 3:
+								message.what=3;
+								ha.sendMessage(message);
+							break;	
+						default:
+							break;
+					}  
+				}
+			};
+
+			Looper.loop();
+			//Log.d(TAG, "work thread will now exit.");
+		}
+
+		public void quitLoop() {
+			if (mHandler != null && mHandler.getLooper() != null) {
+				mHandler.getLooper().quit();
+			}
+		}
+		
+		public void onSetupCmd(int cmd, Object para ) {
+			if (mHandler != null){
+				mHandler.sendMessage(mHandler.obtainMessage(cmd,para));	
+			}	
+		}
+
+		
+
 	}
 	
 }

@@ -575,6 +575,9 @@ public class DTVProgramManager extends DTVActivity{
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
+		if(!connected){
+			return true;
+			}
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_DPAD_LEFT:
 				DTVListDealLeftAndRightKey(0);
@@ -783,7 +786,7 @@ public class DTVProgramManager extends DTVActivity{
 				public void showWindowDetail(Window window){
 					TextView title = (TextView)window.findViewById(R.id.title);
 					title.setTextColor(Color.YELLOW);
-					title.setText("Program Operations");
+					title.setText(R.string.program_operation);
 					
 					ListView list_item = (ListView)window.findViewById(R.id.list_item);
 					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.menu_list_item,itemChoices);

@@ -105,6 +105,19 @@ public class DTVSettingsMenu extends DTVActivity {
 		button_search = (ImageButton)findViewById(R.id.button_search);	
 		button_system = (ImageButton)findViewById(R.id.button_system);	
 		button_av_setting = (ImageButton)findViewById(R.id.button_av);	
+
+		findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					Intent in = new Intent();
+					in.setClass(DTVSettingsMenu.this, DTVPlayer.class);
+					//setResult(RESULT_OK,null);
+					DTVSettingsMenu.this.startActivity(in);	
+					DTVSettingsMenu.this.finish();
+				}
+			}
+		);
 				
 		button_program.setOnClickListener(new ButtonClick()); 	
 		button_search.setOnClickListener(new ButtonClick()); 	
@@ -338,7 +351,7 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		Log.d(TAG, "region = " + region);
 		
-		if(region.contains("DVB-T")){
+		if(region.contains("DVB-T")||region.contains("ISDBT")){
 			Log.d(TAG, "goto DTVScanDVBT");
 			button_status = BUTTON_SEARCH;  
 			DATA = getResources().getStringArray(R.array.search_settings_content_dvbt);
@@ -595,9 +608,8 @@ public class DTVSettingsMenu extends DTVActivity {
 			switch(position){
 			
 		     case 0://SETTINGS_SCREEN_TYPE:
-			 	
-
-				 int mode= mDTVSettings.getScreenMode();		 
+				 //int mode= mDTVSettings.getScreenMode();		 
+				 int mode = DTVGetScreenMode();
 				 if(mode==0){
 				 	 holder.info.setText(R.string.auto);
 				 }
@@ -719,33 +731,79 @@ public class DTVSettingsMenu extends DTVActivity {
 			else{
 				switch(position){
 					case 0:
-						DTVStartProgramManager();
-						DTVSettingsMenu.this.finish();
+						if(isHavePragram()){
+								
+							showProgramManagerPasswordDialog();
+							
+						}
+						else{
+							toast = Toast.makeText(
+							DTVSettingsMenu.this,
+							R.string.dtvplayer_no_program,
+							Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						}
 						break;
 					case 1:
-						DTVStartEPG();
-						DTVSettingsMenu.this.finish();
+						if(isHavePragram()){
+							DTVStartEPG();
+							DTVSettingsMenu.this.finish();
+						}
+						else{
+							toast = Toast.makeText(
+							DTVSettingsMenu.this,
+							R.string.dtvplayer_no_program,
+							Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						}
 						break;
+					/*	
 					case 2:
 						showSortByDialog(info_cur);
 						break;
-					case 3:
+					*/	
+					case 2:
 						Intent Intent_record_device = new Intent();
 		        		Intent_record_device.setClass(DTVSettingsMenu.this, DTVRecordDevice.class);
 		        		startActivityForResult(Intent_record_device,12);
 						//DTVSettingsMenu.this.finish();
 						break;
-					case 4:
-						Intent Intent_pvr_manager = new Intent();
-						Intent_pvr_manager.setClass(DTVSettingsMenu.this,DTVPvrManager.class);
-						startActivity(Intent_pvr_manager);
-						DTVSettingsMenu.this.finish();
+					case 3:
+						showPvrManagerPasswordDialog();
 						break;
-					case 5:
-						Intent Intent_timeshifting = new Intent();
-						Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
-						startActivity(Intent_timeshifting);
-						DTVSettingsMenu.this.finish();
+					case 4:
+						if(isHavePragram()){
+							if(mDTVSettings.getCheckProgramLock()==false){					
+								if(isHaveExternalStorage()){
+									Intent Intent_timeshifting = new Intent();
+									Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
+									startActivity(Intent_timeshifting);
+									DTVSettingsMenu.this.finish();
+								}
+								else{
+									if(toast!=null)
+										toast.cancel(); 
+									toast = Toast.makeText(
+									DTVSettingsMenu.this,
+									R.string.check_usb_device,
+									Toast.LENGTH_SHORT);
+									toast.setGravity(Gravity.CENTER, 0, 0);
+									toast.show();
+								}	
+							}
+							else{
+								showTimeshiftingPasswordDialog();
+							}
+						}else{
+							toast = Toast.makeText(
+							DTVSettingsMenu.this,
+							R.string.dtvplayer_no_program,
+							Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						}
 						break;
 				}
 			}
@@ -999,9 +1057,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 	}	
 
-	public void refreshDvbtManualScanList(){
-		((DvbtManualScanAdapter)ListView_settings.getAdapter()).notifyDataSetChanged();
-	}
+	
 
 	private AdapterView.OnItemClickListener mSearchDvbtOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
@@ -1048,6 +1104,14 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 		}
 	};
+	
+
+	
+	
+
+	public void refreshDvbtManualScanList(){
+		((DvbtManualScanAdapter)ListView_settings.getAdapter()).notifyDataSetChanged();
+	}
 	
 	private class SearchDvbtItemAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
@@ -3452,8 +3516,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 
 	}
-
-					
+			
 	public void showDvbtScanChannelNumberDialog(TextView v){
 		final TextView info_cur = v;
 		int pos = mDTVSettings.getDvbtScanChannelIndex();
@@ -3715,7 +3778,8 @@ public class DTVSettingsMenu extends DTVActivity {
 	
 	public void showScreenTypeDialog(TextView v){
 		final TextView info_cur = v;
-		int mode = mDTVSettings.getScreenMode();
+		//int mode = mDTVSettings.getScreenMode();
+		int mode = DTVGetScreenMode();
 		int pos = 0;
 		if(mode==0){
 			pos = 2;
@@ -3739,15 +3803,18 @@ public class DTVSettingsMenu extends DTVActivity {
 				switch(which){
 					case 0:
 						info_cur.setText(R.string.type_4_3);						
-						mDTVSettings.setScreenMode(2);
+						//mDTVSettings.setScreenMode(2);
+						DTVSetScreenMode(2);
 						break;
 					case 1:
 						info_cur.setText(R.string.type_16_9);
-						mDTVSettings.setScreenMode(3);
+						//mDTVSettings.setScreenMode(3);
+						DTVSetScreenMode(3);
 						break;
 					case 2:
 						info_cur.setText(R.string.auto);
-						mDTVSettings.setScreenMode(0);
+						//mDTVSettings.setScreenMode(0);
+						DTVSetScreenMode(0);
 						break;	
 				}
 			}
@@ -3767,7 +3834,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				mDTVSettings.factoryReset();
 				Intent pickerIntent = new Intent();
 				pickerIntent.setClass(DTVSettingsMenu.this, DTVPlayer.class);
- 		        startActivity(pickerIntent);
+ 		        	startActivity(pickerIntent);
 				DTVSettingsMenu.this.finish();
 			}
 		};
@@ -3806,8 +3873,8 @@ public class DTVSettingsMenu extends DTVActivity {
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
 				toast = Toast.makeText(
 				DTVSettingsMenu.this, 
-	    		R.string.invalid_password,
-	    		Toast.LENGTH_SHORT);
+		    		R.string.invalid_password,
+		    		Toast.LENGTH_SHORT);
 				toast.setGravity(Gravity.CENTER, 0, 0);
 				toast.show();
 			}
@@ -4117,7 +4184,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		
 		new SingleChoiseDialog(DTVSettingsMenu.this,DATA,pos){
 			public void onSetMessage(View v){
-				((TextView)v).setText(getString(R.string.screen_type));
+				((TextView)v).setText(getResources().getStringArray(R.array.Program_settings_content)[2]);
 			}
 			
 			public void onSetNegativeButton(){
@@ -4149,15 +4216,21 @@ public class DTVSettingsMenu extends DTVActivity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 	    //reset_timer();
+		if(!connected){
+			return true;
+			}
 		switch(keyCode)
 		{
-			case KeyEvent.KEYCODE_DPAD_DOWN:			
-				if(cur_select_item== ListView_settings.getCount()-1)
-			    	ListView_settings.setSelection(0); 			
+			case KeyEvent.KEYCODE_DPAD_DOWN:	
+				if(ListView_settings!=null){
+					if(cur_select_item== ListView_settings.getCount()-1)
+				    	ListView_settings.setSelection(0); 	
+				}	
 				break;
 			case KeyEvent.KEYCODE_DPAD_UP:
-			  if(cur_select_item== 0)
-				ListView_settings.setSelection(ListView_settings.getCount()-1); 
+				if(ListView_settings!=null){
+					if(cur_select_item== 0)
+						ListView_settings.setSelection(ListView_settings.getCount()-1); 
 					switch(button_status){
 						case BUTTON_PROGRAM:
 							//button_search.setBackgroundResource(R.drawable.search2);	
@@ -4173,7 +4246,7 @@ public class DTVSettingsMenu extends DTVActivity {
 							button_av_setting.requestFocus();
 							break;
 					}
-					
+				}	
 				break;
 			case KeyEvent.KEYCODE_BACK:	
 				Intent in = new Intent();
