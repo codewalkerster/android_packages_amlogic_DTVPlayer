@@ -39,6 +39,9 @@ import android.database.*;
 import android.os.SystemProperties;
 import android.os.*;
 import java.lang.reflect.Field;
+
+
+
 /**
  *DTV Activity
  */
@@ -88,7 +91,16 @@ abstract public class DTVActivity extends TVActivity{
 		}
 		mLast= PreferenceManager.getDefaultSharedPreferences(otherAppsContext);
 		mLast= PreferenceManager.getDefaultSharedPreferences(otherAppsContext);
+
+		this.getApplicationContext().addActivity(this);
+	
     }
+
+	public DTVPlayerApp getApplicationContext() {
+		return ((DTVPlayerApp) super.getApplicationContext());
+	}
+
+
 
 	DTVSettings mDTVSettings=null;
 	public void onConnected(){
@@ -415,6 +427,7 @@ abstract public class DTVActivity extends TVActivity{
 		Log.d(TAG, "onStart");
 		DTVActivity_ActivedStateManage(true);
 		super.onStart();
+		
 	}
 
 	@Override
@@ -1091,7 +1104,6 @@ abstract public class DTVActivity extends TVActivity{
 		else
 			return false;
 	}
-
 	
 }
 	

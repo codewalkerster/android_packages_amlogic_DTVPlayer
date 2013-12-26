@@ -543,9 +543,22 @@ public class DTVSettingsMenu extends DTVActivity {
 				case 2:  //audio language	
 					showAudioLanguageDialog(info_cur);
 					break;
-				//case 3:
-					//showAudioTrackDialog(info_cur);	
-					//break;
+				case 3:
+					if(mDTVSettings.getBlackoutPolicyConfig()==1)
+				    	{
+				    		//image_cur.setBackgroundResource(R.drawable.select_round_2);
+				    		info_cur.setText(R.string.on);
+						mDTVSettings.setBlackoutPolicyConfig(0);
+						setBlackoutPolicy("0");
+				    	}
+				    	else
+				    	{
+				    		//image_cur.setBackgroundResource(R.drawable.select_round_1);
+				    		info_cur.setText(R.string.off);
+						mDTVSettings.setBlackoutPolicyConfig(1);
+						setBlackoutPolicy("1");
+				    	}	
+					break;
 			}
 		}
 	};
@@ -628,21 +641,21 @@ public class DTVSettingsMenu extends DTVActivity {
 				String lan = getLanguage(getIndexLanguage(mDTVSettings.getAudLanguage()));
 				holder.info.setText(lan);
 				break;
-			/*
-			case 3://SETTINGS_AUDIO_TRACK:
-			 	
-		    	 holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
-				
-				 int tmp= mDTVSettings.getAudioTrack();
-			
-				 if(tmp == 2)
-				 	holder.info.setText(R.string.stereo);
-				 else if(tmp == 1)
-					holder.info.setText(R.string.right);
-				 else if(tmp == 0)
-				 	holder.info.setText(R.string.left);
-		    	 break;
-		    */	 
+			case 3://blackout policy:
+				{
+					//holder.icon.setImageBitmap(mIcon1);
+					holder.info.setVisibility(View.VISIBLE);
+					holder.icon1.setVisibility(View.INVISIBLE);
+					if (mDTVSettings.getBlackoutPolicyConfig()==1){			   
+						//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+						holder.info.setText(R.string.off);
+					}
+					else{
+						//holder.icon1.setBackgroundResource(R.drawable.select_round_1); 
+						holder.info.setText(R.string.on);
+					}	  
+				}
+		  		break; 
 		  }
 
 		  return convertView;
@@ -3831,6 +3844,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				
 			}
 			public void onSetPositiveButton(){
+				switchScreenType(0);
 				mDTVSettings.factoryReset();
 				Intent pickerIntent = new Intent();
 				pickerIntent.setClass(DTVSettingsMenu.this, DTVPlayer.class);

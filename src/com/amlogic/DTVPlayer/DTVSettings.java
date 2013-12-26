@@ -28,6 +28,14 @@ public class DTVSettings{
 		mContext.setConfig("tv:subtitle:margin_top",30);
 		mContext.setConfig("tv:subtitle:margin_bottom",30);
 	}
+
+	public int getBlackoutPolicyConfig(){
+		return mContext.getIntConfig("tv:dtv:blackout_policy");
+	}
+
+	public void setBlackoutPolicyConfig(int val){
+		mContext.setConfig("tv:dtv:blackout_policy",val);
+	}
 	
 	public boolean getSubtitleStatus(){
 		if(mContext.getBooleanConfig("tv:subtitle:enable"))
@@ -247,5 +255,6 @@ public class DTVSettings{
 	public void setDvbtScanBandwidth(int bandwidth){
 		dvbt_band_width=bandwidth;
 	}
+
 }
 

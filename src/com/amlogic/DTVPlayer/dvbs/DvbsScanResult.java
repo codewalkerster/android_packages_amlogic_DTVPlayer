@@ -114,7 +114,6 @@ public class DvbsScanResult extends DTVActivity{
 	private int mSatScanCount=0;
 	boolean scan_ok_flag = false;
 	boolean canplay_flag = false;
-	boolean sync_flag=false;
 	
 	@Override
   	public void onCreate(Bundle savedInstanceState) {
@@ -692,7 +691,6 @@ public class DvbsScanResult extends DTVActivity{
 
 	protected void onStart(){
 		super.onStart();
-		sync_flag=false;
 	}
 
 	/*
@@ -840,14 +838,8 @@ public class DvbsScanResult extends DTVActivity{
 
 	protected void onStop(){
 		Log.d(TAG,"onStop");	
-	
-			stopScan(false);
-		
-		if(sync_flag==false){
-			//mScanDvb.syncProgram(); 
-			sync_flag=true;
-		}	
 		super.onStop();
+		stopScan(false);
 	}
 
 	private  class ScanResultAdapter extends BaseAdapter {
@@ -945,11 +937,6 @@ public class DvbsScanResult extends DTVActivity{
 	        public void onClick(DialogInterface dialog, int id) {
 				
 			stopScan(false);
-			
-			if(sync_flag==false){
-				//mScanDvb.syncProgram(); 
-				sync_flag=true;
-			}	
 			canplay_flag = true;
 			scan_ok_flag = true;
 			returnSettings();
@@ -996,11 +983,6 @@ public class DvbsScanResult extends DTVActivity{
 			}
 			public void onSetPositiveButton(){
 				stopScan(false);
-			
-				if(sync_flag==false){
-					//mScanDvb.syncProgram(); 
-					sync_flag=true;
-				}	
 				canplay_flag = true;
 				scan_ok_flag = true;
 				returnSettings();

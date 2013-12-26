@@ -134,6 +134,7 @@
 		<item>Picture Size</item>	
 		<item>Subtitle Language</item>
 		<item>Audio Language</item>
+		<item>Blackout Policy</item> 
 	</array>
 
 	<array name="system_settings_content" translatable="false">

@@ -152,6 +152,10 @@ public class DTVProgramEdit extends DTVActivity{
 		else{	
 			mTVProgramList[index].deleteFromDb();
 			mTVProgramList = removeProgramFromList(mTVProgramList,index);
+			if(isHavePragram()==false){
+				switchScreenType(0);
+			}
+			
 			if(db_id==cur_db_id)
 				stopPlaying();
 		}

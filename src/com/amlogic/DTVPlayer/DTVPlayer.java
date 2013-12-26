@@ -52,7 +52,8 @@ public class DTVPlayer extends DTVActivity{
 	AlertDialog mAlertDialog=null;  //no signal or no data
 	DTVSettings mDTVSettings=null;	
 	private PowerManager.WakeLock wakeLock = null;
-	
+	private HomeKeyEventBroadCastReceiver home_receiver=null;
+
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
@@ -65,7 +66,11 @@ public class DTVPlayer extends DTVActivity{
 		wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK |
 			PowerManager.ACQUIRE_CAUSES_WAKEUP |
 			PowerManager.ON_AFTER_RELEASE, TAG);
-		wakeLock.acquire();
+		wakeLock.acquire();	
+
+		if(home_receiver==null)	
+			home_receiver = new HomeKeyEventBroadCastReceiver(); 
+		registerReceiver(home_receiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 	}
 
 	public void onConnected(){
@@ -212,6 +217,13 @@ public class DTVPlayer extends DTVActivity{
 				else if(mode==3){
 					DTVSetScreenMode(3);
 				}
+
+				if (mDTVSettings.getBlackoutPolicyConfig()==1){			   
+					setBlackoutPolicy("1");
+				}
+				else{
+					setBlackoutPolicy("0");
+				}	  
 				break;
 			case TVMessage.TYPE_PLAYBACK_STOP:
 				break;
@@ -226,7 +238,7 @@ public class DTVPlayer extends DTVActivity{
 				}
 				break;
 			case TVMessage.TYPE_INPUT_SOURCE_CHANGED:
-				if((msg.getSource()==(int) TVConst.SourceInput.SOURCE_DTV.ordinal())&&newIntentFlag){
+				if((msg.getSource()==(int) TVConst.SourceInput.SOURCE_DTV.ordinal())){
 					if(isHavePragram()==false){ 
 						hideRadioBg();
 						showNoProgramDia(); 
@@ -259,6 +271,13 @@ public class DTVPlayer extends DTVActivity{
 						else if(ScreenMode==3){
 							DTVSetScreenMode(3);
 						}	
+
+						if (mDTVSettings.getBlackoutPolicyConfig()==1){			   
+							setBlackoutPolicy("1");
+						}
+						else{
+							setBlackoutPolicy("0");
+						}	  
 					}
 					newIntentFlag=false;
 				}
@@ -306,23 +325,28 @@ public class DTVPlayer extends DTVActivity{
 	protected void onStop(){
 		Log.d(TAG, "onStop");
 		switchScreenType(0);
-		super.onStop();
 		stopPlaying();
 		if(toast!=null)
 			toast.cancel(); 
 		//writeSysFile("/sys/class/graphics/fb0/free_scale","1");
 		//writeSysFile("/sys/class/graphics/fb0/request2XScale","2");
+		super.onStop();
 	}
 
 	public void onDestroy() {
 		Log.d(TAG, "onDestroy");
+
+		 if(home_receiver!=null)
+			unregisterReceiver(home_receiver);
+	
 		SystemProperties.set("vplayer.hideStatusBar.enable", "false");
 		if (wakeLock != null){
 			wakeLock.release();
 			wakeLock = null;
 		}
 
-		mDTVSettings.setCheckProgramLock(false);
+		if(mDTVSettings!=null)
+			mDTVSettings.setCheckProgramLock(false);
 
 		if(mDialogManager!=null)
 			mDialogManager.dialogManagerDestroy();
@@ -373,7 +397,15 @@ public class DTVPlayer extends DTVActivity{
 				}
 				else if(mode==3){
 					DTVSetScreenMode(3);
-				}	
+				}
+
+				if (mDTVSettings.getBlackoutPolicyConfig()==1){			   
+					setBlackoutPolicy("1");
+				}
+				else{
+					setBlackoutPolicy("0");
+				}	  
+				
 			}	
 		}
 	}
@@ -483,7 +515,6 @@ public class DTVPlayer extends DTVActivity{
 			case KeyEvent.KEYCODE_ENTER:
 				Log.d(TAG,"KEYCODE_ENTER");
 				break;	
-				
 			case DTVActivity.KEYCODE_TTX:	
 				Log.d(TAG,"KEYCODE_ZOOM_IN");
 				showTeltext(DTVPlayer.this);
@@ -2620,9 +2651,11 @@ public class DTVPlayer extends DTVActivity{
 	
 	private void finishPlayer(){
 		switchScreenType(0);
+		setBlackoutPolicy("1");
+		DTVTimeShiftingStop();
 		DTVPlayerStopPlay();
-		finish();
-		//System.exit(0);
+		//finish();
+		getApplication().onTerminate();
 	}
 
 	private void writeSysFile(String path,String value){
@@ -2639,42 +2672,7 @@ public class DTVPlayer extends DTVActivity{
                 Log.e(TAG,"set File ERROR!",e);
         } 
 	}
-
-	private void dealHomeKey(){
-		new Thread(new Runnable(){
-			@Override
-			public void run()
-			{
-			
-			BufferedReader bufferedReader = null;
-			try
-			{
-			
-				Process logcatProcess = Runtime.getRuntime().exec(new String[] {"logcat","ActivityManager:I *:S"});
-				bufferedReader = new BufferedReader(new InputStreamReader(logcatProcess.getInputStream()));
-
-				String line;
-
-				while ((line = bufferedReader.readLine()) != null)
-				{
-				if (line.indexOf("cat=[android.intent.category.HOME]") > 0)
-				{
-					
-					DTVSetScreenMode(0);
-				}
-				}
-
-			}
-			catch (Exception e)
-			{
-
-			e.printStackTrace();
-			}
-			}
-		}).start();
-
-	}	
-
+	
 	public class SubAsyncTask extends AsyncTask<Object, Integer, String>{ 
 	        @Override
 	        protected void onPreExecute() {  
@@ -2703,6 +2701,29 @@ public class DTVPlayer extends DTVActivity{
 	        }  
 	  
 	}  
+
+	class HomeKeyEventBroadCastReceiver extends BroadcastReceiver { 
+		static final String SYSTEM_REASON = "reason"; 
+		static final String SYSTEM_HOME_KEY = "homekey";//home key 
+		static final String SYSTEM_RECENT_APPS = "recentapps";//long home key 
+
+		@Override
+		public void onReceive(Context context, Intent intent) { 
+			String action = intent.getAction(); 
+			if (action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) { 
+				String reason = intent.getStringExtra(SYSTEM_REASON); 
+				if (reason != null) { 
+					if (reason.equals(SYSTEM_HOME_KEY)) { 
+						finishPlayer();
+					} else if (reason.equals(SYSTEM_RECENT_APPS)) { 
+					
+					} 
+				} 
+			} 
+		} 
+	}
+	
+
 
 
 }
