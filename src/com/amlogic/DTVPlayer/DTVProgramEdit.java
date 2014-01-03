@@ -684,66 +684,71 @@ public class DTVProgramEdit extends DTVActivity{
 						
 				break;
 			case DTVActivity.KEYCODE_RED_BUTTON:
-				new SureDialog(DTVProgramEdit.this,true){
-					public void onSetMessage(View v){
-						((TextView)v).setText(getString(R.string.sure_delete));
-					}
+				if(mTVProgramList!=null&&mTVProgramList.length>0){
+					new SureDialog(DTVProgramEdit.this,true){
+						public void onSetMessage(View v){
+							((TextView)v).setText(getString(R.string.sure_delete));
+						}
 
-					public void onSetNegativeButton(){
-			  
-					}
-					public void onSetPositiveButton(){
-						
-
-						
-						deleteProgramFromDB(cur_select_item);
-						myAdapter.notifyDataSetChanged();
-					}
-				};
+						public void onSetNegativeButton(){
+				  
+						}
+						public void onSetPositiveButton(){
+							deleteProgramFromDB(cur_select_item);
+							myAdapter.notifyDataSetChanged();
+						}
+					};
+				}
 				break;
 			case DTVActivity.KEYCODE_GREEN_BUTTON:
-				setMoveMode(true);
-				setMoveItemPos(cur_select_item);
-				myAdapter.notifyDataSetChanged();
+				if(mTVProgramList!=null&&mTVProgramList.length>0){
+					setMoveMode(true);
+					setMoveItemPos(cur_select_item);
+					myAdapter.notifyDataSetChanged();
+				}
 				break;
 			case DTVActivity.KEYCODE_GOTO_BUTTON:
 				showSatellitesList();
 				break;
 			case DTVActivity.KEYCODE_INFO_BUTTON:
-				final CustomDialog mEditCustomDialog = new CustomDialog(DTVProgramEdit.this,R.style.MyDialog);
-				mEditCustomDialog.showDialog(R.layout.edit_dialog, new ICustomDialog(){
-					public boolean onKeyDown(int keyCode, KeyEvent event){
-						if(keyCode == KeyEvent.KEYCODE_BACK)
-							mEditCustomDialog.dismissDialog();
-						return false;
-					}
-					public void showWindowDetail(Window window){
-						TextView title = (TextView)window.findViewById(R.id.title);
-						title.setText(R.string.rename);
-						final EditText mEditText = (EditText)window.findViewById(R.id.edit);
-						mEditText.setText(mTVProgramList[cur_select_item].getName());
-						Button no = (Button)window.findViewById(R.id.no);
-						no.setText(R.string.no);
-						Button yes = (Button)window.findViewById(R.id.yes);
-						yes.setText(R.string.yes);
-						no.setOnClickListener(new OnClickListener(){
-							public void onClick(View v) {
+				if(mTVProgramList!=null&&mTVProgramList.length>0){
+					final CustomDialog mEditCustomDialog = new CustomDialog(DTVProgramEdit.this,R.style.MyDialog);
+					mEditCustomDialog.showDialog(R.layout.edit_dialog, new ICustomDialog(){
+						public boolean onKeyDown(int keyCode, KeyEvent event){
+							if(keyCode == KeyEvent.KEYCODE_BACK)
 								mEditCustomDialog.dismissDialog();
-							}
-						});	 
-						yes.setOnClickListener(new OnClickListener(){
-							public void onClick(View v) {	
-								mTVProgramList[cur_select_item].setProgramName(mEditText.getText().toString());
-								myAdapter.notifyDataSetChanged();
-								mEditCustomDialog.dismissDialog();
-							}
-						});	    
-					}
-				});
+							return false;
+						}
+						public void showWindowDetail(Window window){
+							TextView title = (TextView)window.findViewById(R.id.title);
+							title.setText(R.string.rename);
+							final EditText mEditText = (EditText)window.findViewById(R.id.edit);
+							mEditText.setText(mTVProgramList[cur_select_item].getName());
+							Button no = (Button)window.findViewById(R.id.no);
+							no.setText(R.string.no);
+							Button yes = (Button)window.findViewById(R.id.yes);
+							yes.setText(R.string.yes);
+							no.setOnClickListener(new OnClickListener(){
+								public void onClick(View v) {
+									mEditCustomDialog.dismissDialog();
+								}
+							});	 
+							yes.setOnClickListener(new OnClickListener(){
+								public void onClick(View v) {	
+									mTVProgramList[cur_select_item].setProgramName(mEditText.getText().toString());
+									myAdapter.notifyDataSetChanged();
+									mEditCustomDialog.dismissDialog();
+								}
+							});	    
+						}
+					});
+				}
 				break;
 			case DTVActivity.KEYCODE_FAV_BUTTON:
-				dealFav(cur_select_item);
-				myAdapter.notifyDataSetChanged();
+				if(mTVProgramList!=null&&mTVProgramList.length>0){
+					dealFav(cur_select_item);
+					myAdapter.notifyDataSetChanged();
+				}
 				break;
 			case KeyEvent.KEYCODE_BACK:
 				if(move_mode){

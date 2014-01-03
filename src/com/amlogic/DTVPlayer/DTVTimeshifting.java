@@ -229,14 +229,14 @@ public class DTVTimeshifting extends DTVActivity{
 		TimeshiftingIcon = (ImageView) findViewById(R.id.ImageViewTimeshiftIcon);
 		Timeshifting_icon_layout = (RelativeLayout)findViewById(R.id.RelativeLayoutTimeshiftIcon);
 	
-        more = (ImageButton)findViewById(R.id.moreBtn);
-        play = (ImageButton)findViewById(R.id.PlayBtn);
-        fastforword = (ImageButton)findViewById(R.id.FastForward);
-        fastreverse = (ImageButton)findViewById(R.id.FastReverse);
+		more = (ImageButton)findViewById(R.id.moreBtn);
+		play = (ImageButton)findViewById(R.id.PlayBtn);
+		fastforword = (ImageButton)findViewById(R.id.FastForward);
+		fastreverse = (ImageButton)findViewById(R.id.FastReverse);
 
-        myProgressBar = (SeekBar)findViewById(R.id.SeekBar02);
+		myProgressBar = (SeekBar)findViewById(R.id.SeekBar02);
 		cur_time = (TextView)findViewById(R.id.TextView03);
-        total_time = (TextView)findViewById(R.id.TextView04);
+		total_time = (TextView)findViewById(R.id.TextView04);
 
 		Text_MTS_info = (TextView) findViewById(R.id.Text_MTS_info);
 		Text_screentype_info = (TextView) findViewById(R.id.Text_screentype_info);
@@ -416,10 +416,11 @@ public class DTVTimeshifting extends DTVActivity{
 			}
 		});
 	     
-	    infoLayout.setVisibility(View.INVISIBLE);
+	    	infoLayout.setVisibility(View.INVISIBLE);
 
 		bufferLayout.setVisibility(View.INVISIBLE);
 		infoLayout.setVisibility(View.VISIBLE);
+		inforbar_show_flag=true;
 		play.setEnabled(true);
 		play.setBackgroundResource(R.drawable.play_button);
 		play_status = STAT_PLAY;
@@ -492,14 +493,14 @@ public class DTVTimeshifting extends DTVActivity{
 				}	
 				break;
 			case KeyEvent.KEYCODE_BACK:
-				if(teletext_bar_flag){				
-					DTVSubtitleStop();	
-					DTVTeletextStop();
-					bufferLayout.setVisibility(View.INVISIBLE);
-					showInforbar();				
-				}
-				else if(inforbar_show_flag){
+				if(inforbar_show_flag){
 					hideInforbar();
+				}
+				else if(teletext_bar_flag){	
+					DTVTTHide();
+					teletext_bar_flag=false;
+					bufferLayout.setVisibility(View.INVISIBLE);
+					showInforbar();	
 				}
 				else{
 					showTimeshiftDialog();
@@ -507,7 +508,10 @@ public class DTVTimeshifting extends DTVActivity{
 				return true;
 			case DTVActivity.KEYCODE_TTX:
 				Log.d(TAG,"KEYCODE_TTX");
-				DTVPlayer.showTeltext(DTVTimeshifting.this);
+				if(teletext_bar_flag==false){
+					DTVPlayer.showTeltext(DTVTimeshifting.this);
+					teletext_bar_flag=true;
+				}
 				return true;	
 			case KeyEvent.KEYCODE_ZOOM_OUT:
 				

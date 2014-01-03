@@ -418,9 +418,10 @@ public class DTVChannelList extends DTVActivity{
 				myAdapter.notifyDataSetChanged();			
 				break;		
 			case KeyEvent.KEYCODE_ZOOM_IN:
-				showBookAddDialog();
+				if(mTVProgramList!=null&&mTVProgramList.length>0){
+					showBookAddDialog();
+				}
 				return true;
-				
 			case KeyEvent.KEYCODE_ZOOM_OUT:
 				showSatellitesList();
 				return true;
