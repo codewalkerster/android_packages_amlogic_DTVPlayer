@@ -371,8 +371,10 @@ public class DTVPvrManager extends DTVActivity{
 				if(getFileListCount()>0){
 					stopPlaying();
 					String file_name = getServiceInfoByPostion(cur_select_item);	
-					if(file_name!=null)
+					if(file_name!=null){
+						setBlackoutPolicy("1");
 						startPlayback(file_name);
+					}	
 				}	
 				return true;
 			case DTVActivity.KEYCODE_BLUE_BUTTON:

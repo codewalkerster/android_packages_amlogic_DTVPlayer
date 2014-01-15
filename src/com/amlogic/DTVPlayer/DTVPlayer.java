@@ -2650,6 +2650,7 @@ public class DTVPlayer extends DTVActivity{
 	}
 	
 	private void finishPlayer(){
+		Log.d(TAG,"DTVPlayer finish player!");
 		switchScreenType(0);
 		setBlackoutPolicy("1");
 		DTVTimeShiftingStop();
