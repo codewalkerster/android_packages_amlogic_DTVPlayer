@@ -2,6 +2,7 @@ package com.amlogic.DTVPlayer;
 
 import android.util.Log;
 import android.os.Bundle;
+import android.os.SystemProperties;
 import com.amlogic.tvutil.TVMessage;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVProgram;
@@ -80,41 +81,10 @@ public class DTVPlayer extends DTVActivity{
 		DTVPlayerUIInit();
 		mDTVSettings = new DTVSettings(this);
 
-		/*
-		if(isHavePragram()==false){ 
-			showNoProgramDia(); 
-		}
+		TVMessage msg = new TVMessage(TVMessage.TYPE_INPUT_SOURCE_CHANGED);
+		onMessage(msg);
 		
-		if(bundle!=null){	
-			if (! tryBookingPlay()){
-				playValid();
-			}
-			//ShowControlBar();
-			updateInforbar();
-			ShowProgramNo(pronumber);
-		}else{
-			Log.d(TAG,"--playValid--");
-			playValid();
-		}
-		
-		if(DTVPlayerIsRecording()){
-			showPvrIcon();
-		}	
-		else{
-			hidePvrIcon();
-		}	 
-
-		int mode = DTVGetScreenMode();
-		if(mode==0){
-			DTVSetScreenMode(0);
-		}
-		else if(mode==2){
-			DTVSetScreenMode(2);
-		}
-		else if(mode==3){
-			DTVSetScreenMode(3);
-		}
-		*/
+		SystemProperties.set("sys.amplayer.drop_pcm", "1");
 	}
 
 	public void onDisconnected(){
@@ -149,14 +119,6 @@ public class DTVPlayer extends DTVActivity{
 			case TVMessage.TYPE_PROGRAM_START:
 				SubAsyncTask mTask = new SubAsyncTask();  
 				mTask.execute();  
-				/*
-				DTVPlayerGetCurrentProgramData();
-				if(mTVProgram!=null)
-					DTVPlayerSetRecallList(mTVProgram.getID());
-				RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
-				ShowControlBar();
-				updateInforbar();
-				*/
 				break;
 			case TVMessage.TYPE_RECORD_CONFLICT:
 				int recordConflict = msg.getRecordConflict();
@@ -491,6 +453,8 @@ public class DTVPlayer extends DTVActivity{
 				}	
 				else{
 					finishPlayer();
+					setInputSource(TVConst.SourceInput.SOURCE_ATV);
+					System.exit(0);					
 				}	
 				Log.d(TAG,"KEYCODE_BACK");
 				return true;
@@ -2651,12 +2615,11 @@ public class DTVPlayer extends DTVActivity{
 	
 	private void finishPlayer(){
 		Log.d(TAG,"DTVPlayer finish player!");
+		SystemProperties.set("sys.amplayer.drop_pcm", "0");
 		switchScreenType(0);
 		setBlackoutPolicy("1");
 		DTVTimeShiftingStop();
 		DTVPlayerStopPlay();
-		//finish();
-		getApplication().onTerminate();
 	}
 
 	private void writeSysFile(String path,String value){
@@ -2716,6 +2679,7 @@ public class DTVPlayer extends DTVActivity{
 				if (reason != null) { 
 					if (reason.equals(SYSTEM_HOME_KEY)) { 
 						finishPlayer();
+						getApplication().onTerminate();
 					} else if (reason.equals(SYSTEM_RECENT_APPS)) { 
 					
 					} 
