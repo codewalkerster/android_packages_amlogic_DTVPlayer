@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:id="@+id/RelativeLayout_video"
-		android:layout_width="1280px" 
-		android:layout_height="720px"
+		android:layout_width="fill_parent" 
+		android:layout_height="fill_parent"
 		android:background="#00000000"
 		android:foreground="#00000000">
    
@@ -147,11 +147,11 @@
 	
 		<RelativeLayout 
 			android:id="@+id/RelativeLayoutNoAndName" 
-			android:layout_width="400px" 
-			android:layout_height="100px" 
-			android:layout_marginTop="7px"
-			android:layout_marginRight="5px" 
-			android:layout_marginLeft="15px"
+			android:layout_width="400dp" 
+			android:layout_height="100dp" 
+			android:layout_marginTop="7dp"
+			android:layout_marginRight="5dp" 
+			android:layout_marginLeft="15dp"
 			android:background="@drawable/dtvplayer_inforbar_bg_in">
 			<LinearLayout
 				android:id="@+id/LinearLayoutNoAndName" 
@@ -186,7 +186,7 @@
 				<LinearLayout    
 					android:layout_width="wrap_content"    
 					android:layout_height="wrap_content"
-					android:layout_marginLeft="30px"
+					android:layout_marginLeft="30dp"
 					>
 					<ImageView android:id="@+id/ImageView_icon_epg"
 						android:layout_width="56dp"
@@ -211,9 +211,9 @@
 				<TextView 
 					android:id="@+id/Text_channel_type"
 					android:layout_width="wrap_content"
-					android:layout_height="40px"
-					android:textSize="19px" 
-					android:padding="7px"
+					android:layout_height="40dp"
+					android:textSize="19dp" 
+					android:padding="7dp"
 					android:shadowColor="@android:color/white"
 					android:gravity="center"
 					>

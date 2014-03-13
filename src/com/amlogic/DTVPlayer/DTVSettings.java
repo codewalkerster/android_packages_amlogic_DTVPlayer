@@ -155,6 +155,22 @@ public class DTVSettings{
 	public boolean getLCNStatus(){
 		return mContext.getBooleanConfig("tv:dtv:dvbt:lcn");
 	}
+
+	public void setADSwitch(boolean b){
+		mContext.setConfig("tv:dtv:ad_switch",b);
+	}
+
+	public boolean getADSwitch(){
+		return mContext.getBooleanConfig("tv:dtv:ad_switch");
+	}
+
+	public void setADVolume(int value){
+		mContext.setConfig("tv:dtv:ad_voume",value);
+	}
+
+	public int getADVolume(){
+		return mContext.getIntConfig("tv:dtv:ad_voume");	
+	}
 		
 	public void factoryReset(){
 		mContext.restoreFactorySetting();

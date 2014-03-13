@@ -83,8 +83,7 @@ public class DTVPlayer extends DTVActivity{
 
 		TVMessage msg = new TVMessage(TVMessage.TYPE_INPUT_SOURCE_CHANGED);
 		onMessage(msg);
-		
-		SystemProperties.set("sys.amplayer.drop_pcm", "1");
+		//SystemProperties.set("sys.amplayer.drop_pcm", "1");
 	}
 
 	public void onDisconnected(){
@@ -243,7 +242,11 @@ public class DTVPlayer extends DTVActivity{
 					}
 					newIntentFlag=false;
 				}
-
+				break;
+			case TVMessage.TYPE_NIT_TABLE_VER_CHANGED:
+				Log.d(TAG,"----------TYPE_NIT_TABLE_VER_CHANGED--------");
+				showNitVersionChangedDialog();
+				break;
 			default:
 				break;
 		}
@@ -378,7 +381,8 @@ public class DTVPlayer extends DTVActivity{
 		//Log.d(TAG,"-----"+event.getDownTime()+"---"+SystemClock.uptimeMillis());
 		if(SystemClock.uptimeMillis()-event.getDownTime()>300)
 			return true;
-			
+
+		int ad_volume=0;
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_MUTE:
 				Log.d(TAG,"KEYCODE_MUTE");
@@ -544,6 +548,66 @@ public class DTVPlayer extends DTVActivity{
 						toast.show();
 					}	
 				}
+				return true;
+			case DTVActivity.KEYCODE_AD_BUTTION:
+				if(mDTVSettings.getADSwitch()){
+					mDTVSettings.setADSwitch(false);	
+					if(toast!=null)
+							toast.cancel(); 
+						toast = Toast.makeText(
+						DTVPlayer.this,
+						R.string.off,
+						Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+				}
+				else{
+					mDTVSettings.setADSwitch(true);
+					if(toast!=null)
+							toast.cancel(); 
+						toast = Toast.makeText(
+						DTVPlayer.this,
+						R.string.on,
+						Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+				}
+
+				return true;
+			case DTVActivity.KEYCODE_AD_VOLUME_UP:
+				if(mDTVSettings.getADSwitch()){
+					
+					ad_volume = mDTVSettings.getADVolume();
+					if(ad_volume<100){
+						ad_volume++;
+						mDTVSettings.setADVolume(ad_volume);
+					}
+					if(toast!=null)
+						toast.cancel(); 
+					toast = Toast.makeText(
+					DTVPlayer.this,
+					Integer.toString(ad_volume),
+					Toast.LENGTH_SHORT);
+					toast.setGravity(Gravity.CENTER, 0, 0);
+					toast.show();
+				}	
+				return true;
+			case DTVActivity.KEYCODE_AD_VOLUME_DOWN:
+				if(mDTVSettings.getADSwitch()){
+					ad_volume = mDTVSettings.getADVolume();
+					if(ad_volume>0){
+						ad_volume--;
+						mDTVSettings.setADVolume(ad_volume);
+					}
+					if(toast!=null)
+						toast.cancel(); 
+					toast = Toast.makeText(
+					DTVPlayer.this,
+					Integer.toString(ad_volume),
+					Toast.LENGTH_SHORT);
+					toast.setGravity(Gravity.CENTER, 0, 0);
+					toast.show();
+				}	
 				return true;
 		}
 
@@ -2612,10 +2676,37 @@ public class DTVPlayer extends DTVActivity{
 			}
 		};
 	}
+
+	private void showNitVersionChangedDialog(){
+		new SureDialog(DTVPlayer.this){
+			public void onSetMessage(View v){
+				String strMsg = "NIT version is changed,scan programs again?";	
+				//strMsg = getString(R.string.dtvplayer_pvr_is_running);		
+				((TextView)v).setText(strMsg);
+			}
+			public void onSetNegativeButton(){
+				 
+			}
+			public void onSetPositiveButton(){
+				
+			}
+				
+			public void onShowEvent(){				
+				if(mDialogManager!=null){
+					mDialogManager.setActive(false);
+					Log.d(TAG,"----setActive(false)-----");
+				}	
+			}
+
+			public void onDismissEvent(){
+				if(mDialogManager!=null)
+					mDialogManager.setActive(true);
+			}
+		};
+	}
 	
 	private void finishPlayer(){
 		Log.d(TAG,"DTVPlayer finish player!");
-		SystemProperties.set("sys.amplayer.drop_pcm", "0");
 		switchScreenType(0);
 		setBlackoutPolicy("1");
 		DTVTimeShiftingStop();

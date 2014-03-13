@@ -1070,7 +1070,19 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 	}	
 
-	
+	private void DTVDvbtNitScan(){
+		Intent intent_scan= new Intent();
+		intent_scan.setClass(DTVSettingsMenu.this,DvbtScanResult.class);
+
+		Bundle bundle_scan_dvbt = new Bundle();	
+		bundle_scan_dvbt.putString("scan-mode","dvbt-nit-scan");
+		bundle_scan_dvbt.putInt("scan-fre",mDTVSettings.getDvbtScanFrequency());
+		bundle_scan_dvbt.putInt("scan-band-width",mDTVSettings.getDvbtScanBandwidth());
+			
+		intent_scan.putExtras(bundle_scan_dvbt);
+		//startActivityForResult(intent_scan,1);	
+		startActivity(intent_scan);	
+	}
 
 	private AdapterView.OnItemClickListener mSearchDvbtOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
@@ -1095,12 +1107,15 @@ public class DTVSettingsMenu extends DTVActivity {
 						DTVDvbtManualScanConfig_Data_Init();
 					}
 					break;
-				case 2:  //area
+				case 2: //NIT Scan
+					DTVDvbtNitScan();
+					break;
+				case 3:  //area
 					{
 						showRegionsDialog(info_cur);
 					}
 					break;
-				case 3:  //lcn
+				case 4:  //lcn
 					if(mDTVSettings.getLCNStatus()==false)
 				    	{
 				    		image_cur.setBackgroundResource(R.drawable.select_round_2);
@@ -1194,6 +1209,10 @@ public class DTVSettingsMenu extends DTVActivity {
 					 holder.icon1.setVisibility(View.INVISIBLE);
 			    	 	break;	
 			     case 2:
+					 holder.info.setVisibility(View.INVISIBLE);
+					 holder.icon1.setVisibility(View.INVISIBLE);
+					break;
+			     case 3:
 					/////int n = DTVPlayergetRecallNumber();
 					holder.icon.setImageBitmap(mIcon1);
 					holder.info.setVisibility(View.VISIBLE);
@@ -1205,7 +1224,7 @@ public class DTVSettingsMenu extends DTVActivity {
 						holder.info.setText(regions[mDTVSettings.getRegionsIndex()]);
 					}
 					break;
-				case 3:
+				case 4:
 					{
 						holder.icon.setImageBitmap(mIcon1);
 						holder.info.setVisibility(View.VISIBLE);

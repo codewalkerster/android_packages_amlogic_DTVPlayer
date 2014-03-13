@@ -49,14 +49,14 @@
 			android:layout_marginRight="20dp">
 		   
 			<TextView
-				android:layout_width="200px"
+				android:layout_width="200dp"
 				android:textSize="20sp"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center_vertical"
 				android:singleLine="true"
 				android:text="@string/item_no"/>
 			<TextView android:id="@+id/sat_number"
-				android:layout_width="100px"
+				android:layout_width="100dp"
 				android:textSize="20sp"
 				android:layout_height="wrap_content"
 				android:singleLine="true"/>
@@ -71,7 +71,7 @@
 		   
 			<TextView
 				android:id="@+id/text_sat_name"
-				android:layout_width="200px"
+				android:layout_width="200dp"
 				android:textSize="20sp"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center_vertical"
@@ -90,7 +90,7 @@
 			android:layout_marginLeft="20dp"
 			android:layout_marginRight="20dp">
 			<TextView
-				android:layout_width="200px"
+				android:layout_width="200dp"
 				android:textSize="20sp"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center_vertical"
@@ -99,7 +99,7 @@
 
 			<Button
 				android:id="@+id/edit_direction"
-				android:layout_width="80px"
+				android:layout_width="80dp"
 				android:layout_height="wrap_content"
 			></Button>
 
@@ -112,14 +112,14 @@
 			android:layout_marginLeft="20dp"
 			android:layout_marginRight="20dp">
 			<TextView
-				android:layout_width="200px"
+				android:layout_width="200dp"
 				android:textSize="20sp"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center_vertical"
 				android:singleLine="true"
 				android:text="@string/title_longitude_angle"/>
 			<EditText android:id="@+id/angle0"
-				android:layout_width="120px"
+				android:layout_width="120dp"
 				android:layout_height="wrap_content"
 				android:singleLine="true"
 				android:numeric="integer"/>
@@ -130,7 +130,7 @@
 				android:layout_height="wrap_content"
 				android:text="@string/dot"/>
 			<EditText android:id="@+id/angle1"
-				android:layout_width="70px"
+				android:layout_width="70dp"
 				android:layout_height="wrap_content"
 				android:singleLine="true"
 				android:numeric="integer"/>
@@ -153,7 +153,7 @@
 			android:paddingLeft="60dp"
     		android:paddingRight="60dp"
     		android:paddingTop="30dp"
-			android:layout_marginBottom="20px" 
+			android:layout_marginBottom="20dp" 
 			android:gravity="center">
 			
 			<Button android:id="@+id/no"

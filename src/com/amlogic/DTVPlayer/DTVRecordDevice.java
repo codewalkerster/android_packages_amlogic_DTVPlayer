@@ -573,14 +573,14 @@ public class DTVRecordDevice extends DTVActivity {
 				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
 					File myfile = file;
 					Log.d(TAG,"device path: "+myfile.getName());
-					DeviceItem item = getDeviceName(myfile.getName());								
-					if((item!= null)&&(item.format!=null)){
+					DeviceItem item = new DeviceItem();//getDeviceName(myfile.getName());								
+					//if((item!= null)&&(item.format!=null)){
 						item.Path = myfile.getPath();
 						readUsbDevice(item.Path,item,0);
 						item.VolumeName = item.VolumeName+" ["+myfile.getName()+"]";
 						Log.d(TAG,"device path: "+item.Path+" device format: "+item.format+" name: "+item.VolumeName);
 						deviceList.add(item);
-					}
+					//}
 				}
 			}	
 		}
@@ -612,15 +612,15 @@ public class DTVRecordDevice extends DTVActivity {
 					File myfile = file;
 					Log.d(TAG,"device path: "+myfile.getName());
 
-					DeviceItem item = getDeviceName(myfile.getName());								
-					if((item!= null)&&(item.format!=null)){
+					DeviceItem item = new DeviceItem();//getDeviceName(myfile.getName());								
+					//if((item!= null)&&(item.format!=null)){
 						item.Path = myfile.getPath();
 						readUsbDevice(item.Path,item,0);
 						item.VolumeName = item.VolumeName+" ["+myfile.getName()+"]";
 						Log.d(TAG,"device path: "+item.Path+" device format: "+item.format+" name: "+item.VolumeName);
 						deviceList.add(item);
 
-					}
+					//}
 				}
 			}	
 
@@ -676,8 +676,7 @@ public class DTVRecordDevice extends DTVActivity {
 			}
 		}
 		item.VolumeName = devname;
-		item.icon = BitmapFactory.decodeResource(mContext.getResources(),
-				R.drawable.list_disk_unsel);
+		//item.icon = BitmapFactory.decodeResource(mContext.getResources(),	R.drawable.list_disk_unsel);
 		return item;
 	 }
 
@@ -883,7 +882,7 @@ public class DTVRecordDevice extends DTVActivity {
 
 		item.Path = path;
 		item.VolumeName = "  SDCARD";
-		item.icon = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.list_disk_unsel);
+		//item.icon = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.list_disk_unsel);
 		return item;
 	 }
 	

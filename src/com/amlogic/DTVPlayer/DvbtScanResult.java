@@ -302,6 +302,9 @@ public class DvbtScanResult extends DTVActivity{
 			else if(bundle.getString("scan-mode").equals("dvbt-manual-scan")){
 				DTVScanDVBT_StartManuScan(bundle.getInt("scan-band-width",TVChannelParams.BANDWIDTH_8_MHZ),bundle.getInt("scan-fre",474000));
 			}
+			else if(bundle.getString("scan-mode").equals("dvbt-nit-scan")){
+				DTVScanDVBT_StartNitScan(bundle.getInt("scan-band-width",TVChannelParams.BANDWIDTH_8_MHZ),bundle.getInt("scan-fre",474000));
+			}
 		}		
 	}
 
@@ -371,6 +374,63 @@ public class DvbtScanResult extends DTVActivity{
 			sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_ISDBT);
 		}
 
+		startScan(sp);
+	}
+
+	private void DTVScanDVBT_StartNitScan(int band_width,int fre)
+	{
+		Log.d(TAG, "DTVScanDVBT_StartManuScan");
+	
+		TVScanParams sp=null;	
+
+		switch(band_width)
+		{
+			case DTVScanDVBT.SETTINGS_BANDWIDTH_8_MHZ:
+				if (mDTVSettings.getScanRegion().contains("DVB-T")){
+					sp = TVScanParams.dtvAutoScanParams(0, TVChannelParams.dvbtParams(fre * 1000, TVChannelParams.BANDWIDTH_8_MHZ));
+				}
+				else if(mDTVSettings.getScanRegion().contains("ISDBT")){
+					sp = TVScanParams.dtvAutoScanParams(0, TVChannelParams.isdbtParams(fre * 1000, TVChannelParams.BANDWIDTH_8_MHZ));
+				}
+				break;
+				
+			case DTVScanDVBT.SETTINGS_BANDWIDTH_7_MHZ:
+				if (mDTVSettings.getScanRegion().contains("DVB-T")){
+					sp = TVScanParams.dtvAutoScanParams(0, TVChannelParams.dvbtParams(fre * 1000, TVChannelParams.BANDWIDTH_7_MHZ));
+				}
+				else if(mDTVSettings.getScanRegion().contains("ISDBT")){
+					sp = TVScanParams.dtvAutoScanParams(0, TVChannelParams.isdbtParams(fre * 1000, TVChannelParams.BANDWIDTH_7_MHZ));
+				}
+				break;
+				
+			case DTVScanDVBT.SETTINGS_BANDWIDTH_6_MHZ:
+				if (mDTVSettings.getScanRegion().contains("DVB-T")){
+					sp = TVScanParams.dtvAutoScanParams(0, TVChannelParams.dvbtParams(fre * 1000, TVChannelParams.BANDWIDTH_6_MHZ));
+				}
+				else if(mDTVSettings.getScanRegion().contains("ISDBT")){
+					sp = TVScanParams.dtvAutoScanParams(0, TVChannelParams.isdbtParams(fre * 1000, TVChannelParams.BANDWIDTH_6_MHZ));
+				}			
+				break;			
+			
+			case DTVScanDVBT.SETTINGS_BANDWIDTH_AUTO:	
+				if (mDTVSettings.getScanRegion().contains("DVB-T")){
+					sp = TVScanParams.dtvAutoScanParams(0, TVChannelParams.dvbtParams(fre * 1000, TVChannelParams.BANDWIDTH_AUTO));
+				}
+				else if(mDTVSettings.getScanRegion().contains("ISDBT")){
+					sp = TVScanParams.dtvAutoScanParams(0, TVChannelParams.isdbtParams(fre * 1000, TVChannelParams.BANDWIDTH_AUTO));
+				}		
+				break;
+
+			default:
+				if (mDTVSettings.getScanRegion().contains("DVB-T")){
+					sp = TVScanParams.dtvAutoScanParams(0, TVChannelParams.dvbtParams(fre * 1000, TVChannelParams.BANDWIDTH_8_MHZ));
+				}
+				else if(mDTVSettings.getScanRegion().contains("ISDBT")){
+					sp = TVScanParams.dtvAutoScanParams(0, TVChannelParams.isdbtParams(fre * 1000, TVChannelParams.BANDWIDTH_8_MHZ));
+				}		
+				break;
+		}
+		
 		startScan(sp);
 	}
 

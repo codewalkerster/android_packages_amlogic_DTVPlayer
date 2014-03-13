@@ -166,6 +166,7 @@
 	<array name="search_settings_content_dvbt" translatable="false">
 		<item>Auto Scan</item>	
 		<item>Manual Scan</item>
+		<item>NIT Scan</item>
 		<item>Area</item>
 		<item>LCN</item>
 	</array>
@@ -260,13 +261,13 @@
 
      	
   <!--DTV EPG--> 	
-  	<string name="epg_sunday">Sunday</string>
-  	<string name="epg_monday">Monday</string>
-    <string name="epg_tuesday">Tuesday</string>
-    <string name="epg_wednesday">Wednesday</string>
-    <string name="epg_thursday">Thursday</string>
-    <string name="epg_friday">Friday</string>
-    <string name="epg_saturday">Saturday</string>
+  	<string name="epg_sunday">Sun.</string>
+  	<string name="epg_monday">Mon.</string>
+    <string name="epg_tuesday">Tue.</string>
+    <string name="epg_wednesday">Wed.</string>
+    <string name="epg_thursday">Thur.</string>
+    <string name="epg_friday">Fri.</string>
+    <string name="epg_saturday">Sat.</string>
     <string name="epg_loading">Loading EPG data......</string>
     <string name="epg_waiting">Please wait......</string>
     <string name="epg_no_epg_info">No EPG Info</string>

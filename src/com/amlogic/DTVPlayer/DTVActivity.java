@@ -68,6 +68,10 @@ abstract public class DTVActivity extends TVActivity{
 	final public static int KEYCODE_INFO_BUTTON=KeyEvent.KEYCODE_F10;
 	final public static int KEYCODE_FAV_BUTTON=KeyEvent.KEYCODE_D;
 
+	final public static int KEYCODE_AD_BUTTION=KeyEvent.KEYCODE_F;
+	final public static int KEYCODE_AD_VOLUME_UP = KeyEvent.KEYCODE_G;
+	final public static int KEYCODE_AD_VOLUME_DOWN = KeyEvent.KEYCODE_H;
+
 
 	private TVProgram TVProgram=null;
 	private static int dtvactivity_actived_num = 0;

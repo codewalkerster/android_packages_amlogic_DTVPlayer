@@ -51,15 +51,15 @@ public class CheckUsbdevice
 						for (File myfile : myfiles){*/
 							File myfile = file;
 							if(myfile.canRead()){
-								DeviceItem item = getDeviceName(myfile.getName());								
-								if((item!= null)&&(item.format!=null)){
+								DeviceItem item = new DeviceItem();//getDeviceName(myfile.getName());								
+								//if((item!= null)&&(item.format!=null)){
 									item.Path = myfile.getPath();		
 									path = item.Path+"/"+file_path;
 									File pvr_file = new File(path);
 									if(pvr_file.canRead())
 										return path;
 										
-								}
+								//}
 							}
 						/*}
 					}*/
@@ -92,15 +92,15 @@ public class CheckUsbdevice
 						for (File myfile : myfiles){*/
 							File myfile = file;
 							if(myfile.canRead()){
-								DeviceItem item = getDeviceName(myfile.getName());								
-								if((item!= null)&&(item.format!=null)){
+								DeviceItem item = new DeviceItem();//getDeviceName(myfile.getName());								
+								//if((item!= null)&&(item.format!=null)){
 								//if((item!= null)){
 									item.Path = myfile.getPath();
 									item.VolumeName = item.VolumeName+" ["+myfile.getName()+"]";
 									Log.d("*******","device path: "+item.Path+" device format: "+item.format+" name: "+item.VolumeName);
 									return item.Path;
 									
-								}
+								//}
 							}
 						/*}
 					}*/

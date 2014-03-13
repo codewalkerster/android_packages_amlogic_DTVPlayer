@@ -629,7 +629,7 @@ public class DTVChannelList extends DTVActivity{
 
 	private void showPvrTimeSetDialog(Context context){
 		final Context mContext = context;
-		final CustomDialog mCustomDialog = new CustomDialog(mContext);
+		final CustomDialog mCustomDialog = new CustomDialog(mContext,R.style.MyDialog);
 		mCustomDialog.showDialog(R.layout.dtv_pvr_time_set_dialog, new ICustomDialog(){
 				public boolean onKeyDown(int keyCode, KeyEvent event){
 					if(keyCode == KeyEvent.KEYCODE_BACK)
@@ -977,100 +977,78 @@ public class DTVChannelList extends DTVActivity{
 	
 	}
 
+
 	private AlertDialog.Builder editBuilder=null;
 	public void showPvrDateSetDialog(View v){
 		final TextView text_info = (TextView)v;
-		AlertDialog alert_password=null;	
 
-		LinearLayout pvr_time_layout = null;
-		if(editBuilder==null)
-		editBuilder = new AlertDialog.Builder(this);
+		final CustomDialog mCustomDialog = new CustomDialog(DTVChannelList.this,R.style.MyDialog);
+		mCustomDialog.showDialog(R.layout.date_piker_dialog, new ICustomDialog(){
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				if(keyCode == KeyEvent.KEYCODE_BACK)
+					mCustomDialog.dismissDialog();
+				return false;
+			}
+			public void showWindowDetail(Window window){
+				TextView title = (TextView)window.findViewById(R.id.title);
+				title.setText(R.string.event_start_time);
 
-		pvr_time_layout=(LinearLayout) getLayoutInflater().inflate(R.layout.date_piker_dialog, null);
-
-		DatePicker dp=(DatePicker)pvr_time_layout.findViewById(R.id.dPicker);
-		pvr_time_init();
-		dp.init(mYear, mMonth, mDay, new DatePicker.OnDateChangedListener()    {
+				DatePicker dp=(DatePicker)window.findViewById(R.id.dPicker);
+				pvr_time_init();
+				dp.init(mYear, mMonth, mDay, new DatePicker.OnDateChangedListener()    {
 		 	  
 				public void onDateChanged(DatePicker view, int year, int monthOfYear,
-				int dayOfMonth) 
-				{
-					mYear=year;
-					mMonth= monthOfYear;
-					mDay=dayOfMonth;
+					int dayOfMonth) 
+					{
+						mYear=year;
+						mMonth= monthOfYear;
+						mDay=dayOfMonth;
+					
+					}
+				});
+				TimePicker tp=(TimePicker)window.findViewById(R.id.tPicker);		
+				tp.setIs24HourView(true);
+				tp.setCurrentHour(mHour); 
+				tp.setCurrentMinute(mMinute); 
+				tp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+				  	public void onTimeChanged(TimePicker view,int hourOfDay,int minute)      {
+					  	mHour=hourOfDay;
+						mMinute=minute;
+					  
+					}    
+				  });	 
 				
-				}
-			});
-		TimePicker tp=(TimePicker)pvr_time_layout.findViewById(R.id.tPicker);		
-		tp=(TimePicker)pvr_time_layout.findViewById(R.id.tPicker);
-		tp.setIs24HourView(true);
-		tp.setCurrentHour(mHour); 
-		tp.setCurrentMinute(mMinute); 
-		tp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
-		  	public void onTimeChanged(TimePicker view,int hourOfDay,int minute)      {
-		  	mHour=hourOfDay;
-			mMinute=minute;
-			  
-			}    
-		  });	 
-			
-		  //editBuilder.setTitle(R.string.pvr_set);
-		  editBuilder.setView(pvr_time_layout); 
+				Button no = (Button)window.findViewById(R.id.no);
+				no.setText(R.string.no);
+				Button yes = (Button)window.findViewById(R.id.yes);
+				yes.setText(R.string.yes);
+				no.requestFocus();
+				no.setOnClickListener(new OnClickListener(){
+					public void onClick(View v) {
+						mCustomDialog.dismissDialog();
+					}
+				});	 
+				yes.setOnClickListener(new OnClickListener(){
+					public void onClick(View v) {	
+						long now=0;	
+						int end=0;
 
-		  editBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+						now = time_test(mYear,mMonth,mDay,mHour,mMinute,0);
+			 			Date date =  new Date(now);
+				
 			
-			public void onClick(DialogInterface dialog, int which) {
-                
-
-				//int srv = DATA_DB_ID[cur_select_item];
-				long now=0;	
-				int end=0;
-
-				now = time_test(mYear,mMonth,mDay,mHour,mMinute,0);
-	 			Date date =  new Date(now);
-		
-	
-				SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
-				String str_date  = sdf_date.format(date);
-			
-				text_info.setText(str_date);
-				if(mBookAdd!=null)
-					mBookAdd.start_time=now;
+						SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
+						String str_date  = sdf_date.format(date);
+					
+						text_info.setText(str_date);
+						if(mBookAdd!=null)
+							mBookAdd.start_time=now;
+						
+						mCustomDialog.dismissDialog();
+					}
+				});	    
 			}
 		});
-
-		editBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				
-			}        
-		}); 
-		 
-		  alert_password = editBuilder.create();
-		  alert_password.setOnShowListener(new DialogInterface.OnShowListener(){
-								public void onShow(DialogInterface dialog) {
-
-									}         
-									}); 	
-
-		   alert_password.setOnDismissListener(new DialogInterface.OnDismissListener(){
-								public void onDismiss(DialogInterface dialog) {
-								
-								}         
-								});	
-
-		  
-		  alert_password.show();
-
-	
-		  WindowManager m = getWindowManager();   
-		  Display d = m.getDefaultDisplay();  	
-		 	
-		  WindowManager.LayoutParams lp=alert_password.getWindow().getAttributes();
-		  lp.dimAmount=0.0f;
-		  //lp.height = (int) (d.getHeight() * 0.95);  
-		  //lp.width = (int) (d.getWidth() * 0.85);
-		  alert_password.getWindow().setAttributes(lp);
-		  alert_password.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
 	}
 

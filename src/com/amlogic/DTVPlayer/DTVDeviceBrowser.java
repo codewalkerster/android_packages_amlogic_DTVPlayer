@@ -432,14 +432,14 @@ public class DTVDeviceBrowser extends DTVActivity implements OnItemClickListener
 				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
 					File myfile = file;
 					Log.d(TAG,"device path: "+myfile.getName());
-					DeviceItem item = getDeviceName(myfile.getName());								
-					if((item!= null)&&(item.format!=null)){
+					DeviceItem item = new DeviceItem();//getDeviceName(myfile.getName());								
+					//if((item!= null)&&(item.format!=null)){
 						item.Path = myfile.getPath();
 						//readUsbDevice(item.Path,item,0);
 						item.VolumeName = item.VolumeName+" ["+myfile.getName()+"]";
 						Log.d(TAG,"device path: "+item.Path+" device format: "+item.format+" name: "+item.VolumeName);
 						deviceList.add(item);
-					}
+					//}
 				}
 			}	
 
@@ -460,15 +460,15 @@ public class DTVDeviceBrowser extends DTVActivity implements OnItemClickListener
 					File myfile = file;
 					Log.d(TAG,"device path: "+myfile.getName());
 
-					DeviceItem item = getDeviceName(myfile.getName());								
-					if((item!= null)&&(item.format!=null)){
+					DeviceItem item = new DeviceItem();//getDeviceName(myfile.getName());								
+					//if((item!= null)&&(item.format!=null)){
 						item.Path = myfile.getPath();
 						readUsbDevice(item.Path,item,0);
 						item.VolumeName = item.VolumeName+" ["+myfile.getName()+"]";
 						Log.d(TAG,"device path: "+item.Path+" device format: "+item.format+" name: "+item.VolumeName);
 						deviceList.add(item);
 
-					}
+					//}
 				}
 			}	
 

@@ -19,11 +19,11 @@
 	</RelativeLayout>	
    
 	<RelativeLayout android:id="@+id/RelativeLayoutTimeshiftIcon"
-			android:layout_width="48px" android:layout_height="48px"
+			android:layout_width="48dp" android:layout_height="48dp"
 			android:layout_alignParentTop="true"
-			android:layout_marginTop="8px"
+			android:layout_marginTop="8dp"
 			android:layout_alignParentRight="true"
-			android:layout_marginRight="230px"
+			android:layout_marginRight="230dp"
 			android:gravity="center"
 			android:visibility="invisible"
 			android:background="@drawable/dtvplayer_pvr_icon_bg"
@@ -34,7 +34,7 @@
 						android:src="@drawable/timeshifting_icon"
 						android:layout_alignParentLeft="true"
 						android:visibility="invisible"
-						android:padding="4px"
+						android:padding="4dp"
 						>
 			</ImageView>
 	</RelativeLayout>
@@ -62,21 +62,21 @@
 			<TextView 
 			      android:id="@+id/Text_nextevent"
 			      android:layout_width="fill_parent"
-			      android:layout_height="26px"
+			      android:layout_height="26dp"
 			      android:layout_below="@+id/Text_curevent"
-			      android:textSize="20px"  
-			      android:paddingLeft="33px"
+			      android:textSize="20dp"  
+			      android:paddingLeft="33dp"
 			      >
 			</TextView>
 		</RelativeLayout>
 	
 		<RelativeLayout 
 			android:id="@+id/RelativeLayoutNoAndName" 
-			android:layout_width="400px" 
-			android:layout_height="100px" 
-			android:layout_marginTop="7px"
-			android:layout_marginRight="5px" 
-			android:layout_marginLeft="15px"
+			android:layout_width="400dp" 
+			android:layout_height="100dp" 
+			android:layout_marginTop="7dp"
+			android:layout_marginRight="5dp" 
+			android:layout_marginLeft="15dp"
 			android:background="@drawable/dtvplayer_inforbar_bg_in">
 			<LinearLayout
 				android:id="@+id/LinearLayoutNoAndName" 
@@ -89,20 +89,20 @@
 				   android:layout_width="wrap_content"    
 				   android:layout_height="wrap_content">
 				    <ImageView android:id="@+id/ImageView_icon_scrambled"
-						android:layout_width="26px"
-						android:layout_height="26px"
+						android:layout_width="26dp"
+						android:layout_height="26dp"
 						android:layout_gravity="center"
 						android:background="@drawable/dtvplayer_icon_scrambled" 
 						android:visibility="invisible"/>
 				    <ImageView android:id="@+id/ImageView_icon_fav"
-						android:layout_width="26px"
-						android:layout_height="26px"
+						android:layout_width="26dp"
+						android:layout_height="26dp"
 						android:layout_gravity="center"
 						android:background="@drawable/dtvplayer_icon_fav" 
 						android:visibility="invisible"/>
 				   <ImageView android:id="@+id/ImageView_icon_lock"
-						android:layout_width="26px"
-						android:layout_height="26px"
+						android:layout_width="26dp"
+						android:layout_height="26dp"
 						android:layout_gravity="center"
 						android:background="@drawable/dtvplayer_icon_lock" 
 						android:visibility="invisible"/>
@@ -111,23 +111,23 @@
 				<LinearLayout    
 					android:layout_width="wrap_content"    
 					android:layout_height="wrap_content"
-					android:layout_marginLeft="30px"
+					android:layout_marginLeft="30dp"
 					>
 					<ImageView android:id="@+id/ImageView_icon_epg"
-						android:layout_width="50px"
-						android:layout_height="26px"
+						android:layout_width="50dp"
+						android:layout_height="26dp"
 						android:layout_gravity="center"
 						android:background="@drawable/dtvplayer_icon_epg" 
 						android:visibility="gone"/>
 					<ImageView android:id="@+id/ImageView_icon_sub"
-						android:layout_width="50px"
-						android:layout_height="26px"
+						android:layout_width="50dp"
+						android:layout_height="26dp"
 						android:layout_gravity="center"
 						android:background="@drawable/dtvplayer_icon_sub" 
 						android:visibility="gone"/>
 					<ImageView android:id="@+id/ImageView_icon_txt"
-						android:layout_width="50px"
-						android:layout_height="26px"
+						android:layout_width="50dp"
+						android:layout_height="26dp"
 						android:layout_gravity="center"
 						android:background="@drawable/dtvplayer_icon_txt" 
 						android:visibility="gone"/>
@@ -136,9 +136,9 @@
 				<TextView 
 					android:id="@+id/Text_channel_type"
 					android:layout_width="wrap_content"
-					android:layout_height="40px"
-					android:textSize="19px" 
-					android:padding="7px"
+					android:layout_height="40dp"
+					android:textSize="19dp" 
+					android:padding="7dp"
 					android:shadowColor="@android:color/white"
 					android:gravity="center"
 					android:visibility="gone"
@@ -162,16 +162,16 @@
 			
 		<RelativeLayout android:id="@+id/RelativeLayoutCurrentEvent"
 			android:layout_toRightOf="@+id/RelativeLayoutNoAndName"
-			android:layout_width="594px" 
-			android:layout_height="100px" 
-			android:layout_marginRight="45px" 
-			android:layout_marginTop="8px"
+			android:layout_width="594dp" 
+			android:layout_height="100dp" 
+			android:layout_marginRight="45dp" 
+			android:layout_marginTop="8dp"
 			>
 			<LinearLayout android:id="@+id/LinearLayout02"
 			 android:layout_height="wrap_content"
 			 android:layout_above="@+id/PlayBtn" 
-			 android:layout_marginLeft="15px" 
-			 android:layout_marginTop="5px"
+			 android:layout_marginLeft="15dp" 
+			 android:layout_marginTop="5dp"
 			 android:layout_width="fill_parent">
 				<TextView android:id="@+id/TextView03"
 				 android:layout_width="wrap_content" 
@@ -179,8 +179,8 @@
 				 android:layout_gravity="center_vertical" 
 				 android:text="@string/dtvplayer_str_time_null" 
 				 android:layout_weight="1"
-				 android:textSize="22px"
-				 android:layout_marginLeft="10px">
+				 android:textSize="22dp"
+				 android:layout_marginLeft="10dp">
 				</TextView>
 				<SeekBar android:id="@+id/SeekBar02"
 				 android:layout_height="wrap_content" 
@@ -194,9 +194,9 @@
 				 android:text="@string/dtvplayer_str_time_null" 
 				 android:layout_gravity="center_vertical" 
 				 android:layout_weight="1" 
-				 android:textSize="22px"
-				 android:layout_marginRight="15px" 
-				 android:layout_marginLeft="10px">
+				 android:textSize="22dp"
+				 android:layout_marginRight="15dp" 
+				 android:layout_marginLeft="10dp">
 				 </TextView>
 			</LinearLayout>		
 			<LinearLayout android:id="@+id/LinearLayout01"
@@ -209,7 +209,7 @@
 				  android:id="@+id/FastReverse" 
 				  android:background="@drawable/reverse_button" 
 				  android:layout_below="@+id/LinearLayout02" 
-				  android:layout_marginLeft="10px">
+				  android:layout_marginLeft="10dp">
 				 </ImageButton>
 				 <ImageButton android:layout_height="wrap_content" 
 				  android:layout_width="wrap_content" 
