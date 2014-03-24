@@ -148,62 +148,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		satInfoTitleLayout = (LinearLayout)findViewById(R.id.sat_info_title_layout);
 
 		sat_lnb_list = (ListView)findViewById(R.id.sat_lnb_list);	
-		sat_lnb_list.setOnItemClickListener(new AdapterView.OnItemClickListener()
-	        {
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				// TODO Auto-generated method stub
-				ImageView image_cur = (ImageView)arg1.findViewById(R.id.icon1);
-				final TextView info_cur = (TextView)arg1.findViewById(R.id.info);	
-				switch(arg2){
-					case DISHSETUP_LNB_TYPE:
-						showSatLnbTypeDia();
-						break;
-				       case DISHSETUP_LNB_POWER:
-					 	showLnbPowerDia(info_cur);	
-				    		break;
-					case DISHSETUP_LNB_22K:
-						showLnb22kDia(info_cur);	
-						break; 
-			     	case DISHSETUP_LNB_TONEBURST:
-						showLnbToneBurstDia(info_cur);
-						break;
-					/*		 
-					case DISHSETUP_LNB_DISEQC:
-						 showLnbDiseqcModeDia();
-						break;
-					case DISHSETUP_LNB_COMMITTED_COMMAND:
-						showLnbDiseqcCommittedDia();
-						break;	
-						
-					case DISHSETUP_LNB_DISEQC_REPEATS:
-						dealDiseqcRepeatItem(arg1);
-						break;
-					case DISHSETUP_LNB_DISEQC_SEQUENCE:
-						showLnbDiseqcSequence();
-						break;
-					case DISHSETUP_LNB_UNCOMMITTED_COMMAND:
-						showLnbDiseqcUncommittedDia();
-						break;
-					case DISHSETUP_LNB_FAST_DISEQC:
-						dealFastDiseqcItem(arg1);
-						break;
-					case DISHSETUP_LNB_MOTO_NO:
-						showMotoNoDia();
-						break;	
-					*/
-					case DISHSETUP_DISEQC1_0:
-						showLnbDiseqcCommittedDia(info_cur);
-						break;
-					case DISHSETUP_DISEQC1_1:
-						showLnbDiseqcUncommittedDia(info_cur);
-						break;
-					case DISHSETUP_DISEQC_MOTOR:
-						showLnbDiseqcModeDia(info_cur);
-						break;
-				}
-			}	        	   
-	        });
+
 
 		/*get data*/
 		ScanSatAndtsInfoList = getScanListSatAndTsDataFromBuildDB();
@@ -313,6 +258,66 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			myLnbSetAdapter = new LnbSetAdapter(DTVScanDvbsConfig.this);
 		}
 		sat_lnb_list.setAdapter(myLnbSetAdapter);
+		sat_lnb_list.setOnItemClickListener(new AdapterView.OnItemClickListener()
+	        {
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				ImageView image_cur = (ImageView)arg1.findViewById(R.id.icon1);
+				final TextView info_cur = (TextView)arg1.findViewById(R.id.info);	
+				if(((LnbSetAdapter)sat_lnb_list.getAdapter()).isEnabled(arg2)==false){
+					return;
+				}
+				
+				switch(arg2){
+					case DISHSETUP_LNB_TYPE:
+						showSatLnbTypeDia();
+						break;
+				       case DISHSETUP_LNB_POWER:
+					 	showLnbPowerDia(info_cur);	
+				    		break;
+					case DISHSETUP_LNB_22K:
+						showLnb22kDia(info_cur);	
+						break; 
+			     	case DISHSETUP_LNB_TONEBURST:
+						showLnbToneBurstDia(info_cur);
+						break;
+					/*		 
+					case DISHSETUP_LNB_DISEQC:
+						 showLnbDiseqcModeDia();
+						break;
+					case DISHSETUP_LNB_COMMITTED_COMMAND:
+						showLnbDiseqcCommittedDia();
+						break;	
+						
+					case DISHSETUP_LNB_DISEQC_REPEATS:
+						dealDiseqcRepeatItem(arg1);
+						break;
+					case DISHSETUP_LNB_DISEQC_SEQUENCE:
+						showLnbDiseqcSequence();
+						break;
+					case DISHSETUP_LNB_UNCOMMITTED_COMMAND:
+						showLnbDiseqcUncommittedDia();
+						break;
+					case DISHSETUP_LNB_FAST_DISEQC:
+						dealFastDiseqcItem(arg1);
+						break;
+					case DISHSETUP_LNB_MOTO_NO:
+						showMotoNoDia();
+						break;	
+					*/
+					case DISHSETUP_DISEQC1_0:
+						showLnbDiseqcCommittedDia(info_cur);
+						break;
+					case DISHSETUP_DISEQC1_1:
+						showLnbDiseqcUncommittedDia(info_cur);
+						break;
+					case DISHSETUP_DISEQC_MOTOR:
+						showLnbDiseqcModeDia(info_cur);
+						break;
+				}
+			}	        	   
+	        });
 		myLnbSetAdapter.notifyDataSetChanged();
 
 		sat_lnb_list.setOnKeyListener( new OnKeyListener(){

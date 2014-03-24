@@ -244,8 +244,19 @@ public class DTVPlayer extends DTVActivity{
 				}
 				break;
 			case TVMessage.TYPE_NIT_TABLE_VER_CHANGED:
-				Log.d(TAG,"----------TYPE_NIT_TABLE_VER_CHANGED--------");
-				showNitVersionChangedDialog();
+				Log.d(TAG,"----------TYPE_NIT_TABLE_VER_CHANGED--------"+msg.getReservedValue());
+				
+				if(nitTempVersion != msg.getReservedValue()){
+					nitTempVersion = msg.getReservedValue();
+					nit_dialog = false;
+				}
+				if(DTVgetNitVersion()==-1){
+					DTVSaveNitVersion(msg.getReservedValue());
+				}	
+				else if( DTVgetNitVersion() != -1 &&DTVgetNitVersion()  != msg.getReservedValue() && nit_dialog==false ){					
+					showNitVersionChangedDialog();
+				}
+				
 				break;
 			default:
 				break;
@@ -2677,6 +2688,27 @@ public class DTVPlayer extends DTVActivity{
 		};
 	}
 
+
+	private boolean nit_dialog=false;
+	private int nitTempVersion = -1;
+  	protected void starNitScan()
+	{
+		if(mDTVSettings.getScanRegion().contains("DVB-T")){
+			if(mTVProgram!=null){
+				Intent intent_scan= new Intent();
+				intent_scan.setClass(DTVPlayer.this,DvbtScanResult.class);
+				Bundle bundle_scan_dvbt = new Bundle();	
+				bundle_scan_dvbt.putString("scan-mode","dvbt-nit-scan");
+				bundle_scan_dvbt.putInt("scan-fre",mTVProgram.getChannel().getParams().getFrequency()/1000);
+				bundle_scan_dvbt.putInt("scan-band-width",mTVProgram.getChannel().getParams().getBandwidth());
+				Log.d(TAG,"fre="+mTVProgram.getChannel().getParams().getFrequency()+"---bd="+mTVProgram.getChannel().getParams().getBandwidth());
+					
+				intent_scan.putExtras(bundle_scan_dvbt);
+				startActivity(intent_scan);	
+			}
+		}
+	}
+
 	private void showNitVersionChangedDialog(){
 		new SureDialog(DTVPlayer.this){
 			public void onSetMessage(View v){
@@ -2685,10 +2717,11 @@ public class DTVPlayer extends DTVActivity{
 				((TextView)v).setText(strMsg);
 			}
 			public void onSetNegativeButton(){
-				 
+				 nit_dialog = true;
 			}
 			public void onSetPositiveButton(){
-				
+				nit_dialog = true;
+				starNitScan();
 			}
 				
 			public void onShowEvent(){				

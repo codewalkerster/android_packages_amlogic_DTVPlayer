@@ -963,17 +963,21 @@ public class DTVSettingsMenu extends DTVActivity {
 						showDvbtScanModeDialog(info);
 						//refreshDvbtManualScanList();
 						break;
-					case 1: 	//scan band				
-						showDvbtScanBandDialog(info);
+					case 1: 	//scan band	
+						if(myDvbtManualScanAdapter.isEnabled(arg2))
+							showDvbtScanBandDialog(info);
 						break;
 					case 2:  //channle number
-						showDvbtScanChannelNumberDialog(info);
+						if(myDvbtManualScanAdapter.isEnabled(arg2))
+							showDvbtScanChannelNumberDialog(info);
 						break;
 					case 3:  //fre
-						showDvbtEditFreDialog(info,0);
+						if(myDvbtManualScanAdapter.isEnabled(arg2))
+							showDvbtEditFreDialog(info,0);
 						break;
 					case 4:  //bandwidth
-						showDvbtScanBandwidthDialog(info);	
+						if(myDvbtManualScanAdapter.isEnabled(arg2))
+							showDvbtScanBandwidthDialog(info);	
 						break;
 					case 5:
 						Intent intent_scan= new Intent();
@@ -2576,20 +2580,23 @@ public class DTVSettingsMenu extends DTVActivity {
 						setUnicableSwitchStatus(!getUnicableSwitchStatus());
 						refreshListData();
 						break;
-					case 1: 					
-						int band = getUserBand();
-						if(band>=0&&band<7){
-							info.setText("LNB"+String.valueOf(band+2));
-							setUserBand(band + 1);
+					case 1: 		
+						if(((DvbsUnicableAdapter)ListView_settings.getAdapter()).isEnabled(arg2)){	
+							int band = getUserBand();
+							if(band>=0&&band<7){
+								info.setText("LNB"+String.valueOf(band+2));
+								setUserBand(band + 1);
+							}
+							else{
+								info.setText("LNB1");
+								setUserBand(0);
+							}
 						}
-						else{
-							info.setText("LNB1");
-							setUserBand(0);
-						}
-						
 						break;
 					case 2:
-						showUnicableConfigEditDia();
+						if(((DvbsUnicableAdapter)ListView_settings.getAdapter()).isEnabled(arg2)){	
+							showUnicableConfigEditDia();
+						}	
 						break;
 				}
 			}	
@@ -2969,7 +2976,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			
 			return super.isEnabled(position);
 		}
-	
+
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder=null;
 

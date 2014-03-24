@@ -897,6 +897,19 @@ abstract public class DTVActivity extends TVActivity{
 		//return getScreenType();
 	}
 
+	public void DTVSaveNitVersion(int v){
+		if(mLast!=null)
+			mLast.edit().putInt("nit_version",v).commit();
+	}
+	
+	public int DTVgetNitVersion(){
+		int v = -1;
+		if(mLast!=null)
+			v = mLast.getInt("nit_version",-1);
+		return v;
+		
+	}
+
 	public void DTVSetScreenMode(int mode){
 		if(mLast!=null)
 			mLast.edit().putInt("screen_mode",mode).commit();
