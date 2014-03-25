@@ -177,7 +177,12 @@ public class DTVSettings{
 	}
 
 	public String[] getRegions(){
-		String[] countries = TVRegion.getCountryByDVBT(mContext);
+		String[] countries=null;
+		if(mContext.getStringConfig("tv:dtv:mode").equals("dvbt"))
+			countries = TVRegion.getCountryByDVBT(mContext);
+		else if(mContext.getStringConfig("tv:dtv:mode").equals("isdbt"))
+			countries = TVRegion.getCountryByISDBT(mContext);
+		
 		return countries;	
 	}
 
@@ -208,13 +213,21 @@ public class DTVSettings{
 			value = region;
 		}
 		else{
-			value = region+",Default DVB-T";
+			if(mContext.getStringConfig("tv:dtv:mode").equals("dvbt"))
+				value = region+",Default DVB-T";
+			else if (mContext.getStringConfig("tv:dtv:mode").equals("isdbt"))
+				value = region+",Default ISDBT";
 		}
 		mContext.setConfig("tv:scan:dtv:region",value);
 	} 
 	
 	public int getRegionsIndex(){
-		String[] countries = TVRegion.getCountryByDVBT(mContext);
+		String[] countries =null;
+		if(mContext.getStringConfig("tv:dtv:mode").equals("dvbt"))
+			countries= TVRegion.getCountryByDVBT(mContext);
+	      else if(mContext.getStringConfig("tv:dtv:mode").equals("isdbt"))
+			countries= TVRegion.getCountryByISDBT(mContext);
+		  
 		if(countries!=null){
 			String cur_region = mContext.getStringConfig("tv:scan:dtv:region");
 			cur_region = cur_region.substring(0, cur_region.indexOf(','));
