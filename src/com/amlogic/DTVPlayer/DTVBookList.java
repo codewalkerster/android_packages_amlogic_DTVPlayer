@@ -34,6 +34,9 @@ import android.view.View.OnLongClickListener;
 import android.widget.AbsListView.OnScrollListener;
 import com.amlogic.widget.SureDialog;
 import com.amlogic.widget.SingleChoiseDialog;
+import com.amlogic.widget.CustomDialog;
+import com.amlogic.widget.CustomDialog.ICustomDialog;
+import com.amlogic.DTVPlayer.R;
 
 public class DTVBookList extends DTVActivity{
 	private static final String TAG="DTVBookList";
@@ -137,9 +140,9 @@ public class DTVBookList extends DTVActivity{
 				serviceinfo.setId(mTVBooking[i].getID());
 				serviceinfo.setProgramName(mTVBooking[i].getProgramName());
 				serviceinfo.setEventName(mTVBooking[i].getEventName());
-	    		Date dt_start =  new Date(mTVBooking[i].getStart());
-	    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
-	    		String str_start = sdf.format(dt_start); 
+	 	   		Date dt_start =  new Date(mTVBooking[i].getStart());
+	    			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
+	    			String str_start = sdf.format(dt_start); 
 				serviceinfo.setTime(""+str_start);
 
 				long dt_duration   = mTVBooking[i].getDuration()/60/1000;
@@ -470,177 +473,144 @@ public class DTVBookList extends DTVActivity{
 
 	int mode=1;
 	int repeat=0;
-	private void showEventBookEditDialog(int position){		
+	private void showEventBookEditDialog(int position){
 		final int pos = position;
-		TVEvent mTVEvent = mTVBooking[pos].getEvent();
+		final TVEvent mTVEvent = mTVBooking[pos].getEvent();
 		if(mTVEvent==null)
 			return;
-		
-		final Dialog mDialog = new AlertDialog(this){
-			@Override
+		final CustomDialog mCustomDialog = new CustomDialog(DTVBookList.this,R.style.MyDialog);
+		mCustomDialog.showDialog(R.layout.event_add_dialog, new ICustomDialog(){
 			public boolean onKeyDown(int keyCode, KeyEvent event){
-				 switch (keyCode) {
-					case KeyEvent.KEYCODE_BACK:	
-							dismiss();
-						break;
-				}
-				return super.onKeyDown(keyCode, event);
+				if(keyCode == KeyEvent.KEYCODE_BACK)
+					mCustomDialog.dismissDialog();
+				return false;
 			}
+			public void showWindowDetail(Window window){
+
+				Button no = (Button)window.findViewById(R.id.no);
+				no.setText(R.string.no);
+				Button yes = (Button)window.findViewById(R.id.yes);
+				yes.setText(R.string.yes);
+				TextView title = (TextView)window.findViewById(R.id.title);
+				title.setTextColor(Color.YELLOW);
+				//title.setText(getString(R.string.scan_mode));
+				title.setText("Event Edit");
 			
-		};
-		
-		mDialog.setCancelable(false);
-		mDialog.setCanceledOnTouchOutside(false);
+				final TextView text_channel_name= (TextView) window.findViewById(R.id.text_channel_name);
+				final TextView text_event_name = (TextView) window.findViewById(R.id.text_event_name);
+				final TextView text_event_start_date = (TextView) window.findViewById(R.id.text_event_start_date);
+				final TextView text_event_start_time = (TextView) window.findViewById(R.id.text_event_start_time);
+				final TextView text_event_end_time = (TextView) window.findViewById(R.id.text_event_end_time);
 
-		if(mDialog == null){
-			return;
-		}
+				text_event_name.setText(mTVEvent.getName());
 
-		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
-			public void onShow(DialogInterface dialog) {
+				Date dt_start =  new Date(mTVEvent.getStartTime());
+				Date dt_end   =  new Date(mTVEvent.getEndTime());
 				
-			}         
-		}); 	
-		mDialog.show();
-		mDialog.setContentView(R.layout.event_add_dialog);
-		Window window = mDialog.getWindow();
-		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
-		
-		lp.dimAmount=0.0f;
-		mDialog.getWindow().setAttributes(lp);
-		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
+				SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MMMM-dd"); 
+				String str_start = sdf.format(dt_start); 
+				String str_end   = sdf.format(dt_end); 
+				String str_date  = sdf_date.format(dt_start);
+				text_event_start_date.setText(str_date);
+				text_event_start_time.setText(str_start);
+				text_event_end_time.setText(str_end);
+				
+				text_channel_name.setText(mTVBooking[pos].getProgramName());
+				
+				final ListView LimitListView = (ListView)window.findViewById(R.id.set_list); 	
+				LimitListView.setAdapter(new EventAddAdapter(DTVBookList.this));
 
-		Button no = (Button)window.findViewById(R.id.no);
-		no.setText(R.string.no);
-		Button yes = (Button)window.findViewById(R.id.yes);
-		yes.setText(R.string.yes);
-		TextView title = (TextView)window.findViewById(R.id.title);
-		title.setTextColor(Color.YELLOW);
-		//title.setText(getString(R.string.scan_mode));
-		title.setText("Event Edit");
-	
-		final TextView text_channel_name= (TextView) window.findViewById(R.id.text_channel_name);
-		final TextView text_event_name = (TextView) window.findViewById(R.id.text_event_name);
-		final TextView text_event_start_date = (TextView) window.findViewById(R.id.text_event_start_date);
-		final TextView text_event_start_time = (TextView) window.findViewById(R.id.text_event_start_time);
-		final TextView text_event_end_time = (TextView) window.findViewById(R.id.text_event_end_time);
+				
+				LimitListView.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-		text_event_name.setText(mTVEvent.getName());
+				public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+						Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
+						//SetLimitItemSelected = position;
+					}
 
-		Date dt_start =  new Date(mTVEvent.getStartTime());
-		Date dt_end   =  new Date(mTVEvent.getEndTime());
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
-		SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MMMM-dd"); 
-		String str_start = sdf.format(dt_start); 
-		String str_end   = sdf.format(dt_end); 
-		String str_date  = sdf_date.format(dt_start);
-		text_event_start_date.setText(str_date);
-		text_event_start_time.setText(str_start);
-		text_event_end_time.setText(str_end);
-		
-		text_channel_name.setText(mTVBooking[pos].getProgramName());
-		
-		final ListView LimitListView = (ListView)window.findViewById(R.id.set_list); 	
-		LimitListView.setAdapter(new EventAddAdapter(this));
+					public void onNothingSelected(AdapterView<?> parent) {
+						Log.d(TAG,"<<sat_list onNothingSelected>> ");
+					}
+				});
+				LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+			        {
+						public void onItemClick(AdapterView<?> arg0, View arg1,
+								int arg2, long arg3) {
+							
+							final TextView text =(TextView) arg1.findViewById(R.id.info);
+							final ImageView icon=(ImageView)arg1.findViewById(R.id.icon);	
+							final ImageView icon1=(ImageView)arg1.findViewById(R.id.icon1);
+							
+							// TODO Auto-generated method stub
+							System.out.println("onItemSelected arg0 " + arg0);
+							System.out.println("onItemSelected arg1 " + arg1);
+							System.out.println("onItemSelected arg2 " + arg2);
+							System.out.println("onItemSelected arg3 " + arg3);
+							
+							switch(arg2){
+								case 0:  
+									if(text.getText().equals(getString((R.string.once)))){
+										text.setText(getString(R.string.daily));
+										repeat=1;
+									}
+									else if(text.getText().equals(getString((R.string.daily)))){
+										text.setText(getString(R.string.weekly));
+										repeat=2;
+									}
+									else{
+										text.setText(getString(R.string.once));
+										repeat=0;
+									}
+									break;
+								case 1:
+									if(text.getText().equals(getString((R.string.view)))){
+										text.setText(getString(R.string.pvr));
+										mode=2;
+									}
+									else{
+										text.setText(getString(R.string.view));
+										mode=1;
+									}
+									break;					
+							}
+						}
+			        	    
+			        });
 
-		
-		LimitListView.setOnItemSelectedListener(new OnItemSelectedListener() {
+				no.setFocusable(true);     
+		     		no.setFocusableInTouchMode(true);   
+				no.setOnClickListener(new OnClickListener(){
+				          public void onClick(View v) {				  	 
+				        	 //onSetNegativeButton();
+							if(mCustomDialog!=null&& mCustomDialog.isShowing()){
+								mCustomDialog.dismissDialog();
+							}
+				          }});	 
+				yes.setOnClickListener(new OnClickListener(){
+			          public void onClick(View v) {			  		
+							Log.d(TAG,"mode="+mode + " ---repeat="+repeat);
+							((serviceInfo)serviceList.get(pos)).setMode(mode);
+							((serviceInfo)serviceList.get(pos)).setRepeat(repeat);
+							
+							mTVBooking[pos].updateFlag(mode);
+							mTVBooking[pos].updateRepeat(repeat);
+							if(myAdapter!=null)
+									myAdapter.notifyDataSetChanged();
+							
+							if(mCustomDialog!=null&& mCustomDialog.isShowing()){
+								mCustomDialog.dismissDialog();
+							}
+					}});
+						
 
-		public void onItemSelected(AdapterView<?> parent, View view,
-			int position, long id) {
-				Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
-				//SetLimitItemSelected = position;
-			}
-
-			public void onNothingSelected(AdapterView<?> parent) {
-				Log.d(TAG,"<<sat_list onNothingSelected>> ");
 			}
 		});
-		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				
-				final TextView text =(TextView) arg1.findViewById(R.id.info);
-				final ImageView icon=(ImageView)arg1.findViewById(R.id.icon);	
-				final ImageView icon1=(ImageView)arg1.findViewById(R.id.icon1);
-				
-				// TODO Auto-generated method stub
-				System.out.println("onItemSelected arg0 " + arg0);
-				System.out.println("onItemSelected arg1 " + arg1);
-				System.out.println("onItemSelected arg2 " + arg2);
-				System.out.println("onItemSelected arg3 " + arg3);
-				
-				switch(arg2){
-					case 0:  
-						if(text.getText().equals(getString((R.string.once)))){
-							text.setText(getString(R.string.daily));
-							repeat=1;
-						}
-						else if(text.getText().equals(getString((R.string.daily)))){
-							text.setText(getString(R.string.weekly));
-							repeat=2;
-						}
-						else{
-							text.setText(getString(R.string.once));
-							repeat=0;
-						}
-						break;
-					case 1:
-						if(text.getText().equals(getString((R.string.view)))){
-							text.setText(getString(R.string.pvr));
-							mode=2;
-						}
-						else{
-							text.setText(getString(R.string.view));
-							mode=1;
-						}
-						break;					
-				}
-			}
-        	    
-        });
 
-		no.setFocusable(true);     
-     		no.setFocusableInTouchMode(true);   
-		no.setOnClickListener(new OnClickListener(){
-		          public void onClick(View v) {				  	 
-		        	 //onSetNegativeButton();
-					if(mDialog!=null&& mDialog.isShowing()){
-						mDialog.dismiss();
-					}
-		          }});	 
-		yes.setOnClickListener(new OnClickListener(){
-	          public void onClick(View v) {			  		
-					Log.d(TAG,"mode="+mode + " ---repeat="+repeat);
-					((serviceInfo)serviceList.get(pos)).setMode(mode);
-					((serviceInfo)serviceList.get(pos)).setRepeat(repeat);
-					
-					mTVBooking[pos].updateFlag(mode);
-					mTVBooking[pos].updateRepeat(repeat);
-					if(myAdapter!=null)
-							myAdapter.notifyDataSetChanged();
-					
-					if(mDialog!=null&& mDialog.isShowing()){
-						mDialog.dismiss();
-					}
-			}});
-		
-
-		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
-						public void onShow(DialogInterface dialog) {
-								
-							}         
-							}); 	
-
-		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-						public void onDismiss(DialogInterface dialog) {
-							
-						}         
-						});	
-	
 	}
+
+	
 	
 	private  class EventAddAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
@@ -1090,90 +1060,74 @@ public class DTVBookList extends DTVActivity{
 	private AlertDialog.Builder editBuilder=null;
 	public void showPvrDateSetDialog(View v){
 		final TextView text_info = (TextView)v;
-		AlertDialog alert_password=null;	
 
-		LinearLayout pvr_time_layout = null;
-		if(editBuilder==null)
-		editBuilder = new AlertDialog.Builder(this);
+		final CustomDialog mCustomDialog = new CustomDialog(DTVBookList.this,R.style.MyDialog);
+		mCustomDialog.showDialog(R.layout.date_piker_dialog, new ICustomDialog(){
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				if(keyCode == KeyEvent.KEYCODE_BACK)
+					mCustomDialog.dismissDialog();
+				return false;
+			}
+			public void showWindowDetail(Window window){
+				TextView title = (TextView)window.findViewById(R.id.title);
+				title.setText(R.string.event_start_time);
 
-		pvr_time_layout=(LinearLayout) getLayoutInflater().inflate(R.layout.date_piker_dialog, null);
-
-		DatePicker dp=(DatePicker)pvr_time_layout.findViewById(R.id.dPicker);
-		pvr_time_init();
-		dp.init(mYear, mMonth, mDay, new DatePicker.OnDateChangedListener()    {
+				DatePicker dp=(DatePicker)window.findViewById(R.id.dPicker);
+				pvr_time_init();
+				dp.init(mYear, mMonth, mDay, new DatePicker.OnDateChangedListener()    {
 		 	  
 				public void onDateChanged(DatePicker view, int year, int monthOfYear,
-				int dayOfMonth) 
-				{
-					mYear=year;
-					mMonth= monthOfYear;
-					mDay=dayOfMonth;
+					int dayOfMonth) 
+					{
+						mYear=year;
+						mMonth= monthOfYear;
+						mDay=dayOfMonth;
+					
+					}
+				});
+				TimePicker tp=(TimePicker)window.findViewById(R.id.tPicker);		
+				tp.setIs24HourView(true);
+				tp.setCurrentHour(mHour); 
+				tp.setCurrentMinute(mMinute); 
+				tp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+				  	public void onTimeChanged(TimePicker view,int hourOfDay,int minute)      {
+					  	mHour=hourOfDay;
+						mMinute=minute;
+					  
+					}    
+				  });	 
 				
-				}
-			});
-		TimePicker tp=(TimePicker)pvr_time_layout.findViewById(R.id.tPicker);		
-		tp=(TimePicker)pvr_time_layout.findViewById(R.id.tPicker);
-		tp.setIs24HourView(true);
-		tp.setCurrentHour(mHour); 
-		tp.setCurrentMinute(mMinute); 
-		tp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
-		  	public void onTimeChanged(TimePicker view,int hourOfDay,int minute)      {
-		  	mHour=hourOfDay;
-			mMinute=minute;
-			  
-			}    
-		  });	 
-			
-		  editBuilder.setView(pvr_time_layout); 
-		  editBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {	
-			public void onClick(DialogInterface dialog, int which) {
-				//int srv = DATA_DB_ID[cur_select_item];
-				long now=0;	
-				int end=0;
+				Button no = (Button)window.findViewById(R.id.no);
+				no.setText(R.string.no);
+				Button yes = (Button)window.findViewById(R.id.yes);
+				yes.setText(R.string.yes);
+				no.requestFocus();
+				no.setOnClickListener(new OnClickListener(){
+					public void onClick(View v) {
+						mCustomDialog.dismissDialog();
+					}
+				});	 
+				yes.setOnClickListener(new OnClickListener(){
+					public void onClick(View v) {	
+						long now=0;	
+						int end=0;
 
-				now = time_test(mYear,mMonth,mDay,mHour,mMinute,0);
-	 			Date date =  new Date(now);
-	
-				SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
-				String str_date  = sdf_date.format(date);
+						now = time_test(mYear,mMonth,mDay,mHour,mMinute,0);
+			 			Date date =  new Date(now);
+				
 			
-				text_info.setText(str_date);
-				if(mBookAdd!=null)
-					mBookAdd.start_time=now;
+						SimpleDateFormat sdf_date = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
+						String str_date  = sdf_date.format(date);
+					
+						text_info.setText(str_date);
+						if(mBookAdd!=null)
+							mBookAdd.start_time=now;
+						
+						mCustomDialog.dismissDialog();
+					}
+				});	    
 			}
 		});
-
-		editBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				
-			}        
-		}); 
-		 
-		  alert_password = editBuilder.create();
-		  alert_password.setOnShowListener(new DialogInterface.OnShowListener(){
-								public void onShow(DialogInterface dialog) {
-
-									}         
-									}); 	
-
-		   alert_password.setOnDismissListener(new DialogInterface.OnDismissListener(){
-								public void onDismiss(DialogInterface dialog) {
-								
-								}         
-								});	
-
-		  
-		  alert_password.show();
-
-		  WindowManager m = getWindowManager();   
-		  Display d = m.getDefaultDisplay();  	
-		 	
-		  WindowManager.LayoutParams lp=alert_password.getWindow().getAttributes();
-		  lp.dimAmount=0.0f;
-		  //lp.height = (int) (d.getHeight() * 0.95);  
-		  //lp.width = (int) (d.getWidth() * 0.85);
-		  alert_password.getWindow().setAttributes(lp);
-		  alert_password.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
 	}
 
@@ -1202,9 +1156,15 @@ public class DTVBookList extends DTVActivity{
 	}
 
 	long time_test(int y,int m, int d,int h,int min,int s){	
-		Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT")); 
+		/*Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT")); 
 		cal.set(y, m, d, h, min, s); 
 		return cal.getTime().getTime(); 
+		 */
+		Calendar Calendar_sys=Calendar.getInstance();
+		//Date date = new Date( y, m,  d, h, min, s);
+		//Calendar_sys.setTime(date);
+		Calendar_sys.set(y, m, d, h, min, s); 
+	   	return Calendar_sys.getTime().getTime();
 	}
 	
 }

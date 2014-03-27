@@ -632,7 +632,7 @@ abstract public class DTVActivity extends TVActivity{
 				m_repeat=TVBooking.RP_WEEKLY;
 
 			try{
-				
+				//Log.d(TAG,"m_mode="+m_mode+",start="+start+",duration="+duration+",m_repeat="+m_repeat);
 				TVBooking.bookProgram(this, mTVProgram, m_mode, start,duration, m_repeat, true);
 				
 			}catch(Exception e){

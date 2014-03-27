@@ -910,7 +910,7 @@ public class DTVPlayer extends DTVActivity{
 						showDia(1);
 					}
 					else if(getDTVAVDataStatus()==false){
-						showDia(2);
+						//showDia(2);
 					}
 					else if(getDTVLockedStatus()){
 						DismissDialog();

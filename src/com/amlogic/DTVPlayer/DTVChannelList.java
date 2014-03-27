@@ -616,15 +616,15 @@ public class DTVChannelList extends DTVActivity{
 	}
 
 	long time_test(int y,int m, int d,int h,int min,int s){	
-		Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT")); 
+		/*Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT")); 
 		cal.set(y, m, d, h, min, s); 
 		return cal.getTime().getTime(); 
-		/*
+		 */
 		Calendar Calendar_sys=Calendar.getInstance();
-		Date date = new Date( y, m,  d, h, min, s);
-		Calendar_sys.setTime(date);
-	    return Calendar_sys.getTime().getTime();
-	    */
+		//Date date = new Date( y, m,  d, h, min, s);
+		//Calendar_sys.setTime(date);
+		Calendar_sys.set(y, m, d, h, min, s); 
+	    	return Calendar_sys.getTime().getTime();
 	}
 
 	private void showPvrTimeSetDialog(Context context){
@@ -940,7 +940,7 @@ public class DTVChannelList extends DTVActivity{
         	    
         });
 
-		no.setFocusable(true);     
+		//no.setFocusable(true);     
      	no.setFocusableInTouchMode(true);   
 		no.setOnClickListener(new OnClickListener(){
 		          public void onClick(View v) {				  	 
@@ -953,6 +953,7 @@ public class DTVChannelList extends DTVActivity{
 	          public void onClick(View v) {
 					if(mBookAdd!=null){
 						int db_id=mTVProgramList[cur_select_item].getID();	
+						Log.d(TAG,"db_id="+db_id+",mBookAdd.mode="+mBookAdd.mode+",mBookAdd.start_time="+mBookAdd.start_time+",mBookAdd.duration="+mBookAdd.duration+",mBookAdd.repeat="+mBookAdd.repeat);
 						DTVPlayerAddBook(db_id,mBookAdd.mode,mBookAdd.start_time,mBookAdd.duration,mBookAdd.repeat);
 					}
 					if(mDialog!=null&& mDialog.isShowing()){
