@@ -45,7 +45,6 @@ public class DTVTimeshifting extends DTVActivity{
 		/* there may be a conflict in startTimeshifting, so
 		 * we need to sovle the RECORD_CONFLICT message.
 		 */
-		setBlackoutPolicy("1");
 		startTimeshifting();
 		DTVTimeshiftingUIInit();
 		timeshiftingHandler.postDelayed(timeshiftingTimer, 1000);

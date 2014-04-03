@@ -178,13 +178,7 @@ public class DTVPlayer extends DTVActivity{
 				else if(mode==3){
 					DTVSetScreenMode(3);
 				}
-
-				if (mDTVSettings.getBlackoutPolicyConfig()==1){			   
-					setBlackoutPolicy("1");
-				}
-				else{
-					setBlackoutPolicy("0");
-				}	  
+				
 				break;
 			case TVMessage.TYPE_PLAYBACK_STOP:
 				break;
@@ -233,12 +227,6 @@ public class DTVPlayer extends DTVActivity{
 							DTVSetScreenMode(3);
 						}	
 
-						if (mDTVSettings.getBlackoutPolicyConfig()==1){			   
-							setBlackoutPolicy("1");
-						}
-						else{
-							setBlackoutPolicy("0");
-						}	  
 					}
 					newIntentFlag=false;
 				}
@@ -374,13 +362,6 @@ public class DTVPlayer extends DTVActivity{
 				else if(mode==3){
 					DTVSetScreenMode(3);
 				}
-
-				if (mDTVSettings.getBlackoutPolicyConfig()==1){			   
-					setBlackoutPolicy("1");
-				}
-				else{
-					setBlackoutPolicy("0");
-				}	  
 				
 			}	
 		}
@@ -2741,7 +2722,6 @@ public class DTVPlayer extends DTVActivity{
 	private void finishPlayer(){
 		Log.d(TAG,"DTVPlayer finish player!");
 		switchScreenType(0);
-		setBlackoutPolicy("1");
 		DTVTimeShiftingStop();
 		DTVPlayerStopPlay();
 	}

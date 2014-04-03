@@ -549,14 +549,14 @@ public class DTVSettingsMenu extends DTVActivity {
 				    		//image_cur.setBackgroundResource(R.drawable.select_round_2);
 				    		info_cur.setText(R.string.on);
 						mDTVSettings.setBlackoutPolicyConfig(0);
-						setBlackoutPolicy("0");
+						setBlackoutPolicy(0);
 				    	}
 				    	else
 				    	{
 				    		//image_cur.setBackgroundResource(R.drawable.select_round_1);
 				    		info_cur.setText(R.string.off);
 						mDTVSettings.setBlackoutPolicyConfig(1);
-						setBlackoutPolicy("1");
+						setBlackoutPolicy(1);
 				    	}	
 					break;
 			}

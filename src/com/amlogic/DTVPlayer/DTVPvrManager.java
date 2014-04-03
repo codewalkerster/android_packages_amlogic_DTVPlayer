@@ -372,7 +372,6 @@ public class DTVPvrManager extends DTVActivity{
 					stopPlaying();
 					String file_name = getServiceInfoByPostion(cur_select_item);	
 					if(file_name!=null){
-						setBlackoutPolicy("1");
 						startPlayback(file_name);
 					}	
 				}	
