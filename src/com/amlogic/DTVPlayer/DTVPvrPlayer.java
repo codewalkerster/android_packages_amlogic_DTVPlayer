@@ -53,6 +53,7 @@ public class DTVPvrPlayer extends DTVActivity{
 		Log.d(TAG, "connected");
 		super.onConnected();
 		openVideo();
+		setBlackoutPolicy(1);
 		startPlayback(file_name);
 		DTVPvrPlayerUIInit();
 		Log.d(TAG,"play file ="+file_name);
