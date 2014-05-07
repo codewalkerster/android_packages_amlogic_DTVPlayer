@@ -384,7 +384,17 @@ public class DTVVchipTv extends DTVActivity{
          list_mpaa_adapter_d = new RatingAdapter(this,Rating_status_D);
          list_mpaa_d.setOnItemClickListener(new listOnItemClick());
          list_mpaa_d.setAdapter(list_mpaa_adapter_d);
-    	
+
+	  findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					setResult(RESULT_OK,null);
+					finish();
+				}
+			}
+		);
+		
     }
    
 	private static class RatingAdapter extends BaseAdapter {

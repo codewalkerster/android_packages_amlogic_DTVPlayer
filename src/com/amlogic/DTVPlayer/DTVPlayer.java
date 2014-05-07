@@ -819,7 +819,27 @@ public class DTVPlayer extends DTVActivity{
 		RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
 		
 		init_Animation();
-		
+		 findViewById(R.id.return_icon).setFocusable(false);
+		 findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					Log.d(TAG,"touch exit!!!!!!!!!!!!!!!!!!!!!");
+					if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){	
+						DTVTTHide();
+						DTVPlayerInTeletextStatus=false;
+					}	
+					
+					if(DTVPlayerIsRecording()){
+						DTVPlayerStopRecording();
+					}	
+					
+					finishPlayer();
+					setInputSource(TVConst.SourceInput.SOURCE_ATV);
+					System.exit(0);
+				}
+			}
+		);
 	}
 
 	private boolean tryBookingPlay(){
@@ -866,6 +886,23 @@ public class DTVPlayer extends DTVActivity{
 		return ret;
 	}
 	
+	private class InfoDialog extends Dialog {
+		public InfoDialog(Context context, int theme) {
+			super(context, theme);
+		}
+
+		@Override
+		public boolean onTouchEvent(MotionEvent event) {
+			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				cancel();
+				mDialogManager.setActive(false);
+				ShowControlBar();
+				return true;
+			}
+			return super.onTouchEvent(event);
+		}
+	}
+	
 	private Handler dialogManagerHandler = new Handler();
 	private Runnable dialogManagerTimer = new Runnable() {
 		public void run() {
@@ -879,7 +916,7 @@ public class DTVPlayer extends DTVActivity{
 	public class DialogManager{
 		public Context mContext=null;
 		public PasswordDialog mPasswordDialog=null;
-		public Dialog mDialog=null;
+		public InfoDialog mDialog=null;
 		public Toast toast=null;
 		public String passdialog_text=null;
 		private boolean showDialogActive = true;
@@ -896,7 +933,7 @@ public class DTVPlayer extends DTVActivity{
 		public DialogManager(Context context) {
 			this.mContext = context;
 			if(dialogManagerHandler!=null)
-				dialogManagerHandler.postDelayed(dialogManagerTimer, 2000);
+				dialogManagerHandler.postDelayed(dialogManagerTimer, 5000);
 		}
 
 		public void checkDialogDisplay(){
@@ -999,10 +1036,10 @@ public class DTVPlayer extends DTVActivity{
 			
 			//mDialog = DisplayInfo();
 			if(mDialog==null){
-				mDialog = new Dialog(mContext,R.style.MyDialog);
+				mDialog = new InfoDialog(mContext,R.style.MyDialog);
 			}
-			mDialog.setCancelable(false);
-			mDialog.setCanceledOnTouchOutside(false);
+			mDialog.setCancelable(true);
+			mDialog.setCanceledOnTouchOutside(true);
 			mDialog.setOnKeyListener( new DialogInterface.OnKeyListener(){
 				public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
 					// TODO Auto-generated method stub
@@ -1140,7 +1177,7 @@ public class DTVPlayer extends DTVActivity{
 				case R.id.Button_mainmenu_list:
 					HideMainMenu();
 					ShowChannelList();
- 		            break;
+ 		            		break;
 				case R.id.Button_mainmenu_epg:
 					HideMainMenu();
 					HideControlBar();
@@ -1198,7 +1235,8 @@ public class DTVPlayer extends DTVActivity{
 					HideMainMenu();
 					HideControlBar();	
 					*/
-					break;			
+					break;	
+				
 			}
 		}
     }
@@ -1243,6 +1281,7 @@ public class DTVPlayer extends DTVActivity{
 				if(bar_hide_count >= bar_auto_hide_duration){
 					HideControlBar();
 					HideProgramNo();
+					mDialogManager.setActive(true);
 				}
 				else{
 					bar_hide_count ++;

@@ -176,7 +176,6 @@
 		<item>Auto Scan</item>	
 		<item>Manual Scan</item>
 		<item>Area</item>
-		<item>Antenna Power</item>	
 	</array>
 
 	<array name="search_settings_content_dvbt_manual" translatable="false">

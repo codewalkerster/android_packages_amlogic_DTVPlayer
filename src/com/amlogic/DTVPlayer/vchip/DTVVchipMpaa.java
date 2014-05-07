@@ -54,7 +54,16 @@ public class DTVVchipMpaa extends Activity{
         list_mpaa_adapter = new RatingAdapter(this);
         list_mpaa.setOnItemClickListener(new listOnItemClick());
         list_mpaa.setAdapter(list_mpaa_adapter);
-        
+
+	 findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					setResult(RESULT_OK,null);
+					finish();
+				}
+			}
+		);	
     }
 
 	private TVDimension dm=null;
