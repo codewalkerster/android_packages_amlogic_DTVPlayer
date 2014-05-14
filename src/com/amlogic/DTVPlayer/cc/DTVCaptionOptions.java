@@ -94,6 +94,16 @@ public class DTVCaptionOptions extends DTVActivity {
 		TextView Title=(TextView)findViewById(R.id.title);
 		Title.setTextColor(Color.YELLOW);
 		Title.setText(R.string.cc_digital_options);
+
+		 findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					setResult(RESULT_OK,null);
+					finish();
+				}
+			}
+		);	
 	}
 
 	class listOnItemClick implements OnItemClickListener{

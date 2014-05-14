@@ -124,7 +124,15 @@ public class DTVChannelList extends DTVActivity{
 				}
 			}
 		);
-		
+
+		findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					finish();
+				}
+			}
+		);	
 	}
 
 	public void setFocusPosition(){

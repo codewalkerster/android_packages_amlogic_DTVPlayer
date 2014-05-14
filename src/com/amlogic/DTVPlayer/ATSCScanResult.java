@@ -194,6 +194,19 @@ public class ATSCScanResult extends DTVActivity{
 
 			mSatScanCount = 0;
 
+			 findViewById(R.id.return_icon).setOnClickListener(
+				new View.OnClickListener(){	  
+					public void onClick(View v) {		
+						// TODO Auto-generated method stub	
+						if(scan_ok_flag==false)
+							showReturnDia();
+						else
+							returnSettings();
+					}
+				}
+			);	
+
+
  	 }
 
 

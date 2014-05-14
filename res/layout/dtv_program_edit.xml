@@ -3,15 +3,16 @@
 <LinearLayout
 xmlns:android="http://schemas.android.com/apk/res/android"
 android:orientation="vertical"
-android:layout_width="1280dp"
-android:layout_height="720dp"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
 android:id="@+id/epg_layout_parent"
 android:background ="@drawable/bg" 
 >
 
 	<LinearLayout
+	android:layout_weight="1"    
 	android:layout_width="fill_parent"
-	android:layout_height="110dp"
+	android:layout_height="0dp"
 	android:id="@+id/epg_layout_top"> 
 		<TextView
 		android:layout_width="fill_parent"
@@ -26,14 +27,15 @@ android:background ="@drawable/bg"
 
 	<LinearLayout
 	android:orientation="horizontal"
+	android:layout_weight="5"    
 	android:layout_width="fill_parent"
-	android:layout_height="525dp"
+	android:layout_height="0dp"
 	android:id="@+id/epg_layout_mid"
 	android:baselineAligned="false"
 	>
 		<LinearLayout
 		android:id="@+id/epg_pro"
-		android:layout_weight="8"
+		android:layout_weight="1"
 		android:layout_width="0dp"
 		android:layout_height="fill_parent"
 		android:orientation="vertical"
@@ -108,7 +110,7 @@ android:background ="@drawable/bg"
 				<ListView 
 				android:id="@+id/programListView"
 				android:layout_width="fill_parent" 
-				android:layout_height="440dp"
+				android:layout_height="wrap_content"
 				android:listSelector="@drawable/list_item_bg">
 				</ListView>
 				</LinearLayout>
@@ -117,7 +119,8 @@ android:background ="@drawable/bg"
 
 		<LinearLayout
 		    android:id="@+id/epg_layout_eitlist"
-		    android:layout_width="640dp"
+		   android:layout_weight="1"
+			android:layout_width="0dp"
 		    android:layout_height="fill_parent"
 		    android:orientation="vertical"
 		    android:paddingLeft="21dp"
@@ -130,8 +133,9 @@ android:background ="@drawable/bg"
 				android:background="#00000000"
 				android:foreground="#00000000"
 				android:gravity="center_vertical"
+				android:layout_weight="4"
 				android:layout_width="fill_parent" 
-				android:layout_height="300dp" 
+				android:layout_height="0dp" 
 				android:orientation="horizontal"
 				android:padding="5dp">				
 					<RelativeLayout
@@ -179,8 +183,9 @@ android:background ="@drawable/bg"
 				<LinearLayout 
 				android:background ="@drawable/epg_content_bg3"   
 				android:layout_marginTop="10dp"
+				android:layout_weight="3"
 				android:layout_width="fill_parent" 
-				android:layout_height="wrap_content" 
+				android:layout_height="0dp" 
 				android:focusable = "false"
 				android:orientation="horizontal"
 				android:padding="10dp">
@@ -198,8 +203,9 @@ android:background ="@drawable/bg"
 	
 	<LinearLayout
 	android:orientation="horizontal"
+	android:layout_weight="1"    
 	android:layout_width="fill_parent"
-	android:layout_height="85dp"
+	android:layout_height="0dp"
 	android:gravity="center_vertical"
 	android:id="@+id/epg_layout_bottom"
 	>

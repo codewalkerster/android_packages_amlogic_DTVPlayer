@@ -3,15 +3,16 @@
 <LinearLayout
 xmlns:android="http://schemas.android.com/apk/res/android"
 android:orientation="vertical"
-android:layout_width="1280dp"
-android:layout_height="720dp"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
 android:id="@+id/epg_layout_parent"
 android:background ="@drawable/bg" 
 >
 
 	<LinearLayout
+	android:layout_weight="1"    
 	android:layout_width="fill_parent"
-	android:layout_height="110dp"
+	android:layout_height="0dp"
 	android:id="@+id/epg_layout_top"> 
 		<TextView
 		android:layout_width="fill_parent"
@@ -26,15 +27,16 @@ android:background ="@drawable/bg"
 
 	<LinearLayout
 	android:orientation="horizontal"
+	android:layout_weight="5"    
 	android:layout_width="fill_parent"
-	android:layout_height="525dp"
+	android:layout_height="0dp"
 	android:id="@+id/epg_layout_mid"
 	android:baselineAligned="false"
 	>
 		<LinearLayout
 		android:id="@+id/epg_pro"
 		android:background ="@drawable/epg_content_bg3"   
-		android:layout_weight="9"
+		android:layout_weight="7"
 		android:layout_width="0dp"
 		android:layout_height="fill_parent"
 		android:orientation="vertical"
@@ -65,8 +67,9 @@ android:background ="@drawable/bg"
 
 		<LinearLayout
 		    android:id="@+id/epg_layout_eitlist"
-		    android:layout_width="540dp"
-		    android:layout_height="fill_parent"
+		    android:layout_weight="5"
+			android:layout_width="0dp"
+			android:layout_height="fill_parent"
 		    android:orientation="vertical"
 		    android:paddingLeft="21dp"
 		    android:paddingRight="21dp" >
@@ -78,8 +81,9 @@ android:background ="@drawable/bg"
 				android:background="#00000000"
 				android:foreground="#00000000"
 				android:gravity="center_vertical"
-				android:layout_width="fill_parent" 
-				android:layout_height="300dp" 
+				android:layout_weight="6"
+				android:layout_width="fill_parent"
+				android:layout_height="0dp"
 				android:orientation="horizontal"
 				android:padding="5dp">
 
@@ -94,8 +98,9 @@ android:background ="@drawable/bg"
 				<LinearLayout 
 				android:background ="@drawable/epg_content_bg3"   
 				android:layout_marginTop="10dp"
-				android:layout_width="fill_parent" 
-				android:layout_height="wrap_content" 
+				android:layout_weight="5"
+				android:layout_width="fill_parent"
+				android:layout_height="0dp"
 				android:focusable = "false"
 				android:orientation="vertical"
 				android:padding="15dp">
@@ -114,8 +119,9 @@ android:background ="@drawable/bg"
 	
 	<LinearLayout
 	android:orientation="horizontal"
+	android:layout_weight="1"    
 	android:layout_width="fill_parent"
-	android:layout_height="85dp"
+	android:layout_height="0dp"
 	android:gravity="center_vertical"
 	android:id="@+id/epg_layout_bottom"
 	>

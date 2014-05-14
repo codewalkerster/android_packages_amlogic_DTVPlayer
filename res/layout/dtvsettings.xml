@@ -9,8 +9,8 @@
 		android:id="@+id/RelativeLayoutBG"
 		android:layout_centerHorizontal="true"
 		android:layout_marginTop="100px" 
-		android:layout_width="644px" 
-		android:layout_height="458px"
+		android:layout_width="644dp" 
+		android:layout_height="458dp"
 		android:orientation="vertical">  
     
  	    <RelativeLayout android:id="@+id/RelativeLayoutTitle"

@@ -285,5 +285,39 @@ public class DTVSettings{
 		dvbt_band_width=bandwidth;
 	}
 
+
+	public int getAtscScanMode(){
+		return dvbt_scan_mode;
+	}
+
+	public void setAtscScanMode(int mode){
+		dvbt_scan_mode = mode;
+	}
+
+	public int getAtscScanBand(){
+		return dvbt_band;
+	}
+
+	public void setAtscScanBand(int value){
+		dvbt_band=value;	
+	}
+
+	public int getAtscScanChannelIndex(){
+		return dvbt_channel_index;
+	}
+
+	public void setAtscScanChannelIndex(int index){
+		dvbt_channel_index = index;
+	}
+
+	public int getAtscScanFrequency(){
+		return dvbt_scan_frequency;
+	}
+
+	public void setAtscScanFrequency(int fre){
+		dvbt_scan_frequency=fre;
+	}
+
+
 }
 

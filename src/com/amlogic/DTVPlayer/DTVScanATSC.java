@@ -277,7 +277,28 @@ public class DTVScanATSC extends DTVActivity{
 		setContentView(R.layout.dtvscan_setting);
 
 		ui_dvbsanatsc_setting_title = (TextView)findViewById(R.id.DtvscanTitleText);
-		ui_dvbsanatsc_setting_list = (ListView) findViewById(R.id.DtvscanSettingList);            
+		ui_dvbsanatsc_setting_list = (ListView) findViewById(R.id.DtvscanSettingList);    
+
+		findViewById(R.id.return_icon).setOnClickListener(
+			new View.OnClickListener(){	  
+				public void onClick(View v) {		
+					// TODO Auto-generated method stub	
+					if(dtvscanatsc_scan_mode == DTVSCANATSC_SETTING_SCAN_MODE)
+					{
+						DTVScanATSC_GotoDTVPlayer();
+					}
+					else if(dtvscanatsc_scan_mode == DTVSCANATSC_SETTING_MANU_SCAN_MODE)
+					{
+						DTVScanATSCUiSettingInit();
+					}				
+					else if(dtvscanatsc_scan_mode == DTVSCANATSC_SCAN_MODE)
+					{			
+						stopScan(false);
+						DTVScanATSCUiSettingInit();
+					}
+				}
+			}
+		);
 
 		if (null == ui_dvbsanatsc_setting_list_adapt){
 			ui_dvbsanatsc_setting_list_adapt = new DTVScanATSC_SettingListAdapter(this);
