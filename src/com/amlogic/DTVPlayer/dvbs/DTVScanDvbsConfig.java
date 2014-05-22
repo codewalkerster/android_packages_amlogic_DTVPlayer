@@ -2896,7 +2896,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				ContentValues values = new ContentValues();
 				switch(LnbSettingItemSelected){
 					case 0:
-						values.put("diseqc_mode", DbSat.LNB_DISEQC_NONE);
+						values.put("diseqc_mode", DbSat.LNB_DISEQC_11);
 						SatInfo.setSwtPort(DbSat.LNB_DISEQC_11);
 						break;
 					case 1:
