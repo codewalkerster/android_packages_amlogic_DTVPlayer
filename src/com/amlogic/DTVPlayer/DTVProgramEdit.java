@@ -154,6 +154,11 @@ public class DTVProgramEdit extends DTVActivity{
 			mTVProgramList = removeProgramFromList(mTVProgramList,index);
 			if(isHavePragram()==false){
 				switchScreenType(0);
+			}else{
+				for(int i=0;i<mTVProgramList.length;i++){
+					 mTVProgramList[i].modifyChanOrder(i);
+					 mTVProgramList[i].setProgramNumber(i+1);
+				}
 			}
 			
 			if(db_id==cur_db_id)
@@ -488,7 +493,6 @@ public class DTVProgramEdit extends DTVActivity{
 		return this.moveItemPos;
 	}
 
-	int order[]=null;
 	public void exchageItem(int first, int second){
 		Log.d(TAG,"cur_pos="+first+"-----"+"temp_pos="+second);
 		TVProgram mTemp;
@@ -504,9 +508,9 @@ public class DTVProgramEdit extends DTVActivity{
 			mTVProgramList[second]=mTemp;
 		}
 		
-		order = new int[mTVProgramList.length];
 		for(int i=0;i<mTVProgramList.length;i++){
-			//order[i]=mTVProgramList[i].getNumber();
+			 mTVProgramList[i].modifyChanOrder(i);
+			 mTVProgramList[i].setProgramNumber(i+1);
 		}
 	}
 
@@ -935,7 +939,7 @@ public class DTVProgramEdit extends DTVActivity{
 			(fav==false)?getString(R.string.add_fav):getString(R.string.del_fav),
 			//(skip==false)?getString(R.string.add_skip):getString(R.string.del_skip),
 			(lock==false)?getString(R.string.add_lock):getString(R.string.del_lock),		
-			//getString(R.string.move),
+			getString(R.string.move),
 			//getString(R.string.add_into_group)
 		};
 
@@ -1017,14 +1021,14 @@ public class DTVProgramEdit extends DTVActivity{
 									myAdapter.notifyDataSetChanged();
 									mCustomDialog.dismissDialog();
 									break;
-								/*	
+									
 								case 4: //move
 									setMoveMode(true);
 									setMoveItemPos(pos);
 									myAdapter.notifyDataSetChanged();
 									mCustomDialog.dismissDialog();
 									break;
-								
+								/*
 								case 5: //add into group
 									programGroupOperate(pos);
 									//mCustomDialog.dismissDialog();
@@ -1485,7 +1489,12 @@ public class DTVProgramEdit extends DTVActivity{
 			// Bind the data efficiently with the holder.
 
 			if(mDTVSettings.getScanRegion().contains("ATSC")==false){
-				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber()));
+				//if(mDTVSettings.getLCNStatus()){
+					holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber()));
+				//}
+				//else{
+					//holder.prono.setText(Integer.toString(position+1));
+				//}
 			}
 			else{
 				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber())+"-"+Integer.toString(mTVProgramList[position].getNumber().getMinor()));
