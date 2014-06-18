@@ -3,7 +3,8 @@
 	android:orientation="horizontal"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:layout_gravity="center_vertical">
+	android:layout_gravity="center_vertical"
+	android:minHeight="50dip">
 
 	<ImageView android:id="@+id/icon"
 		android:layout_width="40dp"

@@ -6223,8 +6223,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		
 		ContentValues values=null;
 
-		
-		mDialog = new AlertDialog(mContext){
+		mDialog = new Dialog(mContext,R.style.MyDialog){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
@@ -6665,7 +6664,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	private void showTsAddDia(){
 		ContentValues values=null;
 
-		mDialog = new AlertDialog(mContext){
+		mDialog = new Dialog(mContext,R.style.MyDialog){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {

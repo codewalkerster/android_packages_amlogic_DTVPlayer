@@ -27,26 +27,34 @@ abstract public class PasswordDialog {
 	Dialog mDialog = null;
 	private Context mContext = null;
 
-	ImageButton pin0 ;
+	/* ImageButton pin0 ;
     ImageButton pin1 ;
     ImageButton pin2 ;
-    ImageButton pin3 ;
+    ImageButton pin3 ; */
+	TextView mPinTextView = null;
        
-    private static int cur_button_position=0;
+    // private static int cur_button_position=0;
     
-    private  String pin_char_0=null;
+    /* private  String pin_char_0=null;
     private  String pin_char_1=null;
     private  String pin_char_2=null;
-    private  String pin_char_3=null;
+    private  String pin_char_3=null; */
 	
 	public PasswordDialog(Context context) {
 		mContext = context;
-		cur_button_position=0;	
-		mDialog = new Dialog(mContext,R.style.MyDialog){
-			@Override
-			public boolean onKeyDown(int keyCode, KeyEvent event){
-				 switch (keyCode) {
-					case KeyEvent.KEYCODE_0:
+		// cur_button_position=0;	
+		mDialog = new Dialog(mContext,R.style.MyDialog);
+		if(mDialog == null){
+			return;
+		}
+
+		//mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(true);
+		mDialog.setOnKeyListener( new DialogInterface.OnKeyListener(){
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				
+				switch (keyCode) {
+					/* case KeyEvent.KEYCODE_0:
 					case KeyEvent.KEYCODE_1:
 					case KeyEvent.KEYCODE_2:
 					case KeyEvent.KEYCODE_3:
@@ -93,7 +101,7 @@ abstract public class PasswordDialog {
 								}	
 								break;	
 						}
-						return true;
+						return true; */
 					case KeyEvent.KEYCODE_MENU:	
 					case KeyEvent.KEYCODE_BACK:	
 						if(onDealUpDownKey()){
@@ -109,33 +117,32 @@ abstract public class PasswordDialog {
 							return true;
 						}
 						break;
+					case KeyEvent.KEYCODE_DPAD_CENTER:
+					case KeyEvent.KEYCODE_ENTER:	
+						checkPassword();
+						return true;
 				}
-				return super.onKeyDown(keyCode, event);
+				return false;
 			}
-			
-		};
+		});
 		
-		
-		//mDialog.setCancelable(false);
-		mDialog.setCanceledOnTouchOutside(true);
-
-		if(mDialog == null){
-			return;
-		}
 
 		mDialog.show();
 		mDialog.setContentView(R.layout.vchip_pin);
 		Window window = mDialog.getWindow();
-		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		((PasswordLayout)window.findViewById(R.id.password_layout)).setPasswordDialog(this);
+
+		/* WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
-		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND); */
+
 		pin_button_init(window);
 
 	}
 
 	private void pin_button_init(Window window ){
-		pin0 = (ImageButton)window.findViewById(R.id.pin_button0);
+		/* pin0 = (ImageButton)window.findViewById(R.id.pin_button0);
 		pin1 = (ImageButton)window.findViewById(R.id.pin_button1);
 		pin2 = (ImageButton)window.findViewById(R.id.pin_button2);
 		pin3 = (ImageButton)window.findViewById(R.id.pin_button3);
@@ -217,8 +224,21 @@ abstract public class PasswordDialog {
 				InputMethodManager imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);  	
 				imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
 				//imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);  
-		}});
+		}}); */
+		mPinTextView = (TextView)window.findViewById(R.id.pin_textview);
+		// mPinTextView.requestFocus();
 
+		window.findViewById(R.id.ok_icon).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (check_pin()) {
+					dismissDialog();
+					onCheckPasswordIsRight();
+				} else {
+					onCheckPasswordIsFalse();
+				}
+			}
+		});
 		window.findViewById(R.id.return_icon).setOnClickListener(
 			new View.OnClickListener(){	  
 				public void onClick(View v) {		
@@ -227,6 +247,15 @@ abstract public class PasswordDialog {
 				}
 			}
 		);
+	}
+
+	public void checkPassword() {
+		if (check_pin()) {
+			dismissDialog();
+			onCheckPasswordIsRight();
+		} else {
+			onCheckPasswordIsFalse();
+		}
 	}
 
 	public void setDialogContent(String c){
@@ -238,8 +267,9 @@ abstract public class PasswordDialog {
 	}
 	
     private boolean check_pin(){
-    	String cur_pin = null;
-    	cur_pin=pin_char_0+pin_char_1+pin_char_2+pin_char_3;
+    	// String cur_pin = null;
+    	// cur_pin=pin_char_0+pin_char_1+pin_char_2+pin_char_3;
+		String cur_pin = mPinTextView.getText().toString();
 		
     	String database_pin = "0000";
 		
@@ -273,10 +303,10 @@ abstract public class PasswordDialog {
 
 	public void showDialog(){
 		if(mDialog!=null&& mDialog.isShowing()==false){
-			pin_char_0=null;
+			/* pin_char_0=null;
 			pin_char_1=null;
 			pin_char_2=null;
-			pin_char_3=null;
+			pin_char_3=null; */
 			mDialog.show();
 		}
 	}

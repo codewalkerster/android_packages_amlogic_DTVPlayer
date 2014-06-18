@@ -24,6 +24,7 @@ import android.content.*;
 import android.graphics.*;
 import android.text.*;
 import android.text.method.*;
+import android.os.SystemProperties;
 import java.lang.reflect.Field;
 
 import com.amlogic.widget.PasswordDialog;
@@ -36,11 +37,18 @@ import com.amlogic.widget.CheckUsbdevice;
 public class DTVSettingsMenu extends DTVActivity {
 	private static final String TAG="DTVSettingsMenu";
 	DTVSettings mDTVSettings = null;
+	private boolean mMidUi = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dtv_settings_menu);
+		if (SystemProperties.get("ro.product.brand", "").equals("MID")) {
+			mMidUi = true;
+			setContentView(R.layout.mid_dtv_settings_menu);
+		} else {
+			mMidUi = false;
+			setContentView(R.layout.dtv_settings_menu);
+		}
 	}
 
 	@Override
@@ -195,8 +203,33 @@ public class DTVSettingsMenu extends DTVActivity {
 		});
 		button_av_setting.setOnKeyListener(new buttonOnKeyListener());
 		//button_search.setBackgroundResource(R.drawable.search2);	
-		button_search.requestFocus();
-		SearchItem_Init();
+		
+		Bundle bundle = this.getIntent().getExtras();
+		int menuId = R.string.setting_menu_search;
+		if (bundle != null)
+			menuId = bundle.getInt("menu");
+		switch (menuId) {
+			case R.string.setting_menu_program:
+				button_program.requestFocus();
+				ProgramItem_Init();
+				break;
+			case R.string.setting_menu_search:
+				button_search.requestFocus();
+				SearchItem_Init();
+				break;
+			case R.string.setting_menu_system:
+				button_system.requestFocus();
+				SystemItem_Init();
+				break;
+			case R.string.setting_menu_av:
+				button_av_setting.requestFocus();
+				AVItem_Init();
+				break;
+			default:
+				button_search.requestFocus();
+				SearchItem_Init();
+				break;	
+		}
 		
 		//dialog
 		editBuilder = new AlertDialog.Builder(this);
@@ -533,6 +566,18 @@ public class DTVSettingsMenu extends DTVActivity {
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
 			final TextView info_cur = (TextView)v.findViewById(R.id.info);
+
+			if (mMidUi) {
+				int count = ((AvItemAdapter)((ListView)parent).getAdapter()).getCount();
+				if (position == count - 1) {
+					Intent in = new Intent();
+					in.setClass(DTVSettingsMenu.this, DTVPlayer.class);
+					DTVSettingsMenu.this.startActivity(in);
+					DTVSettingsMenu.this.finish();
+					return;
+				}
+			}
+
 			switch(position){
 				case 0:
 					showScreenTypeDialog(info_cur);		
@@ -584,7 +629,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 
 		public int getCount() {
-			return listItems.length;
+			return mMidUi ? (listItems.length + 1) : listItems.length;
 		}
 
 		public Object getItem(int position) {
@@ -613,7 +658,16 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 
 			// Bind the data efficiently with the holder.
-			holder.text.setText(listItems[position]);
+			if (mMidUi) {
+				if (position != listItems.length) {
+					holder.text.setText(listItems[position]);
+				} else {
+					holder.text.setText(R.string.exit);
+					holder.info.setVisibility(View.GONE);
+					return convertView;
+				}
+			} else
+				holder.text.setText(listItems[position]);
 			holder.icon.setVisibility(View.INVISIBLE);
 			holder.info.setTextColor(Color.YELLOW);
 			holder.info.setVisibility(View.VISIBLE);
@@ -667,6 +721,18 @@ public class DTVSettingsMenu extends DTVActivity {
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
 			final TextView info_cur = (TextView)v.findViewById(R.id.info);
+
+			if (mMidUi) {
+				int count = ((ProgramItemAdapter)((ListView)parent).getAdapter()).getCount();
+				if (position == count - 1) {
+					Intent in = new Intent();
+					in.setClass(DTVSettingsMenu.this, DTVPlayer.class);
+					DTVSettingsMenu.this.startActivity(in);	
+					DTVSettingsMenu.this.finish();
+					return;
+				}
+			}
+
 			if(mDTVSettings.getScanRegion().contains("DVBS")){
 				switch(position){
 					case 0:
@@ -844,7 +910,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 
 		public int getCount() {
-			return listItems.length;
+			return mMidUi ? (listItems.length + 1) : listItems.length;
 		}
 
 		public Object getItem(int position) {
@@ -873,7 +939,16 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 
 			// Bind the data efficiently with the holder.
-			holder.text.setText(listItems[position]);
+			if (mMidUi) {
+				if (position != listItems.length) {
+					holder.text.setText(listItems[position]);
+				} else {
+					holder.text.setText(R.string.exit);
+					holder.info.setVisibility(View.GONE);
+					return convertView;
+				}
+			} else
+				holder.text.setText(listItems[position]);
 			holder.icon.setVisibility(View.INVISIBLE);
 			holder.info.setTextColor(Color.YELLOW);
 			holder.info.setVisibility(View.INVISIBLE);
@@ -893,6 +968,18 @@ public class DTVSettingsMenu extends DTVActivity {
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
 			final TextView info_cur = (TextView)v.findViewById(R.id.info);
+
+			if (mMidUi) {
+				int count = ((SearchItemAdapter)((ListView)parent).getAdapter()).getCount();
+				if (position == count - 1) {
+					Intent in = new Intent();
+					in.setClass(DTVSettingsMenu.this, DTVPlayer.class);
+					DTVSettingsMenu.this.startActivity(in);
+					DTVSettingsMenu.this.finish();
+					return;
+				}
+			}
+
 			switch(position){
 				case 0:
 					{	
@@ -950,6 +1037,17 @@ public class DTVSettingsMenu extends DTVActivity {
 				TextView info = (TextView)arg1.findViewById(R.id.info);
 
 				System.out.println("onItemSelected arg3 " + arg3);
+
+				if (mMidUi) {
+					int count = ((DvbtManualScanAdapter)((ListView)arg0).getAdapter()).getCount();
+					if (arg2 == count - 1) {
+						Intent in = new Intent();
+						in.setClass(DTVSettingsMenu.this, DTVPlayer.class);
+						DTVSettingsMenu.this.startActivity(in);
+						DTVSettingsMenu.this.finish();
+						return;
+					}
+				}
 
 				/*
 				DVBUnicableSetting setting = getUnicableSetting();
@@ -1128,6 +1226,18 @@ public class DTVSettingsMenu extends DTVActivity {
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
 			final TextView info_cur = (TextView)v.findViewById(R.id.info);
+
+			if (mMidUi) {
+				int count = ((SearchDvbtItemAdapter)((ListView)parent).getAdapter()).getCount();
+				if (position == count - 1) {
+					Intent in = new Intent();
+					in.setClass(DTVSettingsMenu.this, DTVPlayer.class);
+					DTVSettingsMenu.this.startActivity(in);
+					DTVSettingsMenu.this.finish();
+					return;
+				}
+			}
+
 			switch(position){
 				case 0:   //auto scan
 					{	
@@ -1209,7 +1319,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 
 		public int getCount() {
-			return listItems.length;
+			return mMidUi ? (listItems.length + 1) : listItems.length;
 		}
 
 		public Object getItem(int position) {
@@ -1238,7 +1348,16 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 
 			// Bind the data efficiently with the holder.
-			holder.text.setText(listItems[position]);
+			if (mMidUi) {
+				if (position != listItems.length) {
+					holder.text.setText(listItems[position]);
+				} else {
+					holder.text.setText(R.string.exit);
+					holder.info.setVisibility(View.GONE);
+					return convertView;
+				}
+			} else
+				holder.text.setText(listItems[position]);
 			holder.icon.setVisibility(View.INVISIBLE);
 			holder.info.setTextColor(Color.YELLOW);
 			switch(position){				
@@ -1359,6 +1478,20 @@ public class DTVSettingsMenu extends DTVActivity {
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
 			final TextView info_cur = (TextView)v.findViewById(R.id.info);
+
+			if (dtvscanatsc_scan_mode == DTVSCANATSC_SETTING_SCAN_MODE) {
+				if (mMidUi) {
+					int count = ((SearchATSCItemAdapter)((ListView)parent).getAdapter()).getCount();
+					if (position == count - 1) {
+						Intent in = new Intent();
+						in.setClass(DTVSettingsMenu.this, DTVPlayer.class);
+						DTVSettingsMenu.this.startActivity(in);
+						DTVSettingsMenu.this.finish();
+						return;
+					}
+				}
+			}
+
 			DTVScanATSC_SettingListItemClicked(info_cur,position);
 		}
 	};
@@ -1409,6 +1542,10 @@ public class DTVSettingsMenu extends DTVActivity {
 							break;
 						case 1:  //manual scan
 							DTVScanATSCUiScan();
+							break;
+						case 2:
+							dtvscanatsc_scan_mode = DTVSCANATSC_SETTING_SCAN_MODE;
+							SearchItem_Init();
 							break;
 						default:
 							break;
@@ -1582,12 +1719,12 @@ public class DTVSettingsMenu extends DTVActivity {
 			switch(dtvscanatsc_scan_mode)
 			{
 				case DTVSCANATSC_SETTING_SCAN_MODE:
-					
-					return listItems.length;
+					return mMidUi ? (listItems.length + 1) : listItems.length;
 				case DTVSCANATSC_SETTING_MANU_SCAN_MODE:	
-					return 2;
+					return mMidUi ? 3 : 2;
 				default:
-					return listItems.length;
+					return mMidUi ? (listItems.length + 1) : listItems.length;
+
 			}		
 		}
 
@@ -1621,6 +1758,12 @@ public class DTVSettingsMenu extends DTVActivity {
 			holder.info.setTextColor(Color.YELLOW);
 
 		displaytext(holder,position);
+		if (mMidUi) {
+			if (position == listItems.length) {
+				holder.info.setVisibility(View.GONE);
+				return convertView;
+			}
+		}
 		
 		switch(dtvscanatsc_scan_mode){
 			case DTVSCANATSC_SETTING_SCAN_MODE:
@@ -1725,6 +1868,9 @@ public class DTVSettingsMenu extends DTVActivity {
 						holder.info.setVisibility(View.GONE);
 
 						break;
+					case 2:
+						holder.info.setVisibility(View.GONE);
+						break;
 					default:
 						break; 
 				}
@@ -1740,27 +1886,55 @@ public class DTVSettingsMenu extends DTVActivity {
 			{
 				case DTVSCANATSC_SETTING_SCAN_MODE:
 					{
-						switch(position)
-						{
-							case SETTINGS_AUTO_SCAN:
-								vh.text.setText(R.string.dtvscan_scan_auto);
-								break;
-							case SETTINGS_MANU_SCAN:
-								vh.text.setText(R.string.dtvscan_scan_manual);
-								break;
-							case SETTINGS_AREA:
-								vh.text.setText(R.string.dtvscan_erea);
-								break;
-							/*	
-							case SETTINGS_ANTENNA_POWER:
-								vh.text.setText(R.string.dtvscanatsc_antennapower);
-								break;
-							case SETTINGS_SIGNAL_TYPE:
-								vh.text.setText(R.string.dtvscanatsc_signaltype);
-								break;	
-							*/	
-							default:
-								break;
+						if (mMidUi) {
+							if (position != listItems.length) {
+								switch(position)
+								{
+									case SETTINGS_AUTO_SCAN:
+										vh.text.setText(R.string.dtvscan_scan_auto);
+										break;
+									case SETTINGS_MANU_SCAN:
+										vh.text.setText(R.string.dtvscan_scan_manual);
+										break;
+									case SETTINGS_AREA:
+										vh.text.setText(R.string.dtvscan_erea);
+										break;
+									/*	
+									case SETTINGS_ANTENNA_POWER:
+										vh.text.setText(R.string.dtvscanatsc_antennapower);
+										break;
+									case SETTINGS_SIGNAL_TYPE:
+										vh.text.setText(R.string.dtvscanatsc_signaltype);
+										break;	
+									*/	
+									default:
+										break;
+								}
+							} else
+								vh.text.setText(R.string.exit);
+						} else {
+							switch(position)
+							{
+								case SETTINGS_AUTO_SCAN:
+									vh.text.setText(R.string.dtvscan_scan_auto);
+									break;
+								case SETTINGS_MANU_SCAN:
+									vh.text.setText(R.string.dtvscan_scan_manual);
+									break;
+								case SETTINGS_AREA:
+									vh.text.setText(R.string.dtvscan_erea);
+									break;
+								/*	
+								case SETTINGS_ANTENNA_POWER:
+									vh.text.setText(R.string.dtvscanatsc_antennapower);
+									break;
+								case SETTINGS_SIGNAL_TYPE:
+									vh.text.setText(R.string.dtvscanatsc_signaltype);
+									break;	
+								*/	
+								default:
+									break;
+							}
 						}
 					}
 					break;
@@ -1792,6 +1966,9 @@ public class DTVSettingsMenu extends DTVActivity {
 							*/	
 							case 1:   //manual scan
 								vh.text.setText(R.string.dtvscan_begain_search);
+								break;
+							case 2:
+								vh.text.setText(R.string.dtvscan_scan_manual_back);
 								break;
 							default:
 								break;
@@ -1908,7 +2085,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 
 		public int getCount() {
-			return listItems.length;
+			return mMidUi ? (listItems.length + 1) : listItems.length;
 		}
 
 		public Object getItem(int position) {
@@ -1937,8 +2114,16 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 
 			// Bind the data efficiently with the holder.
-			holder.text.setText(listItems[position]);
-			holder.icon.setVisibility(View.INVISIBLE);
+			if (mMidUi) {
+				if (position != listItems.length) {
+					holder.text.setText(listItems[position]);
+				} else {
+					holder.text.setText(R.string.exit);
+					holder.info.setVisibility(View.GONE);
+					return convertView;
+				}
+			} else
+				holder.text.setText(listItems[position]);
 			holder.info.setTextColor(Color.YELLOW);
 			switch(position){
 			
@@ -1980,6 +2165,17 @@ public class DTVSettingsMenu extends DTVActivity {
 			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
 
 			final TextView info_cur = (TextView)v.findViewById(R.id.info);
+
+			if (mMidUi) {
+				int count = ((SystemItemAdapter)((ListView)parent).getAdapter()).getCount();
+				if (position == count - 1) {
+					Intent in = new Intent();
+					in.setClass(DTVSettingsMenu.this, DTVPlayer.class);
+					DTVSettingsMenu.this.startActivity(in);
+					DTVSettingsMenu.this.finish();
+					return;
+				}
+			}
 			
 			switch(position){
 				case SETTINGS_RECALL_LIST:
@@ -2085,7 +2281,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 
 		public int getCount() {
-			return listItems.length;
+			return mMidUi ? (listItems.length + 1) : listItems.length;
 		}
 
 		public Object getItem(int position) {
@@ -2114,7 +2310,17 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 
 			// Bind the data efficiently with the holder.
-			holder.text.setText(listItems[position]);
+			if (mMidUi) {
+				if (position != listItems.length) {
+					holder.text.setText(listItems[position]);
+				} else {
+					holder.text.setText(R.string.exit);
+					holder.info.setVisibility(View.GONE);
+					return convertView;
+				}
+			} else
+				holder.text.setText(listItems[position]);
+
 			holder.icon.setVisibility(View.INVISIBLE);
 			holder.info.setTextColor(Color.YELLOW);
 			switch(position){
@@ -3009,7 +3215,7 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		public int getCount() {
 			//return listItems.length;
-			return listItems.length;
+			return mMidUi ? (listItems.length + 1) : listItems.length;
 		}
 
 		public Object getItem(int position) {
@@ -3054,10 +3260,22 @@ public class DTVSettingsMenu extends DTVActivity {
 				holder = (ViewHolder) convertView.getTag();
 			}
 
-			holder.info.setTextColor(Color.YELLOW);			
-			holder.text.setTextColor(Color.WHITE);
-					
-			holder.text.setText(listItems[position]);
+			if (mMidUi) {
+				if (position != listItems.length) {
+					holder.info.setTextColor(Color.YELLOW);
+					holder.text.setTextColor(Color.WHITE);
+					holder.text.setText(listItems[position]);
+				} else {
+					holder.text.setText(R.string.exit);
+					holder.info.setVisibility(View.GONE);
+					return convertView;
+				}
+			} else {
+				holder.info.setTextColor(Color.YELLOW);
+				holder.text.setTextColor(Color.WHITE);
+				holder.text.setText(listItems[position]);
+			}
+
 			switch(position){
 				 case 0:    //scan mode
 				 	holder.icon.setImageBitmap(mIcon1);

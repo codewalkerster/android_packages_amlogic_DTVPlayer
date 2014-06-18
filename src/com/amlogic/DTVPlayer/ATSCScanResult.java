@@ -402,6 +402,8 @@ public class ATSCScanResult extends DTVActivity{
 				stopScan(true);
 				progressBar.setProgress(100);
 				progress_value.setText("100%");				
+				scan_ok_flag = true;
+				canplay_flag = true;
 				Log.d(TAG, "stopScan End");				
 				break;
 			default:

@@ -6,6 +6,7 @@
 		android:layout_height="42dp"       
 		android:paddingLeft="10px"
 		android:gravity="center_vertical"
+		android:minHeight="50dip"
 		>
 	<TextView       
 		android:id="@+id/prono"
@@ -43,4 +44,5 @@
 		android:layout_height="30px"
 		android:gravity="center"
 		android:layout_marginRight="40px"/>
+
 </LinearLayout>  

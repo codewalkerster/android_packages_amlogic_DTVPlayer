@@ -36,10 +36,26 @@ public class DTVPvrPlayer extends DTVActivity{
 	private String proname=null;
 	private String file_name = null;
 	private boolean current_playback_flag=false;
+	private enum menu {
+		TTX,
+		AUDIO_LANGUAGE,
+		SUBTITLE_SETTING,
+		SHORTCUT_AUDIO_TRACK,
+		SHORTCUT_PICTURE_MODE,
+		EXIT_PLAYER,
+		MENU_NUM,
+	}
+	private static final int[] MENUS = new int[menu.MENU_NUM.ordinal()];
 	
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
+		MENUS[menu.TTX.ordinal()] = R.string.tel_text;
+		MENUS[menu.AUDIO_LANGUAGE.ordinal()] = R.string.dtvplayer_audio_language_set;
+		MENUS[menu.SUBTITLE_SETTING.ordinal()] = R.string.dtvplayer_subtitle_language_set;
+		MENUS[menu.SHORTCUT_AUDIO_TRACK.ordinal()] = R.string.audio_track;
+		MENUS[menu.SHORTCUT_PICTURE_MODE.ordinal()] = R.string.picture_mode;
+		MENUS[menu.EXIT_PLAYER.ordinal()] = R.string.exit_player;
 		setContentView(R.layout.dtvtimeshiftplayer); 
 		Bundle bundle = this.getIntent().getExtras();
 		if(bundle!=null){
@@ -59,7 +75,7 @@ public class DTVPvrPlayer extends DTVActivity{
 		Log.d(TAG,"play file ="+file_name);
 		pvrHandler.postDelayed(pvrTimer, 1000);
 		current_playback_flag=false;
-		//setVideoViewWindow();
+		setVideoViewWindow();
 	}
 
 	@Override
@@ -231,7 +247,12 @@ public class DTVPvrPlayer extends DTVActivity{
 		more.setOnClickListener(new Button.OnClickListener(){
 			public void onClick(View v) {
 				//hideInforbar();
-				showTimeshiftDialog();
+				// showTimeshiftDialog();
+				Context ctx = DTVPvrPlayer.this;
+				String[] menuItems = new String[menu.MENU_NUM.ordinal()];
+				for (int i = 0; i < menuItems.length; i++)
+					menuItems[i] = ctx.getString(MENUS[i]);
+				new MenuDialog(DTVPvrPlayer.this, menuItems, 0);
 			}
         });	
 	
@@ -385,6 +406,44 @@ public class DTVPvrPlayer extends DTVActivity{
 
 	}
 
+	class MenuDialog extends SingleChoiseDialog {
+		public MenuDialog(Context context, String[] item, int pos) {
+			super(context, item, pos);
+		}
+
+		@Override
+		public void onSetMessage(View v) {
+			((TextView)v).setText(getString(R.string.menu));
+		}
+
+		@Override
+		public void onSetNegativeButton() {
+		}
+
+		@Override
+		public void onSetPositiveButton(int which) {
+			switch (MENUS[which]) {
+				case R.string.tel_text:
+					DTVPlayer.showTeltext(DTVPvrPlayer.this);
+					break;
+				case R.string.dtvplayer_audio_language_set:
+					showAudioLanguageDialog(DTVPvrPlayer.this);
+					break;
+				case R.string.dtvplayer_subtitle_language_set:
+					showSubtitleSettingMenu(DTVPvrPlayer.this);
+					break;
+				case R.string.audio_track:
+					shortcut_key_deal("AUDIOTRACK");
+					break;
+				case R.string.picture_mode:
+					shortcut_key_deal("pictrue_mode");
+					break;
+				case R.string.exit_player:
+					showTimeshiftDialog();
+					break;
+			}
+		}
+	}
 
 	class MouseClick implements OnClickListener{
 	    public void onClick(View v) {

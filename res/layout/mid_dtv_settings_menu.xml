@@ -19,6 +19,7 @@
 	        android:layout_marginTop="20dp"
 	     >	
 	     	
+		 <!-- android:layout_weight="1" -->
 	      <LinearLayout
 	        android:id="@+id/linearLayout1"
 		    android:layout_width="match_parent"
@@ -28,10 +29,11 @@
 	        android:orientation="horizontal"
 	     	>
 	        
+		 <!-- android:layout_weight="1" -->
 	         <RelativeLayout 
+		 		android:layout_weight="1"
 	             android:layout_width="wrap_content"
 	             android:layout_height="wrap_content"
-	             android:layout_weight="1"
 	             >	
 				<ImageButton android:id="@+id/button_program"
 					android:layout_width="160dp"
@@ -52,10 +54,11 @@
 	         </RelativeLayout> 
 
 	          
+		 <!-- android:layout_weight="1" -->
 		 <RelativeLayout 
+		 		android:layout_weight="1"
 	             android:layout_width="wrap_content"
 	             android:layout_height="wrap_content"
-	             android:layout_weight="1"
 				 >
 			<ImageButton android:id="@+id/button_search"
 					android:layout_width="160dp"
@@ -75,10 +78,12 @@
 		            />					
 		         </RelativeLayout> 
 		         
+		 <!-- android:layout_weight="1" -->
 				<RelativeLayout 
+		 		android:layout_weight="1"
 		             android:layout_width="wrap_content"
 		             android:layout_height="wrap_content"
-		             android:layout_weight="1">	
+		             >	
 				<ImageButton android:id="@+id/button_system"
 						android:layout_width="160dp"
 					android:layout_height="148dp"
@@ -97,11 +102,13 @@
 			            />					
 		         </RelativeLayout> 
 	         
+		 <!-- android:layout_weight="1" -->
 				<RelativeLayout 
+		 		android:layout_weight="1"
 		             android:layout_width="wrap_content"
 		             android:layout_height="wrap_content"
 		             android:orientation="vertical"
-		             android:layout_weight="1">	
+		             >	
 				<ImageButton android:id="@+id/button_av"
 						android:layout_width="160dp"
 					android:layout_height="148dp"
@@ -122,10 +129,13 @@
 
 		    </LinearLayout>
 
+			<!-- android:layout_marginBottom="30dp" -->
+			<!-- android:layout_weight="3" -->
 		    <FrameLayout
-		        android:layout_weight="3"
 		    	android:layout_width="match_parent"
 		    	android:layout_height="0dp"
+				android:layout_weight="3"
+				android:layout_marginBottom="30dp"
 		    	android:gravity="center"
 		    	>						   	
 					<LinearLayout
@@ -156,12 +166,14 @@
 					    android:visibility="gone">					       	   	 					    
 					</LinearLayout>				       	   	 
 				</FrameLayout>	
+				<!-- android:visibility="gone" -->
 				<LinearLayout
 				    android:layout_weight="1"
 				    android:layout_width="match_parent"
 				    android:layout_height="0dp"
 		    		android:gravity="center_horizontal"
 		    		android:orientation="horizontal"
+					android:visibility="gone"
 		    	>
 					<LinearLayout
 					android:layout_weight="1"    

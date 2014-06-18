@@ -54,10 +54,51 @@ public class DTVPlayer extends DTVActivity{
 	DTVSettings mDTVSettings=null;	
 	private PowerManager.WakeLock wakeLock = null;
 	private HomeKeyEventBroadCastReceiver home_receiver=null;
+	private enum menu{
+		PROGRAM,
+		SEARCH,
+		SYSTEM,
+		AV,
+		TTX,
+		REC,
+		RECALL_LIST,
+		SUBTITLE_SETTING,
+		SHORTCUT_FAV,
+		SHORTCUT_AUDIO_TRACK,
+		SHORTCUT_PICTURE_MODE,
+		SHORTCUT_SUBTITLE,
+		AUDIO_LANGUAGE,
+		TIMESHIFTING,
+		AD,
+		AD_VOLUME_UP,
+		AD_VOLUME_DOWN,
+		EXIT_PLAYER,
+		MENU_NUM,
+	}
+	private static final int[] MENUS = new int[menu.MENU_NUM.ordinal()];
 
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
+		MENUS[menu.PROGRAM.ordinal()] = R.string.setting_menu_program;
+		MENUS[menu.SEARCH.ordinal()] = R.string.setting_menu_search;
+		MENUS[menu.SYSTEM.ordinal()] = R.string.setting_menu_system;
+		MENUS[menu.AV.ordinal()] = R.string.setting_menu_av;
+		MENUS[menu.TTX.ordinal()] = R.string.tel_text;
+		MENUS[menu.REC.ordinal()] = R.string.rec;
+		MENUS[menu.RECALL_LIST.ordinal()] = R.string.recall_list;
+		MENUS[menu.SUBTITLE_SETTING.ordinal()] = R.string.dtvplayer_subtitle_language_set;
+		MENUS[menu.SHORTCUT_FAV.ordinal()] = R.string.favorite;
+		MENUS[menu.SHORTCUT_AUDIO_TRACK.ordinal()] = R.string.audio_track;
+		MENUS[menu.SHORTCUT_PICTURE_MODE.ordinal()] = R.string.picture_mode;
+		MENUS[menu.SHORTCUT_SUBTITLE.ordinal()] = R.string.subtitle;
+		MENUS[menu.AUDIO_LANGUAGE.ordinal()] = R.string.dtvplayer_audio_language_set;
+		MENUS[menu.TIMESHIFTING.ordinal()] = R.string.timeshift_time_set;
+		MENUS[menu.AD.ordinal()] = R.string.ad;
+		MENUS[menu.AD_VOLUME_UP.ordinal()] = R.string.ad_volume_up;
+		MENUS[menu.AD_VOLUME_DOWN.ordinal()] = R.string.ad_volume_down;
+		MENUS[menu.EXIT_PLAYER.ordinal()] = R.string.exit_player;
+		writeSysFile("/sys/class/ppmgr/angle","2");
 		setContentView(R.layout.dtvplayer);
 		SystemProperties.set("vplayer.hideStatusBar.enable", "true");
 		bundle = this.getIntent().getExtras();
@@ -819,6 +860,10 @@ public class DTVPlayer extends DTVActivity{
 		RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
 		
 		init_Animation();
+		// findViewById(R.id.return_icon).setFocusable(false);
+		// findViewById(R.id.return_icon).setOnClickListener(new MouseClick());
+		findViewById(R.id.menu_icon).setFocusable(false);
+		findViewById(R.id.menu_icon).setOnClickListener(new MouseClick());
 		 findViewById(R.id.return_icon).setFocusable(false);
 		 findViewById(R.id.return_icon).setOnClickListener(
 			new View.OnClickListener(){	  
@@ -1160,10 +1205,197 @@ public class DTVPlayer extends DTVActivity{
 		return;
 	}
 
+	class AudioTrackDialog extends SingleChoiseDialog {
+		public AudioTrackDialog(Context context, String[] item, int pos) {
+			super(context, item, pos);
+		}
+
+		@Override
+		public void onSetMessage(View v) {
+			((TextView)v).setText(getString(R.string.menu));
+		}
+
+		@Override
+		public void onSetNegativeButton() {
+		}
+
+		@Override
+		public void onSetPositiveButton(int which) {
+			switch (which) {
+				case 0:
+					// left
+					DTVSetAudioTrack(1);
+					break;
+				case 1:
+					// right
+					DTVSetAudioTrack(2);
+					break;
+				case 2:
+					// stereo
+					DTVSetAudioTrack(0);
+					break;
+			}
+		}
+	}
+
+	class MenuDialog extends SingleChoiseDialog {
+		public MenuDialog(Context context, String[] item, int pos) {
+			super(context, item, pos);
+		}
+
+		@Override
+		public void onSetMessage(View v) {
+			((TextView)v).setText(getString(R.string.menu));
+		}
+
+		@Override
+		public void onSetNegativeButton() {
+		}
+
+		@Override
+		public void onSetPositiveButton(int which) {
+			int ad_volume = 0;
+			switch (MENUS[which]) {
+				case R.string.setting_menu_program:
+				case R.string.setting_menu_search:
+				case R.string.setting_menu_system:
+				case R.string.setting_menu_av:
+					Intent intent = new Intent();
+					Bundle bundle = new Bundle();
+					bundle.putInt("menu", MENUS[which]);
+					intent.putExtras(bundle);
+					intent.setClass(DTVPlayer.this, DTVSettingsMenu.class);
+					startActivity(intent);
+					break;
+				case R.string.tel_text:
+					showTeltext(DTVPlayer.this);
+					break;
+				case R.string.rec:
+					showPvrDurationTimeSetDialog(DTVPlayer.this);
+					break;
+				case R.string.recall_list:
+					showRecallListDialog(DTVPlayer.this);
+					break;
+				case R.string.dtvplayer_subtitle_language_set:
+					HideControlBar();
+					showSubtitleSettingMenu(DTVPlayer.this);
+					break;
+				case R.string.favorite:
+					shortcut_key_deal("FAV");
+					break;
+				case R.string.audio_track:
+					shortcut_key_deal("AUDIOTRACK");
+					break;
+				case R.string.picture_mode:
+					shortcut_key_deal("pictrue_mode");
+					break;
+				case R.string.subtitle:
+					shortcut_key_deal("SUBTITLE");
+					break;
+				case R.string.dtvplayer_audio_language_set:
+					showAudioLanguageDialog(DTVPlayer.this);
+					break;
+				case R.string.timeshift_time_set:
+					if (!mDTVSettings.getCheckProgramLock()) {
+						if (isHaveExternalStorage()) {
+							Intent timeshift = new Intent();
+							timeshift.setClass(DTVPlayer.this, DTVTimeshifting.class);
+							startActivity(timeshift);
+							HideControlBar();
+						} else {
+							if (toast != null)
+								toast.cancel();
+							toast = Toast.makeText(DTVPlayer.this, R.string.check_usb_device, Toast.LENGTH_SHORT);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.show();
+						}
+					}
+					break;
+				case R.string.ad:
+					if(mDTVSettings.getADSwitch()){
+						mDTVSettings.setADSwitch(false);	
+						if(toast!=null)
+							toast.cancel(); 
+						toast = Toast.makeText(DTVPlayer.this, R.string.off, Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+					}
+					else{
+						mDTVSettings.setADSwitch(true);
+						if(toast!=null)
+							toast.cancel(); 
+						toast = Toast.makeText(DTVPlayer.this, R.string.on, Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+					}
+					break;
+				case R.string.ad_volume_up:
+					if(mDTVSettings.getADSwitch()){
+						ad_volume = mDTVSettings.getADVolume();
+						if(ad_volume<100){
+							ad_volume++;
+							mDTVSettings.setADVolume(ad_volume);
+						}
+						if(toast!=null)
+							toast.cancel(); 
+						toast = Toast.makeText(DTVPlayer.this, Integer.toString(ad_volume), Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+					}
+					break;
+				case R.string.ad_volume_down:
+					if(mDTVSettings.getADSwitch()){
+						ad_volume = mDTVSettings.getADVolume();
+						if(ad_volume>0){
+							ad_volume--;
+							mDTVSettings.setADVolume(ad_volume);
+						}
+						if(toast!=null)
+							toast.cancel(); 
+						toast = Toast.makeText(DTVPlayer.this, Integer.toString(ad_volume), Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+					}
+					break;
+				case R.string.exit_player:
+					if (dtvplyaer_b_txt && DTVPlayerInTeletextStatus) {
+						DTVTTHide();
+						DTVPlayerInTeletextStatus = false;
+					}
+					finishPlayer();
+					setInputSource(TVConst.SourceInput.SOURCE_ATV);
+					System.exit(0);
+					break;
+			}
+		}
+	}
+
 	class MouseClick implements OnClickListener{
 	    public void onClick(View v) {
 			// TODO Auto-generated method stub	
 			switch (v.getId()) {
+				case R.id.menu_icon:
+					Context ctx = DTVPlayer.this;
+					String[] menuItems = new String[menu.MENU_NUM.ordinal()];
+					for (int i = 0; i < menuItems.length; i++)
+						menuItems[i] = ctx.getString(MENUS[i]);
+					new MenuDialog(DTVPlayer.this, menuItems, 0);
+					break;
+				case R.id.return_icon:
+					Log.d(TAG, v + " touch exit!!!!!!!!!!!!!!!!!!!!!");
+					if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){	
+						DTVTTHide();
+						DTVPlayerInTeletextStatus=false;
+					}	
+					
+					if(DTVPlayerIsRecording()){
+						DTVPlayerStopRecording();
+					}	
+					
+					finishPlayer();
+					setInputSource(TVConst.SourceInput.SOURCE_ATV);
+					System.exit(0);
+					break;
 				case R.id.RelativeLayout_video:
 					if(inforbar_show_flag==false){
 						ShowControlBar();

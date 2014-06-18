@@ -102,14 +102,19 @@
 		android:layout_marginLeft="30dp"
 		android:layout_marginRight="30dp"
 		android:layout_marginBottom="10dp"
-		android:background="@drawable/dtvplayer_bar_bg" 
-		android:layout_height="150dp"
+		android:background="@drawable/dtvplayer_inforbar_bg" 
+		android:layout_height="174dp"
 		android:paddingBottom="0dp"
 		>
-
+		<RelativeLayout 
+			android:layout_height="2dp"
+			android:layout_width="fill_parent" 
+			android:background="@drawable/line"
+			android:layout_above="@+id/RelativeLayoutNextprogram">
+		</RelativeLayout>	
 		<RelativeLayout android:id="@+id/RelativeLayoutNextprogram" 
-			android:layout_height="36dp" 
 			android:layout_marginRight="5dp" 
+			android:layout_height="60dp"
 			android:layout_width="fill_parent" 
 			android:layout_marginLeft="5dp"
 			android:layout_alignParentBottom="true"
@@ -143,10 +148,10 @@
 				      >
 				</TextView>
 				<ImageButton 
-				        android:id="@+id/return_icon" 
-		    			android:layout_width="wrap_content"
-		    			android:layout_height="wrap_content"
-					android:background="@drawable/return_icon"
+				        android:id="@+id/menu_icon" 
+					android:layout_width="60dp"
+					android:layout_height="60dp"
+					android:background="@drawable/menu"
 		    		></ImageButton>
 			</LinearLayout>
 		</RelativeLayout>

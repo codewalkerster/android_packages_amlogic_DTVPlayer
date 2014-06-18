@@ -87,20 +87,20 @@
 			android:orientation="horizontal"
 			android:paddingLeft="60dp"
     		android:paddingRight="60dp"
-    		android:paddingTop="30dp"
+    		android:paddingTop="25dp"
 			android:layout_marginBottom="20px" 
 			android:gravity="center">
 			
 			<Button android:id="@+id/no"
 			   android:layout_width="wrap_content"
-	           android:layout_height="35dp"
+	           android:layout_height="45dp"
 	       	   android:background="@drawable/single_dia_button"
 	       	   android:layout_weight="1"
 	           />
 	           
 			<Button android:id="@+id/yes"
 			   android:layout_width="wrap_content"
-	           android:layout_height="35dp"
+	           android:layout_height="45dp"
 	       	   android:background="@drawable/single_dia_button"
 	       	   android:layout_weight="1"
 	       	   android:layout_marginLeft="60dp"

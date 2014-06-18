@@ -26,36 +26,38 @@ abstract public class PasswordSettingDialog {
 	Dialog mDialog = null;
 	private Context mContext = null;
 
-	ImageButton pin0 ;
+	/* ImageButton pin0 ;
     ImageButton pin1 ;
     ImageButton pin2 ;
-    ImageButton pin3 ;
+    ImageButton pin3 ; */
+	TextView mPinTextView = null;
 
-	ImageButton pin00 ;
+	/* ImageButton pin00 ;
     ImageButton pin11 ;
     ImageButton pin22 ;
-    ImageButton pin33 ;
+    ImageButton pin33 ; */
+	TextView mPinConfirmTextView = null;
        
-    private static int cur_button_position=0;
+    // private static int cur_button_position=0;
     
-    private static String pin_char_0=null;
+    /* private static String pin_char_0=null;
     private static String pin_char_1=null;
     private static String pin_char_2=null;
-    private static String pin_char_3=null;
+    private static String pin_char_3=null; */
 
-	private static String pin_char_00=null;
+	/* private static String pin_char_00=null;
     private static String pin_char_11=null;
     private static String pin_char_22=null;
-    private static String pin_char_33=null;
+    private static String pin_char_33=null; */
 	
 	public PasswordSettingDialog(Context context) {
 		mContext = context;
-		cur_button_position=0;	
-		mDialog = new AlertDialog(mContext){
+		// cur_button_position=0;	
+		mDialog = new Dialog(mContext, R.style.MyDialog){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
-					case KeyEvent.KEYCODE_0:
+					/* case KeyEvent.KEYCODE_0:
 					case KeyEvent.KEYCODE_1:
 					case KeyEvent.KEYCODE_2:
 					case KeyEvent.KEYCODE_3:
@@ -132,7 +134,7 @@ abstract public class PasswordSettingDialog {
 								}	
 								break;
 						}
-						return true;
+						return true; */
 					case KeyEvent.KEYCODE_BACK:	
 						dismissDialog();
 						break;
@@ -161,16 +163,17 @@ abstract public class PasswordSettingDialog {
 		mDialog.show();
 		mDialog.setContentView(R.layout.password_setting);
 		Window window = mDialog.getWindow();
-		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		((PasswordSettingLayout)window.findViewById(R.id.password_setting_layout)).setPasswordSettingDialog(this);
+		/* WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
 		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
-		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND); */
 		pin_button_init(window);
 
 	}
 
 	private void pin_button_init(Window window ){
-		pin0 = (ImageButton)window.findViewById(R.id.pin_button0);
+		/* pin0 = (ImageButton)window.findViewById(R.id.pin_button0);
 		pin1 = (ImageButton)window.findViewById(R.id.pin_button1);
 		pin2 = (ImageButton)window.findViewById(R.id.pin_button2);
 		pin3 = (ImageButton)window.findViewById(R.id.pin_button3);
@@ -276,13 +279,41 @@ abstract public class PasswordSettingDialog {
                 } else {   
                     
                 }   
-            }});   
+            }}); */
+		mPinTextView = (TextView)window.findViewById(R.id.pin_textview);
+		mPinConfirmTextView = (TextView)window.findViewById(R.id.pin_confirm_textview);
 		
+		window.findViewById(R.id.ok_icon).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (check_pin()) {
+					dismissDialog();
+					onCheckPasswordIsRight();
+				} else {
+					onCheckPasswordIsFalse();
+				}
+			}
+		});
+		window.findViewById(R.id.return_icon).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				dismissDialog();
+			}
+		});
     }
+
+	public void checkPassword() {
+		if (check_pin()) {
+			dismissDialog();
+			onCheckPasswordIsRight();
+		} else {
+			onCheckPasswordIsFalse();
+		}
+	}
 
 	
     private boolean check_pin(){
-    	String cur_pin = null;
+    	/* String cur_pin = null;
 		String confirm_pin = null;
     	cur_pin = pin_char_0+pin_char_1+pin_char_2+pin_char_3;
 		confirm_pin = pin_char_00+pin_char_11+pin_char_22+pin_char_33;
@@ -297,7 +328,17 @@ abstract public class PasswordSettingDialog {
 			}	
 		}	    
 		else
-    		return false;
+    		return false; */
+		String pin = mPinTextView.getText().toString();
+		String pinConfirm = mPinConfirmTextView.getText().toString();
+		if (pin.equals(pinConfirm)) {
+			if (TextUtils.isEmpty(pin) || TextUtils.isEmpty(pinConfirm))
+				return false;
+			DTVSettings mDTVSettings = new DTVSettings(mContext);
+			mDTVSettings.setPassWord(pinConfirm);
+			return true;
+		} else
+			return false;
     }
 	
 	public void dismissDialog(){

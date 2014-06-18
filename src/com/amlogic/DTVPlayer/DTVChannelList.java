@@ -47,12 +47,11 @@ public class DTVChannelList extends DTVActivity{
 	int db_id=-1;
 	private int service_type=TVProgram.TYPE_TV;
 	private boolean favor=false;
+	private static final int LEFT = 0;
+	private static final int RIGHT = 1;
 
 	private void getListData(int type){
-		if(type==0)
-			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,true);
-		else if(type==1)
-			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,true);
+		mTVProgramList = TVProgram.selectByType(this, type, true);
 	}
 
 	private void getListFavorite(){
@@ -90,14 +89,13 @@ public class DTVChannelList extends DTVActivity{
 		Text_title.setTextColor(Color.YELLOW);
 		class_total = getListProgramClass();
 		if(service_type == TVProgram.TYPE_RADIO){
-			getListData(1);
 			Text_title.setText(R.string.radio);
 		}	
 		else{
 			service_type = TVProgram.TYPE_TV;
-			getListData(0);
 			Text_title.setText(R.string.tv);
 		}
+		getListData(service_type);
 		
 		ListView_channel = (ListView) findViewById(R.id.ListView_channel);
 		myAdapter = new IconAdapter(DTVChannelList.this,null);
@@ -111,7 +109,7 @@ public class DTVChannelList extends DTVActivity{
 			new View.OnClickListener(){	  
 				public void onClick(View v) {		
 					// TODO Auto-generated method stub	
-					DTVListDealLeftAndRightKey(0);
+					DTVListDealLeftAndRightKey(LEFT);
 				}
 			}
 		);
@@ -120,11 +118,19 @@ public class DTVChannelList extends DTVActivity{
 			new View.OnClickListener(){	  
 				public void onClick(View v) {		
 					// TODO Auto-generated method stub	
-					DTVListDealLeftAndRightKey(1);
+					DTVListDealLeftAndRightKey(RIGHT);
 				}
 			}
 		);
 
+		if (!mDTVSettings.getScanRegion().contains("DVBS")) {
+			findViewById(R.id.ok_icon).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					chooseItem(cur_select_item);
+				}
+			});
+		}
 		findViewById(R.id.return_icon).setOnClickListener(
 			new View.OnClickListener(){	  
 				public void onClick(View v) {		
@@ -197,7 +203,8 @@ public class DTVChannelList extends DTVActivity{
   
   	private AdapterView.OnItemSelectedListener mOnSelectedListener = new AdapterView.OnItemSelectedListener(){
 		public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
-			ListView_channel = (ListView) findViewById(R.id.ListView_channel);
+			parent.setSelection(position);
+			v.requestFocus();
 			if(ListView_channel.hasFocus() == true){
 				if(mDTVSettings.getScanRegion().contains("DVBS")==true){
 					TextView info= (TextView) findViewById(R.id.channel_info);
@@ -222,32 +229,34 @@ public class DTVChannelList extends DTVActivity{
 		}
 	};
 
+	private void chooseItem(int position) {
+		int db_id = mTVProgramList[position].getID();
+		int serviceType = mTVProgramList[position].getType();
+		if (DTVPlayerGetCurrentProgramType() != serviceType) {
+			if (serviceType == TVProgram.TYPE_RADIO) {
+				setProgramType(TVProgram.TYPE_RADIO);
+			} else {
+				setProgramType(TVProgram.TYPE_TV);
+			}
+		}
+		if (DTVPlayerGetCurrentProgramID() != db_id) {
+			Bundle bundle = new Bundle();
+			bundle.putInt("db_id", db_id);
+			bundle.putInt("service_type", serviceType);
+			bundle.putString("activity_tag", "DTVChannelList");
+			Intent intent = new Intent();
+			intent.setClass(DTVChannelList.this, DTVPlayer.class);
+			intent.putExtras(bundle);
+			startActivity(intent);
+		}
+		DTVChannelList.this.finish();
+	}
+
 	private AdapterView.OnItemClickListener mOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
-			int db_id=mTVProgramList[position].getID();	
-			int serviceType = mTVProgramList[position].getType();
-
-			if(DTVPlayerGetCurrentProgramType()!=serviceType){
-				if(serviceType==TVProgram.TYPE_RADIO){
-					setProgramType(TVProgram.TYPE_RADIO);
-				}	
-				else{
-					setProgramType(TVProgram.TYPE_TV);
-				}
-			}	
-			
-			if(DTVPlayerGetCurrentProgramID()!=db_id){
-				Bundle bundle = new Bundle();
-				bundle.putInt("db_id",db_id);
-				bundle.putInt("service_type",serviceType);
-				bundle.putString("activity_tag","DTVChannelList");
-				Intent in = new Intent();
-				in.setClass(DTVChannelList.this, DTVPlayer.class);
-				in.putExtras(bundle);
-				startActivity(in);
-			}
-			DTVChannelList.this.finish();
-
+			v.requestFocus();
+			parent.setSelection(position);
+			chooseItem(position);
 		}
 	};
 
@@ -321,7 +330,7 @@ public class DTVChannelList extends DTVActivity{
 			else{
 				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber())+"-"+Integer.toString(mTVProgramList[position].getNumber().getMinor()));
 			}
-			
+
 			holder.text.setText(mTVProgramList[position].getName());
 
 			if(db_id == mTVProgramList[position].getID()){  
@@ -353,6 +362,7 @@ public class DTVChannelList extends DTVActivity{
 			else{
 				holder.icon_scrambled.setBackgroundResource(Color.TRANSPARENT);
 			}			  
+		
 			return convertView;
 		}
 	}	
@@ -386,10 +396,10 @@ public class DTVChannelList extends DTVActivity{
 			}
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_DPAD_LEFT:
-				DTVListDealLeftAndRightKey(0);
+				DTVListDealLeftAndRightKey(LEFT);
 				break;		
 			case KeyEvent.KEYCODE_DPAD_RIGHT:	
-				DTVListDealLeftAndRightKey(1);
+				DTVListDealLeftAndRightKey(RIGHT);
 				break;
 			case KeyEvent.KEYCODE_DPAD_DOWN:
 				if(ListView_channel!=null){
@@ -481,30 +491,100 @@ public class DTVChannelList extends DTVActivity{
 		rQuest2Animation.setDuration(duration);
 	}
 
-	private void DTVListDealLeftAndRightKey(int mode){
+	private void setTVList() {
+		getListData(TVProgram.TYPE_TV);
+		Text_title.setText(R.string.tv);
+		favor = false;
+		service_type = TVProgram.TYPE_TV;
+		myAdapter.notifyDataSetChanged();
+	}
+
+	private void setRadioList() {
+		getListData(TVProgram.TYPE_RADIO);
+		Text_title.setText(R.string.radio);
+		favor = false;
+		service_type = TVProgram.TYPE_RADIO;
+		myAdapter.notifyDataSetChanged();
+	}
+
+	private void setFavList() {
+		getListFavorite();
+		Text_title.setText(R.string.favorite);
+		favor = true;
+		service_type = -1;
+		myAdapter.notifyDataSetChanged();
+	}
+
+	private void setTVGroupList() {
+		Text_title.setText(mTVGroup[cur_class_no].getName());
+		getClassData(mTVGroup[cur_class_no].getID());
+		favor = false;
+		service_type = -1;
+		myAdapter.notifyDataSetChanged();
+	}
+
+	private void DTVListDealLeftAndRightKey(int direction) {
+		switch (direction) {
+			case LEFT:
+				if ((service_type == TVProgram.TYPE_RADIO) && !favor) {
+					if (class_total > 0) {
+						cur_class_no = class_total - 1;
+						setTVGroupList();
+					} else
+						setTVList();
+				} else if ((service_type != TVProgram.TYPE_TV) && (service_type != TVProgram.TYPE_RADIO)
+					&& !favor) {
+					if (cur_class_no > 0 && class_total > 0) {
+						cur_class_no--;
+						setTVGroupList();
+					} else
+						setTVList();
+				} else if ((service_type == TVProgram.TYPE_TV) && !favor) {
+					setFavList();
+				} else if (favor) {
+					setRadioList();
+				}
+				break;
+			case RIGHT:
+				if ((service_type == TVProgram.TYPE_TV) && !favor) {
+					if (class_total > 0) {
+						cur_class_no = 0;
+						setTVGroupList();
+					} else
+						setRadioList();
+				} else if ((service_type != TVProgram.TYPE_TV) && (service_type != TVProgram.TYPE_RADIO)
+					&& !favor) {
+					if (cur_class_no < class_total - 1) {
+						cur_class_no++;
+						setTVGroupList();
+					} else
+						setRadioList();
+				} else if ((service_type == TVProgram.TYPE_RADIO) && !favor) {
+					setFavList();
+				} else if (favor) {
+					setTVList();
+				}
+				break;
+		}
+		setFocusPosition();
+	}
+
+	private void DTVListDealLeftAndRightKey_old(int mode){
 		switch(mode){
-			case 0:  //left
+			case LEFT:  //left
 				//LinearLayoutListView.startAnimation(lQuest1Animation); 
 				if((service_type == TVProgram.TYPE_RADIO)&&(favor!=true)){
-					getListData(0);
-					Text_title.setText(R.string.tv);
-					service_type = TVProgram.TYPE_TV;
-					myAdapter.notifyDataSetChanged();
+					setTVList();
 				}
 				else if((service_type == TVProgram.TYPE_TV)&&(favor!=true)){
 					Log.d(TAG,"##########"+class_total);
 					if(class_total>0){	
 						service_type = -1;
 					   	cur_class_no = class_total-1;
-						Text_title.setText(mTVGroup[cur_class_no].getName());
-						getClassData(mTVGroup[cur_class_no].getID());
-						myAdapter.notifyDataSetChanged();
+						setTVGroupList();
 					}
 					else{					
-						Text_title.setText(R.string.favorite);
-						getListFavorite();
-						myAdapter.notifyDataSetChanged();
-						favor=true;
+						setFavList();
 					}	
 				}	
 				else if((favor!=true)&&(service_type != TVProgram.TYPE_TV)&&(service_type != TVProgram.TYPE_RADIO)){
@@ -512,45 +592,30 @@ public class DTVChannelList extends DTVActivity{
 					{
 						service_type = -1;
 						cur_class_no --;
-						Text_title.setText(mTVGroup[cur_class_no].getName());
-						getClassData(mTVGroup[cur_class_no].getID());
-						myAdapter.notifyDataSetChanged();
-						
+						setTVGroupList();
 					}
 					else
 					{
-						Text_title.setText(R.string.favorite);
-						getListFavorite();
-						myAdapter.notifyDataSetChanged();
-						favor=true;
+						setFavList();
 					}
 				}
 				else if(favor==true)
 				{
-					getListData(1);
-					Text_title.setText(R.string.radio);
-					service_type = TVProgram.TYPE_RADIO;
-					myAdapter.notifyDataSetChanged();
-					favor=false;
+					setRadioList();
+					favor = false;
 				}	
 				setFocusPosition();
 				//LinearLayoutListView.startAnimation(lQuest2Animation); 
 			
 				break;	
-			case 1:
+			case RIGHT:
 				//LinearLayoutListView.startAnimation(rQuest1Animation);  
 				if(service_type == TVProgram.TYPE_TV)
 				{
-					getListData(1);
-					Text_title.setText(R.string.radio);
-					service_type = TVProgram.TYPE_RADIO;
-					myAdapter.notifyDataSetChanged();
+					setRadioList();
 				}
 				else if((service_type == TVProgram.TYPE_RADIO)&&(favor==false)){
-					Text_title.setText(R.string.favorite);
-					getListFavorite();
-					myAdapter.notifyDataSetChanged();
-					favor=true;
+					setFavList();
 				}
 				else if(favor==true)
 				{
@@ -559,17 +624,11 @@ public class DTVChannelList extends DTVActivity{
 					{	
 						service_type = -1;
 					    cur_class_no = 0;
-						Text_title.setText(mTVGroup[cur_class_no].getName());
-						getClassData(mTVGroup[cur_class_no].getID());
-						myAdapter.notifyDataSetChanged();
+						setTVGroupList();
 					}
 					else
 					{
-						
-						getListData(0);
-						Text_title.setText(R.string.tv);
-						service_type = TVProgram.TYPE_TV;
-						myAdapter.notifyDataSetChanged();
+						setTVList();
 					}	
 					favor=false;
 				}	
@@ -579,16 +638,11 @@ public class DTVChannelList extends DTVActivity{
 					{
 						service_type = -1;
 						cur_class_no ++;
-						Text_title.setText(mTVGroup[cur_class_no].getName());
-						getClassData(mTVGroup[cur_class_no].getID());
-						myAdapter.notifyDataSetChanged();
+						setTVGroupList();
 					}
 					else
 					{
-						getListData(0);
-						Text_title.setText(R.string.tv);
-						service_type = TVProgram.TYPE_TV;
-						myAdapter.notifyDataSetChanged();
+						setTVList();
 					}
 					
 				}	
@@ -1455,13 +1509,9 @@ public class DTVChannelList extends DTVActivity{
 		no.setOnClickListener(new OnClickListener(){
 		          public void onClick(View v) {				  	 
 					//onSetNegativeButton();
-					if(service_type == TVProgram.TYPE_RADIO){
-						getListData(1);
-					}	
-					else{
+					if (service_type != TVProgram.TYPE_RADIO)
 						service_type = TVProgram.TYPE_TV;
-						getListData(0);
-					}
+					getListData(service_type);
 					myAdapter.notifyDataSetChanged();
 					if(mDialog!=null&& mDialog.isShowing()){
 						mDialog.dismiss();

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="650dp"
+<com.amlogic.widget.PasswordLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/password_layout"
+	android:layout_width="550dp"
 	android:layout_height="wrap_content"
 	android:layout_marginLeft="45dp" 
 	android:layout_gravity="center" 
@@ -43,13 +44,13 @@
 			        android:layout_gravity="center_horizontal"
 			        android:textColor="#FFFFFFFF"
 			 		android:gravity="center" 
-			 		android:textSize="10px" 
+			 		android:textSize="10dp" 
 			        />	
     		</LinearLayout> 
 
     		<LinearLayout
 				android:layout_width="match_parent"
-				android:layout_height="60dp"
+				android:layout_height="wrap_content"
 				android:orientation="horizontal"
 	    		android:padding="14dp"
 	    		android:gravity="center"
@@ -102,7 +103,22 @@
 	           	   android:layout_weight="1"
 		           />  
 	    		 -->
-	    		 <ImageButton android:id="@+id/pin_button0"
+				 <TextView android:id="@+id/pin_textview"
+					 android:singleLine="true"
+					 android:password="true"
+					 android:maxLength="4"
+					 android:layout_width="wrap_content"
+					 android:layout_height="45dp"
+					 android:textSize="24dp"
+					 android:gravity="center"
+					 android:numeric="integer"
+					 android:background="@drawable/button_pin_null"
+					 android:layout_weight="1"
+					 android:cursorVisible="false"
+					 android:focusableInTouchMode="true"
+					 android:inputType="number"
+					 />
+				 <!-- <ImageButton android:id="@+id/pin_button0"
 		           android:layout_width="wrap_content"
 		           android:layout_height="45dp"
 		           android:background="@drawable/button_pin_null"
@@ -127,7 +143,7 @@
 		           	android:layout_height="45dp"
 	           	   	android:background="@drawable/button_pin_null"
 	           	   	android:layout_weight="1"
-		           />
+				   /> -->
 	          </LinearLayout>  
     	</LinearLayout>
         	
@@ -146,24 +162,24 @@
 			android:gravity="center">
 
 			<ImageView 
-				android:id="@+id/number"
+				android:id="@+id/ok_icon"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:background="@drawable/number"
+				android:background="@drawable/ok_icon"
 			></ImageView>
 			<TextView
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:layout_gravity="center"
-			    android:text="@string/help_info_number"
+			    android:text="@string/confirm"
 			    android:textColor="#FFFFFFFF"
 			    android:textSize="24dp"
 			    android:layout_marginRight="30dp"
 			    />
 			<ImageView 
 				android:id="@+id/return_icon"
-				android:layout_width="45dp"
-				android:layout_height="45dp"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
 				android:background="@drawable/return_icon"
 			></ImageView>
 			<TextView
@@ -175,5 +191,5 @@
 			    android:textSize="24dp" />
 		</LinearLayout>
 	</LinearLayout>
-</LinearLayout>
+</com.amlogic.widget.PasswordLayout>
 

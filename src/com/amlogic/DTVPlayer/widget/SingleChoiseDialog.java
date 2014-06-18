@@ -63,8 +63,8 @@ abstract public class SingleChoiseDialog {
 			
 		};
 		
-		mDialog.setCancelable(false);
-		mDialog.setCanceledOnTouchOutside(false);
+		mDialog.setCancelable(true);
+		mDialog.setCanceledOnTouchOutside(true);
 
 		if(mDialog == null){
 			return;
@@ -120,9 +120,9 @@ abstract public class SingleChoiseDialog {
 		list_item.setOnItemClickListener(mOnItemClickListener);
 		
 		
-     	no.setFocusable(true);   
+     	// no.setFocusable(true);   
      	//no.requestFocus();   
-     	no.setFocusableInTouchMode(true);   
+     	// no.setFocusableInTouchMode(true);   
 		no.setOnClickListener(new OnClickListener(){
 		          public void onClick(View v) {				  	 
 		        	 onSetNegativeButton();

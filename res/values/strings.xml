@@ -11,9 +11,15 @@
 	<string name="yes">Yes</string>
 	<string name="no">No</string>
 	<string name="all">All</string>
+	<string name="menu">MENU</string>
 	<string name="tv">TV</string>
 	<string name="radio">Radio</string>
 	<string name="favorite">Favorite</string>
+	<string name="picture_mode">Pciture mode</string>
+	<string name="tel_text">TTX</string>
+	<string name="ad">AD</string>
+	<string name="ad_volume_up">AD volume up</string>
+	<string name="ad_volume_down">AD volume down</string>
 	<string name="unfavorite">Move Favorite</string>
 
 	<string name="auto">Auto</string>
@@ -323,6 +329,7 @@
 	<string name="dtvscandvbt_bandwidth">Bandwidth(M)</string>	
 	<string name="dtvscandvbt_scan_bandwidthauto">Auto</string>
 	<string name="dtvscan_begain_search">Search</string>	
+	<string name="dtvscan_scan_manual_back">Return Back</string>
 	<string name="dtvscan_confirm">ok</string>
 	<string name="dtvscan_cancel">cancel</string>
 	<string name="dtvscan_scan_tv">TV</string>
@@ -613,6 +620,7 @@
 	
 	<string name="confirm">Confirm</string>
 	<string name="exit">Exit</string>
+	<string name="exit_player">Exit Player</string>
 	<string name="rec">REC</string>
 
 	<string name="goto_s">Satellite</string>
