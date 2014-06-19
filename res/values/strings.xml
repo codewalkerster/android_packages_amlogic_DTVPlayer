@@ -673,5 +673,13 @@
 		<item>Türkçe</item>
 		<item>Ellinika</item>
 	</array>	
+
+	<string name="channel_info">Channel Information</string>
+	<string name="channel_fre">Frequency</string>
+	<string name="channel_strenght">Signal Strenght</string>	
+	<string name="channel_signal_quality">Signal Quality</string>
+	<string name="channel_error_rate">Error Rate</string>	
+	<string name="channel_video_pid">Video PID</string>
+	<string name="channel_audio_pid">Audio PID</string>
 	
 </resources>
