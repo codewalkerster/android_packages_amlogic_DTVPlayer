@@ -1654,9 +1654,48 @@ public class DTVPlayer extends DTVActivity{
 		inforbar_show_flag = false;
 	}	
 
+
+	private Handler timer_channel_info_handler = new Handler();   
+	private Runnable timer_channel_info_runnable = new Runnable() {
+
+		public void run() {
+		    	updataSignalInfo();
+			timer_channel_info_handler.postDelayed(this, 1000);
+		}   
+	};
+
+	private void updataSignalInfo()
+	{
+		
+		TextView strenght = (TextView)channel_info_view.findViewById(R.id.channel_strenght);
+		TextView signal_quality = (TextView)channel_info_view.findViewById(R.id.channel_signal_quality);
+		//TextView error_rate = (TextView)channel_info_view.findViewById(R.id.channel_error_rate);
+
+		int strength=getFrontendSignalStrength();
+		if(strength>100)
+			strength=0;
+		strenght.setText(this.getResources().getString(R.string.channel_strenght)+": "+Integer.toString(strength));
+		signal_quality.setText(this.getResources().getString(R.string.channel_signal_quality)+": "+Integer.toString(getFrontendSNR()));
+		//error_rate.setText(this.getResources().getString(R.string.channel_error_rate)+": "+Integer.toString(getFrontendBER()));
+
+		editBuilder.setView(channel_info_view); 
+
+		alert_password.setOnKeyListener( new DialogInterface.OnKeyListener(){
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				// TODO Auto-generated method stub
+				switch(keyCode)
+				{	
+					case  KeyEvent.KEYCODE_TAB:
+							dialog.cancel();
+							return true;
+				}
+				return false;
+			}
+		});
+	}
+
 	LinearLayout channel_info_view = null; 
 	private AlertDialog.Builder editBuilder;
-	
 	private void showChannelInfo(){
 		Log.d(TAG, "report : ber:" + getFrontendBER() + " snr:" +getFrontendSNR() + " strength:" + getFrontendSignalStrength());
 
@@ -1742,7 +1781,7 @@ public class DTVPlayer extends DTVActivity{
 
 		alert_password.setOnDismissListener(new DialogInterface.OnDismissListener(){
 			public void onDismiss(DialogInterface dialog) {
-				//timer_channel_info_handler.removeCallbacks(timer_channel_info_runnable);  
+				timer_channel_info_handler.removeCallbacks(timer_channel_info_runnable);  
 			}         
 		});	
 
@@ -1754,7 +1793,7 @@ public class DTVPlayer extends DTVActivity{
 		alert_password.getWindow().setAttributes(lp);
 		alert_password.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		
-		//timer_channel_info_handler.postDelayed(timer_channel_info_runnable, 1000);
+		timer_channel_info_handler.postDelayed(timer_channel_info_runnable, 1000);
 
 	}
 
