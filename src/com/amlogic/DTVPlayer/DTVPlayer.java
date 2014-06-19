@@ -864,27 +864,6 @@ public class DTVPlayer extends DTVActivity{
 		// findViewById(R.id.return_icon).setOnClickListener(new MouseClick());
 		findViewById(R.id.menu_icon).setFocusable(false);
 		findViewById(R.id.menu_icon).setOnClickListener(new MouseClick());
-		 findViewById(R.id.return_icon).setFocusable(false);
-		 findViewById(R.id.return_icon).setOnClickListener(
-			new View.OnClickListener(){	  
-				public void onClick(View v) {		
-					// TODO Auto-generated method stub	
-					Log.d(TAG,"touch exit!!!!!!!!!!!!!!!!!!!!!");
-					if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){	
-						DTVTTHide();
-						DTVPlayerInTeletextStatus=false;
-					}	
-					
-					if(DTVPlayerIsRecording()){
-						DTVPlayerStopRecording();
-					}	
-					
-					finishPlayer();
-					setInputSource(TVConst.SourceInput.SOURCE_ATV);
-					System.exit(0);
-				}
-			}
-		);
 	}
 
 	private boolean tryBookingPlay(){
