@@ -3742,7 +3742,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					break;
 				
 				}	
-				refreshAtscManualScanList();
+				refreshDvbtManualScanList();
 			}
 		};						
 	}							

@@ -653,13 +653,15 @@
 
 	<array name="settings_lauguage" translatable="false">
 		<item>English</item>
-		<item>Chinese</item>    	
+		<item>Chinese</item>   
+		<item>Thailand</item>    
 	</array>	
 
 	
 	<array name="lauguage_iso_639_2" translatable="false">
 		<item>eng</item>
-		<item>chi</item>    	
+		<item>chi</item>  
+		<item>tha</item> 
 	</array>
 
 	<array name="teletext_region_lauguage" translatable="false">
@@ -673,5 +675,13 @@
 		<item>Türkçe</item>
 		<item>Ellinika</item>
 	</array>	
+
+	<string name="channel_info">Channel Information</string>
+	<string name="channel_fre">Frequency</string>
+	<string name="channel_strenght">Signal Strenght</string>	
+	<string name="channel_signal_quality">Signal Quality</string>
+	<string name="channel_error_rate">Error Rate</string>	
+	<string name="channel_video_pid">Video PID</string>
+	<string name="channel_audio_pid">Audio PID</string>
 	
 </resources>

@@ -66,15 +66,14 @@
 			      android:layout_height="fill_parent"		      
 			    ></ListView>
 	        -->
-
-	        <ListView
+	       <com.amlogic.widget.FocusScrollListView
 	            android:id="@+id/ListView_channel"
 	            android:layout_width="match_parent"
 	            android:layout_height="match_parent"
+	            android:listSelector="#00000000"
 	            android:layout_margin="0dip"
-		    android:listSelector="@drawable/program_list_item_bg"
 	            android:padding="0dip" >
-	        </ListView>
+	        </com.amlogic.widget.FocusScrollListView>
 	    </LinearLayout>
 
 	    <LinearLayout

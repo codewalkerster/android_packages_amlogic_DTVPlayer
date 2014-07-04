@@ -14,6 +14,7 @@ import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVEvent;
 import com.amlogic.tvutil.DTVPlaybackParams;
 import com.amlogic.tvutil.DTVRecordParams;
+import com.amlogic.tvutil.TVSatellite;
 
 import android.view.*;
 import android.view.View.*;
@@ -557,6 +558,7 @@ public class DTVPlayer extends DTVActivity{
 				return true;
 			case DTVActivity.KEYCODE_GREEN_BUTTON: //tv/radio
 				Log.d(TAG,"KEYCODE_GREEN_BUTTON");	
+				showChannelInfo();
 				return true;	
 			case DTVActivity.KEYCODE_RED_BUTTON: //16:9/4:3
 				Log.d(TAG,"KEYCODE_RED_BUTTON");
@@ -1651,6 +1653,150 @@ public class DTVPlayer extends DTVActivity{
 		}
 		inforbar_show_flag = false;
 	}	
+
+
+	private Handler timer_channel_info_handler = new Handler();   
+	private Runnable timer_channel_info_runnable = new Runnable() {
+
+		public void run() {
+		    	updataSignalInfo();
+			timer_channel_info_handler.postDelayed(this, 1000);
+		}   
+	};
+
+	private void updataSignalInfo()
+	{
+		
+		TextView strenght = (TextView)channel_info_view.findViewById(R.id.channel_strenght);
+		TextView signal_quality = (TextView)channel_info_view.findViewById(R.id.channel_signal_quality);
+		//TextView error_rate = (TextView)channel_info_view.findViewById(R.id.channel_error_rate);
+
+		int strength=getFrontendSignalStrength();
+		if(strength>100)
+			strength=0;
+		strenght.setText(this.getResources().getString(R.string.channel_strenght)+": "+Integer.toString(strength));
+		signal_quality.setText(this.getResources().getString(R.string.channel_signal_quality)+": "+Integer.toString(getFrontendSNR()));
+		//error_rate.setText(this.getResources().getString(R.string.channel_error_rate)+": "+Integer.toString(getFrontendBER()));
+
+		editBuilder.setView(channel_info_view); 
+
+		alert_password.setOnKeyListener( new DialogInterface.OnKeyListener(){
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				// TODO Auto-generated method stub
+				switch(keyCode)
+				{	
+					case  KeyEvent.KEYCODE_TAB:
+							dialog.cancel();
+							return true;
+				}
+				return false;
+			}
+		});
+	}
+
+	LinearLayout channel_info_view = null; 
+	private AlertDialog.Builder editBuilder;
+	private void showChannelInfo(){
+		Log.d(TAG, "report : ber:" + getFrontendBER() + " snr:" +getFrontendSNR() + " strength:" + getFrontendSignalStrength());
+
+		editBuilder = new AlertDialog.Builder(this);	
+		
+		channel_info_view = (LinearLayout)getLayoutInflater().inflate(R.layout.dvbs_channel_info, null);
+		TextView fre_text = (TextView)channel_info_view.findViewById(R.id.fre);
+		int frequency = 0;
+
+		if(mDTVSettings.getScanRegion().contains("DVBS")){
+			if(mTVProgram!=null){
+				if(mTVProgram.getChannel()!=null){
+					frequency = mTVProgram.getChannel().getParams().getFrequency();
+					int sym = mTVProgram.getChannel().getParams().getSymbolRate();
+					int polartion = mTVProgram.getChannel().getParams().getPolarisation();
+					String pol="";
+					if(polartion ==0)
+					pol="V";
+					else
+					pol="H";
+					int sat_id = mTVProgram.getChannel().getParams().getSatId();
+					String sat_name = TVSatellite.tvSatelliteSelect(DTVPlayer.this,sat_id).getSatelliteName();
+
+					fre_text.setText(String.valueOf(frequency/1000)+"MHz   "+pol+"   "+String.valueOf(sym/1000)+"KS/s   "+sat_name);
+				
+					TextView satellites_name = (TextView)channel_info_view.findViewById(R.id.sat_name);
+					satellites_name.setText(this.getResources().getString(R.string.sat_name)+": "+sat_name);
+
+					TextView symb = (TextView)channel_info_view.findViewById(R.id.symb);
+					symb.setText(this.getResources().getString(R.string.ts_symbol)+": "+Integer.toString(sym/1000)+" KS/s");
+
+					TextView polar = (TextView)channel_info_view.findViewById(R.id.polar);
+					String polar_s = (polartion==0)?"H":"V";
+					polar.setText(this.getResources().getString(R.string.ts_polarity)+": "+polar_s);
+				}
+			}
+		}	
+		else
+			channel_info_view = (LinearLayout)getLayoutInflater().inflate(R.layout.channel_info, null);
+		
+			 
+		TextView channel_name = (TextView)channel_info_view.findViewById(R.id.channel_name);
+		
+
+		TextView strenght = (TextView)channel_info_view.findViewById(R.id.channel_strenght);
+		TextView signal_quality = (TextView)channel_info_view.findViewById(R.id.channel_signal_quality);
+		//TextView error_rate = (TextView)channel_info_view.findViewById(R.id.channel_error_rate);
+
+		TextView vid = (TextView)channel_info_view.findViewById(R.id.video_pid);
+		TextView aid = (TextView)channel_info_view.findViewById(R.id.audio_pid);
+
+		channel_name.setText(this.getResources().getString(R.string.channel_name)+": "+dtvplayer_name);
+		fre_text.setText(this.getResources().getString(R.string.channel_fre)+": "+Integer.toString(frequency/1000)+" kHZ");
+
+		int strength=getFrontendSignalStrength();
+		if(strength>100)
+			strength=0;
+		strenght.setText(this.getResources().getString(R.string.channel_strenght)+": "+Integer.toString(strength));
+		signal_quality.setText(this.getResources().getString(R.string.channel_signal_quality)+": "+Integer.toString(getFrontendSNR()));
+		//error_rate.setText(this.getResources().getString(R.string.channel_error_rate)+": "+Integer.toString(getFrontendBER()));
+
+		int  video_pid = 0x1fff;
+		int audio_pid = 0x1fff;
+		
+		if(mTVProgram!=null){
+			
+			video_pid  = mTVProgram.getVideo().getPID();
+			audio_pid  = mTVProgram.getAudio().getPID();
+		}		
+
+		vid.setText(this.getResources().getString(R.string.channel_video_pid)+": "+Integer.toString(video_pid));
+		aid.setText(this.getResources().getString(R.string.channel_audio_pid)+": "+Integer.toString(audio_pid));	
+
+		editBuilder.setTitle(R.string.channel_info);
+		editBuilder.setView(channel_info_view); 
+ 
+		alert_password = editBuilder.create();
+
+		alert_password.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+			}         
+		}); 	
+
+		alert_password.setOnDismissListener(new DialogInterface.OnDismissListener(){
+			public void onDismiss(DialogInterface dialog) {
+				timer_channel_info_handler.removeCallbacks(timer_channel_info_runnable);  
+			}         
+		});	
+
+		alert_password.show();
+		//alert_password.getWindow().setLayout(400, -1);
+			
+		WindowManager.LayoutParams lp=alert_password.getWindow().getAttributes();
+		lp.dimAmount=0.0f;
+		alert_password.getWindow().setAttributes(lp);
+		alert_password.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		
+		timer_channel_info_handler.postDelayed(timer_channel_info_runnable, 1000);
+
+	}
+
 
 	private boolean radio_bg_flag=false;
 	private void showRadioBg(){
