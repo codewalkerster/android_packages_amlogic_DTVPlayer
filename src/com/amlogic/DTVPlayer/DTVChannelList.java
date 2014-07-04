@@ -203,8 +203,8 @@ public class DTVChannelList extends DTVActivity{
   
   	private AdapterView.OnItemSelectedListener mOnSelectedListener = new AdapterView.OnItemSelectedListener(){
 		public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
-			parent.setSelection(position);
-			v.requestFocus();
+			//parent.setSelection(position);
+			//v.requestFocus();
 			if(ListView_channel.hasFocus() == true){
 				if(mDTVSettings.getScanRegion().contains("DVBS")==true){
 					TextView info= (TextView) findViewById(R.id.channel_info);
