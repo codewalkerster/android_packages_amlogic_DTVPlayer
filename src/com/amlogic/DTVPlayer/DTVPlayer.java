@@ -507,7 +507,8 @@ public class DTVPlayer extends DTVActivity{
 				else{
 					finishPlayer();
 					setInputSource(TVConst.SourceInput.SOURCE_ATV);
-					System.exit(0);					
+					//System.exit(0);	
+					getApplication().onTerminate();
 				}	
 				Log.d(TAG,"KEYCODE_BACK");
 				return true;

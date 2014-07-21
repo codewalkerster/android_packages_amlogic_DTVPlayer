@@ -6267,7 +6267,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		title.setTextColor(Color.YELLOW);
 		title.setText(getString(R.string.edit_title));
 
-	    final DbTransponder TsInfo  = queryTsData(list_cur_pos);
+	    	final DbTransponder TsInfo  = queryTsData(list_cur_pos);
 		
 		final EditText edittext_frequency= (EditText) window.findViewById(R.id.edittext_frequency);
 		final EditText edittext_symbol = (EditText) window.findViewById(R.id.edittext_symbol);
