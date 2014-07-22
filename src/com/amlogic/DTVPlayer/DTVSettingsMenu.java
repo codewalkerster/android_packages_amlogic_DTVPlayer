@@ -26,7 +26,6 @@ import android.text.*;
 import android.text.method.*;
 import android.os.SystemProperties;
 import java.lang.reflect.Field;
-
 import com.amlogic.widget.PasswordDialog;
 import com.amlogic.widget.SureDialog;
 import com.amlogic.widget.SingleChoiseDialog;
@@ -4053,26 +4052,66 @@ public class DTVSettingsMenu extends DTVActivity {
 	public void showDvbtEditFreDialog(View v,int pos){
 		final View view = v;
 		final int position = pos;
-		builder = new AlertDialog.Builder(this);	
-		final EditText editText = new EditText(this);
-		editText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(6)});
-		
-		//editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
-		builder.setTitle(R.string.edit_title);
+		mDialog = new Dialog(this,R.style.MyDialog){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						if(mDialog!=null&& mDialog.isShowing()){
+							mDialog.dismiss();
+						}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.edit_number_dialog);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.0f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.edit_title));
+		
+		final EditText editText= (EditText) window.findViewById(R.id.edit);
+		editText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(6)});
 		TextView desFreText = (TextView) view;
 		editText.setText(desFreText.getText().toString());
-		builder.setView(editText); 
 
-		AlertDialog alert = builder.create();
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
 
-		alert.setOnKeyListener( new DialogInterface.OnKeyListener(){
-			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-				// TODO Auto-generated method stub
-				switch(keyCode)
-				{	
-					case KeyEvent.KEYCODE_DPAD_CENTER:
-					case KeyEvent.KEYCODE_ENTER:
+		no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+		        	 //onSetNegativeButton();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+				 //onSetPositiveButton(cur_choise_index);
 						String fre = editText.getText().toString();
 						if(fre==null||fre.equals("")){
 							editText.setText(null);
@@ -4102,38 +4141,18 @@ public class DTVSettingsMenu extends DTVActivity {
 								Log.d(TAG,"New usf"+usfs[position]);
 								*/
 								mDTVSettings.setDvbtScanFrequency(Integer.parseInt(editText.getText().toString()));
-								dialog.cancel();
 							}	
 						}
-						return true;
-					case  KeyEvent.KEYCODE_BACK:
-						dialog.cancel();
-						return true;
-				}
-				
-				return false;
-			}
-		});	
+				 
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+	          }});
+
 
 		
-		alert.setOnShowListener(new DialogInterface.OnShowListener(){
-						public void onShow(DialogInterface dialog) {
-			
-							}         
-							}); 	
-
-		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
-						public void onDismiss(DialogInterface dialog) {	
-						}         
-						});	
-		alert.show();	
-		alert.getWindow().setLayout(500, -200);
-		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-		lp.dimAmount=0.0f;
-		alert.getWindow().setAttributes(lp);
-		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
-				
+
 	public void showDvbtScanBandwidthDialog(TextView v){
 		final TextView info_cur = v;
 		int pos = mDTVSettings.getDvbtScanBandwidth();
