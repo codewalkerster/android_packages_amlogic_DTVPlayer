@@ -318,6 +318,17 @@ public class DTVSettings{
 		dvbt_scan_frequency=fre;
 	}
 
+	public void setStringConfig(String name, String value){
+		mContext.setConfig(name, value);
+	}
+
+	public void setIntConfig(String name, int value){
+		mContext.setConfig(name, value);
+	}
+
+	public void setBoolConfig(String name, Boolean value){
+		mContext.setConfig(name, value);
+	}
 
 }
 
