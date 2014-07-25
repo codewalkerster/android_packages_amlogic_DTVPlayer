@@ -15,6 +15,9 @@ import com.amlogic.tvutil.TVEvent;
 import com.amlogic.tvutil.DTVPlaybackParams;
 import com.amlogic.tvutil.DTVRecordParams;
 import com.amlogic.tvutil.TVSatellite;
+import com.amlogic.widget.CheckUsbdevice;
+import com.amlogic.tvutil.TVConfigValue;
+import com.amlogic.tvservice.TVConfig;
 
 import android.view.*;
 import android.view.View.*;
@@ -50,7 +53,8 @@ import java.lang.Process;
 public class DTVPlayer extends DTVActivity{
 	private static final String TAG="DTVPlayer";
 	private Toast toast=null;
-	private Bundle bundle;	
+	private Bundle bundle;
+	private TVConfig config;
 	AlertDialog mAlertDialog=null;  //no signal or no data
 	DTVSettings mDTVSettings=null;	
 	private PowerManager.WakeLock wakeLock = null;
@@ -111,8 +115,9 @@ public class DTVPlayer extends DTVActivity{
 			PowerManager.ON_AFTER_RELEASE, TAG);
 		wakeLock.acquire();	
 
-		if(home_receiver==null)	
-			home_receiver = new HomeKeyEventBroadCastReceiver(); 
+		config = new TVConfig(this);
+		if(home_receiver==null)
+			home_receiver = new HomeKeyEventBroadCastReceiver();
 		registerReceiver(home_receiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 	}
 
@@ -197,7 +202,16 @@ public class DTVPlayer extends DTVActivity{
 				    		Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
 							toast.show();
-										
+
+							if(isRecord == true){
+								mDebugRecordProgressDialog.cancel();
+								DTVPlayerStopRecording();
+				                progressThread.setState(ProgressThread.STATE_DONE);
+				                showWarningDialog();
+				                isRecord = false;
+							}
+
+
 					break;
 					case  TVMessage.REC_ERR_ACCESS_FILE:
 						break;
@@ -503,7 +517,9 @@ public class DTVPlayer extends DTVActivity{
 				}	
 				else if(DTVPlayerIsRecording()){
 					showStopPVRDialog();
-				}	
+				}else if(debugAVInfoShowFlag){
+					HideDebugAVInfoDialog();
+				}
 				else{
 					finishPlayer();
 					setInputSource(TVConst.SourceInput.SOURCE_ATV);
@@ -660,6 +676,14 @@ public class DTVPlayer extends DTVActivity{
 					toast.show();
 				}	
 				return true;
+			case KeyEvent.KEYCODE_B:
+				if(debugMenuDialogShowFlag == 0xf){
+					Usbdevice = new CheckUsbdevice(this);
+					append_flag = false;
+					showDebugMenuDialog();
+				}
+				debugMenuDialogShowFlag = 0x0;
+				return true;
 		}
 
 		return super.onKeyDown(keyCode, event);
@@ -667,6 +691,7 @@ public class DTVPlayer extends DTVActivity{
 
 
 	private RelativeLayout RelativeLayout_inforbar=null;
+	private RelativeLayout RelativeLayout_debugInfoDialog=null;
 	private RelativeLayout RelativeLayout_mainmenu=null;
 	private RelativeLayout RelativeLayout_videobcak=null;
 	private RelativeLayout RelativeLayout_program_number=null;
@@ -702,8 +727,9 @@ public class DTVPlayer extends DTVActivity{
 	TextView Text_button_info=null;
 
 	private void DTVPlayerUIInit(){
-		RelativeLayout_inforbar = (RelativeLayout)findViewById(R.id.RelativeLayoutInforbar);	
-		RelativeLayout_mainmenu = (RelativeLayout)findViewById(R.id.RelativeLayoutMainMenu);	
+		RelativeLayout_inforbar = (RelativeLayout)findViewById(R.id.RelativeLayoutInforbar);
+		RelativeLayout_debugInfoDialog = (RelativeLayout)findViewById(R.id.RelativeLayoutDebugAVInfoDialog);
+		RelativeLayout_mainmenu = (RelativeLayout)findViewById(R.id.RelativeLayoutMainMenu);
 		RelativeLayout_program_number = (RelativeLayout)findViewById(R.id.RelativeLayoutProNumer);
 		RelativeLayout_radio_bg = (RelativeLayout)findViewById(R.id.RelativeLayoutRadioBg);
 		RelativeLayout_recording_icon = (RelativeLayout)findViewById(R.id.RelativeLayoutPvrIcon);
@@ -861,7 +887,8 @@ public class DTVPlayer extends DTVActivity{
 		RelativeLayout_inforbar.setVisibility(View.INVISIBLE);
 		RelativeLayout_radio_bg.setVisibility(View.INVISIBLE);
 		RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
-		
+		RelativeLayout_debugInfoDialog.setVisibility(View.INVISIBLE);
+
 		init_Animation();
 		// findViewById(R.id.return_icon).setFocusable(false);
 		// findViewById(R.id.return_icon).setOnClickListener(new MouseClick());
@@ -2107,6 +2134,18 @@ public class DTVPlayer extends DTVActivity{
 	private void DTVDealDigtalKey(int value){
 		int number_key_value=0;
 
+		if(value == KeyEvent.KEYCODE_2 && debugMenuDialogShowFlag == 0x0){
+			debugMenuDialogShowFlag |= 0x1;
+		}else if(value == KeyEvent.KEYCODE_4 && debugMenuDialogShowFlag == 0x1){
+			debugMenuDialogShowFlag |= 0x2;
+		}else if(value == KeyEvent.KEYCODE_6 && debugMenuDialogShowFlag == 0x3){
+			debugMenuDialogShowFlag |= 0x4;
+		}else if(value == KeyEvent.KEYCODE_8 && debugMenuDialogShowFlag == 0x7){
+			debugMenuDialogShowFlag |= 0x8;
+		}else{
+			debugMenuDialogShowFlag = 0x0;
+		}
+
 		if(mDTVSettings.getScanRegion().contains("ATSC")){
 			if(DTVPlayerInTeletextStatus==false){
 				prono_timer_handler.removeCallbacks(prono_timer_runnable);
@@ -3197,16 +3236,507 @@ public class DTVPlayer extends DTVActivity{
 					if (reason.equals(SYSTEM_HOME_KEY)) { 
 						finishPlayer();
 						getApplication().onTerminate();
-					} else if (reason.equals(SYSTEM_RECENT_APPS)) { 
-					
-					} 
-				} 
-			} 
-		} 
+					} else if (reason.equals(SYSTEM_RECENT_APPS)) {
+
+					}
+				}
+			}
+		}
 	}
-	
+
+	public static CheckUsbdevice Usbdevice = null;
+	public static FileWriter dvbAVInfoWriter = null;
+	private int debugMenuDialogShowFlag=0;
+
+	private void showDebugMenuDialog(){
+		AlertDialog.Builder debugMenuDialog = new AlertDialog.Builder(this)
+			.setTitle("User Debug Menu")
+			.setItems(new String[] {"AV Info","Tv Record","Tv Config"}, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					//Log.d(TAG, "###Recive click"+which);
+					switch (which) {
+						case 0:
+							Log.d(TAG, "###show av info");
+							ShowDebugAVInfoDialog();
+							break;
+						case 1:
+							Log.d(TAG, "###go to record");
+							showDebugRecordDialog();
+							break;
+						case 2:
+							Log.d(TAG, "### show config Menu");
+							showDebugConfigDialog();
+							break;
+						default:
+							break;
+					}
+				}
+			});
+
+			debugMenuDialog.create();
+			debugMenuDialog.show();
+
+	}
+
+	private void showWarningDialog(){
+		AlertDialog.Builder debugWarningBuilder = new AlertDialog.Builder(this)
+		.setTitle("Record infomation")
+		.setPositiveButton("sure", null);
+		debugWarningBuilder.setMessage("WARNING! please check the USB devices !");
+		debugWarningBuilder.show();
+	}
+
+	private void showDebugRecordDialog(){
+		if (isHaveExternalStorage()){
+			AlertDialog.Builder debugRecordBuilder = new AlertDialog.Builder(this)
+			.setTitle("Record infomation")
+			.setNegativeButton("yes", new DialogInterface.OnClickListener() {
+		     @Override
+		     public void onClick(DialogInterface dialog, int which) {
+		      // TODO Auto-generated method stub
+		     	Log.d(TAG, "@@@ready to record...");
+		     	DTVPlayerStartRecording(60*60*1000);
+		     	showDebugRecordProgressDialog();
+		     }
+		    })
+		    .setPositiveButton("no", new DialogInterface.OnClickListener() {
+
+		     @Override
+		     public void onClick(DialogInterface dialog, int which) {
+		      // TODO Auto-generated method stub
+		     	Log.d(TAG, "@@@cancel to record...");
+		     }
+		    });
+
+			TextView text = new TextView(this);
+			text.setText("Are you sure to record?");
+			text.setTextSize(27);
+			text.setGravity(Gravity.CENTER);
+			debugRecordBuilder.setView(text);
+			debugRecordBuilder.create();
+			debugRecordBuilder.show();
+		}else{
+			showWarningDialog();
+		}
+	}
+
+	//static final int PROGRESS_DIALOG = 0;
+	boolean isRecord = false;
+    ProgressThread progressThread;
+    ProgressDialog mDebugRecordProgressDialog;
+    private void showDebugRecordProgressDialog(){
+    	isRecord = true;
+		mDebugRecordProgressDialog = new ProgressDialog(this);
+        mDebugRecordProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mDebugRecordProgressDialog.setTitle("Record infomation");
+		mDebugRecordProgressDialog.setMessage("In recording, click stop-key to cancel...");
+		mDebugRecordProgressDialog.setProgress(60);
+		mDebugRecordProgressDialog.setMax(60);
+        progressThread = new ProgressThread(handler);
+        progressThread.start();
+        mDebugRecordProgressDialog.setButton("stop", new DialogInterface.OnClickListener() {
+	        public void onClick(DialogInterface dialog, int i)
+	        {
+	        	isRecord = false;
+	        	DTVPlayerStopRecording();
+	            dialog.cancel();
+	        }
+    	});
+        mDebugRecordProgressDialog.show();
+    	setDialogFontSize(mDebugRecordProgressDialog, 20);
+    }
+	final Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            int total = msg.getData().getInt("total");
+            mDebugRecordProgressDialog.setProgress(total);
+            if (total >= 60){
+                isRecord = false;
+                mDebugRecordProgressDialog.cancel();
+				DTVPlayerStopRecording();
+                progressThread.setState(ProgressThread.STATE_DONE);
+            }
+        }
+    };
+    private class ProgressThread extends Thread {
+        Handler mHandler;
+        final static int STATE_DONE = 0;
+        final static int STATE_RUNNING = 1;
+        int mState;
+        int total;
+        ProgressThread(Handler h) {
+            mHandler = h;
+        }
+        public void run() {
+            mState = STATE_RUNNING;
+            total = 0;
+            while (mState == STATE_RUNNING) {
+                try {
+                    Thread.sleep(60*1000);
+                } catch (InterruptedException e) {
+                    Log.e("ERROR", "Thread Interrupted");
+                }
+                Message msg = mHandler.obtainMessage();
+                Bundle b = new Bundle();
+                b.putInt("total", total);
+                msg.setData(b);
+                mHandler.sendMessage(msg);
+                total++;
+            }
+        }
+        /* sets the current state for the thread,
+         * used to stop the thread */
+        public void setState(int state) {
+            mState = state;
+        }
+    }
+
+	private void setDialogFontSize(Dialog dialog,int size)
+    {
+        Window window = dialog.getWindow();
+        View view = window.getDecorView();
+        setViewFontSize(view,size);
+    }
+    private void setViewFontSize(View view,int size)
+    {
+        if(view instanceof ViewGroup)
+        {
+            ViewGroup parent = (ViewGroup)view;
+            int count = parent.getChildCount();
+            for (int i = 0; i < count; i++)
+            {
+                setViewFontSize(parent.getChildAt(i),size);
+            }
+        }
+        else if(view instanceof TextView){
+            TextView textview = (TextView)view;
+            textview.setTextSize(size);
+        }
+    }
+
+	private boolean debugAVInfoShowFlag=false;
+	//private int debugMenuDialogShowFlag=0;
+	private void ShowDebugAVInfoDialog(){
+		Log.d(TAG, "********remove call back first!!!!");
+		debug_info_timer_handler.removeCallbacks(debug_info_timer_runnable);
+		if((debugAVInfoShowFlag==false)&&(RelativeLayout_debugInfoDialog!=null&&showAction!=null)){
+			RelativeLayout_debugInfoDialog.startAnimation(showAction);
+			RelativeLayout_debugInfoDialog.setVisibility(View.VISIBLE);
+		}
+
+		debugAVInfoShowFlag = true;
+		debug_info_timer_handler.postDelayed(debug_info_timer_runnable, debug_inforbar_distime);
+	}
+
+	private void HideDebugAVInfoDialog(){
+		//inforbarLayout.setVisibility(View.INVISIBLE);
+		if(debugAVInfoShowFlag){
+			if(RelativeLayout_debugInfoDialog!=null&&hideAction!=null){
+				RelativeLayout_debugInfoDialog.startAnimation(hideAction);
+    			RelativeLayout_debugInfoDialog.setVisibility(View.INVISIBLE);
+			}
+		}
+		debugAVInfoShowFlag = false;
+	}
 
 
+	private boolean append_flag = false;
+	private int debug_inforbar_distime=1000;
+	private Handler	debug_info_timer_handler = new Handler();
+	private Runnable debug_info_timer_runnable = new Runnable(){
+		public void run() {
+			if(debugAVInfoShowFlag==true){
+
+				Log.d(TAG, "\t\t@=====================================append flag:"+ append_flag);
+				String satellites_db = null;
+				satellites_db = Usbdevice.getDevice();
+				Log.d(TAG, "\t\t################ Usb Devices:"+satellites_db);
+				try {
+
+						Log.d(TAG, "\t\t################ new fileWriter");
+						if(append_flag==true){
+							dvbAVInfoWriter = new FileWriter(satellites_db+"/dvb_debug_avinfo.txt", true);
+						}else{
+							dvbAVInfoWriter = new FileWriter(satellites_db+"/dvb_debug_avinfo.txt");
+							append_flag = true;
+						}
+
+		            try {
+		                dvbAVInfoWriter.write("audio pts:"+getAudioPts()+"\n");
+		                dvbAVInfoWriter.write("video pts:"+getVideoPts()+"\n");
+		                dvbAVInfoWriter.write("demux audio pts:"+getDemuxAudioPts()+"\n");
+		                dvbAVInfoWriter.write("demux video pts:"+getDemuxVideoPts()+"\n");
+		                dvbAVInfoWriter.write("audio buffer level:"+getBufferLevel(2)+"\n");
+		                dvbAVInfoWriter.write("video buffer level:"+getBufferLevel(1)+"\n");
+		                dvbAVInfoWriter.write("\n\n\n");
+		                } finally {
+		                    dvbAVInfoWriter.close();
+		                }
+		        }catch (FileNotFoundException e) {
+		            e.printStackTrace();
+		        }catch (Exception e) {
+		                Log.e(TAG,"set File ERROR!",e);
+		        }
+		        updteDebugInforbar();
+				Log.d(TAG, "\t\t@=====================================@");
+			}
+			debug_info_timer_handler.postDelayed(this, debug_inforbar_distime);
+		}
+	};
+
+	private String getAudioPts(){
+		File file=null;
+		BufferedReader br=null;
+		String audio_pts=null;
+		try{
+			file=new File("/sys/class/tsync/pts_audio");
+			br=new BufferedReader(new FileReader(file));
+
+			audio_pts=br.readLine();
+			if(br != null){
+				br.close();
+			}
+			Log.d(TAG, "=====>>read audio pts: "+audio_pts);
+		}catch(Exception e){
+		}
+		return audio_pts;
+	}
+
+	private String getVideoPts(){
+		File file=null;
+		BufferedReader br=null;
+		String video_pts=null;
+		try{
+			file=new File("/sys/class/tsync/pts_video");
+			br=new BufferedReader(new FileReader(file));
+
+			video_pts=br.readLine();
+			if(br != null){
+				br.close();
+			}
+			Log.d(TAG, "=====>>read video pts: "+video_pts);
+		}catch(Exception e){
+		}
+		return video_pts;
+	}
+	private String getDemuxAudioPts(){
+		File file=null;
+		BufferedReader br=null;
+		String demux_audio_pts=null;
+		try{
+			file=new File("/sys/class/stb/audio_pts");
+			br=new BufferedReader(new FileReader(file));
+
+			demux_audio_pts=br.readLine();
+			if(br != null){
+				br.close();
+			}
+			Log.d(TAG, "=====>>read demux audio pts: "+demux_audio_pts);
+		}catch(Exception e){
+		}
+		return demux_audio_pts;
+	}
+	private String getDemuxVideoPts(){
+		File file=null;
+		BufferedReader br=null;
+		String demux_video_pts=null;
+		try{
+			file=new File("/sys/class/stb/video_pts");
+			br=new BufferedReader(new FileReader(file));
+
+			demux_video_pts=br.readLine();
+			if(br != null){
+				br.close();
+			}
+			Log.d(TAG, "=====>>read demux video pts: "+demux_video_pts);
+		}catch(Exception e){
+		}
+		return demux_video_pts;
+	}
+	private String getBufferLevel(int index){
+		String video_buffer_level=null;
+		String audio_buffer_level=null;
+		File file=null;
+		BufferedReader br=null;
+		String temp=null;
+		String temp_sub=null;
+
+		try{
+			file=new File("sys/class/amstream/bufs");
+			br=new BufferedReader(new FileReader(file));
+
+			temp=br.readLine();
+
+			while(temp!=null){
+				temp=br.readLine();
+				if(temp.length() >= 9){
+					temp_sub=temp.substring(1, 10);
+					if(temp_sub.equals("buf level")){
+						if(video_buffer_level==null){
+							video_buffer_level=temp.substring(11);
+							Log.d(TAG, "@@@@@@@@@@@@@ read video_buffer_level:"+video_buffer_level);
+						}
+						else if(audio_buffer_level==null){
+							audio_buffer_level=temp.substring(11);
+							Log.d(TAG, "@@@@@@@@@@@@@ read audio_buffer_level:"+audio_buffer_level);
+						}
+					}
+				}
+
+			}
+			if(br != null){
+				br.close();
+			}
+
+		}catch(Exception e){
+		}
+		if(index == 1){
+			return audio_buffer_level;
+		}else if(index == 2){
+			return video_buffer_level;
+		}
+		return null;
+	}
+
+	private void updteDebugInforbar(){
+		if (mDTVSettings == null)
+			return;
+
+		TextView Text_v_buf_level= (TextView) findViewById(R.id.Text_v_buf_level);
+		Text_v_buf_level.setText("video buffer level: "+getBufferLevel(2));
+		TextView Text_a_buf_level= (TextView) findViewById(R.id.Text_a_buf_level);
+		Text_a_buf_level.setText("audio buffer level: "+getBufferLevel(1));
+
+		TextView Text_v_pts= (TextView) findViewById(R.id.Text_v_pts);
+		Text_v_pts.setText("video pts: "+getVideoPts());
+		TextView Text_a_pts= (TextView) findViewById(R.id.Text_a_pts);
+		Text_a_pts.setText("audio pts: "+getAudioPts());
+
+		TextView Text_demux_v_pts= (TextView) findViewById(R.id.Text_demux_v_pts);
+		Text_demux_v_pts.setText("demux video pts: "+getDemuxVideoPts());
+		TextView Text_demux_a_pts= (TextView) findViewById(R.id.Text_demux_a_pts);
+		Text_demux_a_pts.setText("demux audio pts: "+getDemuxAudioPts());
+
+	}
+
+	private String[] m_Items;
+	private int cfgCount = 0;
+	private void showDebugConfigDialog(){
+
+		AlertDialog.Builder tvConfigDialog = new AlertDialog.Builder(this)
+			.setTitle("Config Menu");
+
+		File file=null;
+		BufferedReader br=null;
+		String temp=null;
+		String temp_sub=null;
+		int count = 0;
+		//final CharSequence[] items = null;// = {region, region};
+
+		m_Items = new String[65];
+
+		try{
+			file=new File("data/data/com.amlogic.tvservice/files/tv.cfg");
+			br=new BufferedReader(new FileReader(file));
+
+			temp=br.readLine();
+
+			while(temp!=null){
+				m_Items[count] = temp;
+				temp=br.readLine();
+				Log.d(TAG, "read tv cfg:"+m_Items[count]+" count is "+count);
+				count++;
+			}
+			cfgCount = count;
+			if(br != null){
+				br.close();
+			}
+
+		}catch(Exception e){
+		}
+
+
+		tvConfigDialog.setItems(m_Items,  new DialogInterface.OnClickListener(){
+			public void onClick(DialogInterface dialog, int which) {
+				showDebugConfigInputDialog(m_Items[which], which);
+			}
+		});
+		tvConfigDialog.create();
+		tvConfigDialog.show();
+	}
+
+
+	private void showDebugConfigInputDialog(String text, final int index){
+		final String title = text.substring(0, text.indexOf('='));
+		String value = text.substring(text.indexOf('=')+1);
+
+		final EditText editText = new EditText(this);
+		//editText.setText(text);
+		editText.setText(value);
+		AlertDialog.Builder configInputDialog = new AlertDialog.Builder(this)
+
+		//.setTitle("please input the value")
+		.setTitle(title)
+		.setView(editText)
+		.setPositiveButton("yes", new DialogInterface.OnClickListener(){
+
+			public void onClick(DialogInterface dialog, int which) {
+				Log.d(TAG, "recive input string:"+editText.getText().toString());
+
+				m_Items[index] = title + "=" + editText.getText().toString();
+
+				String vstr  = editText.getText().toString();
+				TVConfigValue value;
+
+				if(vstr.matches("[ \\t\\n]*\".*\"[ \\t\\n]*")){
+					String sv = vstr.replaceAll("[ \\t\\n]*\"(.*)\"[ \\t\\n]*", "$1");
+					value = new TVConfigValue(sv);
+					Log.d(TAG, title+"=\""+sv+"\"");
+
+				}else if(vstr.matches("[ \\t\\n]*true[ \\t\\n]*")){
+					value = new TVConfigValue(true);
+					Log.d(TAG, title+"=true");
+
+				}else if(vstr.matches("[ \\t\\n]*false[ \\t\\n]*")){
+					value = new TVConfigValue(false);
+					Log.d(TAG, title+"=false");
+
+				}else{
+					String istrs[] = vstr.split(",");
+					if(istrs.length == 1){
+						String istr = istrs[0].replaceAll("[ \\t\\n]*([+-]?\\d*)", "$1");
+						value = new TVConfigValue(Integer.parseInt(istr));
+						Log.d(TAG, title+"="+Integer.parseInt(istr));
+					}else{
+						int v[] = new int[istrs.length];
+						int i;
+
+						for(i = 0; i < istrs.length; i++){
+							String istr = istrs[i].replaceAll("[ \\t\\n]*([+-]?\\d*)", "$1");
+							v[i] = Integer.parseInt(istr);
+						}
+
+						value = new TVConfigValue(v);
+						Log.d(TAG, title+"="+vstr);
+					}
+				}
+				try{
+
+					if(value.getType() == 1){
+						mDTVSettings.setStringConfig(title, value.getString());
+					}else if(value.getType() == 2){
+						mDTVSettings.setIntConfig(title, value.getInt());
+					}else if(value.getType() == 3){
+						mDTVSettings.setBoolConfig(title, value.getBoolean());
+					}
+
+				}catch(Exception e){
+				}
+
+		        showDebugMenuDialog();
+			}
+		})
+		.setNegativeButton("no", null);
+		configInputDialog.show();
+	}
 
 }
-

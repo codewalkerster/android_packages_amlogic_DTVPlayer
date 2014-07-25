@@ -94,7 +94,101 @@
 			</LinearLayout>
 		</LinearLayout>
 	</RelativeLayout>
-		
+
+	<!--DebugInfoBar display-->
+	<RelativeLayout android:id="@+id/RelativeLayoutDebugAVInfoDialog"
+		android:layout_alignParentTop="true"
+		android:layout_width="fill_parent"
+		android:layout_marginLeft="30dp"
+		android:layout_marginRight="30dp"
+		android:layout_marginTop="50dp"
+		android:background="@drawable/dtvplayer_bar_bg"
+		android:layout_height="180dp"
+		>
+
+		<!--LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:layout_alignParentBottom="true"
+		    android:orientation="horizontal" -->
+
+<!--android:layout_width="fill_parent"-->
+		      <!--android:layout_width="fill_parent"-->
+		      <!--android:singleLine="true"-->
+			<TextView
+		      android:id="@+id/Text_v_buf_level"
+		      android:layout_height="36dp"
+		      android:layout_width="fill_parent"
+		      android:layout_below="@+id/RelativeLayoutDebugAVInfoDialog"
+		      android:textSize="26sp"
+		      android:paddingLeft="30dp"
+		      android:singleLine="true"
+		      android:layout_weight="1"
+		      >
+			</TextView>
+
+			<TextView
+		      android:id="@+id/Text_a_buf_level"
+		      android:layout_height="36dp"
+		      android:layout_width="fill_parent"
+		      android:layout_below="@+id/RelativeLayoutDebugAVInfoDialog"
+		      android:textSize="26sp"
+		      android:paddingLeft="700dp"
+		      android:layout_weight="1"
+		      >
+			</TextView>
+
+		    <TextView
+		      android:id="@+id/Text_v_pts"
+		      android:layout_width="fill_parent"
+		      android:layout_height="36dp"
+		      android:layout_below="@+id/Text_v_buf_level"
+		      android:textSize="26sp"
+		      android:paddingLeft="30dp"
+		      android:singleLine="true"
+		      android:layout_weight="1"
+		      >
+			</TextView>
+
+			<TextView
+		      android:id="@+id/Text_a_pts"
+		      android:layout_width="fill_parent"
+		      android:layout_height="36dp"
+		      android:layout_below="@+id/Text_v_buf_level"
+		      android:textSize="26sp"
+		      android:paddingLeft="700dp"
+		      android:singleLine="true"
+		      android:layout_weight="1"
+		      >
+			</TextView>
+
+			 <TextView
+		      android:id="@+id/Text_demux_v_pts"
+		      android:layout_width="fill_parent"
+		      android:layout_height="36dp"
+		      android:layout_below="@+id/Text_v_pts"
+		      android:textSize="26sp"
+		      android:paddingLeft="30dp"
+		      android:singleLine="true"
+		      android:layout_weight="1"
+		      >
+			</TextView>
+
+			<TextView
+		      android:id="@+id/Text_demux_a_pts"
+		      android:layout_width="fill_parent"
+		      android:layout_height="36dp"
+		      android:layout_below="@+id/Text_v_pts"
+		      android:textSize="26sp"
+		      android:paddingLeft="700dp"
+		      android:singleLine="true"
+		      android:layout_weight="1"
+		      >
+			</TextView>
+		<!--/LinearLayout-->
+
+	</RelativeLayout>
+
 	<!--Inforbar display-->
 	<RelativeLayout android:id="@+id/RelativeLayoutInforbar"
 		android:layout_alignParentBottom="true"
