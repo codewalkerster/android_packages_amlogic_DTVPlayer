@@ -223,6 +223,7 @@ abstract public class DTVActivity extends TVActivity{
 					break;
 				case TVMessage.TYPE_PROGRAM_SWITCH:	
 					RecordStatus(STATUS_LOCKED,false);
+					RecordStatus(STATUS_SCRAMBLED,false);
 					mDTVSettings.setCheckProgramLock(false);
 					break;
 				case TVMessage.TYPE_PROGRAM_SCRAMBLED:
