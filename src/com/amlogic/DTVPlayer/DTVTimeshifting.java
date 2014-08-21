@@ -943,10 +943,12 @@ public class DTVTimeshifting extends DTVActivity{
 						play.requestFocus();
 						play.setBackgroundResource(R.drawable.pause_button);
 						TimeshiftingIcon.setImageResource(R.drawable.timeshifting_icon);
+						play_status = STAT_PLAY;
 						break;
 					case DTVPlaybackParams.PLAYBACK_ST_PAUSED:
 						play.setBackgroundResource(R.drawable.play_button);
 						TimeshiftingIcon.setImageResource(R.drawable.timeshifting_pause);
+						play_status = STAT_PAUSE;
 						break;
 					case DTVPlaybackParams.PLAYBACK_ST_EXIT:
 	 					SeekSliding = false;
