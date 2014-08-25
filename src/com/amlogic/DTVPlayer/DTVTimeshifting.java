@@ -62,10 +62,13 @@ public class DTVTimeshifting extends DTVActivity{
 		/* there may be a conflict in startTimeshifting, so
 		 * we need to sovle the RECORD_CONFLICT message.
 		 */
-		setBlackoutPolicy(1);
+		//setBlackoutPolicy(1);
 		startTimeshifting();
 		DTVTimeshiftingUIInit();
 		timeshiftingHandler.postDelayed(timeshiftingTimer, 1000);
+		DTVTimeShiftingPause();
+		play_status = STAT_PAUSE;
+		showStartOrExitDialog();
 	}
 
 	private MountEventReceiver mount_receiver=null;
@@ -526,6 +529,23 @@ public class DTVTimeshifting extends DTVActivity{
 		};
 	}
 
+	private void showStartOrExitDialog(){
+		new SureDialog(DTVTimeshifting.this){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.timeshifting_pause_message));
+			}
+			public void onSetNegativeButton(){
+				 DTVTimeshifting.this.finish();
+			}
+			public void onSetPositiveButton(){
+				play.requestFocus();
+				play.setBackgroundResource(R.drawable.pause_button);
+				play_status = STAT_PLAY;
+				DTVTimeShiftingResume();
+			}
+		};
+	}
+
 	private void showStopRecordingDialog(){
 		new SureDialog(DTVTimeshifting.this){
 			public void onSetMessage(View v){
@@ -946,6 +966,7 @@ public class DTVTimeshifting extends DTVActivity{
 						play_status = STAT_PLAY;
 						break;
 					case DTVPlaybackParams.PLAYBACK_ST_PAUSED:
+						play.requestFocus();
 						play.setBackgroundResource(R.drawable.play_button);
 						TimeshiftingIcon.setImageResource(R.drawable.timeshifting_pause);
 						play_status = STAT_PAUSE;

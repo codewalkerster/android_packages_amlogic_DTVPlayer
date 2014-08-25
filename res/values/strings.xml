@@ -256,6 +256,7 @@
 	<string name="closed_caption">Closed Caption</string>	
 	<!--Timeshifting-->
 	<string name="timeshifting_exit_message">Do you want exit timeshifting</string>
+	<string name="timeshifting_pause_message">"yes" continue,"no" exit</string>
 	<string name="timeshift_when_recording">Now is recording,if you want to timeshifting,you must first stop pvr</string>
 	<string name="timeshift_when_radio">Now is radio, not support timeshifting</string>
 	<string name="timeshift_when_lock">Locked channel,please unlock first</string>
