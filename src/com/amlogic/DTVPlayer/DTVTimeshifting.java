@@ -535,7 +535,11 @@ public class DTVTimeshifting extends DTVActivity{
 				((TextView)v).setText(getString(R.string.timeshifting_pause_message));
 			}
 			public void onSetNegativeButton(){
-				 DTVTimeshifting.this.finish();
+				 DTVTimeShiftingStop();
+				Intent intent = new Intent();
+				intent.setClass(DTVTimeshifting.this, DTVPlayer.class);
+				startActivity(intent);
+				finish();	
 			}
 			public void onSetPositiveButton(){
 				play.requestFocus();
