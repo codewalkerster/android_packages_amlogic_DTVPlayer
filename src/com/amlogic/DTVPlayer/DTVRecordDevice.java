@@ -46,12 +46,12 @@ public class DTVRecordDevice extends DTVActivity {
 	private getDiskInfoThread  t=null;
 	
 	int dev_list_sel = 0;			
-    final int DIALOG_INSERT_USB_MESSAGE = 1;
-    final int DIALOG_YES_NO_MESSAGE = 2;
-    ArrayList<DeviceItem> deviceList= null;
-    private Context mContext	= null;
-    
-    private MountEventReceiver mount_receiver = null;
+	final int DIALOG_INSERT_USB_MESSAGE = 1;
+	final int DIALOG_YES_NO_MESSAGE = 2;
+	ArrayList<DeviceItem> deviceList= null;
+	private Context mContext	= null;
+
+	private MountEventReceiver mount_receiver = null;
 
 	private ImageButton returnButton;
 
@@ -61,9 +61,10 @@ public class DTVRecordDevice extends DTVActivity {
 	private String sd_path="/storage/external_storage/sdcard1";
 	private TextView disk_type=null;
 	private TextView disk_total=null;
-    private TextView disk_space=null;
+	private TextView disk_space=null;
+	private boolean mMidUi = false;
 	
-    class MountEventReceiver extends BroadcastReceiver {
+	class MountEventReceiver extends BroadcastReceiver {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -94,9 +95,7 @@ public class DTVRecordDevice extends DTVActivity {
     			}
 	        }
 		}
-    }
-	
-	
+	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -106,7 +105,14 @@ public class DTVRecordDevice extends DTVActivity {
 	  	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 	  	WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
-		setContentView(R.layout.dtv_record_device);
+		if (SystemProperties.get("ro.product.brand", "").equals("MID")) {
+			mMidUi = true;
+			setContentView(R.layout.mid_dtv_record_device);
+		} else {
+			mMidUi = false;
+			setContentView(R.layout.dtv_record_device);
+		}
+		
 		mContext = this;  	
 	}
 
@@ -436,21 +442,23 @@ public class DTVRecordDevice extends DTVActivity {
 		}
 		myUsbDeviceSingleChoiseDialog=new SingleChoiseDialog(DTVRecordDevice.this,list_content,pos){
 			public void onSetMessage(View v){
-				((TextView)v).setText(getString(R.string.timeshift_time_set));
+				((TextView)v).setText(getString(R.string.pvr_storage_select));
 			}
 
 			public void onSetNegativeButton(){
 				
 			}
 			public void onSetPositiveButton(int which){
-				dev_list_sel = which;
-				DeviceItem item = deviceList.get(which);  
-				Log.d(TAG,"path="+item.Path);
-				info_cur.setText(item.Path);
-				mDTVSettings.setRecordStoragePath(item.Path);
-				//disk_type.setText(item.format);
-				disk_total.setText(item.total);
-				disk_space.setText(item.spare);
+				if(deviceList!=null&&deviceList.size()>0){
+					dev_list_sel = which;
+					DeviceItem item = deviceList.get(which);  
+					Log.d(TAG,"path="+item.Path);
+					info_cur.setText(item.Path);
+					mDTVSettings.setRecordStoragePath(item.Path);
+					//disk_type.setText(item.format);
+					disk_total.setText(item.total);
+					disk_space.setText(item.spare);
+				}	
 			}
 		};				
 	}

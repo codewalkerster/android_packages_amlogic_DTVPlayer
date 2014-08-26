@@ -191,7 +191,7 @@ public class DTVPlayer extends DTVActivity{
 				    		Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
 							toast.show();
-						
+						showRecordPathSettingsDia();
 						break;
 					case  TVMessage.REC_ERR_WRITE_FILE:	
 						if(toast!=null)
@@ -1209,6 +1209,24 @@ public class DTVPlayer extends DTVActivity{
 				}		
 				
 				startActivity(Intent_scan);
+			}
+		};
+		return;
+	}
+
+	private void showRecordPathSettingsDia(){
+		new SureDialog(DTVPlayer.this,false){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.check_usb_device));
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(){
+				Intent Intent_record_device = new Intent();
+		        	Intent_record_device.setClass(DTVPlayer.this, DTVRecordDevice.class);
+		        	startActivityForResult(Intent_record_device,12);
 			}
 		};
 		return;
