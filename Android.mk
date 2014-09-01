@@ -9,7 +9,7 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src)
 #LOCAL_SDK_VERSION := current
 LOCAL_PACKAGE_NAME := DTVPlayer
 LOCAL_STATIC_JAVA_LIBRARIES := tvmiddleware
-
+LOCAL_JNI_SHARED_LIBRARIES := libam_adp libam_mw libjnitvmboxdevice libjnitvdatabase libjnitvscanner libjnitvsubtitle libjnitvepgscanner libzvbi
 LOCAL_PROGUARD_ENABLED := disabled
 
 LOCAL_CERTIFICATE := platform
