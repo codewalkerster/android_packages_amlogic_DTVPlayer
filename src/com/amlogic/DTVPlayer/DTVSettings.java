@@ -21,6 +21,46 @@ public class DTVSettings{
 		mContext = (DTVActivity)context;
 		
 	}
+
+	public String getDtvMode(){
+		return mContext.getStringConfig("tv:dtv:mode");
+	}
+
+	public void setDtvMode(String mode){
+		mContext.setConfig("tv:dtv:mode",mode);
+		if(mode.equals("dvbs")){
+			mContext.setConfig("tv:scan:dtv:region","Default DVBS");
+		}
+		else if(mode.equals("dvbt")){
+			mContext.setConfig("tv:scan:dtv:region","UK,Default DVB-T");
+		}
+		else if(mode.equals("isdbt")){
+			mContext.setConfig("tv:scan:dtv:region","BRAZIL,Default ISDBT");
+		}
+		else if(mode.equals("atsc")){
+			mContext.setConfig("tv:scan:dtv:region","U.S.,ATSC Air");
+		}
+	}
+
+	public String getDtvDemodAndDmxConfig(){
+		return mContext.getStringConfig("tv:dtv:config_demod_fe");
+	}
+
+	public void setDtvDemodAndDmxConfig(String mode){
+		if(mode.equals("avl6211")){
+			mContext.setConfig("tv:dtv:config_demod_fe","dtv_demod 0 driver Avl6211|dtv_demod 0 i2c_id 2|dtv_demod 0 i2c_addr 0xc0|dtv_demod 0 reset_gpio GPIOY_5|frontend 0 dtv_demod 0|frontend 0 ts 0|enable 0");
+			mContext.setConfig("tv:dtv:config_dmx","0 p 0 0");	
+		}
+		else if(mode.equals("mxl101")){
+			mContext.setConfig("tv:dtv:config_demod_fe","dtv_demod 0 driver Mxl101|dtv_demod 0 i2c_id 2|dtv_demod 0 i2c_addr 0x60|dtv_demod 0 reset_gpio GPIOY_5|frontend 0 dtv_demod 0|frontend 0 ts 0|enable 0");
+			mContext.setConfig("tv:dtv:config_dmx","0 s 0 1");	
+		}
+		else if(mode.equals("si2168")){
+			mContext.setConfig("tv:dtv:config_demod_fe","dtv_demod 0 driver Avl6211|dtv_demod 0 i2c_id 2|dtv_demod 0 i2c_addr 0xc0|dtv_demod 0 reset_gpio GPIOY_5|frontend 0 dtv_demod 0|frontend 0 ts 0|enable 0");
+			mContext.setConfig("tv:dtv:config_dmx","0 p 0 0");	
+		}
+		
+	}
 	
 	public void setTeltextBound(){
 		mContext.setConfig("tv:subtitle:margin_left",30);

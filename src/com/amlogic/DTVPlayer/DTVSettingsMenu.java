@@ -4732,6 +4732,9 @@ public class DTVSettingsMenu extends DTVActivity {
 		};		
 	}
 
+
+	private int debugMenuDialogShowFlag=0;
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
@@ -4741,6 +4744,34 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 		switch(keyCode)
 		{
+			case KeyEvent.KEYCODE_0:
+			case KeyEvent.KEYCODE_1:
+			case KeyEvent.KEYCODE_2:
+			case KeyEvent.KEYCODE_3:
+			case KeyEvent.KEYCODE_4:
+			case KeyEvent.KEYCODE_5:
+			case KeyEvent.KEYCODE_6:
+			case KeyEvent.KEYCODE_7:
+			case KeyEvent.KEYCODE_8:
+			case KeyEvent.KEYCODE_9:
+				if(keyCode == KeyEvent.KEYCODE_2 && debugMenuDialogShowFlag == 0x0){
+					debugMenuDialogShowFlag |= 0x1;
+				}else if(keyCode == KeyEvent.KEYCODE_4 && debugMenuDialogShowFlag == 0x1){
+					debugMenuDialogShowFlag |= 0x2;
+				}else if(keyCode == KeyEvent.KEYCODE_6 && debugMenuDialogShowFlag == 0x3){
+					debugMenuDialogShowFlag |= 0x4;
+				}else if(keyCode == KeyEvent.KEYCODE_8 && debugMenuDialogShowFlag == 0x7){
+					debugMenuDialogShowFlag |= 0x8;
+				}else{
+					debugMenuDialogShowFlag = 0x0;
+				}
+				return true;
+			case KeyEvent.KEYCODE_B:
+				if(debugMenuDialogShowFlag == 0xf){
+					showMenuAndDemodDebugDialog();
+				}
+				debugMenuDialogShowFlag = 0x0;
+				return true;	
 			case KeyEvent.KEYCODE_DPAD_DOWN:	
 				if(ListView_settings!=null){
 					if(cur_select_item== ListView_settings.getCount()-1)
@@ -4880,6 +4911,102 @@ public class DTVSettingsMenu extends DTVActivity {
 	private void onShow(){
 		RelativeLayout RelativeLayoutParent = (RelativeLayout)findViewById(R.id.RelativeLayoutParent);
 		RelativeLayoutParent.setVisibility(View.VISIBLE);
+	}
+
+
+	private void showMenuAndDemodDebugDialog(){
+		AlertDialog.Builder debugMenuDialog = new AlertDialog.Builder(this)
+			.setTitle("Menu and demod tuner config")
+			.setItems(new String[] {"Menu Config","Demod tuner config",""}, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					//Log.d(TAG, "###Recive click"+which);
+					switch (which) {
+						case 0:
+							showDvbModeMenuDebugDialog();
+							break;
+						case 1:
+							showDemodAndDmxConfigMenuDebugDialog();
+							break;
+					}
+				}
+			});
+
+		debugMenuDialog.create();
+		debugMenuDialog.show();
+	}
+
+	public void showDvbModeMenuDebugDialog(){
+		String mode = mDTVSettings.getDtvMode();
+		int pos = 0;
+		if(mode.equals("dvbs")){
+			pos = 0;
+		}
+		else if(mode.equals("dvbt")){
+			pos = 1;
+		}
+		else if(mode.equals("isdbt")){
+			pos = 2;
+		}
+		else if(mode.equals("atsc")){
+			pos = 3;
+		}
+		
+		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "DVBS", "DVBT/T2","ISDBT","ATSC"},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText("DTV Mode");
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				switch(which){
+				case 0:  //DVBS
+					mDTVSettings.setDtvMode("dvbs");
+					break;
+				case 1:  //DVBT/T2
+					mDTVSettings.setDtvMode("dvbt");
+					break;
+				case 2:  //ISDBT
+					mDTVSettings.setDtvMode("isdbt");
+					break;	
+				case 3:  //ATSC
+					mDTVSettings.setDtvMode("atsc");
+					break;
+				}	
+			}
+		};						
+	}
+
+	public void showDemodAndDmxConfigMenuDebugDialog(){
+		//String mode = mDTVSettings.getDtvMode();
+		int pos = 0;
+	
+		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "AVL6211(DVBS)", "MXL101(DVBT)","SI2168(DVBT/T2)","ITE9173(ISDBT)"},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText("DTV Mode");
+			}
+
+			public void onSetNegativeButton(){
+				
+			}
+			public void onSetPositiveButton(int which){
+				switch(which){
+				case 0:  //DVBS
+					mDTVSettings.setDtvDemodAndDmxConfig("avl6211");
+					break;
+				case 1:  //DVBT/T2
+					mDTVSettings.setDtvDemodAndDmxConfig("mxl101");
+					break;
+				case 2:  //ISDBT
+					mDTVSettings.setDtvDemodAndDmxConfig("si2168");
+					break;	
+				case 3:  //ATSC
+					
+					break;
+				}	
+			}
+		};						
 	}
 				
 }
