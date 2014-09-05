@@ -5005,6 +5005,8 @@ public class DTVSettingsMenu extends DTVActivity {
 					
 					break;
 				}	
+
+				FeConfigAndDmxConfig();
 			}
 		};						
 	}
