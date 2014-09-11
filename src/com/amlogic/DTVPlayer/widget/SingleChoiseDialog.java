@@ -33,9 +33,9 @@ abstract public class SingleChoiseDialog {
 	TextView title;
 	ListView list_item;
 	Button no ;
-    Button yes ;
+	Button yes ;
 	String[] item_string=null;
-    int cur_choise_index=0;
+	int cur_choise_index=0;
 	
 	public SingleChoiseDialog(Context context,String[] item,int pos) {
 		mContext = context;
@@ -120,9 +120,9 @@ abstract public class SingleChoiseDialog {
 		list_item.setOnItemClickListener(mOnItemClickListener);
 		
 		
-     	// no.setFocusable(true);   
-     	//no.requestFocus();   
-     	// no.setFocusableInTouchMode(true);   
+		// no.setFocusable(true);   
+		//no.requestFocus();   
+		// no.setFocusableInTouchMode(true);   
 		no.setOnClickListener(new OnClickListener(){
 		          public void onClick(View v) {				  	 
 		        	 onSetNegativeButton();

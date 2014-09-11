@@ -5006,6 +5006,9 @@ public class DTVSettingsMenu extends DTVActivity {
 					break;
 				}	
 
+				
+			}
+			public void onDismissEvent(){
 				FeConfigAndDmxConfig();
 			}
 		};						
