@@ -843,7 +843,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				  if(list_cur_pos== 0&&sat_list_focus_flag)
 					sat_list.setSelection(sat_list.getCount()-1); 
 				  break;
-			case KeyEvent.KEYCODE_ZOOM_IN:
+			case DTVActivity.KEYCODE_TTX:
 				if(ListStatus ==0&&ScanSatAndtsInfoList.size()>0){
 					ListStatus =1;
 					gobal_sat_cur_pos = list_cur_pos;
@@ -876,7 +876,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					show_no_satellites_info();
 				}		
 				return true;
-			case KeyEvent.KEYCODE_ZOOM_OUT:
+			case DTVActivity.KEYCODE_REC:
+			case DTVActivity.KEYCODE_RED_BUTTON:
 				if(ListStatus ==0){
 					showSatAddDia();
 				}
@@ -884,8 +885,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 					showTsAddDia();
 				}
 				break;
-			case KeyEvent.KEYCODE_TV_REPEAT:
-				Log.d(TAG,"KEY:KEYCODE_MEDIA_REPEAT");
+			case DTVActivity.KEYCODE_YELLOW_BUTTON:
 				if(ListStatus ==0){
 					showSatEditDia();
 				}
@@ -898,12 +898,8 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				if(ListStatus==1)
 					showTransponderSignalInfoDialog();
 				break;
-			case KeyEvent.KEYCODE_TAB: 
-				Log.d(TAG,"KEY:KEYCODE_MEDIA_INFO");
+			case DTVActivity.KEYCODE_BLUE_BUTTON: 
 				showDeleteDia();
-				break;
-			case KeyEvent.KEYCODE_TV_SWITCH: 
-				Log.d(TAG,"KEY:KEYCODE_TV_SYSTEM");
 				break;
 			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE:
 				Log.d(TAG,"KEY:KEYCODE_MEDIA_RATIO");
@@ -938,9 +934,6 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				Log.d(TAG,"KEY:KEYCODE_MEDIA_SUB_T");
 				if(ListStatus==1)
 					showSetLimitAndPositionDia();
-				break;
-			case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-				
 				break;
 			case KeyEvent.KEYCODE_BACK:
 				if(ListStatus ==1){

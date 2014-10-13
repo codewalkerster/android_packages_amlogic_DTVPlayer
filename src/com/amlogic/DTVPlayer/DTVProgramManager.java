@@ -598,8 +598,6 @@ public class DTVProgramManager extends DTVActivity{
 						mButton.requestFocus();
 				}
 				break;
-			case KeyEvent.KEYCODE_ZOOM_IN:
-				return true;
 			case KeyEvent.KEYCODE_BACK:
 				if(move_mode)
 					move_mode=false;

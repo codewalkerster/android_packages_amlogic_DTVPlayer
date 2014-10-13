@@ -25,6 +25,16 @@
 	<string name="auto">Auto</string>
 	<string name="type_4_3">4:3</string>
 	<string name="type_16_9">16:9</string>
+	<string name="full_screen">Full Screen</string>
+	<string name="type_4_3_IGNORE">4:3</string>
+	<string name="type_4_3_LETTER_BOX">4:3 LETTER BOX</string>
+	<string name="type_4_3_PAN_SCAN">4:3 PAN SCAN</string>
+	<string name="type_4_3_COMBINED">4:3 COMBINED</string>
+	<string name="type_16_9_IGNORE">16:9</string>
+	<string name="type_16_9_LETTER_BOX">16:9 LETTER BOX</string>
+	<string name="type_16_9_PAN_SCAN">16:9 PAN SCAN</string>
+	<string name="type_16_9_COMBINED">16:9 COMBINED</string>
+	
 
 	<string name="mono">Mono</string>
 	<string name="SAP">SAP</string>	
@@ -78,6 +88,7 @@
 	<string name="dtvplayer_no_program">No program</string>
 	<string name="dtvplayer_no_signal"> No signal</string>
 	<string name="dtvplayer_scrambled">Scrambled program</string>
+	<string name="dtvplayer_signal_bad">Signal quality is bad</string>
 
 	<string name="dtvplayer_subtitle_language_set">Subtitle language set</string>
 	<string name="dtvplayer_audio_language_set">Audio language set</string>
@@ -141,6 +152,7 @@
 		<item>Subtitle Language</item>
 		<item>Audio Language</item>
 		<item>Blackout Policy</item> 
+		<item>Information Show Time</item> 
 	</array>
 
 	<array name="system_settings_content" translatable="false">
@@ -190,6 +202,7 @@
 		<item>Channel</item>
 		<item>Frequency(KHz)</item>
 		<item>Bandwidth(M)</item>
+		<item>Signal Check</item>
 		<item>Search</item>
 	</array>
 

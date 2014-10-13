@@ -3,6 +3,8 @@ package com.amlogic.DTVPlayer;
 import android.util.Log;
 import android.os.Bundle;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import com.amlogic.tvutil.TVMessage;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVProgram;
@@ -29,6 +31,23 @@ public class DTVSettings{
 		mContext.setConfig("tv:subtitle:margin_bottom",30);
 	}
 
+	public int getSignalQualityRangeMin(){
+		return  mContext.getIntConfig("tv:dtv:signal_quality_range_min");
+	}
+
+	public int getSignalQualityRangeMax(){
+		return  mContext.getIntConfig("tv:dtv:signal_quality_range_max");
+	}
+
+	public int getInforBarShowTime(){
+		return mContext.getIntConfig("tv:dtv:menu_show_time");
+	}
+
+	public void setInforBarShowTime(int time){
+		if(time>=2&&time<=10)
+		mContext.setConfig("tv:dtv:menu_show_time",time);
+	} 
+	
 	public int getBlackoutPolicyConfig(){
 		return mContext.getIntConfig("tv:dtv:blackout_policy");
 	}
@@ -173,6 +192,11 @@ public class DTVSettings{
 	}
 		
 	public void factoryReset(){
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
+		if(mLast!=null){
+			mLast.edit().putInt("recall_number",1).commit();
+			mLast.edit().putInt("screen_mode",1).commit();
+		}	
 		mContext.restoreFactorySetting();
 	}
 

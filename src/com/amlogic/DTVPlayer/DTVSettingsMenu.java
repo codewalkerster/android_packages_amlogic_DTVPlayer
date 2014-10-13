@@ -1,7 +1,7 @@
 package com.amlogic.DTVPlayer;
 
 import android.util.Log;
-import android.os.Bundle;
+import android.os.*;
 import com.amlogic.tvutil.TVMessage;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVProgram;
@@ -603,6 +603,9 @@ public class DTVSettingsMenu extends DTVActivity {
 						setBlackoutPolicy(1);
 				    	}	
 					break;
+				case 4:
+					showInforbarShowTimeDialog(info_cur);
+					break;
 			}
 		}
 	};
@@ -709,6 +712,14 @@ public class DTVSettingsMenu extends DTVActivity {
 					}	  
 				}
 		  		break; 
+			case 4:
+				{
+					
+					holder.info.setVisibility(View.VISIBLE);
+					holder.icon1.setVisibility(View.INVISIBLE);
+					holder.info.setText(String.valueOf(mDTVSettings.getInforBarShowTime())+"S");
+				}
+				break;
 		  }
 
 		  return convertView;
@@ -1077,6 +1088,9 @@ public class DTVSettingsMenu extends DTVActivity {
 							showDvbtScanBandwidthDialog(info);	
 						break;
 					case 5:
+						showSignalCheckDialog();
+						break;
+					case 6:
 						Intent intent_scan= new Intent();
 						intent_scan.setClass(DTVSettingsMenu.this,DvbtScanResult.class);
 
@@ -3838,9 +3852,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					dvbsanatsc_channelallbandlist[temp]=TVChannelParams.atscParams(dvbsanatsc_channelallbandlist[i].frequency, dvbsanatsc_channelallbandlist[i].modulation);			
 					temp++;
 				}
-				
 			}
-				
 		}
 
 	}
@@ -3939,8 +3951,207 @@ public class DTVSettingsMenu extends DTVActivity {
 				DTVScanDVBT_UpdateChInfoByChNo(which);
 				refreshDvbtManualScanList();
 			}
+
+			public void onDismissEvent(){
+			}
 		};						
 	}
+
+	private Handler timer_signal_check_handler = new Handler();   
+
+	private Runnable timer_signal_check_runnable = new Runnable() {
+		public void run() {
+			timer_signal_check_handler.postDelayed(timer_signal_check_runnable,500);  
+			updataSignalInfo();
+		}   
+	};
+
+	private void updataSignalInfo(){
+		
+		int ber = getFrontendBER();
+		int snr =  getFrontendSNR();
+		int strength =  getFrontendSignalStrength();
+		
+		boolean lock_status = false;
+		if(getFrontendStatus()==32)						
+			lock_status = false;
+		else
+			lock_status=true;
+
+		if(mDialog!=null){
+			Window window = mDialog.getWindow();
+			final CheckBox checkboxStatus = (CheckBox)window.findViewById(R.id.checkStatus);
+			
+			final ProgressBar ProgressBarSNR = (ProgressBar)window.findViewById(R.id.ProgressBarSNR);
+	    		ProgressBarSNR.setMax(100);
+	    		
+			final ProgressBar ProgressBarAGC = (ProgressBar)window.findViewById(R.id.ProgressBarAGC);
+	    		ProgressBarAGC.setMax(100);
+
+			//final ProgressBar ProgressBarBER = (ProgressBar)dvbs_set_limit_list.findViewById(R.id.ProgressBarBER);
+	    		//ProgressBarBER.setMax(100);
+
+			final TextView snr_value = (TextView) window.findViewById(R.id.snr_value);
+			final TextView agc_value = (TextView) window.findViewById(R.id.agc_value);
+			//final TextView ber_value = (TextView) window.findViewById(R.id.ber_value);	
+
+			if(strength>100)
+				strength=0;
+			
+			ProgressBarSNR.setProgress(strength);
+			ProgressBarAGC.setProgress(snr);
+			//ProgressBarBER.setProgress(info.getBER());
+
+			snr_value.setText(Integer.toString((strength>100)?100:strength));
+			agc_value.setText(Integer.toString((snr>100)?100:snr));
+			//ber_value.setText(Integer.toString((info.getBER()>100)?100:info.getBER()));
+			
+			if(lock_status==false)
+				checkboxStatus.setChecked(false);
+			else
+				checkboxStatus.setChecked(true);
+
+		}
+		
+	}
+
+	private void showSignalCheckDialog(){
+		mDialog = new AlertDialog(DTVSettingsMenu.this){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						if(mDialog!=null&& mDialog.isShowing()){
+							mDialog.dismiss();
+						}
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			public void onShow(DialogInterface dialog) {
+				
+			}         
+		}); 	
+		mDialog.show();
+		mDialog.setContentView(R.layout.dvbt_signal_check);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.0f;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+	
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(DTVSettingsMenu.this.getResources().getStringArray(R.array.search_settings_content_dvbt_manual)[5]);
+	
+		final TextView edittext_frequency= (TextView) window.findViewById(R.id.edittext_frequency);
+		final TextView edittext_band = (TextView) window.findViewById(R.id.band);
+		//final TextView polarization = (TextView) window.findViewById(R.id.polarization);
+
+    		final ProgressBar ProgressBarSNR = (ProgressBar)window.findViewById(R.id.ProgressBarSNR);
+    		ProgressBarSNR.setMax(100);
+    		
+		final ProgressBar ProgressBarAGC = (ProgressBar)window.findViewById(R.id.ProgressBarAGC);
+    		ProgressBarAGC.setMax(100);
+
+		//final ProgressBar ProgressBarBER = (ProgressBar)dvbs_set_limit_list.findViewById(R.id.ProgressBarBER);
+    		//ProgressBarBER.setMax(100);
+
+		final TextView snr_value = (TextView) window.findViewById(R.id.snr_value);
+		final TextView agc_value = (TextView) window.findViewById(R.id.agc_value);
+		//final TextView ber_value = (TextView) dvbs_set_limit_list.findViewById(R.id.ber_value);	
+		final CheckBox checkboxStatus = (CheckBox)window.findViewById(R.id.checkStatus);
+
+		checkboxStatus.setFocusable(false);  
+		String region = null;
+		try {
+			region = mDTVSettings.getScanRegion();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.d(TAG, "Cannot read dtv region !!!");
+			return;
+		}
+
+		Log.d(TAG, "region = " + region);
+		
+		if(region.contains("DVB-T")){
+			lock(TVChannelParams.dvbtParams(mDTVSettings.getDvbtScanFrequency()*1000,mDTVSettings.getDvbtScanBandwidth()));
+
+			final  RadioGroup mRadioGroup = (RadioGroup) window.findViewById(R.id.radiogroup);
+			mRadioGroup.setVisibility(View.VISIBLE);
+			final  RadioButton mRadio1 = (RadioButton) window.findViewById(R.id.dvbt);
+			mRadio1.setText("DVBT");
+			final  RadioButton mRadio2 = (RadioButton) window.findViewById(R.id.dvbt2);
+			mRadio2.setText("DVBT2");
+			
+			mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+			  @Override
+			  public void onCheckedChanged(RadioGroup group, int checkedId) {
+			   if (checkedId == mRadio1.getId()) {
+			    	lock(TVChannelParams.dvbtParams(mDTVSettings.getDvbtScanFrequency()*1000,mDTVSettings.getDvbtScanBandwidth()));
+			   } else if (checkedId == mRadio2.getId()) {
+			   	lock(TVChannelParams.dvbt2Params(mDTVSettings.getDvbtScanFrequency()*1000,mDTVSettings.getDvbtScanBandwidth()));
+			   }
+			  }
+			 });
+
+		}
+		else if(region.contains("ISDBT")){
+			lock(TVChannelParams.isdbtParams(mDTVSettings.getDvbtScanFrequency()*1000,mDTVSettings.getDvbtScanBandwidth()));
+
+		}
+				
+		edittext_frequency.setText(String.valueOf(mDTVSettings.getDvbtScanFrequency())+"KHZ");
+		String bandwidth=null;
+		switch(mDTVSettings.getDvbtScanBandwidth()){
+			case TVChannelParams.BANDWIDTH_8_MHZ:
+				bandwidth= "8M";
+				break;
+			case TVChannelParams.BANDWIDTH_7_MHZ:
+				bandwidth= "7M";
+				break;
+			case TVChannelParams.BANDWIDTH_6_MHZ:
+				bandwidth= "6M";
+				break;			
+			case TVChannelParams.BANDWIDTH_AUTO:
+				bandwidth= "Auto";
+				break;
+		}				
+		edittext_band.setText(bandwidth);
+
+		snr_value.setText("0%");
+		agc_value.setText("0%");
+		//ber_value.setText("0%");
+		
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+								
+							}         
+							}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							timer_signal_check_handler.removeCallbacks(timer_signal_check_runnable);  
+						}         
+						});	
+
+		timer_signal_check_handler.postDelayed(timer_signal_check_runnable, 500);
+		
+	}
+
+	
 
 	private void DTVScanATSC_UpdateChInfoByChNo(int index)
 	{
@@ -4291,23 +4502,14 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 		};						
 	}
-	
-	public void showScreenTypeDialog(TextView v){
+
+			
+	public void showInforbarShowTimeDialog(TextView v){
 		final TextView info_cur = v;
-		//int mode = mDTVSettings.getScreenMode();
-		int mode = DTVGetScreenMode();
-		int pos = 0;
-		if(mode==0){
-			pos = 2;
-		}
-		else  if(mode==2){
-			pos = 0;
-		}
-		else  if(mode==3){
-			pos = 1;
-		}
+		int time = mDTVSettings.getInforBarShowTime();
+		int pos = time -2;
 		
-		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "4:3","16:9","auto"},pos){
+		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{"2s","3s","4s","5s","6s","7s","8s","9s","10s",},pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getString(R.string.screen_type));
 			}
@@ -4315,23 +4517,87 @@ public class DTVSettingsMenu extends DTVActivity {
 			public void onSetNegativeButton(){
 				
 			}
+
+			public void onSetPositiveButton(int which){
+				info_cur.setText(String.valueOf(which+2)+"S");						
+				mDTVSettings.setInforBarShowTime(which+2);
+			}
+		};		
+	}
+	
+	public void showScreenTypeDialog(TextView v){
+		final TextView info_cur = v;
+		//int mode = mDTVSettings.getScreenMode();
+		int mode = DTVGetScreenMode();
+		int pos = 0;
+		final int step = 5;
+		if(mode==1){
+			pos = 0;
+		}
+		else {
+			pos = mode-step;
+		}
+		
+		/************************************
+		VIDEO_WIDEOPTION_4_3_IGNORE       = 6,
+		VIDEO_WIDEOPTION_4_3_LETTER_BOX   = 7,
+		VIDEO_WIDEOPTION_4_3_PAN_SCAN     = 8,
+		VIDEO_WIDEOPTION_4_3_COMBINED     = 9,
+		VIDEO_WIDEOPTION_16_9_IGNORE      = 10,
+		VIDEO_WIDEOPTION_16_9_LETTER_BOX  = 11,
+		VIDEO_WIDEOPTION_16_9_PAN_SCAN    = 12,
+		VIDEO_WIDEOPTION_16_9_COMBINED    = 13,
+		***************************************/
+		
+		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{"Full","4:3 IGNORE","4:3 LETTER BOX","4:3 PAN SCAN","4:3 COMBINED", "16:9 IGNORE","16:9 LETTER BOX","16:9 PAN SCAN","16:9 COMBINED"},pos){
+			public void onSetMessage(View v){
+				((TextView)v).setText(getString(R.string.screen_type));
+			}
+			
+			public void onSetNegativeButton(){
+				
+			}
+
 			public void onSetPositiveButton(int which){
 				switch(which){
 					case 0:
-						info_cur.setText(R.string.type_4_3);						
-						//mDTVSettings.setScreenMode(2);
-						DTVSetScreenMode(2);
+						info_cur.setText(R.string.full_screen);						
+						DTVSetScreenMode(1);
 						break;
 					case 1:
-						info_cur.setText(R.string.type_16_9);
-						//mDTVSettings.setScreenMode(3);
-						DTVSetScreenMode(3);
+						info_cur.setText(R.string.type_4_3_IGNORE);						
+						//mDTVSettings.setScreenMode(2);
+						DTVSetScreenMode(which+step);
 						break;
 					case 2:
-						info_cur.setText(R.string.auto);
-						//mDTVSettings.setScreenMode(0);
-						DTVSetScreenMode(0);
+						info_cur.setText(R.string.type_4_3_LETTER_BOX);
+						DTVSetScreenMode(which+step);
+						break;
+					case 3:
+						info_cur.setText(R.string.type_4_3_PAN_SCAN);
+						DTVSetScreenMode(which+step);
 						break;	
+					case 4:
+						info_cur.setText(R.string.type_4_3_COMBINED);						
+						DTVSetScreenMode(which+step);
+						break;
+					case 5:
+						info_cur.setText(R.string.type_16_9_IGNORE);						
+						DTVSetScreenMode(which+step);	
+						break;
+					case 6:
+						info_cur.setText(R.string.type_16_9_LETTER_BOX);						
+						DTVSetScreenMode(which+step);
+						break;
+					case 7:
+						info_cur.setText(R.string.type_16_9_PAN_SCAN);						
+						DTVSetScreenMode(which+step);
+						break;
+					case 8:
+						info_cur.setText(R.string.type_16_9_COMBINED);						
+						DTVSetScreenMode(which+step);						
+						break;
+					
 				}
 			}
 		};		

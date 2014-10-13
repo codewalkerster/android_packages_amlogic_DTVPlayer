@@ -212,8 +212,8 @@ public class DTVBookingManager extends DTVActivity{
 				break;
 			case KeyEvent.KEYCODE_ZOOM_IN:
 				Intent pickerIntent = new Intent();
-                pickerIntent.setClass(DTVBookingManager.this, DTVChannelList.class);
-                startActivity(pickerIntent);
+		              pickerIntent.setClass(DTVBookingManager.this, DTVChannelList.class);
+		              startActivity(pickerIntent);
 				return true;	
 		}
 		

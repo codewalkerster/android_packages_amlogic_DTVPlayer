@@ -1,0 +1,699 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DTV播放器</string>
+	<string name="app">DTVPlayer</string>
+	<!--gobal-->
+	<string name="sure">确定?</string>
+	<string name="on">开</string>
+    <string name="off">关</string>
+	<string name="cancel">退出</string>
+    <string name="ok">是</string>
+	<string name="yes">是</string>
+	<string name="no">否</string>
+	<string name="all">所有</string>
+	<string name="menu">菜单</string>
+	<string name="tv">电视</string>
+	<string name="radio">广播</string>
+	<string name="favorite">喜爱</string>
+	<string name="picture_mode">画面模式</string>
+	<string name="tel_text">TTX</string>
+	<string name="ad">AD</string>
+	<string name="ad_volume_up">AD volume up</string>
+	<string name="ad_volume_down">AD volume down</string>
+	<string name="unfavorite">移除喜爱</string>
+
+	<string name="auto">自动</string>
+	<string name="type_4_3">4:3</string>
+	<string name="type_16_9">16:9</string>
+	<string name="full_screen">Full Screen</string>
+	<string name="type_4_3_IGNORE">4:3</string>
+	<string name="type_4_3_LETTER_BOX">4:3 LETTER BOX</string>
+	<string name="type_4_3_PAN_SCAN">4:3 PAN SCAN</string>
+	<string name="type_4_3_COMBINED">4:3 COMBINED</string>
+	<string name="type_16_9_IGNORE">16:9</string>
+	<string name="type_16_9_LETTER_BOX">16:9 LETTER BOX</string>
+	<string name="type_16_9_PAN_SCAN">16:9 PAN SCAN</string>
+	<string name="type_16_9_COMBINED">16:9 COMBINED</string>
+	
+
+	<string name="mono">Mono</string>
+	<string name="SAP">SAP</string>	
+	<string name="stereo">立体声</string>
+	<string name="left">左声道</string>
+	<string name="right">右声道</string>	
+
+	<string name="add">添加</string>
+	<string name="edit">编辑</string>
+	<string name="delete">删除</string>	
+	<string name="move">移动</string>
+	<string name="add_fav">添加喜爱</string>
+	<string name="del_fav">移除喜爱</string>
+	<string name="add_lock">加锁</string>
+	<string name="del_lock">解锁</string>
+	<string name="add_skip">添加隐藏</string>
+	<string name="del_skip">移除</string>	
+
+	<string name="add_into_group">添加到组</string>	
+	
+    <string name="dtvplayer_loading">加载中...</string>
+	<!--main menu button info--> 
+	<string name="dtvplayer_menu_button_list">节目列表</string>
+	<string name="dtvplayer_menu_button_epg">节目指南</string>
+	<string name="dtvplayer_menu_button_settings">设置</string>
+	<string name="dtvplayer_menu_button_program_manager">节目管理</string>
+	<string name="dtvplayer_menu_button_timeshifting">时移电视</string>
+	<string name="dtvplayer_menu_button_epg_book_manager">节目指南管理</string>
+	<string name="dtvplayer_menu_button_pvr_manager">录像管理</string>
+    <string name="dtvplayer_menu_button_hide">隐藏</string>
+	<string name="dtvplayer_skip_channel">将隐藏节目，确认？</string>
+	<string name="dtvplayer_enter_pvr">进入录像，确认？</string>
+	<string name="dtvplayer_stop_pvr">停止录像，确认</string>
+	<string name="dtvplayer_change_channel">录像进行中，确认要变更频道？</string>
+	<string name="dtvplayer_pvr_is_running">录像进行中，请先停止录像</string>
+	<string name="dtvplayer_no_teletext">无图文</string>
+	<string name="dtvplayer_channel_is_hided">无效输入当前节目被隐藏</string>
+	<string name="dtvplayer_no_current_event">当前：无信息</string>
+	<string name="dtvplayer_no_next_event">下一节目：无信息</string>
+	<string name="dtvplayer_title_info">无标题信息</string>
+  	<string name="dtvplayer_detail_info">无详细信息</string>
+	<string name="dtvplayer_no_channel_stored">无节目，请先搜索</string>
+    <string name="dtvplayer_str_time_null">00:00:00</string>
+  	<string name="dtvplayer_pvr_rec_time">录制时长</string>
+  	<string name="dtvplayer_pvr_set_start_time">设置起始时间</string>
+    <string name="dtvplayer_pvr_rec_min">分</string>
+	<string name="dtvplayer_pvr_start_time">时长</string>
+	<string name="dtvplayer_pvr_record_dialog">录像即将开始，确认继续吗？</string>
+	<string name="dtvplayer_subscribe_play_dialog">预约播放即将开始，确认继续吗？</string>
+
+	<string name="dtvplayer_no_program">节目停播</string>
+	<string name="dtvplayer_no_signal"> 无信号</string>
+	<string name="dtvplayer_scrambled">加扰节目</string>
+
+	<string name="dtvplayer_subtitle_language_set">字幕语言设置</string>
+	<string name="dtvplayer_audio_language_set">音频语言设置</string>
+
+	<string name="dtvplayer_pvr_duration_time">录像时间设置</string>
+	<string name="dtvplayer_pvr_duration_time_head">时长</string>
+	<string name="dtvplayer_pvr_min">分</string>
+
+	<string name="dtvplayer_pvr_time_start">开始</string>
+
+	<!--device browser-->
+	<string name="download_sel_confirm">保存录像到选定存储设备？</string>
+	<string name="usb_removed">找不到录像存储设备，请检查</string>
+	<string name="usb_mounted">加载存储设备</string>	
+	<string name="selected_help">请选择存储设备按确认键</string>	
+	<string name="volume">可移动磁盘</string>
+	<string name="pls_insert_usb">请连接存储设备</string>	
+	<string name="volume_total">总空间:</string>
+	<string name="volume_available">可用空间:</string>	
+	<string name="no_usb_device">找不到存储设备</string>	
+
+    <!--settings help--> 
+    <string name="help_info_move">移动</string>
+  	<string name="help_info_select">选择</string>
+  	<string name="help_info_return">返回</string>
+  	<string name="help_info_number">数字</string>
+  	
+    <!--settings-->
+    <string name="settings_title">设置</string>
+	<array name="settings_content" translatable="false">
+		<item>搜索</item>  
+		<item>字幕开关</item>	    
+		<item>画面</item>	
+		<item>声道设置</item>
+		<item>出厂设置</item>	
+		<item>密码设置</item>	
+		<item>存储设备设置</item>
+		<item>时移电视设置</item>
+		<item>父母级别控制</item>
+		<item>图文区域设置</item>
+	</array>
+
+	<array name="settings_content_atsc" translatable="false">
+		<item>Channel Search</item>  
+		<item>Subtitle Switch</item>	    
+		<item>Picture Size</item>	
+		<item>Audio Track</item>
+		<item>Factory data reset</item>	
+		<item>Set password</item>	
+		<item>Select storage device</item>
+		<item>Timeshifting setting</item>
+		<item>Parental rating age</item>
+		<item>V-Chip</item>
+		<item>TTX Region</item>
+		<item>Closed Caption</item>
+		<item>Antenna Source</item>
+	</array>
+
+	<array name="av_settings_content" translatable="false">
+		<item>画面</item>	
+		<item>字幕开关</item>
+		<item>音频语言</item>
+		<item>切换静帧</item> 
+	</array>
+
+	<array name="system_settings_content" translatable="false">
+		<item>回看列表</item>	
+		<item>字幕开关</item>	    
+		<item>出厂设置</item>	
+		<item>密码设置</item>	
+		<item>父母级别控制</item>
+		<item>图文区域设置</item>
+	</array>
+
+	<array name="system_settings_content_atsc" translatable="false">	
+		<item>Recall List</item>	
+		<item>Subtitle Switch</item>	    
+		<item>Factory data reset</item>	
+		<item>Set password</item>	
+		<item>Parental rating age</item>
+		<item>TTX Region</item>
+		<item>Closed Caption</item>
+		<item>Antenna Source</item>
+	</array>
+
+	<array name="search_settings_content_dvbs" translatable="false">
+		<item>天线设置</item>	
+		<item>数据库管理</item>
+		<item>Unicable 配置</item>
+	</array>
+
+	<array name="search_settings_content_dvbt" translatable="false">
+		<item>自动搜索</item>	
+		<item>手动搜索</item>
+		<item>网络搜索</item>
+		<item>地区</item>
+		<item>LCN</item>
+	</array>
+
+	
+	<array name="search_settings_content_atsc" translatable="false">
+		<item>Auto Scan</item>	
+		<item>Manual Scan</item>
+		<item>Area</item>
+	</array>
+
+	<array name="search_settings_content_dvbt_manual" translatable="false">
+		<item>模式</item>	
+		<item>范围</item>
+		<item>频道</item>
+		<item>频率(KHz)</item>
+		<item>带宽(M)</item>
+		<item>信号检测</item>
+		<item>搜索</item>
+	</array>
+
+	<array name="Program_settings_content" translatable="false">
+		<item>节目管理</item>	
+		<item>节目指南</item>
+		<!--<item>Sort By</item>-->
+		<item>录像设置</item>
+		<item>录像管理</item>
+		<item>时移电视</item>
+	</array>
+
+	
+	<array name="Program_settings_content_dvbs" translatable="false">
+		<item>节目管理</item>	
+		<item>节目指南</item>
+		<!--<item>Sort By</item>-->
+		<item>录像设置</item>
+		<item>录像管理</item>
+		<item>时移电视</item>
+	</array>
+
+	<array name="record_device_content" translatable="false">
+		<item>磁盘</item>	
+		<item>时移时长设置</item>
+	</array>
+
+	<array name="sort_by_content" translatable="false">
+		<item>默认</item>	
+		<item>加扰</item>
+		<item>频率</item>
+		<item>名称</item>
+	</array>
+
+	<string name="invalid_input">无效输入</string>
+	<string name="invalid_password">无效密码</string>
+	<string name="no_channel_stored">没有频道保存，要更细频道列表吗？</string>
+	
+         
+	<string name="subtitle">字幕</string>
+	<string name="subtitle_switch">字幕开关</string>
+	<string name="screen_type ">画面</string>
+	<string name="audio_track">声道</string>
+	
+	<string name="password_set ">密码设置</string>
+	<string name="sure_factory_set">恢复出厂设置，确定？</string>
+
+    <string name="sync_time_item">更新系统时间</string> 
+	<string name="sync_time">确认同步系统时间通过TDT？</string>
+	<string name="pvr_storage_select">设置存储器</string>
+    <string name="timeshift_time_set">时移电视设置</string>
+    <string name="parental_rating_set">父母控制级别</string>
+    <string name="ttx_region">区域</string>
+    <string name="lcn_switch">LCN</string>	
+    
+   
+
+	<string name="enter_cur_password">当前密码</string>
+	<string name="enter_new_password">新密码</string>
+	<string name="confirm_password">确认密码</string>
+	<string name="enter_lock_password">请输入锁密码</string>
+	<string name="enter_password">请输入密码</string>
+
+	<string name="vchip">VChip</string>
+	<string name="closed_caption">Closed Caption</string>	
+	<!--Timeshifting-->
+	<string name="timeshifting_exit_message">退出时移电视，确认？</string>
+	<string name="timeshifting_pause_message">"yes" continue,"no" exit</string>
+	<string name="timeshift_when_recording">正在录像，要进入时移电视需要先停止录像</string>
+	<string name="timeshift_when_radio">广播不支持时移</string>
+	<string name="timeshift_when_lock">加锁节目，请先解锁</string>
+
+	<string name="check_usb_device">没有存储设备</string>
+	<string name="usb_cant_access_file">存储设备没有权限</string>
+	<string name="usbdisk_is_full">存储设备已满或者已经断开</string>
+
+     	
+  <!--DTV EPG--> 	
+  	<string name="epg_sunday">周日</string>
+  	<string name="epg_monday">周一</string>
+    <string name="epg_tuesday">周二</string>
+    <string name="epg_wednesday">周三</string>
+    <string name="epg_thursday">周四</string>
+    <string name="epg_friday">周五</string>
+    <string name="epg_saturday">周六</string>
+    <string name="epg_loading">加载节目指南信息。。。</string>
+    <string name="epg_waiting">请稍后。。。</string>
+    <string name="epg_no_epg_info">无节目指南信息</string>
+    <string name="epg_operate_des01">OK--预约播放/预约录像     		  INFO--时间信息</string>
+	
+    <string name="epg_title">节目指南</string>
+    <string name="epg_ok">预约</string>
+    <string name="epg_info">节目指南信息</string>
+    <string name="epg_booklist">预约列表</string>
+    <string name="epg_page_up">向上翻页</string>
+    <string name="epg_page_down">向下翻页</string>
+    
+	<!--DTV REC Manager-->
+
+	<string name="recmanager_proname">节目名称</string>
+    <string name="recmanager_evtname">事件名称</string>
+    <string name="recmanager_time">时间</string>
+    <string name="recmanager_filename">文件名称</string>
+    <string name="recmanager_help_info">Press ZOOM IN key to create new record</string>
+
+    <string name="recording">正在录制</string>
+	<string name="completed ">录制完成</string>
+	<string name="scheduled">计划录制</string>
+	<string name="sure_delete">确认删除？</string>
+	<string name="play">播放</string>
+
+  	<string name="time_shift_exit">确认退出时移电视？</string>
+  	<string name="subtitle_language_set">字幕语言设置</string>
+  	<string name="audio_language_set">音频语言设置</string>
+      	
+	<!--DTV Scan-->
+   	<string name="dtvscan_scansettingtitle">搜索</string>
+	<string name="dtvscan_manualscansettingtitle">手动搜索</string>
+	<string name="dtvscan_scan_auto">自动搜索</string>
+	<string name="dtvscan_scan_manual">手动搜索</string>	
+	<string name="dtvscan_erea">地区</string>
+	<string name="dtvscandvbt_erea_uk">UK</string>
+	<string name="dtvscandvbt_erea_france">France</string>
+	<string name="dtvscandvbt_erea_australia">Australia</string>
+	<string name="dtvscandvbt_erea_italy">Italy</string>
+	<string name="dtvscandvbt_erea_taiwan">Taiwan</string>	
+	<string name="dtvscan_lcn">LCN</string>	
+	<string name="dtvscan_lcn_on">开</string>
+	<string name="dtvscan_lcn_off">关</string>	
+	<string name="dtvscan_scan_mode">模式</string>	
+	<string name="dtvscan_by_frequence">通过频率</string>	
+	<string name="dtvscan_by_channel">频率列表</string>
+	<string name="dtvscan_scan_band">范围</string>
+	<string name="dtvscan_scan_band_vhf">VHF</string>
+	<string name="dtvscan_scan_band_uhf">UHF</string>
+	<string name="dtvscan_channel_no">Ch No</string>
+	<string name="dtvscan_base_frequence">频率(KHz)</string>
+	<string name="dtvscan_edit_freq">输入频率</string>
+	<string name="dtvscandvbt_bandwidth">带宽(M)</string>	
+	<string name="dtvscandvbt_scan_bandwidthauto">自动</string>
+	<string name="dtvscan_begain_search">搜索</string>	
+	<string name="dtvscan_scan_manual_back">返回</string>
+	<string name="dtvscan_confirm">确认</string>
+	<string name="dtvscan_cancel">取消</string>
+	<string name="dtvscan_scan_tv">电视</string>
+	<string name="dtvscan_scan_audio">广播</string>	
+	<string name="dtvscanatsc_erea_usa">USA</string>
+	<string name="dtvscanatsc_erea_canada">Canada</string>
+	<string name="dtvscanatsc_erea_mexico">Mexico</string>	
+	<string name="dtvscanatsc_antennapower">Antenna Power</string>	
+	<string name="dtvscanatsc_antennapower_on">开</string>
+	<string name="dtvscanatsc_antennapower_off">关</string>
+	<string name="dtvscanatsc_signaltype">Signal Type</string>
+	<string name="dtvscanatsc_signaltype_cable">Cable</string>
+   <string name="dtvscanatsc_signaltype_air">Air</string>
+	<string name="dtvscanatsc_modulation">Modulation</string>	
+	<string name="dtvscanatsc_modulation_qamauto">Qam Auto</string>
+	<string name="dtvscanatsc_modulation_qam16">Qam 16</string>
+	<string name="dtvscanatsc_modulation_qam32">Qam 32</string>
+	<string name="dtvscanatsc_modulation_qam64">Qam 64</string>
+	<string name="dtvscanatsc_modulation_qam128">Qam 128</string>
+	<string name="dtvscanatsc_modulation_qam256">Qam 256</string>
+	<string name="dtvscanatsc_modulation_vsb8">Vsb 8</string>
+	<string name="dtvscanatsc_modulation_vsb16">Vsb 16</string>	
+
+	<!--V_Chip parent control-->
+	<string name="parent_control_title">Parent Control</string>
+	<string name="parent_control_change_password">Change Password</string>
+	<string name="parent_control_switch">P.G Switch</string>
+	<string name="parent_control_switch_on">On</string>
+	<string name="parent_control_switch_off">Off</string>
+
+	<string name="parent_control_TV">TV</string>
+	<string name="parent_control_TV_title">TV Parental Guidelines</string>
+
+	<string name="parent_control_MPAA">MPAA</string>
+	<string name="parent_control_Canada_English">Canada English</string>
+	<string name="parent_control_Canada_French">Canada French</string>
+
+	<string name="parent_control_rrt_set">RRT Setting</string>
+	<string name="parent_control_rrt_reset">RRT Reset</string>
+
+	<string name="enter_new_pin">Enter New PIN</string>
+	<string name="confirm_new_pin">Confirm New PIN</string>
+	<string name="enter_vchip_pin">Enter Vchip PIN</string>
+	<string name="vchip_pin">Vchip PIN</string>
+	<string name="vchip_pin_error">PIN is invalid,please enter again.</string>
+
+	<string name="vchip_rrt_dimensions_values">Values</string>
+	<string name="vchip_rrt_dimensions_abbrev">Abbrev</string>
+	<string name="vchip_rrt_dimensions_status">Status</string>
+
+	<!--Closed Caption-->
+	<string name="cc_title">Closed Caption</string>
+	<string name="cc_switch">Caption</string>
+	<string name="cc_switch_on">On</string>
+	<string name="cc_switch_off">Off</string>
+	
+	<string name="cc_mode_basic">Basic Selection</string>
+	<string name="cc_mode_basic_conect1">CC1</string>
+	<string name="cc_mode_basic_conect2">CC2</string>
+	<string name="cc_mode_basic_conect3">CC3</string>
+	<string name="cc_mode_basic_conect4">CC4</string>
+	
+	<string name="cc_mode_advance">Advanced Selection</string>
+	<string name="cc_mode_advance_conect1">Service1</string>
+  	<string name="cc_mode_advance_conect2">Service2</string>
+  	<string name="cc_mode_advance_conect3">Service3</string>
+	<string name="cc_mode_advance_conect4">Service4</string>
+
+	<string name="cc_mode_advance_text1">Text1</string>
+  	<string name="cc_mode_advance_text2">Text2</string>
+  	<string name="cc_mode_advance_text3">Text3</string>
+	<string name="cc_mode_advance_text4">Text4</string>
+
+	<!--Digital Caption Options-->
+	<string name="cc_digital_options">Digital Caption Options</string>
+
+  	<string name="cc_digital_options_size">Size</string>
+  	<string name="cc_digital_options_size_large">Large</string>
+  	<string name="cc_digital_options_size_small">Small</string>
+  	<string name="cc_digital_options_size_standard">Standard</string>
+	
+  	<string name="cc_digital_options_font_sytle">Font Style</string>
+  	<string name="cc_digital_options_font_sytle0">Style 0</string>
+  	<string name="cc_digital_options_font_sytle1">Style 1</string>
+	<string name="cc_digital_options_font_sytle2">Style 2</string>
+	<string name="cc_digital_options_font_sytle3">Style 3</string>
+	<string name="cc_digital_options_font_sytle4">Style 4</string>
+  	<string name="cc_digital_options_font_sytle5">Style 5</string>
+	<string name="cc_digital_options_font_sytle6">Style 6</string>
+	<string name="cc_digital_options_font_sytle7">Style 7</string>
+  	
+	<string name="cc_digital_options_foreground_color">Foreground Color</string>
+	<string name="cc_digital_options_background_color">Background Color</string>
+	
+	<string name="cc_digital_options_color_black">Black</string>
+	<string name="cc_digital_options_color_red">Red</string>
+	<string name="cc_digital_options_color_green">Green</string>
+	<string name="cc_digital_options_color_blue">Blue</string>
+	<string name="cc_digital_options_color_yellow">Yellow</string>
+	<string name="cc_digital_options_color_magenta">Magenta</string>
+	<string name="cc_digital_options_color_cyan">Cyan</string>
+
+  	<string name="cc_digital_options_foreground_opacity">Foreground Opacity</string>
+	<string name="cc_digital_options_background_opacity">Background Opacity</string>
+	
+	<string name="cc_digital_options_opacity_default">Default</string>
+	<string name="cc_digital_options_opacity_transparent">Transparent</string>
+	<string name="cc_digital_options_opacity_translucent">Translucent</string>
+	<string name="cc_digital_options_opacity_solid">Solid</string>
+	<string name="cc_digital_options_opacity_flashing">Flashing</string>	
+	
+	<string name="cc_digital_options_retune_default">Return to Default</string>
+
+
+	<!--menu DVBS/S2--> 
+	<string name="scan_program">搜索设置</string>
+	<string name="dvbs_dish_setup">天线设置</string>
+	<string name="dvbs_db_management">数据库管理</string>
+	<string name="dvbs_unicable_config">Unicable 设置</string>
+
+	<string name="dvbs_unicable_switch">Unicable 开关</string>
+	<string name="dvbs_unicable_user_band">用户设定</string>
+	<string name="dvbs_unicable_user_define">自定义</string>
+	
+	<!--menu DBM-->
+	<string name="dvbs_dbm_title">数据库管理</string>
+	<string name="dvbs_dbm_load">从存储设备加载</string>
+	<string name="dvbs_dbm_backup">备份到存储设备</string>
+
+	<string name ="xml_load_success">Load satellites DB file success</string>
+	<string name ="xml_generator_success">Backup satellites DB file success</string>
+	<string name ="xml_generator_fail">Backup satellites DB file fail</string>
+	
+	<string name="edit_title">编辑</string>
+	<string name="add_title">添加</string>
+	<string name="delete_title">删除</string>
+	<string name="scan_title">搜索</string>
+	
+	<string name="item_no">编号</string>
+	<string name="sat_name">卫星名称</string>
+	<string name="longitude_direction">经度</string>
+	<string name="latitude_direction">维度</string>
+	<string name="longitude_angle">Longitude Angle</string>
+	<string name="latitude_angle">Latitude Angle</string>
+	<string name="band">波段</string>
+	<string name="lo_la_input_invalid">输入无效,经度:0--180,纬度:0-90</string>
+
+	<string name="title_sat_name">名称</string>
+	<string name="title_longitude_direction">方向</string>
+	<string name="title_longitude_angle">角度</string>
+	<string name = "dot">.</string>
+	<string name="transponder_info">转发器信息</string>
+	<string name="can_not_search">需要转发器信息</string>
+	
+	<string name="ts_frequency">频率</string>
+	<string name="ts_polarity">极化</string>
+	<string name="ts_symbol">符号率</string>
+	<string name="program_operation">节目操作</string>
+	
+	
+	<string name="dish_setup_lnb_no">LNB No.</string>
+	<string name="dish_setup_lnb_type">LNB Type</string>
+	<string name="dish_setup_lnb_power">LNB Power</string>
+	<string name="dish_setup_22K">22K</string>
+	<string name="dish_setup_lnb_toneburst">ToneBurst</string>
+	<string name="dish_setup_diseqc">DisEqc Mode</string>
+	<string name="dish_setup_diseqc0">DisEqc1.0</string>
+	<string name="dish_setup_diseqc1">DisEqc1.1</string>
+	<string name="dish_setup_diseqc2">DisEqc1.2</string>
+	<string name="dish_setup_diseqc3">DisEqc1.3</string>
+	<string name="dish_setup_committed_command">Committed Diseqc</string>	
+	<string name="dish_setup_fast_diseqc">Fast Diseqc</string>
+	<string name="dsh_setup_diseqc_repeat">Diseqc Repeat</string>
+	<string name="dish_setup_diseqc_sequence">Diseqc Sequence</string>
+	<string name="dish_setup_uncommitted_command">Uncommitted Diseqc</string>
+	<string name="dish_setup_moto">Moto</string>
+	<string name="dish_setup_moto_number">Moto No.</string>
+	
+	<string name="dish_setup_conf_none">无</string>
+	<string name="dish_setup_conf_auto">自动</string>
+	<string name="dish_setup_conf_on">开</string>
+	<string name="dish_setup_conf_off">关</string>
+	<string name="dish_setup_conf_user_dual">User Dual</string>
+	<string name="dish_setup_conf_user_sigle">User Sigle</string>
+	
+	<string name="dish_setup_conf_lnb_low">LNB Low</string>
+	<string name="dish_setup_conf_lnb_high">LNB High</string>
+	<string name="dish_setup_conf_lnb_threshold">Threshold</string>
+	<string name="dish_setup_conf_lnb_user_mode">User Mode</string>
+	<string name="dish_setup_conf_lnb_lof">LOF</string>
+
+	<string name="scan_mode">搜索模式</string>
+	<string name="scan_mode_default">默认</string>
+	<string name="scan_mode_blind">盲扫</string>
+	<string name="scan_mode_network">网络搜索</string>
+
+	<string name="scan_crypted">加密</string>
+	<string name="scan_crypted_all">所有</string>
+	<string name="scan_crypted_fta">免费节目</string>
+
+	<string name="scan_service_type">Servcie Type</string>
+	<string name="scan_service_all">All</string>
+	<string name="scan_service_tv">TV</string>
+	<string name="scan_service_radio">Radio</string>
+	<string name="scan_ts">Transponder</string>
+
+	<string name="set_limit">Set Limit</string>
+	<string name="set_limit_move_continue">Move Continue</string>
+	<string name="set_limit_move_step">Move Step(1)</string>
+	<string name="set_limit_set_east">Set East Limit</string>
+	<string name="set_limit_set_west">Set West Limit</string>
+	<string name="set_limit_goto_reference">Goto Reference</string>
+	<string name="set_limit_disable_limit">Disable Limit</string>
+	<string name="set_position_store_position">Store Position</string>
+	<string name="set_position_goto_position">Goto Position</string>
+	<string name="set_position_goto_xx">Goto X</string>
+	
+
+	<string name="dish_setup_conf_sat_pos">Sat Position</string>
+	<string name="dish_setup_conf_sat_pos_a">Position A</string>
+	<string name="dish_setup_conf_sat_pos_b">Position B</string>
+
+	<string name="mhz">MHz</string>
+	<string name="khz">KHz</string>
+	<string name="dish_setup_conf_lnb">LNB</string>
+	<string name="dish_setup_conf_lnb_1">LNB1</string>
+	<string name="dish_setup_conf_lnb_2">LNB2</string>
+	<string name="dish_setup_conf_lnb_3">LNB3</string>
+	<string name="dish_setup_conf_lnb_4">LNB4</string>
+	<string name="dish_setup_conf_lnb_5">LNB5</string>
+	<string name="dish_setup_conf_lnb_6">LNB6</string>
+	<string name="dish_setup_conf_lnb_7">LNB7</string>
+	<string name="dish_setup_conf_lnb_8">LNB8</string>
+	<string name="dish_setup_conf_lnb_9">LNB9</string>
+	<string name="dish_setup_conf_lnb_10">LNB10</string>
+	<string name="dish_setup_conf_lnb_11">LNB11</string>
+	<string name="dish_setup_conf_lnb_12">LNB12</string>
+	<string name="dish_setup_conf_lnb_13">LNB13</string>
+	<string name="dish_setup_conf_lnb_14">LNB14</string>
+	<string name="dish_setup_conf_lnb_15">LNB15</string>
+	<string name="dish_setup_conf_lnb_16">LNB16</string>
+
+	<string name="dish_setup_conf_button_des1">zoom in</string>
+	<string name="dish_setup_conf_button_des2">zoom out</string>
+	<string name="dish_setup_conf_button_des3">repeat</string>
+	<string name="dish_setup_conf_button_des4">info</string>
+	<string name="dish_setup_conf_button_des5">ok</string>
+	<string name="dish_setup_conf_button_des6">ratio</string>
+	<string name="dish_setup_conf_button_des7">sub-t</string>
+	<string name="dish_setup_conf_button_des8">audio</string>
+
+	<string name="dish_setup_conf_button_des1_info">Goto Sat/TS</string>
+	<string name="dish_setup_conf_button_des2_info">添加</string>
+	<string name="dish_setup_conf_button_des3_info">编辑</string>
+	<string name="dish_setup_conf_button_des4_info">删除</string>
+	<string name="dish_setup_conf_button_des5_info">选择</string>
+	<string name="dish_setup_conf_button_des6_info">搜索</string>
+	<string name="dish_setup_conf_button_des7_info">Set Position</string>
+	<string name="dish_setup_conf_button_des8_info">Set Location</string>
+	<string name="dish_setup_conf_set_position">Set Position</string>
+	
+	<string name="add_to_scanlist">添加到卫星列表</string>
+	<string name="no_scan_list">"zoom out" 添加卫星信息</string>
+	<string name="no_data_info">"zoom out" 添加转发器信息</string>
+	<string name="scan_result_help">方向 按键/选择节目                                            确认 按键/播放</string>
+
+	<string name="snr">SNR</string>
+	<string name="agc">AGC</string>
+	<string name="strength">强度</string>
+	<string name="quality">质量</string>
+	<string name="ber">误码率</string>
+	<string name="lock_status">锁定状态</string>
+	<string name="sat_signal_info">卫星信号信息</string>
+	<string name="progress">进度</string>
+	<string name="satellites_info_list">卫星信息</string>
+	
+	<!--menu settings-->
+	<string name="setting_menu_program">节目</string>  
+	<string name="setting_menu_search">搜索</string>   
+	<string name="setting_menu_system">系统</string>   
+	<string name="setting_menu_av">选项</string>   
+	<string name="title_record_device">录像存储设备</string>
+	<string name="title_program_edit">节目管理</string>
+	<string name="title_pvr_manager">录像管理</string>
+	
+	<string name="epg_exit">退出</string>
+	
+	<string name="confirm">确认</string>
+	<string name="exit">退出</string>
+	<string name="exit_player">退出播放器</string>
+	<string name="rec">录像</string>
+
+	<string name="goto_s">卫星</string>
+	<string name="goto_t">转发器</string>
+	<string name="find">查找</string>
+	<string name="fav">喜爱</string>
+	<string name="rename">重命名</string>
+	<string name="skip">隐藏</string>
+	<string name="lock">加锁</string>
+
+	<!--event add dialog-->
+	<string name="channel_name">节目名称</string>
+	<string name="event_name">时间名称</string>
+	<string name="event_start_date">开始日期</string>
+	<string name="event_start_time">开始时间</string>
+	<string name="event_end_time">结束</string>
+	<string name="duration">时长</string>
+	<string name="repeat">重复</string>
+	<string name="mode">模式</string>
+	<string name="status">状态</string>
+	
+	<string name="daily">每日</string>
+	<string name="weekly">每周</string>
+	<string name="once">一次</string>
+	<string name="view">播放</string>
+	<string name="pvr">录像</string>
+	<string name="size">大小</string>
+	<string name="preview">预览</string>
+	<string name="recall_list">回看列表</string>
+
+	<array name="settings_lauguage" translatable="false">
+		<item>英语</item>
+		<item>中文</item>   
+		<item>泰语</item>    
+	</array>	
+
+	
+	<array name="lauguage_iso_639_2" translatable="false">
+		<item>eng</item>
+		<item>chi</item>  
+		<item>tha</item> 
+	</array>
+
+	<array name="teletext_region_lauguage" translatable="false">
+		<item>English</item>
+		<item>Deutsch</item>    
+		<item>Svenska/Suomi/Magyar</item>
+		<item>Italiano</item>
+		<item>Français</item>   
+		<item>Português/Español</item>
+		<item>Cesky/Slovencina</item>   
+		<item>Türkçe</item>
+		<item>Ellinika</item>
+	</array>	
+
+	<string name="channel_info">节目信息</string>
+	<string name="channel_fre">频率</string>
+	<string name="channel_strenght">信号强度</string>	
+	<string name="channel_signal_quality">信号质量</string>
+	<string name="channel_error_rate">误码率</string>	
+	<string name="channel_video_pid">视频 PID</string>
+	<string name="channel_audio_pid">音频 PID</string>
+	
+</resources>

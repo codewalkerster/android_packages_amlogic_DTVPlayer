@@ -714,7 +714,7 @@ public class DTVProgramEdit extends DTVActivity{
 			case DTVActivity.KEYCODE_GOTO_BUTTON:
 				showSatellitesList();
 				break;
-			case DTVActivity.KEYCODE_INFO_BUTTON:
+			case DTVActivity.KEYCODE_INFO:
 				if(mTVProgramList!=null&&mTVProgramList.length>0){
 					final CustomDialog mEditCustomDialog = new CustomDialog(DTVProgramEdit.this,R.style.MyDialog);
 					mEditCustomDialog.showDialog(R.layout.edit_dialog, new ICustomDialog(){
