@@ -300,6 +300,24 @@ public class DTVSettings{
 		dvbt_scan_frequency=fre;
 	}
 
+	private int dvbc_scan_modulation=TVChannelParams.MODULATION_QAM_64;
+	public int getDvbcModulation(){
+		return dvbc_scan_modulation;
+	}
+
+	public void setDvbcModulation(int modulation){
+		dvbc_scan_modulation=modulation;
+	}
+
+	private int dvbc_scan_symbole=6875000;
+	public int getDvbcSymbole(){
+		return dvbc_scan_symbole;
+	}
+
+	public void setDvbcSymbole(int sym){
+		dvbc_scan_symbole=sym;
+	}
+
 	private int dvbt_band_width=0;
 	public int getDvbtScanBandwidth(){
 		return dvbt_band_width;

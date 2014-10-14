@@ -189,6 +189,11 @@
 		<item>LCN</item>
 	</array>
 
+	<array name="search_settings_content_dvbc" translatable="false">
+		<item>Auto Scan</item>	
+		<item>Manual Scan</item>
+	</array>
+
 	
 	<array name="search_settings_content_atsc" translatable="false">
 		<item>Auto Scan</item>	
@@ -202,6 +207,17 @@
 		<item>Channel</item>
 		<item>Frequency(KHz)</item>
 		<item>Bandwidth(M)</item>
+		<item>Signal Check</item>
+		<item>Search</item>
+	</array>
+
+	<array name="search_settings_content_dvbc_manual" translatable="false">
+		<item>Scan Mode</item>	
+		<item>Scan Band</item>
+		<item>Channel</item>
+		<item>Frequency(KHz)</item>
+		<item>Modulation</item>
+		<item>Symbole(bps)</item>
 		<item>Signal Check</item>
 		<item>Search</item>
 	</array>
@@ -490,6 +506,8 @@
 	<string name="longitude_angle">Longitude Angle</string>
 	<string name="latitude_angle">Latitude Angle</string>
 	<string name="band">Band</string>
+	<string name="modulation">Modulation</string>
+	<string name="symbole">Symbole</string>
 	<string name="lo_la_input_invalid">Input is invalid,Longitude:0--180,Latitude:0-90</string>
 
 	<string name="title_sat_name">Name</string>
@@ -688,6 +706,7 @@
 		<item>Cesky/Slovencina</item>   
 		<item>Türkçe</item>
 		<item>Ellinika</item>
+		<item>Alarabia / English</item>
 	</array>	
 
 	<string name="channel_info">Channel Information</string>
