@@ -137,11 +137,13 @@ abstract public class DTVActivity extends TVActivity{
 	public final int STATUS_SCRAMBLED=1;
 	public final int STATUS_DATA=2;
 	public final int STATUS_LOCKED=3;
+	public final int STATUS_AC3_LICENCE=4;
 
 	public static boolean signal=true;
 	public static boolean scrambled=false;
 	public static boolean has_data=true;
 	public static boolean locked=false;
+	public static boolean ac3_lience = true;
 
 	public void RecordStatus(int status,boolean value){
 		switch(status){
@@ -168,8 +170,13 @@ abstract public class DTVActivity extends TVActivity{
 					locked=value;
 					onDialogStatusChanged(STATUS_LOCKED);
 				}
-
 				break;
+			case STATUS_AC3_LICENCE:
+				if(ac3_lience!=value){
+					ac3_lience=value;
+					onDialogStatusChanged(STATUS_AC3_LICENCE);
+				}
+				break;	
 		}
 	}
 	
@@ -189,6 +196,10 @@ abstract public class DTVActivity extends TVActivity{
 		return has_data;
 	}
 
+	public boolean getDTVAc3LienceStatus(){
+		return ac3_lience;
+	}
+	
 	private void onDialogStatusRecord(TVMessage msg){
 		switch(msg.getType()) {
 			case TVMessage.TYPE_PROGRAM_BLOCK:
@@ -231,6 +242,12 @@ abstract public class DTVActivity extends TVActivity{
 					break;
 				case TVMessage.TYPE_PROGRAM_SCRAMBLED:
 					RecordStatus(STATUS_SCRAMBLED,true);
+					break;
+				case TVMessage.TYPE_AUDIO_AC3_NO_LICENCE:
+					RecordStatus(STATUS_AC3_LICENCE,false);
+					break;
+				case TVMessage.TYPE_AUDIO_AC3_LICENCE_RESUME:
+					RecordStatus(STATUS_AC3_LICENCE,true);
 					break;
 			}
 

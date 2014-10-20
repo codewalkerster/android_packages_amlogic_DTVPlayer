@@ -682,6 +682,15 @@ public class DTVPlayer extends DTVActivity{
 				}
 				debugMenuDialogShowFlag = 0x0;
 				return true;
+			case KeyEvent.KEYCODE_E:
+				Intent intent = new Intent();
+				Bundle bundle = new Bundle();
+				bundle.putInt("db_id", DTVPlayerGetCurrentProgramID());
+				intent.putExtras(bundle);
+				intent.setClass(this, DTVProgramEdit.class);
+				startActivity(intent);	
+				
+				break;	
 		}
 
 		return super.onKeyDown(keyCode, event);
@@ -1020,6 +1029,9 @@ public class DTVPlayer extends DTVActivity{
 					else if(getDTVScrambledStatus()==true){
 						showDia(3);
 					}
+					else if(getDTVAc3LienceStatus()==false){
+						showDia(5);
+					}
 					else {
 						hidePasswordDialog();
 						DismissDialog();
@@ -1142,6 +1154,11 @@ public class DTVPlayer extends DTVActivity{
 						break;
 					case 4:
 						text.setText(R.string.dtvplayer_signal_bad);
+						text.setTextSize(27); 
+						text.setGravity(Gravity.CENTER);
+						break;
+					case 5:	
+						text.setText(R.string.dtvplayer_ac3_no_licence);
 						text.setTextSize(27); 
 						text.setGravity(Gravity.CENTER);
 						break;

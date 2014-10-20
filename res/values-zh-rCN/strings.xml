@@ -88,6 +88,8 @@
 	<string name="dtvplayer_no_program">节目停播</string>
 	<string name="dtvplayer_no_signal"> 无信号</string>
 	<string name="dtvplayer_scrambled">加扰节目</string>
+	<string name="dtvplayer_signal_bad">Signal quality is bad</string>
+	<string name="dtvplayer_ac3_no_licence">AC3 audio no lience</string>
 
 	<string name="dtvplayer_subtitle_language_set">字幕语言设置</string>
 	<string name="dtvplayer_audio_language_set">音频语言设置</string>
@@ -151,6 +153,7 @@
 		<item>字幕开关</item>
 		<item>音频语言</item>
 		<item>切换静帧</item> 
+		<item>Information Show Time</item> 
 	</array>
 
 	<array name="system_settings_content" translatable="false">

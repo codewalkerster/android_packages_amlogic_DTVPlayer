@@ -89,6 +89,7 @@
 	<string name="dtvplayer_no_signal"> No signal</string>
 	<string name="dtvplayer_scrambled">Scrambled program</string>
 	<string name="dtvplayer_signal_bad">Signal quality is bad</string>
+	<string name="dtvplayer_ac3_no_licence">AC3 audio no lience</string>
 
 	<string name="dtvplayer_subtitle_language_set">Subtitle language set</string>
 	<string name="dtvplayer_audio_language_set">Audio language set</string>
