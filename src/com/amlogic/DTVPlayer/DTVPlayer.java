@@ -127,10 +127,11 @@ public class DTVPlayer extends DTVActivity{
 		openVideo();
 		DTVPlayerUIInit();
 		mDTVSettings = new DTVSettings(this);
+		
 
 		TVMessage msg = new TVMessage(TVMessage.TYPE_INPUT_SOURCE_CHANGED);
 		onMessage(msg);
-		//SystemProperties.set("sys.amplayer.drop_pcm", "1");
+
 	}
 
 	public void onDisconnected(){
@@ -550,11 +551,9 @@ public class DTVPlayer extends DTVActivity{
 				Log.d(TAG,"KEYCODE_ENTER");
 				break;	
 			case DTVActivity.KEYCODE_TTX:	
-				Log.d(TAG,"KEYCODE_ZOOM_IN");
 				showTeltext(DTVPlayer.this);
 				return true;
-			case DTVActivity.KEYCODE_YELLOW_BUTTON:
-				Log.d(TAG,"KEYCODE_ZOOM_OUT");
+			case DTVActivity.KEYCODE_REC:
 				showPvrDurationTimeSetDialog(DTVPlayer.this);
 				return true;
 			case DTVActivity.KEYCODE_RECALL_BUTTON:
@@ -566,7 +565,6 @@ public class DTVPlayer extends DTVActivity{
 				showSubtitleSettingMenu(DTVPlayer.this);
 				return true;
 			case DTVActivity.KEYCODE_FAV_BUTTON:
-				Log.d(TAG,"KEYCODE_FAV_BUTTON");
 				shortcut_key_deal("FAV");
 				return true;	
 			case DTVActivity.KEYCODE_AUDIO_TRACK:
@@ -582,7 +580,7 @@ public class DTVPlayer extends DTVActivity{
 				shortcut_key_deal("pictrue_mode");
 				return true;
 			case DTVActivity.KEYCODE_EPG: //epg
-				Log.d(TAG,"KEYCODE_MEDIA_FAST_FORWARD");
+				
 				return true;
 			case DTVActivity.KEYCODE_BLUE_BUTTON: //pvr manager
 				Log.d(TAG,"KEYCODE_BLUE_BUTTON");
@@ -684,6 +682,15 @@ public class DTVPlayer extends DTVActivity{
 				}
 				debugMenuDialogShowFlag = 0x0;
 				return true;
+			case KeyEvent.KEYCODE_E:
+				Intent intent = new Intent();
+				Bundle bundle = new Bundle();
+				bundle.putInt("db_id", DTVPlayerGetCurrentProgramID());
+				intent.putExtras(bundle);
+				intent.setClass(this, DTVProgramEdit.class);
+				startActivity(intent);	
+				
+				break;	
 		}
 
 		return super.onKeyDown(keyCode, event);
@@ -757,7 +764,7 @@ public class DTVPlayer extends DTVActivity{
 		Button_mainmenu_list = (Button)findViewById(R.id.Button_mainmenu_list);
 		Button_mainmenu_list.setOnClickListener(new MouseClick());
 		Button_mainmenu_list.setOnFocusChangeListener(new Button.OnFocusChangeListener(){
-            public void onFocusChange(View v, boolean hasFocus) {
+              public void onFocusChange(View v, boolean hasFocus) {
                // TODO Auto-generated method stub
                if(hasFocus == true){
 				   Text_button_info.setText(R.string.dtvplayer_menu_button_list); 
@@ -974,6 +981,8 @@ public class DTVPlayer extends DTVActivity{
 		public Toast toast=null;
 		public String passdialog_text=null;
 		private boolean showDialogActive = true;
+		private int signal_range_min =0;
+		private int signal_range_max =0;
 
 		public void dialogManagerDestroy(){
 			if(dialogManagerHandler!=null)
@@ -986,6 +995,7 @@ public class DTVPlayer extends DTVActivity{
 
 		public DialogManager(Context context) {
 			this.mContext = context;
+			
 			if(dialogManagerHandler!=null)
 				dialogManagerHandler.postDelayed(dialogManagerTimer, 5000);
 		}
@@ -993,11 +1003,24 @@ public class DTVPlayer extends DTVActivity{
 		public void checkDialogDisplay(){
 				if(showDialogActive){
 					
+					int snr = getFrontendSNR();
+					if(mDTVSettings!=null){
+						signal_range_min=mDTVSettings.getSignalQualityRangeMin();
+						signal_range_max=mDTVSettings.getSignalQualityRangeMax();
+					}
+			
+					//Log.d(TAG,"--snr-"+snr+"-min-"+signal_range_min+"-max-"+signal_range_max);
 					if(getDTVSignalStatus()==false){
 						showDia(1);
 					}
+					else if(snr>signal_range_min&&snr<signal_range_max){
+						showDia(4);
+					}
+					else if(snr <signal_range_min ){
+						showDia(1);
+					}
 					else if(getDTVAVDataStatus()==false){
-						//showDia(2);
+						showDia(2);
 					}
 					else if(getDTVLockedStatus()){
 						DismissDialog();
@@ -1006,10 +1029,15 @@ public class DTVPlayer extends DTVActivity{
 					else if(getDTVScrambledStatus()==true){
 						showDia(3);
 					}
+					else if(getDTVAc3LienceStatus()==false){
+						showDia(5);
+					}
 					else {
 						hidePasswordDialog();
 						DismissDialog();
 					}
+
+					
 				}
 				else{
 					hidePasswordDialog();
@@ -1121,6 +1149,16 @@ public class DTVPlayer extends DTVActivity{
 						break;
 					case 3:
 						text.setText(R.string.dtvplayer_scrambled);
+						text.setTextSize(27); 
+						text.setGravity(Gravity.CENTER);
+						break;
+					case 4:
+						text.setText(R.string.dtvplayer_signal_bad);
+						text.setTextSize(27); 
+						text.setGravity(Gravity.CENTER);
+						break;
+					case 5:	
+						text.setText(R.string.dtvplayer_ac3_no_licence);
 						text.setTextSize(27); 
 						text.setGravity(Gravity.CENTER);
 						break;
@@ -1536,8 +1574,8 @@ public class DTVPlayer extends DTVActivity{
 	private Handler	timer_handler = new Handler();   
 	private Runnable timer_runnable = new Runnable(){
 		public void run() {
-			if(inforbar_show_flag==true){	
-				if(bar_hide_count >= bar_auto_hide_duration){
+			if(inforbar_show_flag==true&&getProgramServiceType()!=TVProgram.TYPE_RADIO){
+				if(mDTVSettings!=null&&bar_hide_count >= mDTVSettings.getInforBarShowTime()){
 					HideControlBar();
 					HideProgramNo();
 					mDialogManager.setActive(true);
@@ -1731,7 +1769,7 @@ public class DTVPlayer extends DTVActivity{
 				// TODO Auto-generated method stub
 				switch(keyCode)
 				{	
-					case  KeyEvent.KEYCODE_TAB:
+					case  DTVActivity.KEYCODE_INFO:
 							dialog.cancel();
 							return true;
 				}
@@ -2288,21 +2326,22 @@ public class DTVPlayer extends DTVActivity{
 		if(key.equals("pictrue_mode")){
 			
 			int mode = DTVGetScreenMode();
-			if(mode==0){
-				ShowInformation(getString(R.string.type_4_3));
-				DTVSetScreenMode(2);
-				Text_screentype_info.setText(getString(R.string.type_4_3));
+			if(mode==1){
+				DTVSetScreenMode(mode+5);
+				//ShowInformation(getString(R.string.type_16_9));
+				//Text_screentype_info.setText(getString(R.string.type_4_3));
 			}
-			else  if(mode==2){
-				ShowInformation(getString(R.string.type_16_9));		
-				DTVSetScreenMode(3);
-				Text_screentype_info.setText(getString(R.string.type_16_9));
+			else  if(mode==13){
+					
+				DTVSetScreenMode(1);
+				//Text_screentype_info.setText(getString(R.string.type_16_9));
 			}
-			else  if(mode==3){
-				ShowInformation(getString(R.string.auto));		
-				DTVSetScreenMode(0);
-				Text_screentype_info.setText(getString(R.string.auto));
+			else{
+				
+				DTVSetScreenMode(mode+1);
+				//Text_screentype_info.setText(getString(R.string.type_16_9));
 			}
+			ShowInformation(getScreenTypeStrings());		
 		}
 		else if(key.equals("AUDIOTRACK")){
 			int mode = DTVGetAudioTrack();

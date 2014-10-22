@@ -435,16 +435,15 @@ public class DTVChannelList extends DTVActivity{
 				}
 				myAdapter.notifyDataSetChanged();			
 				break;		
-			case KeyEvent.KEYCODE_ZOOM_IN:
+			case DTVActivity.KEYCODE_REC:
 				if(mTVProgramList!=null&&mTVProgramList.length>0){
 					showBookAddDialog();
 				}
 				return true;
-			case KeyEvent.KEYCODE_ZOOM_OUT:
+			case DTVActivity.KEYCODE_GOTO_BUTTON:
 				showSatellitesList();
 				return true;
-			case KeyEvent.KEYCODE_TAB: //info
-				Log.d(TAG,"KEYCODE_TAB");	
+			case DTVActivity.KEYCODE_RED_BUTTON: 
 				showProgramSearchDialog();
 				return true;
 			/*	
@@ -1478,7 +1477,7 @@ public class DTVChannelList extends DTVActivity{
 		title.setTextColor(Color.YELLOW);
 		title.setText(getString(R.string.find));
 
-      	EditText editText = (EditText)window.findViewById(R.id.edittext_name);
+      		EditText editText = (EditText)window.findViewById(R.id.edittext_name);
 
 		editText.addTextChangedListener(new TextWatcher() {
 		   @Override

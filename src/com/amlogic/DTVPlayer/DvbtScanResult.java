@@ -305,6 +305,9 @@ public class DvbtScanResult extends DTVActivity{
 			else if(bundle.getString("scan-mode").equals("dvbt-nit-scan")){
 				DTVScanDVBT_StartNitScan(bundle.getInt("scan-band-width",TVChannelParams.BANDWIDTH_8_MHZ),bundle.getInt("scan-fre",474000));
 			}
+			else if(bundle.getString("scan-mode").equals("dvbc-manual-scan")){
+				DTVScanDVBC_StartManuScan(bundle.getInt("scan-fre"),bundle.getInt("scan-modulation"),bundle.getInt("scan-symbole"));
+			}
 		}		
 	}
 
@@ -373,6 +376,9 @@ public class DvbtScanResult extends DTVActivity{
 		else if (mDTVSettings.getScanRegion().contains("ISDBT")){
 			sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_ISDBT);
 		}
+		if(mDTVSettings.getScanRegion().contains("DVB-C")){
+			sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_QAM);
+		}
 
 		startScan(sp);
 	}
@@ -431,6 +437,11 @@ public class DvbtScanResult extends DTVActivity{
 				break;
 		}
 		
+		startScan(sp);
+	}
+
+	private void DTVScanDVBC_StartManuScan(int fre,int modulation,int symbole){	
+		TVScanParams sp=TVScanParams.dtvManualScanParams(0, TVChannelParams.dvbcParams(fre*1000, modulation, symbole));
 		startScan(sp);
 	}
 

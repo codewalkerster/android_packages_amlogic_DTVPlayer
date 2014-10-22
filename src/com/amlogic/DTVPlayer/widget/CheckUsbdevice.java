@@ -1,5 +1,7 @@
 package com.amlogic.widget;
 
+import java.io.*;
+import java.util.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -291,13 +293,13 @@ public class CheckUsbdevice
 		return satellites_db_file_list;
 	}
 	
-	public List<String> getPvrFileList() {
+	public List<File> getPvrFileList() {
 		String externalStorageState = Environment.getExternalStorageState();  
 
-		List<String> pvr_file_list = null;
+		List<File> pvr_file_list = null;
 
 		if(pvr_file_list == null)
-			pvr_file_list =  new ArrayList<String>();
+			pvr_file_list =  new ArrayList<File>();
 		
 		File[] files = new File("/storage/external_storage").listFiles();
 		if (files != null) {
@@ -313,7 +315,8 @@ public class CheckUsbdevice
 											if(myts_file.isDirectory()){
 
 											}else if(myts_file.getName().endsWith(".ts")){								
-												pvr_file_list.add(myts_file.getPath());
+												//pvr_file_list.add(myts_file.getPath());
+												pvr_file_list.add(myts_file);
 												Log.d("U disk","DB satellites file name:"+myts_file.getPath());
 											}
 										}	
@@ -339,7 +342,8 @@ public class CheckUsbdevice
 
 								}else{
 									if(myts_file.getName().endsWith(".ts")){
-										pvr_file_list.add(myts_file.getPath());
+										//pvr_file_list.add(myts_file.getPath());
+										pvr_file_list.add(myts_file);
 										Log.d("SDCard","DB satellites file name:"+myts_file.getName());
 										}
 								}
@@ -353,6 +357,88 @@ public class CheckUsbdevice
 	    }  
 	
 		return pvr_file_list;
+	}
+
+	public class FileOrder{
+		//sort by size 
+		public void orderByLength(List< File> files) {
+		 //List< File> files = Arrays.asList(new File(fliePath).listFiles());
+		 Collections.sort(files, new Comparator< File>() {
+		     public int compare(File f1, File f2) {
+			long diff = f1.length() - f2.length();
+			if (diff > 0)
+			  return 1;
+			else if (diff == 0)
+			  return 0;
+			else
+			  return -1;
+		     }
+		    public boolean equals(Object obj) {
+			return true;
+		    }
+		   });
+		   /*for (File f : files) {
+		      if(f.isDirectory()) continue;
+		      System.out.println(f.getName()+":"+f.length());
+		   }*/
+		}
+		//sort by name
+		public void orderByName(List< File> files) {
+		 //List< File> files = Arrays.asList(new File(fliePath).listFiles());
+		  Collections.sort(files, new Comparator< File>() {
+		   @Override
+		   public int compare(File o1, File o2) {
+			if (o1.isDirectory() && o2.isFile())
+		          return -1;
+			if (o1.isFile() && o2.isDirectory())
+		          return 1;
+			return o1.getName().compareTo(o2.getName());
+		   }
+		  });
+		  /*
+		   for (File f : files) {
+		     System.out.println(f.getName());
+		    }*/
+		  }
+		//sort by Date
+		public void orderByDate(List< File> files) {
+		 //List< File> files = Arrays.asList(new File(fliePath).listFiles());
+		   Collections.sort(files,new Comparator< File>(){
+		     public int compare(File f1, File f2) {
+			long diff = f1.lastModified() - f2.lastModified();
+			if (diff > 0)
+			  return 1;
+			else if (diff == 0)
+			  return 0;
+			else
+			  return -1;
+		     }
+		     public boolean equals(Object obj) {
+			return true;
+		     }
+				
+		     });
+		   /*
+		     for (int i = fs.length-1; i >-1; i--) {
+			System.out.println(fs[i].getName());
+			System.out.println(new Date(fs[i].lastModified()));
+		      }
+		      */
+		}
+		  
+	}
+
+	public  List<File> FindFile(List< File> list, String key_search)
+	{
+	     List<File> listFile = new ArrayList<File>();
+			
+	     for (int i = 0;i<list.size();i++) {
+			if (list.get(i).getName().toLowerCase().lastIndexOf(key_search) > -1||list.get(i).getName().indexOf(key_search.toUpperCase()) > -1) {
+				listFile.add(list.get(i));
+			}
+            }
+	      
+	    return listFile;
 	}
 
 

@@ -512,8 +512,7 @@ public class DTVPvrPlayer extends DTVActivity{
 					showTimeshiftDialog();
 				}
 				return true;
-			case KeyEvent.KEYCODE_ZOOM_IN:	
-				Log.d(TAG,"KEYCODE_ZOOM_IN");
+			case DTVActivity.KEYCODE_TTX:	
 				DTVPlayer.showTeltext(DTVPvrPlayer.this);	
 				return true;	
 			case KeyEvent.KEYCODE_DPAD_DOWN:
@@ -527,18 +526,10 @@ public class DTVPvrPlayer extends DTVActivity{
 					DTVTTGotoPreviousPage();
 				}	
 				return true;
-			case KeyEvent.KEYCODE_TV_REPEAT:
-				Log.d(TAG,"KEYCODE_TV_REPEAT");
-				//DTVPlayer.showSubtitleSettingMenu(DTVPvrPlayer.this);
-				return true;	
 			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
 				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_VOICEMODE");
 				showAudioLanguageDialog(DTVPvrPlayer.this);
 				return true;		
-			case KeyEvent.KEYCODE_TAB: //info
-				if(teletext_bar_flag){
-				}
-				return true;	
 			case KeyEvent.KEYCODE_TV_SUBTITLE:
 				showSubtitleSettingMenu(DTVPvrPlayer.this);
 				return true;	

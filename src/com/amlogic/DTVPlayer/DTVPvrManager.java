@@ -148,7 +148,7 @@ public class DTVPvrManager extends DTVActivity{
 	private Handler  currenttimer_handler;
 	private Runnable currenttimer_runnable;
 
-	private List<String> filenameList=null;
+	private List<File> filenameList=null;
 	private void getFileList(){
 		CheckUsbdevice Usbdevice = new CheckUsbdevice(this);
 
@@ -408,7 +408,7 @@ public class DTVPvrManager extends DTVActivity{
     
     public String getServiceInfoByPostion(int position){
 		if(filenameList!=null)
-    		return filenameList.get(position);
+    		return filenameList.get(position).getPath();
 		else return null;
     }
     
@@ -417,7 +417,7 @@ public class DTVPvrManager extends DTVActivity{
 		private LayoutInflater mInflater;    			
 		private Context cont;
 		private int selectItem;
-		private List<String> listItems=null;
+		private List<File> listItems=null;
 		
 		class ViewHolder {  
 			TextView 	 filename;
@@ -425,13 +425,17 @@ public class DTVPvrManager extends DTVActivity{
 			ImageView icon;
 		}
     		
-		public MyAdapter(Context context, List<String> list) {
+		public MyAdapter(Context context, List<File> list) {
 			super();
 			cont = context;
 			listItems = list;
 			mInflater=LayoutInflater.from(context);			  
 		}
 
+		public void setListData(List<File> list){
+			listItems = list;
+		}
+		
 		public int getCount() {
 			if(listItems==null)
 				return 0;
@@ -501,7 +505,7 @@ public class DTVPvrManager extends DTVActivity{
 			final int  pos = position;
 			choise = 0;
 				
-			new SingleChoiseDialog(DTVPvrManager.this,new String[]  { "Play", "Delete" }, 0){
+			new SingleChoiseDialog(DTVPvrManager.this,new String[]  { "Play", "Delete","Order by name","Order by size","Order by date","Search"}, 0){
 				public void onSetMessage(View v){
 					((TextView)v).setText(getString(R.string.sure_factory_set));
 				}
@@ -511,15 +515,14 @@ public class DTVPvrManager extends DTVActivity{
 				}
 				public void onSetPositiveButton(int which){
 					switch(which){
-						case 0:		
-							
+						case 0:								
 							Bundle bundle_pvr_player = new Bundle();
 							filename = getServiceInfoByPostion(pos);
 							bundle_pvr_player.putString("file_name", filename); 	
 							Intent Intent_pvrplayer = new Intent();
 							Intent_pvrplayer.setClass(DTVPvrManager.this, DTVPvrPlayer.class);
 							Intent_pvrplayer.putExtras(bundle_pvr_player);
-		                    startActivity(Intent_pvrplayer);
+		                    			startActivity(Intent_pvrplayer);
 							DTVPvrManager.this.finish();
 							break;
 						case 1:
@@ -539,12 +542,157 @@ public class DTVPvrManager extends DTVActivity{
 								};	
 							}
 							break;
+						case 2: //order by name
+							{
+								CheckUsbdevice Usbdevice = new CheckUsbdevice(DTVPvrManager.this);
+								if(Usbdevice!=null){
+									CheckUsbdevice.FileOrder order = Usbdevice.new FileOrder();
+									order.orderByName(filenameList);
+								}
+								refresh_data();
+							}
+							break;
+						case 3://order by size
+							{
+								CheckUsbdevice Usbdevice = new CheckUsbdevice(DTVPvrManager.this);
+								if(Usbdevice!=null){
+									CheckUsbdevice.FileOrder order = Usbdevice.new FileOrder();
+									order.orderByLength(filenameList);
+								}
+								refresh_data();
+							}
+							break;
+						case 4://order by date
+							{
+								CheckUsbdevice Usbdevice = new CheckUsbdevice(DTVPvrManager.this);
+								if(Usbdevice!=null){
+									CheckUsbdevice.FileOrder order = Usbdevice.new FileOrder();
+									order.orderByDate(filenameList);
+								}
+								refresh_data();
+							}
+							break;
+						case 5://search
+							{
+								showRecordSearchDialog();
+							}
+							break;
 					}
 				}
 			};			
 		}
 	};
-	
+
+	private void showRecordSearchDialog(){
+		final Dialog mDialog = new Dialog(this,R.style.MyDialog){
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event){
+				 switch (keyCode) {
+					case KeyEvent.KEYCODE_BACK:	
+						dismiss();
+						break;
+				}
+				return super.onKeyDown(keyCode, event);
+			}
+			
+		};
+		
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		if(mDialog == null){
+			return;
+		}
+
+		mDialog.show();
+		mDialog.setContentView(R.layout.program_search_dialog);
+		Window window = mDialog.getWindow();
+		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
+		
+		lp.dimAmount=0.0f;
+		//lp.width = (int) (mDialog.getWidth() * 0.50);
+		lp.x=600;
+		lp.y=-250;
+		mDialog.getWindow().setAttributes(lp);
+		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+		Button no = (Button)window.findViewById(R.id.no);
+		no.setText(R.string.no);
+		Button yes = (Button)window.findViewById(R.id.yes);
+		yes.setText(R.string.yes);
+		TextView title = (TextView)window.findViewById(R.id.title);
+		title.setTextColor(Color.YELLOW);
+		title.setText(getString(R.string.find));
+
+      		EditText editText = (EditText)window.findViewById(R.id.edittext_name);
+		final CheckUsbdevice Usbdevice = new CheckUsbdevice(DTVPvrManager.this);
+
+		editText.addTextChangedListener(new TextWatcher() {
+		   @Override
+		   public void onTextChanged(CharSequence s, int start, int before, int count) {
+				// TODO Auto-generated method stub	
+
+				String name = s.toString();
+				Log.d(TAG,"record name="+name);
+				
+				if(Usbdevice!=null){
+					filenameList=Usbdevice.getPvrFileList();
+					if(filenameList!=null)
+						filenameList=Usbdevice.FindFile(filenameList, name);
+				}
+
+				myAdapter.setListData(filenameList);
+				refresh_data();
+		   }
+		   
+		   @Override
+		   public void beforeTextChanged(CharSequence s, int start, int count,int after) {
+				// TODO Auto-generated method stub
+		    
+		   }
+		   
+		   @Override
+		   public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+		    
+		   }
+		});
+		
+		no.setFocusable(true);   
+	     	//no.requestFocus();   
+	     	no.setFocusableInTouchMode(true);   
+		no.setOnClickListener(new OnClickListener(){
+		          public void onClick(View v) {				  	 
+					//onSetNegativeButton();
+					getFileList();
+					refresh_data();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+		          }});	 
+		yes.setOnClickListener(new OnClickListener(){
+	          public void onClick(View v) {
+					//myAdapter.notifyDataSetChanged();
+					if(mDialog!=null&& mDialog.isShowing()){
+						mDialog.dismiss();
+					}
+			}});
+		
+		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+						public void onShow(DialogInterface dialog) {
+							
+							}         
+							}); 	
+
+		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+						public void onDismiss(DialogInterface dialog) {
+							list = (ListView)findViewById(R.id.listview_recmanager);
+							list.requestFocus();
+						}         
+						});	
+
+
+	}
 
 }
 

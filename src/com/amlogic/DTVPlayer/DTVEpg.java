@@ -259,7 +259,7 @@ public class DTVEpg extends DTVActivity{
 		EitListView.setOnKeyListener(new OnKeyListener() { 
 			public boolean onKey(View v, int keyCode, KeyEvent event) {		
 				switch(keyCode){
-					case KeyEvent.KEYCODE_TAB: //info
+					case DTVActivity.KEYCODE_INFO: //info
 						if (event.getAction() == KeyEvent.ACTION_DOWN) {
 							showInfoDia(v,current_date_index,eit_list_cur_pos);	
 						}

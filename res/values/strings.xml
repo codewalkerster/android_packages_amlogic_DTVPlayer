@@ -25,6 +25,16 @@
 	<string name="auto">Auto</string>
 	<string name="type_4_3">4:3</string>
 	<string name="type_16_9">16:9</string>
+	<string name="full_screen">Full Screen</string>
+	<string name="type_4_3_IGNORE">4:3</string>
+	<string name="type_4_3_LETTER_BOX">4:3 LETTER BOX</string>
+	<string name="type_4_3_PAN_SCAN">4:3 PAN SCAN</string>
+	<string name="type_4_3_COMBINED">4:3 COMBINED</string>
+	<string name="type_16_9_IGNORE">16:9</string>
+	<string name="type_16_9_LETTER_BOX">16:9 LETTER BOX</string>
+	<string name="type_16_9_PAN_SCAN">16:9 PAN SCAN</string>
+	<string name="type_16_9_COMBINED">16:9 COMBINED</string>
+	
 
 	<string name="mono">Mono</string>
 	<string name="SAP">SAP</string>	
@@ -78,6 +88,8 @@
 	<string name="dtvplayer_no_program">No program</string>
 	<string name="dtvplayer_no_signal"> No signal</string>
 	<string name="dtvplayer_scrambled">Scrambled program</string>
+	<string name="dtvplayer_signal_bad">Signal quality is bad</string>
+	<string name="dtvplayer_ac3_no_licence">AC3 audio no lience</string>
 
 	<string name="dtvplayer_subtitle_language_set">Subtitle language set</string>
 	<string name="dtvplayer_audio_language_set">Audio language set</string>
@@ -141,6 +153,7 @@
 		<item>Subtitle Language</item>
 		<item>Audio Language</item>
 		<item>Blackout Policy</item> 
+		<item>Information Show Time</item> 
 	</array>
 
 	<array name="system_settings_content" translatable="false">
@@ -177,6 +190,11 @@
 		<item>LCN</item>
 	</array>
 
+	<array name="search_settings_content_dvbc" translatable="false">
+		<item>Auto Scan</item>	
+		<item>Manual Scan</item>
+	</array>
+
 	
 	<array name="search_settings_content_atsc" translatable="false">
 		<item>Auto Scan</item>	
@@ -190,6 +208,18 @@
 		<item>Channel</item>
 		<item>Frequency(KHz)</item>
 		<item>Bandwidth(M)</item>
+		<item>Signal Check</item>
+		<item>Search</item>
+	</array>
+
+	<array name="search_settings_content_dvbc_manual" translatable="false">
+		<item>Scan Mode</item>	
+		<item>Scan Band</item>
+		<item>Channel</item>
+		<item>Frequency(KHz)</item>
+		<item>Modulation</item>
+		<item>Symbole(bps)</item>
+		<item>Signal Check</item>
 		<item>Search</item>
 	</array>
 
@@ -477,6 +507,8 @@
 	<string name="longitude_angle">Longitude Angle</string>
 	<string name="latitude_angle">Latitude Angle</string>
 	<string name="band">Band</string>
+	<string name="modulation">Modulation</string>
+	<string name="symbole">Symbole</string>
 	<string name="lo_la_input_invalid">Input is invalid,Longitude:0--180,Latitude:0-90</string>
 
 	<string name="title_sat_name">Name</string>
@@ -675,6 +707,7 @@
 		<item>Cesky/Slovencina</item>   
 		<item>Türkçe</item>
 		<item>Ellinika</item>
+		<item>Alarabia / English</item>
 	</array>	
 
 	<string name="channel_info">Channel Information</string>
