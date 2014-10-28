@@ -30,7 +30,7 @@ function clean {
 #		mm clean-dvbdemotest
 		cd $ANDROID_BUILD_TOP
 		
-		mm clean-libam_adp clean-libam_mw clean-libjnitvmboxdevice clean-libjnitvdatabase clean-libjnitvscanner clean-libjnitvsubtitle clean-libjnitvepgscanner clean-libzvbi clean-DTVPlayer clean-TVService
+		mm clean-libam_adp clean-libam_mw clean-libjnitvmboxdevice clean-libjnitvdatabase clean-libjnitvdbcheck clean-libjnitvscanner clean-libjnitvsubtitle clean-libjnitvepgscanner clean-libzvbi clean-DTVPlayer clean-TVService
 		
 		cd $BUILD_TOPDIR
 	fi
@@ -88,7 +88,7 @@ mkdir .tmp/SYSTEM/etc
 mkdir .tmp/META
 
 APPS="TVService DTVPlayer"
-LIBS="am_adp am_mw jnitvmboxdevice jnitvdatabase jnitvscanner jnitvsubtitle jnitvepgscanner zvbi"
+LIBS="am_adp am_mw jnitvmboxdevice jnitvdatabase jnitvdbcheck jnitvscanner jnitvsubtitle jnitvepgscanner zvbi"
 CFG_FILES="tv_default.cfg tv_default.dtd tv_default.xml"
 
 for i in $APPS; do
