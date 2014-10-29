@@ -522,10 +522,13 @@ public class DTVPlayer extends DTVActivity{
 					HideDebugAVInfoDialog();
 				}
 				else{
-					finishPlayer();
-					setInputSource(TVConst.SourceInput.SOURCE_ATV);
-					//System.exit(0);	
-					getApplication().onTerminate();
+					if(mDTVSettings.getIsLauncher()!=1){
+
+						finishPlayer();
+						setInputSource(TVConst.SourceInput.SOURCE_ATV);
+						//System.exit(0);	
+						getApplication().onTerminate();
+					}	
 				}	
 				Log.d(TAG,"KEYCODE_BACK");
 				return true;
@@ -3291,8 +3294,10 @@ public class DTVPlayer extends DTVActivity{
 				String reason = intent.getStringExtra(SYSTEM_REASON); 
 				if (reason != null) { 
 					if (reason.equals(SYSTEM_HOME_KEY)) { 
-						finishPlayer();
-						getApplication().onTerminate();
+						if(mDTVSettings.getIsLauncher()!=1){
+							finishPlayer();
+							getApplication().onTerminate();
+						}
 					} else if (reason.equals(SYSTEM_RECENT_APPS)) {
 
 					}

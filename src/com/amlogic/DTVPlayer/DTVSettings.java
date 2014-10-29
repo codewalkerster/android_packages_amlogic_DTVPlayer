@@ -71,6 +71,10 @@ public class DTVSettings{
 		mContext.setConfig("tv:subtitle:margin_bottom",30);
 	}
 
+	public int getIsLauncher(){
+		return  mContext.getIntConfig("tv:dtv:launcher");
+	}
+
 	public int getSignalQualityRangeMin(){
 		return  mContext.getIntConfig("tv:dtv:signal_quality_range_min");
 	}
