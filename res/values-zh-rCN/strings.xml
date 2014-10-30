@@ -16,16 +16,16 @@
 	<string name="radio">广播</string>
 	<string name="favorite">喜爱</string>
 	<string name="picture_mode">画面模式</string>
-	<string name="tel_text">TTX</string>
+	<string name="tel_text">图文</string>
 	<string name="ad">AD</string>
-	<string name="ad_volume_up">AD volume up</string>
-	<string name="ad_volume_down">AD volume down</string>
+	<string name="ad_volume_up">AD音量加</string>
+	<string name="ad_volume_down">AD音量减</string>
 	<string name="unfavorite">移除喜爱</string>
 
 	<string name="auto">自动</string>
 	<string name="type_4_3">4:3</string>
 	<string name="type_16_9">16:9</string>
-	<string name="full_screen">Full Screen</string>
+	<string name="full_screen">全屏</string>
 	<string name="type_4_3_IGNORE">4:3</string>
 	<string name="type_4_3_LETTER_BOX">4:3 LETTER BOX</string>
 	<string name="type_4_3_PAN_SCAN">4:3 PAN SCAN</string>
@@ -34,8 +34,19 @@
 	<string name="type_16_9_LETTER_BOX">16:9 LETTER BOX</string>
 	<string name="type_16_9_PAN_SCAN">16:9 PAN SCAN</string>
 	<string name="type_16_9_COMBINED">16:9 COMBINED</string>
+	<array name="settings_screen_mode" translatable="false">
+		<item>全屏</item>  
+		<item>4:3</item>	    
+		<item>4:3 LETTER BOX</item>	
+		<item>4:3 PAN SCAN</item>
+		<item>4:3 COMBINED</item>	
+		<item>16:9</item>	
+		<item>16:9 LETTER BOX</item>
+		<item>16:9 PAN SCAN</item>
+		<item>16:9 COMBINED</item>
+	</array>
 	
-
+	<string name="stop_scan">停止搜索</string>
 	<string name="mono">Mono</string>
 	<string name="SAP">SAP</string>	
 	<string name="stereo">立体声</string>
@@ -88,8 +99,8 @@
 	<string name="dtvplayer_no_program">节目停播</string>
 	<string name="dtvplayer_no_signal"> 无信号</string>
 	<string name="dtvplayer_scrambled">加扰节目</string>
-	<string name="dtvplayer_signal_bad">Signal quality is bad</string>
-	<string name="dtvplayer_ac3_no_licence">AC3 audio no lience</string>
+	<string name="dtvplayer_signal_bad">信号质量差</string>
+	<string name="dtvplayer_ac3_no_licence">AC3音频无授权</string>
 
 	<string name="dtvplayer_subtitle_language_set">字幕语言设置</string>
 	<string name="dtvplayer_audio_language_set">音频语言设置</string>
@@ -153,7 +164,7 @@
 		<item>字幕开关</item>
 		<item>音频语言</item>
 		<item>切换静帧</item> 
-		<item>Information Show Time</item> 
+		<item>信息栏显示时长</item> 
 	</array>
 
 	<array name="system_settings_content" translatable="false">
@@ -190,6 +201,10 @@
 		<item>LCN</item>
 	</array>
 
+	<array name="search_settings_content_dvbc" translatable="false">
+		<item>全频段搜索</item>	
+		<item>手动搜索</item>
+	</array>
 	
 	<array name="search_settings_content_atsc" translatable="false">
 		<item>Auto Scan</item>	
@@ -203,6 +218,15 @@
 		<item>频道</item>
 		<item>频率(KHz)</item>
 		<item>带宽(M)</item>
+		<item>信号检测</item>
+	</array>
+	<array name="search_settings_content_dvbc_manual" translatable="false">
+		<item>模式</item>	
+		<item>范围</item>
+		<item>频道</item>
+		<item>频率(KHz)</item>
+		<item>调制方式</item>
+		<item>符号率(bps)</item>
 		<item>信号检测</item>
 		<item>搜索</item>
 	</array>

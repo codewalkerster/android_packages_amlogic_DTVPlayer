@@ -686,18 +686,48 @@ public class DTVSettingsMenu extends DTVActivity {
 			switch(position){
 			
 		     case 0://SETTINGS_SCREEN_TYPE:
-				 //int mode= mDTVSettings.getScreenMode();		 
-				 int mode = DTVGetScreenMode();
-				 if(mode==0){
-				 	 holder.info.setText(R.string.auto);
-				 }
-				 else  if(mode==2){
-					holder.info.setText(R.string.type_4_3);
-				 }
-				 else  if(mode==3){
-					holder.info.setText(R.string.type_16_9);
-				 }	
-		    	 break;
+				 //int mode= mDTVSettings.getScreenMode();	
+				int mode = DTVGetScreenMode();
+				int pos = 0;
+				final int step = 5;
+				if(mode==1){
+					pos = 0;
+				}
+				else {
+					pos = mode-step;
+				}
+				 
+				 switch(pos){
+					case 0:
+						holder.info.setText(R.string.full_screen);						
+						break;
+					case 1:
+						holder.info.setText(R.string.type_4_3_IGNORE);						
+						break;
+					case 2:
+						holder.info.setText(R.string.type_4_3_LETTER_BOX);
+					break;
+					case 3:
+						holder.info.setText(R.string.type_4_3_PAN_SCAN);
+						break;	
+					case 4:
+						holder.info.setText(R.string.type_4_3_COMBINED);						
+						break;
+					case 5:
+						holder.info.setText(R.string.type_16_9_IGNORE);						
+						break;
+					case 6:
+						holder.info.setText(R.string.type_16_9_LETTER_BOX);						
+						break;
+					case 7:
+						holder.info.setText(R.string.type_16_9_PAN_SCAN);						
+						break;
+					case 8:
+						holder.info.setText(R.string.type_16_9_COMBINED);						
+						break;
+					
+				}
+		    	 	break;
 			case 1: //subtitle language
 				String language = getLanguage(getIndexLanguage(mDTVSettings.getSubtitleLanguage()));
 				holder.info.setText(language);
@@ -5265,8 +5295,8 @@ public class DTVSettingsMenu extends DTVActivity {
 		VIDEO_WIDEOPTION_16_9_PAN_SCAN    = 12,
 		VIDEO_WIDEOPTION_16_9_COMBINED    = 13,
 		***************************************/
-		
-		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{"Full","4:3 IGNORE","4:3 LETTER BOX","4:3 PAN SCAN","4:3 COMBINED", "16:9 IGNORE","16:9 LETTER BOX","16:9 PAN SCAN","16:9 COMBINED"},pos){
+		final String DATA[] = getResources().getStringArray(R.array.settings_screen_mode);
+		new SingleChoiseDialog(DTVSettingsMenu.this,DATA,pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getString(R.string.screen_type));
 			}
