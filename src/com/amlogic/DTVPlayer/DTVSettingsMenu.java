@@ -4523,22 +4523,24 @@ public class DTVSettingsMenu extends DTVActivity {
 	private Runnable timer_signal_check_runnable = new Runnable() {
 		public void run() {
 			timer_signal_check_handler.postDelayed(timer_signal_check_runnable,500);  
-			updataSignalInfo();
+			t.onSetupCmd(50,null);
 		}   
 	};
 
-	private void updataSignalInfo(){
-		
-		int ber = getFrontendBER();
-		int snr =  getFrontendSNR();
-		int strength =  getFrontendSignalStrength();
-		
+	class DVBFrontendSignalInfo{
+		int ber = 0;
+		int snr = 0;
+		int strength = 0;
 		boolean lock_status = false;
-		if(getFrontendStatus()==32)						
-			lock_status = false;
-		else
-			lock_status=true;
+	}
 
+	private void updataSignalInfo(DVBFrontendSignalInfo info ){
+		
+		int ber = info.ber;
+		int snr =  info.snr;
+		int strength =  info.strength;
+		boolean lock_status = info.lock_status;
+		
 		if(mDialog!=null){
 			Window window = mDialog.getWindow();
 			final CheckBox checkboxStatus = (CheckBox)window.findViewById(R.id.checkStatus);
@@ -4576,6 +4578,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		
 	}
 
+	signalCheckThread t =null;
 	private void showSignalCheckDialog(){
 		String region;
 		try {
@@ -4585,6 +4588,9 @@ public class DTVSettingsMenu extends DTVActivity {
 			Log.d(TAG, "Cannot read dtv region !!!");
 			return;
 		}
+
+		t =new signalCheckThread();  
+		t.start(); 
 		
 		mDialog = new AlertDialog(DTVSettingsMenu.this){
 			@Override
@@ -4608,11 +4614,6 @@ public class DTVSettingsMenu extends DTVActivity {
 			return;
 		}
 
-		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
-			public void onShow(DialogInterface dialog) {
-				
-			}         
-		}); 	
 		mDialog.show();
 
 		if (region.contains("DVB-C")){
@@ -4677,7 +4678,6 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 		else if(region.contains("ISDBT")){
 			lock(TVChannelParams.isdbtParams(mDTVSettings.getDvbtScanFrequency()*1000,mDTVSettings.getDvbtScanBandwidth()));
-
 		}
 
 				
@@ -4735,12 +4735,19 @@ public class DTVSettingsMenu extends DTVActivity {
 		
 		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
 						public void onShow(DialogInterface dialog) {
-								
+								//stopPlaying();
+								t.onSetupCmd(50,null);
 							}         
 							}); 	
 
 		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
 						public void onDismiss(DialogInterface dialog) {
+							TVProgram mTVProgram=DTVPlayerGetDataByCurrentID();
+
+							if(mTVProgram!=null){
+								lock(mTVProgram.getChannel().getParams());
+							}
+							t.quitLoop();	
 							timer_signal_check_handler.removeCallbacks(timer_signal_check_runnable);  
 						}         
 						});	
@@ -4749,6 +4756,91 @@ public class DTVSettingsMenu extends DTVActivity {
 		
 	}
 
+	public class EventHandler extends Handler {  
+
+		public EventHandler(Looper looper) {  
+		     super(looper);  
+		}  
+
+		@Override  
+
+		public void handleMessage(Message msg) {  
+			   switch (msg.what) { 
+					case 50: 
+			   		 	updataSignalInfo((DVBFrontendSignalInfo)msg.obj);
+					break;
+				}  
+		}
+	}  
+
+	class cmdParams{
+		TVChannelParams channel;
+		int				unit;
+	} 
+
+	class signalCheckThread extends Thread {
+		private Handler mHandler = null;
+
+		private static final int ROTOR_CMD_STOP_MOVING		= 0;	//!< para: None
+		private static final int ROTOR_CMD_DISABLE_LIMIT	= 1;	//!< para: None
+		private static final int ROTOR_CMD_SET_ELIMIT		= 2;	//!< para: None
+		
+		public void run() {
+			Looper.prepare();
+
+			mHandler = new Handler() {
+				public void handleMessage(Message msg) {
+
+					switch (msg.what) { 
+						case 50:
+							{		
+								
+								DVBFrontendSignalInfo info = new DVBFrontendSignalInfo();
+
+								info.ber = getFrontendBER();
+								info.snr = getFrontendSNR();
+								info.strength = getFrontendSignalStrength();
+								if(getFrontendStatus()==32)
+								
+								 info.lock_status = false;
+								else
+									info.lock_status=true;
+
+								Log.d(TAG, "report : ber:" + info.ber + " snr:" + info.snr + " strength:" + info.strength+"lock status:"+info.lock_status);
+
+								Message message=new Message();
+								message.what=50;
+								message.obj= (Object)info;
+			
+								EventHandler ha =new EventHandler(Looper.getMainLooper());  
+								ha.sendMessage(message);
+							}
+							break;
+						default:
+							break;
+					}  
+				}
+			};
+
+			Looper.loop();
+			Log.d(TAG, "work thread will now exit.");
+		}
+
+		public void quitLoop() {
+			if (mHandler != null && mHandler.getLooper() != null) {
+				mHandler.getLooper().quit();
+			}
+		}
+		
+		public void onSetupCmd(int cmd, Object para ) {
+			if (mHandler != null){
+				mHandler.sendMessage(mHandler.obtainMessage(cmd,para));	
+			}	
+		}
+
+		
+
+	}
 	
 
 	private void DTVScanATSC_UpdateChInfoByChNo(int index)
@@ -5963,8 +6055,11 @@ public class DTVSettingsMenu extends DTVActivity {
 		else if(mode.equals("atsc")){
 			pos = 3;
 		}
+		else if(mode.equals("dvbc")){
+			pos = 4;
+		}
 		
-		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "DVBS", "DVBT/T2","ISDBT","ATSC"},pos){
+		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "DVBS", "DVBT/T2","ISDBT","ATSC","DVBC"},pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText("DTV Mode");
 			}
@@ -5985,6 +6080,9 @@ public class DTVSettingsMenu extends DTVActivity {
 					break;	
 				case 3:  //ATSC
 					mDTVSettings.setDtvMode("atsc");
+					break;
+				case 4:
+					mDTVSettings.setDtvMode("dvbc");
 					break;
 				}	
 			}

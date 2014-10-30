@@ -1789,7 +1789,7 @@ public class DTVPlayer extends DTVActivity{
 		editBuilder = new AlertDialog.Builder(this);	
 		
 		channel_info_view = (LinearLayout)getLayoutInflater().inflate(R.layout.dvbs_channel_info, null);
-		TextView fre_text = (TextView)channel_info_view.findViewById(R.id.fre);
+		TextView fre_text = null;
 		int frequency = 0;
 
 		if(mDTVSettings.getScanRegion().contains("DVBS")){
@@ -1805,7 +1805,7 @@ public class DTVPlayer extends DTVActivity{
 					pol="H";
 					int sat_id = mTVProgram.getChannel().getParams().getSatId();
 					String sat_name = TVSatellite.tvSatelliteSelect(DTVPlayer.this,sat_id).getSatelliteName();
-
+					fre_text = (TextView)channel_info_view.findViewById(R.id.fre);
 					fre_text.setText(String.valueOf(frequency/1000)+"MHz   "+pol+"   "+String.valueOf(sym/1000)+"KS/s   "+sat_name);
 				
 					TextView satellites_name = (TextView)channel_info_view.findViewById(R.id.sat_name);
@@ -1820,13 +1820,20 @@ public class DTVPlayer extends DTVActivity{
 				}
 			}
 		}	
-		else
+		else{
 			channel_info_view = (LinearLayout)getLayoutInflater().inflate(R.layout.channel_info, null);
 		
-			 
+			if(mTVProgram!=null){
+				if(mTVProgram.getChannel()!=null){
+					frequency = mTVProgram.getChannel().getParams().getFrequency();
+				}
+			}
+			fre_text = (TextView)channel_info_view.findViewById(R.id.fre);
+			fre_text.setText(this.getResources().getString(R.string.channel_fre)+": "+Integer.toString(frequency/1000)+" kHZ");
+		}	 
 		TextView channel_name = (TextView)channel_info_view.findViewById(R.id.channel_name);
 		
-
+		TextView fre = (TextView)channel_info_view.findViewById(R.id.fre);
 		TextView strenght = (TextView)channel_info_view.findViewById(R.id.channel_strenght);
 		TextView signal_quality = (TextView)channel_info_view.findViewById(R.id.channel_signal_quality);
 		//TextView error_rate = (TextView)channel_info_view.findViewById(R.id.channel_error_rate);
@@ -1835,7 +1842,6 @@ public class DTVPlayer extends DTVActivity{
 		TextView aid = (TextView)channel_info_view.findViewById(R.id.audio_pid);
 
 		channel_name.setText(this.getResources().getString(R.string.channel_name)+": "+dtvplayer_name);
-		fre_text.setText(this.getResources().getString(R.string.channel_fre)+": "+Integer.toString(frequency/1000)+" kHZ");
 
 		int strength=getFrontendSignalStrength();
 		if(strength>100)

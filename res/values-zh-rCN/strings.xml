@@ -515,6 +515,8 @@
 	<string name="longitude_angle">Longitude Angle</string>
 	<string name="latitude_angle">Latitude Angle</string>
 	<string name="band">波段</string>
+	<string name="modulation">调制方式</string>
+	<string name="symbole">符号率</string>
 	<string name="lo_la_input_invalid">输入无效,经度:0--180,纬度:0-90</string>
 
 	<string name="title_sat_name">名称</string>

@@ -42,6 +42,9 @@ public class DTVSettings{
 		else if(mode.equals("atsc")){
 			mContext.setConfig("tv:scan:dtv:region","U.S.,ATSC Air");
 		}
+		else  if(mode.equals("dvbc")){
+			mContext.setConfig("tv:scan:dtv:region","China,DVB-C allband");
+		}
 	}
 
 	public String getDtvDemodAndDmxConfig(){
