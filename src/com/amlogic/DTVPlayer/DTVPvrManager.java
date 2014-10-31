@@ -504,8 +504,9 @@ public class DTVPvrManager extends DTVActivity{
 			String file_name = getServiceInfoByPostion(position);
 			final int  pos = position;
 			choise = 0;
-				
-			new SingleChoiseDialog(DTVPvrManager.this,new String[]  { "Play", "Delete","Order by name","Order by size","Order by date","Search"}, 0){
+
+			final String DATA[] = getResources().getStringArray(R.array.pvr_manage_content);
+			new SingleChoiseDialog(DTVPvrManager.this,DATA, 0){
 				public void onSetMessage(View v){
 					((TextView)v).setText(getString(R.string.sure_factory_set));
 				}

@@ -259,6 +259,15 @@
 		<item>Timeshift Size</item>
 	</array>
 
+	<array name="pvr_manage_content" translatable="false">
+		<item>Play</item>	
+		<item>Delete</item>
+		<item>Order by name</item>	
+		<item>Order by size</item>
+		<item>Order by date</item>	
+		<item>Search</item>
+	</array>
+
 	<array name="sort_by_content" translatable="false">
 		<item>Default</item>	
 		<item>By Encrypt</item>

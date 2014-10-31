@@ -254,7 +254,16 @@
 		<item>磁盘</item>	
 		<item>时移时长设置</item>
 	</array>
-
+	
+	<array name="pvr_manage_content" translatable="false">
+		<item>播放</item>	
+		<item>删除</item>
+		<item>按名称排序</item>	
+		<item>按大小排序</item>
+		<item>按时间排序</item>	
+		<item>查找</item>
+	</array>
+	
 	<array name="sort_by_content" translatable="false">
 		<item>默认</item>	
 		<item>加扰</item>
