@@ -508,7 +508,7 @@ public class DTVPvrManager extends DTVActivity{
 			final String DATA[] = getResources().getStringArray(R.array.pvr_manage_content);
 			new SingleChoiseDialog(DTVPvrManager.this,DATA, 0){
 				public void onSetMessage(View v){
-					((TextView)v).setText(getString(R.string.sure_factory_set));
+					((TextView)v).setText(getString(R.string.title_pvr_manager));
 				}
 
 				public void onSetNegativeButton(){
