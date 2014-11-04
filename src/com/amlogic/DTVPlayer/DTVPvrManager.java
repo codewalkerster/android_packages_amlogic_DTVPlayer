@@ -289,7 +289,7 @@ public class DTVPvrManager extends DTVActivity{
 			    //float size = ((float)file.length())/1024/1024;
 				HashMap<String, Object> map = new HashMap<String, Object>();   
 				map.put("ItemTitle", getString(R.string.size)+":");   
-				map.put("ItemText", file.length()+" B");   
+				map.put("ItemText", file.length()/1024+" KB");   
 				listItem.add(map);   
 
 				HashMap<String, Object> map1 = new HashMap<String, Object>();   
