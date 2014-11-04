@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">DTV播放器</string>
 	<string name="app">DTVPlayer</string>
@@ -254,7 +254,16 @@
 		<item>磁盘</item>	
 		<item>时移时长设置</item>
 	</array>
-
+	
+	<array name="pvr_manage_content" translatable="false">
+		<item>播放</item>	
+		<item>删除</item>
+		<item>按名称排序</item>	
+		<item>按大小排序</item>
+		<item>按时间排序</item>	
+		<item>查找</item>
+	</array>
+	
 	<array name="sort_by_content" translatable="false">
 		<item>默认</item>	
 		<item>加扰</item>
@@ -295,7 +304,7 @@
 	<string name="closed_caption">Closed Caption</string>	
 	<!--Timeshifting-->
 	<string name="timeshifting_exit_message">退出时移电视，确认？</string>
-	<string name="timeshifting_pause_message">"yes" continue,"no" exit</string>
+	<string name="timeshifting_pause_message">"是" 继续时移录像,"否" 退出</string>
 	<string name="timeshift_when_recording">正在录像，要进入时移电视需要先停止录像</string>
 	<string name="timeshift_when_radio">广播不支持时移</string>
 	<string name="timeshift_when_lock">加锁节目，请先解锁</string>

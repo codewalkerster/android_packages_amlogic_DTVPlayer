@@ -882,16 +882,45 @@ public class DTVPvrPlayer extends DTVActivity{
 
 		
 		int mode = DTVGetScreenMode();
-		if(mode==0){
-			Text_screentype_info.setText(getString(R.string.auto));
+		int pos = 0;
+		final int step = 5;
+		if(mode==1){
+			pos = 0;
 		}
-		else  if(mode==2){
-			Text_screentype_info.setText(getString(R.string.type_4_3));
+		else {
+			pos = mode-step;
 		}
-		else  if(mode==3){
-			Text_screentype_info.setText(getString(R.string.type_16_9));
+				 
+		 switch(pos){
+			case 0:
+				Text_screentype_info.setText(R.string.full_screen);						
+				break;
+			case 1:
+				Text_screentype_info.setText(R.string.type_4_3_IGNORE);						
+				break;
+			case 2:
+				Text_screentype_info.setText(R.string.type_4_3_LETTER_BOX);
+			break;
+			case 3:
+				Text_screentype_info.setText(R.string.type_4_3_PAN_SCAN);
+				break;	
+			case 4:
+				Text_screentype_info.setText(R.string.type_4_3_COMBINED);						
+				break;
+			case 5:
+				Text_screentype_info.setText(R.string.type_16_9_IGNORE);						
+				break;
+			case 6:
+				Text_screentype_info.setText(R.string.type_16_9_LETTER_BOX);						
+				break;
+			case 7:
+				Text_screentype_info.setText(R.string.type_16_9_PAN_SCAN);						
+				break;
+			case 8:
+				Text_screentype_info.setText(R.string.type_16_9_COMBINED);						
+				break;
+			
 		}
-		
 		
 		mode = DTVGetAudioTrack();
 		if(mode==0){ 						
