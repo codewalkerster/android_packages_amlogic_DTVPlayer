@@ -52,6 +52,7 @@
 	<string name="stereo">立体声</string>
 	<string name="left">左声道</string>
 	<string name="right">右声道</string>	
+	<string name="sub">字幕</string>	
 
 	<string name="add">添加</string>
 	<string name="edit">编辑</string>
