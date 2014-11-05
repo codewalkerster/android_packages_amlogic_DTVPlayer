@@ -976,7 +976,7 @@ public class DvbsScanResult extends DTVActivity{
 	private void showReturnDia(){
 		new SureDialog(DvbsScanResult.this,true){
 			public void onSetMessage(View v){
-				((TextView)v).setText("Stop scan?");
+				((TextView)v).setText(getString(R.string.stop_scan));
 			}
 			public void onSetNegativeButton(){
 	  
