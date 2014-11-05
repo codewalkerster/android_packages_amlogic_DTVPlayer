@@ -624,7 +624,7 @@ public class DTVPlayer extends DTVActivity{
 							toast.cancel(); 
 						toast = Toast.makeText(
 						DTVPlayer.this,
-						R.string.off,
+						"AD"+getString(R.string.off),
 						Toast.LENGTH_SHORT);
 						toast.setGravity(Gravity.CENTER, 0, 0);
 						toast.show();
@@ -635,7 +635,7 @@ public class DTVPlayer extends DTVActivity{
 							toast.cancel(); 
 						toast = Toast.makeText(
 						DTVPlayer.this,
-						R.string.on,
+						"AD"+getString(R.string.on),
 						Toast.LENGTH_SHORT);
 						toast.setGravity(Gravity.CENTER, 0, 0);
 						toast.show();
@@ -2050,10 +2050,10 @@ public class DTVPlayer extends DTVActivity{
 		}	
 		
 		if(DTVGetSubtitleStatus()){
-			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.on));	
+			Text_parent_control_info_icon.setText(getString(R.string.sub)+":"+getString(R.string.on));	
 		}
 		else{
-			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
+			Text_parent_control_info_icon.setText(getString(R.string.sub)+":"+getString(R.string.off));
 		}
 
 		if(getProgramServiceType()==TVProgram.TYPE_RADIO)
@@ -2402,13 +2402,13 @@ public class DTVPlayer extends DTVActivity{
 		else if(key.equals("SUBTITLE")){
 			if(DTVGetSubtitleStatus()){
 				DTVSetSubtitleStatus(false);
-				ShowInformation(getString(R.string.off));	
-				Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));	
+				ShowInformation(getString(R.string.sub)+":"+getString(R.string.off));	
+				Text_parent_control_info_icon.setText(getString(R.string.sub)+":"+getString(R.string.off));	
 			}
 			else{
 				DTVSetSubtitleStatus(true);
-				ShowInformation(getString(R.string.on));
-				Text_parent_control_info_icon.setText("SUB:"+getString(R.string.on));	
+				ShowInformation(getString(R.string.sub)+":"+getString(R.string.on));
+				Text_parent_control_info_icon.setText(getString(R.string.sub)+":"+getString(R.string.on));	
 			}
 		}
 		else if(key.equals("FAV")){

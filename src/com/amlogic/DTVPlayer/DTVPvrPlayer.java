@@ -226,10 +226,10 @@ public class DTVPvrPlayer extends DTVActivity{
 		}	
 		
 		if(DTVGetSubtitleStatus()){
-			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.on));	
+			Text_parent_control_info_icon.setText(getString(R.string.sub)+":"+getString(R.string.on));	
 		}
 		else{
-			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
+			Text_parent_control_info_icon.setText(getString(R.string.sub)+":"+getString(R.string.off));
 		}
 	
         more = (ImageButton)findViewById(R.id.moreBtn);
@@ -703,12 +703,12 @@ public class DTVPvrPlayer extends DTVActivity{
 			if(DTVGetSubtitleStatus()){
 				DTVSetSubtitleStatus(false);
 				//ShowInformation(getString(R.string.off));	
-				Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));	
+				Text_parent_control_info_icon.setText(getString(R.string.sub)+":"+getString(R.string.off));	
 			}
 			else{
 				DTVSetSubtitleStatus(true);
 				//ShowInformation(getString(R.string.on));
-				Text_parent_control_info_icon.setText("SUB:"+getString(R.string.on));	
+				Text_parent_control_info_icon.setText(getString(R.string.sub)+":"+getString(R.string.on));	
 			}
 		}
 		
@@ -934,10 +934,10 @@ public class DTVPvrPlayer extends DTVActivity{
 		}	
 		
 		if(DTVGetSubtitleStatus()){
-			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.on));	
+			Text_parent_control_info_icon.setText(getString(R.string.sub)+":"+getString(R.string.on));	
 		}
 		else{
-			Text_parent_control_info_icon.setText("SUB:"+getString(R.string.off));
+			Text_parent_control_info_icon.setText(getString(R.string.sub)+":"+getString(R.string.off));
 		}
 
 

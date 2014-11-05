@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">DTVPlayer</string>
 	<string name="app">DTVPlayer</string>
@@ -54,6 +54,7 @@
 	<string name="stereo">Stereo</string>
 	<string name="left">Left</string>
 	<string name="right">Right</string>	
+	<string name="sub">SUB</string>	
 
 	<string name="add">Add</string>
 	<string name="edit">Edit</string>
@@ -517,6 +518,7 @@
 	<string name ="xml_generator_success">Backup satellites DB file success</string>
 	<string name ="xml_generator_fail">Backup satellites DB file fail</string>
 	
+	<string name="operations">Operations</string>	
 	<string name="edit_title">Edit</string>
 	<string name="add_title">Add</string>
 	<string name="delete_title">Delete</string>
@@ -569,7 +571,7 @@
 	<string name="dish_setup_conf_on">On</string>
 	<string name="dish_setup_conf_off">Off</string>
 	<string name="dish_setup_conf_user_dual">User Dual</string>
-	<string name="dish_setup_conf_user_sigle">User Sigle</string>
+	<string name="dish_setup_conf_user_sigle">User Single</string>
 	
 	<string name="dish_setup_conf_lnb_low">LNB Low</string>
 	<string name="dish_setup_conf_lnb_high">LNB High</string>
@@ -591,6 +593,11 @@
 	<string name="scan_service_tv">TV</string>
 	<string name="scan_service_radio">Radio</string>
 	<string name="scan_ts">Transponder</string>
+
+	<string name="east">East</string>
+	<string name="west">West</string>
+	<string name="south">South</string>
+	<string name="north">North</string>		
 
 	<string name="set_limit">Set Limit</string>
 	<string name="set_limit_move_continue">Move Continue</string>

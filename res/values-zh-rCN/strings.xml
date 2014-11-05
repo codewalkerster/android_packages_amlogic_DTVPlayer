@@ -46,12 +46,14 @@
 		<item>16:9 COMBINED</item>
 	</array>
 	
+	<string name="stop">停止</string>
 	<string name="stop_scan">停止搜索</string>
 	<string name="mono">Mono</string>
 	<string name="SAP">SAP</string>	
 	<string name="stereo">立体声</string>
 	<string name="left">左声道</string>
 	<string name="right">右声道</string>	
+	<string name="sub">字幕</string>	
 
 	<string name="add">添加</string>
 	<string name="edit">编辑</string>
@@ -508,10 +510,12 @@
 	<string name="dvbs_dbm_load">从存储设备加载</string>
 	<string name="dvbs_dbm_backup">备份到存储设备</string>
 
-	<string name ="xml_load_success">Load satellites DB file success</string>
-	<string name ="xml_generator_success">Backup satellites DB file success</string>
-	<string name ="xml_generator_fail">Backup satellites DB file fail</string>
+	<string name ="xml_load_success">加载卫星数据库成功</string>
+	<string name ="xml_generator_success">备份卫星数据库成功</string>
+	<string name ="xml_generator_fail">备份卫星数据库失败</string>
 	
+	
+	<string name="operations">操作</string>	
 	<string name="edit_title">编辑</string>
 	<string name="add_title">添加</string>
 	<string name="delete_title">删除</string>
@@ -521,8 +525,8 @@
 	<string name="sat_name">卫星名称</string>
 	<string name="longitude_direction">经度</string>
 	<string name="latitude_direction">维度</string>
-	<string name="longitude_angle">Longitude Angle</string>
-	<string name="latitude_angle">Latitude Angle</string>
+	<string name="longitude_angle">经度参数</string>
+	<string name="latitude_angle">维度参数</string>
 	<string name="band">波段</string>
 	<string name="modulation">调制方式</string>
 	<string name="symbole">符号率</string>
@@ -564,7 +568,7 @@
 	<string name="dish_setup_conf_on">开</string>
 	<string name="dish_setup_conf_off">关</string>
 	<string name="dish_setup_conf_user_dual">User Dual</string>
-	<string name="dish_setup_conf_user_sigle">User Sigle</string>
+	<string name="dish_setup_conf_user_sigle">User Single</string>
 	
 	<string name="dish_setup_conf_lnb_low">LNB Low</string>
 	<string name="dish_setup_conf_lnb_high">LNB High</string>
@@ -581,22 +585,27 @@
 	<string name="scan_crypted_all">所有</string>
 	<string name="scan_crypted_fta">免费节目</string>
 
-	<string name="scan_service_type">Servcie Type</string>
-	<string name="scan_service_all">All</string>
-	<string name="scan_service_tv">TV</string>
-	<string name="scan_service_radio">Radio</string>
-	<string name="scan_ts">Transponder</string>
+	<string name="scan_service_type">服务类型</string>
+	<string name="scan_service_all">所有</string>
+	<string name="scan_service_tv">电视</string>
+	<string name="scan_service_radio">广播</string>
+	<string name="scan_ts">转发器</string>
+
+	<string name="east">东</string>
+	<string name="west">西</string>
+	<string name="south">南</string>
+	<string name="north">北</string>	
 
 	<string name="set_limit">Set Limit</string>
-	<string name="set_limit_move_continue">Move Continue</string>
-	<string name="set_limit_move_step">Move Step(1)</string>
-	<string name="set_limit_set_east">Set East Limit</string>
-	<string name="set_limit_set_west">Set West Limit</string>
+	<string name="set_limit_move_continue">连续移动</string>
+	<string name="set_limit_move_step">单步移动(1)</string>
+	<string name="set_limit_set_east">东向限定</string>
+	<string name="set_limit_set_west">西向限定</string>
 	<string name="set_limit_goto_reference">Goto Reference</string>
-	<string name="set_limit_disable_limit">Disable Limit</string>
-	<string name="set_position_store_position">Store Position</string>
-	<string name="set_position_goto_position">Goto Position</string>
-	<string name="set_position_goto_xx">Goto X</string>
+	<string name="set_limit_disable_limit">取消限定</string>
+	<string name="set_position_store_position">保存设定位置</string>
+	<string name="set_position_goto_position">转到设置位置</string>
+	<string name="set_position_goto_xx">自动</string>
 	
 
 	<string name="dish_setup_conf_sat_pos">Sat Position</string>
@@ -632,15 +641,15 @@
 	<string name="dish_setup_conf_button_des7">sub-t</string>
 	<string name="dish_setup_conf_button_des8">audio</string>
 
-	<string name="dish_setup_conf_button_des1_info">Goto Sat/TS</string>
+	<string name="dish_setup_conf_button_des1_info">切换卫星/转发器</string>
 	<string name="dish_setup_conf_button_des2_info">添加</string>
 	<string name="dish_setup_conf_button_des3_info">编辑</string>
 	<string name="dish_setup_conf_button_des4_info">删除</string>
 	<string name="dish_setup_conf_button_des5_info">选择</string>
 	<string name="dish_setup_conf_button_des6_info">搜索</string>
-	<string name="dish_setup_conf_button_des7_info">Set Position</string>
-	<string name="dish_setup_conf_button_des8_info">Set Location</string>
-	<string name="dish_setup_conf_set_position">Set Position</string>
+	<string name="dish_setup_conf_button_des7_info">位置调整</string>
+	<string name="dish_setup_conf_button_des8_info">本地经纬度</string>
+	<string name="dish_setup_conf_set_position">位置调整</string>
 	
 	<string name="add_to_scanlist">添加到卫星列表</string>
 	<string name="no_scan_list">"zoom out" 添加卫星信息</string>
