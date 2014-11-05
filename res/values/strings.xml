@@ -518,6 +518,7 @@
 	<string name ="xml_generator_success">Backup satellites DB file success</string>
 	<string name ="xml_generator_fail">Backup satellites DB file fail</string>
 	
+	<string name="operations">Operations</string>	
 	<string name="edit_title">Edit</string>
 	<string name="add_title">Add</string>
 	<string name="delete_title">Delete</string>

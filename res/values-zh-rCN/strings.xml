@@ -46,6 +46,7 @@
 		<item>16:9 COMBINED</item>
 	</array>
 	
+	<string name="stop">停止</string>
 	<string name="stop_scan">停止搜索</string>
 	<string name="mono">Mono</string>
 	<string name="SAP">SAP</string>	
@@ -513,6 +514,8 @@
 	<string name ="xml_generator_success">备份卫星数据库成功</string>
 	<string name ="xml_generator_fail">备份卫星数据库失败</string>
 	
+	
+	<string name="operations">操作</string>	
 	<string name="edit_title">编辑</string>
 	<string name="add_title">添加</string>
 	<string name="delete_title">删除</string>

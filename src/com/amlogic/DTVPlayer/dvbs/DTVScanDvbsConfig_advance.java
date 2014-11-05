@@ -2852,7 +2852,7 @@ public class DTVScanDvbsConfig_advance  extends DTVActivity {
 		}
 		@Override
 		public void onAnimationEnd(Animation animation) {
-			t.setText("Stop");
+			t.setText(getString(R.string.stop));
 		}
 		});
 	}
@@ -3251,14 +3251,14 @@ public class DTVScanDvbsConfig_advance  extends DTVActivity {
 
 					switch(arg2){
 						case 0:  //move continue
-							text.setText("Stop");	
+							text.setText(getString(R.string.stop));	
 							hideMoveIcon(icon);
 							hideMoveIcon(icon1);
 							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STOP_MOVING,null);
 							 t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
 							break;
 						case 1:  //move one step
-							text.setText("Stop");
+							text.setText(getString(R.string.stop));
 							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STOP_MOVING,null);
 							 t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
 							break;
@@ -3366,7 +3366,7 @@ public class DTVScanDvbsConfig_advance  extends DTVActivity {
 							{
 								hideMoveIcon(icon);
 								hideMoveIcon(icon1);
-								text.setText("Stop");
+								text.setText(getString(R.string.stop));
 								//t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
 								
 							}
@@ -5751,7 +5751,7 @@ public class DTVScanDvbsConfig_advance  extends DTVActivity {
 
 				String mode = holder.info.getText().toString();
 				if(mode.equals("")||mode.equals(null))
-					holder.info.setText("Stop");
+					holder.info.setText(getString(R.string.stop));
 				else
 					holder.info.setText(mode);	
 			} 

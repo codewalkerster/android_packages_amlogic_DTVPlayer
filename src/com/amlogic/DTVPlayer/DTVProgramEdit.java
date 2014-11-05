@@ -831,7 +831,7 @@ public class DTVProgramEdit extends DTVActivity{
 				public void showWindowDetail(Window window){
 					TextView title = (TextView)window.findViewById(R.id.title);
 					title.setTextColor(Color.YELLOW);
-					title.setText("Group Operations");
+					title.setText(getString(R.string.operations));
 					
 					ListView list_item = (ListView)window.findViewById(R.id.list_item);
 					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.menu_list_item,itemChoices);

@@ -407,7 +407,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 				public void showWindowDetail(Window window){
 					TextView title = (TextView)window.findViewById(R.id.title);
 					title.setTextColor(Color.YELLOW);
-					title.setText("Operations");
+					title.setText(getString(R.string.operations));
 					
 					ListView list_item = (ListView)window.findViewById(R.id.list_item);
 					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.menu_list_item,ListStatus ==0?itemChoices:itemChoices1);
@@ -4107,7 +4107,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 		}
 		@Override
 		public void onAnimationEnd(Animation animation) {
-			t.setText("Stop");
+			t.setText(getString(R.string.stop));
 		}
 		});
 	}
@@ -4749,14 +4749,14 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 	
 					switch(arg2){
 						case 0:  //move continue
-							text.setText("Stop");	
+							text.setText(getString(R.string.stop));	
 							hideMoveIcon(icon);
 							hideMoveIcon(icon1);
 							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STOP_MOVING,null);
 							 t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
 							break;
 						case 1:  //move one step
-							text.setText("Stop");
+							text.setText(getString(R.string.stop));
 							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STOP_MOVING,null);
 							 t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
 							break;
@@ -4868,7 +4868,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 							{
 								hideMoveIcon(icon);
 								hideMoveIcon(icon1);
-								text.setText("Stop");
+								text.setText(getString(R.string.stop));
 								t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);						
 							}
 							break;
@@ -8169,7 +8169,7 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 
 				String mode = holder.info.getText().toString();
 				if(mode.equals("")||mode.equals(null))
-					holder.info.setText("Stop");
+					holder.info.setText(getString(R.string.stop));
 				else
 					holder.info.setText(mode);	
 			} 
