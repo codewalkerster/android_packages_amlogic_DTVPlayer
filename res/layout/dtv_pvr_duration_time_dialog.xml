@@ -22,12 +22,12 @@
 		<TextView
 	        android:id="@+id/title"
 	        android:layout_width="match_parent"
-	        android:layout_height="34px"
+	        android:layout_height="34dp"
 	        android:layout_gravity="center_horizontal"
 	        android:text="@string/enter_password"
 	        android:textColor="#FFFFFFFF"
 	 		android:gravity="center"
-	        android:textSize="24px" 
+	        android:textSize="24sp" 
 	        android:layout_marginTop="20px"
 	        android:layout_marginBottom="10px" />	
 	</LinearLayout> 
@@ -53,23 +53,23 @@
 			android:layout_marginRight="30px"> 	
 			<TextView
 				android:id="@+id/head"
-				android:layout_width="200px"
-				android:layout_height="34px"
+				android:layout_width="200dp"
+				android:layout_height="34dp"
 				android:layout_gravity="center_horizontal"
 				android:textColor="#FFFFFFFF"
 				android:gravity="center"
-				android:textSize="24px" 
+				android:textSize="24sp" 
 				android:layout_marginTop="20px"
 				android:layout_marginBottom="10px" />		
 			<EditText
 	        	android:id="@+id/edit"
-	        	android:layout_width="100px"
-	       	 	android:layout_height="50px"
+	        	android:layout_width="100dp"
+	       	 	android:layout_height="50dp"
 	        	android:layout_gravity="center_horizontal"
 	        	android:text="@string/enter_password"
 	        	android:textColor="#FFFFFFFF"
 	 			android:gravity="left"
-	        	android:textSize="30px" 
+	        	android:textSize="24sp" 
 	        	android:layout_marginLeft="24px"
 				android:layout_marginRight="30px"
 	        	android:layout_marginTop="20px"
@@ -78,12 +78,12 @@
 		
 			<TextView
 				android:id="@+id/tail"
-				android:layout_width="140px"
-				android:layout_height="34px"
+				android:layout_width="140dp"
+				android:layout_height="34dp"
 				android:layout_gravity="center_horizontal"
 				android:textColor="#FFFFFFFF"
 				android:gravity="center"
-				android:textSize="24px" 
+				android:textSize="24sp" 
 				android:layout_marginTop="20px"
 				android:layout_marginBottom="10px" />	
 		</LinearLayout>
@@ -103,17 +103,17 @@
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
 			android:paddingLeft="60dp"
-    		android:paddingRight="60dp"
-    		android:paddingTop="30dp"
+			android:paddingRight="60dp"
+			android:paddingTop="30dp"
 			android:layout_marginBottom="20px" 
 			android:gravity="center">
-			
+
 			<Button android:id="@+id/no"
-			   android:layout_width="wrap_content"
-	           android:layout_height="35dp"
-	       	   android:background="@drawable/single_dia_button"
-	       	   android:layout_weight="1"
-	           />
+			android:layout_width="wrap_content"
+			android:layout_height="35dp"
+			android:background="@drawable/single_dia_button"
+			android:layout_weight="1"
+			/>
 	           
 			<Button android:id="@+id/yes"
 			   android:layout_width="wrap_content"
