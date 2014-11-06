@@ -1062,7 +1062,7 @@ public class DTVEpg extends DTVActivity{
 		TextView title = (TextView)window.findViewById(R.id.title);
 		title.setTextColor(Color.YELLOW);
 		//title.setText(getString(R.string.scan_mode));
-		title.setText("Event Add");
+		title.setText(getString(R.string.epg_event_add));
 	
 		final TextView text_channel_name= (TextView) window.findViewById(R.id.text_channel_name);
 		final TextView text_event_name = (TextView) window.findViewById(R.id.text_event_name);

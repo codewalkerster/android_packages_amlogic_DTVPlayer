@@ -338,6 +338,8 @@
     <string name="epg_booklist">BOOK LIST</string>
     <string name="epg_page_up">PAGE UP</string>
     <string name="epg_page_down">PAGE DOWN</string>
+    <string name="epg_event_add">Event Add</string>
+    
     
 	<!--DTV REC Manager-->
 

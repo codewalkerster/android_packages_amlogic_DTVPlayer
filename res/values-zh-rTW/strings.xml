@@ -335,6 +335,8 @@
     <string name="epg_booklist">预约列表</string>
     <string name="epg_page_up">向上翻页</string>
     <string name="epg_page_down">向下翻页</string>
+    <string name="epg_event_add">添加预约</string>
+
     
 	<!--DTV REC Manager-->
 

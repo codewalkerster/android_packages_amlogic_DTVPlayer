@@ -335,6 +335,8 @@
     <string name="epg_booklist">预约列表</string>
     <string name="epg_page_up">向上翻页</string>
     <string name="epg_page_down">向下翻页</string>
+    <string name="epg_event_add">添加预约</string>
+
     
 	<!--DTV REC Manager-->
 
@@ -515,7 +517,7 @@
 	<string name ="xml_generator_fail">备份卫星数据库失败</string>
 	
 	
-	<string name="operations">操作</string>	
+	<string name="operations">编辑</string>	
 	<string name="edit_title">编辑</string>
 	<string name="add_title">添加</string>
 	<string name="delete_title">删除</string>
@@ -597,15 +599,15 @@
 	<string name="north">北</string>	
 
 	<string name="set_limit">Set Limit</string>
-	<string name="set_limit_move_continue">连续移动</string>
-	<string name="set_limit_move_step">单步移动(1)</string>
-	<string name="set_limit_set_east">东向限定</string>
-	<string name="set_limit_set_west">西向限定</string>
+	<string name="set_limit_move_continue">Move Continue</string>
+	<string name="set_limit_move_step">Move Step(1)</string>
+	<string name="set_limit_set_east">Set East Limit</string>
+	<string name="set_limit_set_west">Set West Limit</string>
 	<string name="set_limit_goto_reference">Goto Reference</string>
-	<string name="set_limit_disable_limit">取消限定</string>
-	<string name="set_position_store_position">保存设定位置</string>
-	<string name="set_position_goto_position">转到设置位置</string>
-	<string name="set_position_goto_xx">自动</string>
+	<string name="set_limit_disable_limit">Disable Limit</string>
+	<string name="set_position_store_position">Store Position</string>
+	<string name="set_position_goto_position">Goto Position</string>
+	<string name="set_position_goto_xx">Goto X</string>
 	
 
 	<string name="dish_setup_conf_sat_pos">Sat Position</string>
