@@ -42,36 +42,36 @@
 			android:id="@+id/layout_body"
     		android:layout_width="match_parent"
     		android:layout_height="wrap_content"
-    		android:orientation="horizontal"
-    		android:paddingLeft="14dp"
-    		android:paddingRight="14dp"
-    		android:gravity="center"
+    		android:paddingLeft="50dp"
+    		android:paddingRight="50dp"
     		android:background="@drawable/single_dia_body"
     		android:layout_above="@+id/layout_tail" 
     		android:layout_below="@+id/layout_head" >
-		<!--
-		<ListView 
-			android:id="@+id/list_item"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:cacheColorHint="#00000000"
-			android:divider="#0000"
-			android:dividerHeight="0px"
-			android:focusable="true"
-			android:layout_marginLeft="30px"
-			android:layout_marginRight="30px" 			
-		></ListView>   
-		-->
-		
-		<com.amlogic.widget.FocusScrollListView 
-			android:id="@+id/list_item"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginLeft="36dp"
-			android:layout_marginRight="36dp" 
-			android:listSelector="#00000000">
-		</com.amlogic.widget.FocusScrollListView>
-		
+
+    		<LinearLayout
+    			android:layout_width="match_parent"
+    			android:layout_height="match_parent">
+			<!--
+			<ListView 
+				android:id="@+id/list_item"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:cacheColorHint="#00000000"
+				android:divider="#0000"
+				android:dividerHeight="0px"
+				android:focusable="true"
+				android:layout_marginLeft="30px"
+				android:layout_marginRight="30px" 			
+			></ListView>   
+			-->
+			
+			<com.amlogic.widget.FocusScrollListView 
+				android:id="@+id/list_item"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:listSelector="#00000000">
+			</com.amlogic.widget.FocusScrollListView>
+		</LinearLayout> 
 	</LinearLayout> 
 	
 	<LinearLayout

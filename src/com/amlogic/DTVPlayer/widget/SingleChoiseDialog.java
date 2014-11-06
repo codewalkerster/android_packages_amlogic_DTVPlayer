@@ -107,6 +107,10 @@ abstract public class SingleChoiseDialog {
 
 		/*ListView Item*/
 		list_item = (ListView)window.findViewById(R.id.list_item);
+
+		if(item.length>=10)
+			list_item.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 600));
+
 		list_item.setItemsCanFocus(false);
 		list_item.setChoiceMode(ListView.CHOICE_MODE_SINGLE);		
 		SimpleAdapter adapter = new SimpleAdapter(mContext, platform(),

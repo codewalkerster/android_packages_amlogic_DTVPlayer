@@ -56,7 +56,7 @@
 
 		<Button
 			android:id="@+id/edit_longitude_direction"
-			android:layout_width="80px"
+			android:layout_width="100dp"
 			android:layout_height="wrap_content"
 		></Button>
 
@@ -110,7 +110,7 @@
 
 		<Button
 			android:id="@+id/edit_latitude_direction"
-			android:layout_width="100px"
+			android:layout_width="100dp"
 			android:layout_height="wrap_content"
 		></Button>
 

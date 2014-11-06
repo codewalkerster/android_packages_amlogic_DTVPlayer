@@ -961,7 +961,7 @@ abstract public class DTVActivity extends TVActivity{
 	
 			int size = DTVPlayergetRecallNumber();
 
-			while(recall_list.size()>=size+1){
+			while(recall_list.size()>size+1){
 				recall_list.remove(0);
 			}
 
@@ -979,6 +979,9 @@ abstract public class DTVActivity extends TVActivity{
 				recall_list.remove(pos);
 			
 			recall_list.add(id);
+
+			if((recall_list.size()>size+1))
+				recall_list.remove(0);
 		}
 	}
 

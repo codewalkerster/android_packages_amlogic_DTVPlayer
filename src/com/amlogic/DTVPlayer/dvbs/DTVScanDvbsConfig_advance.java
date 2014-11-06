@@ -2387,21 +2387,21 @@ public class DTVScanDvbsConfig_advance  extends DTVActivity {
 
 				
 		if(longitude_direction.equals("East")){
-			edit_longitude_direction.setText("East");
+			edit_longitude_direction.setText(getString(R.string.east));
 		}
 		else{
-			edit_longitude_direction.setText("West");
+			edit_longitude_direction.setText(getString(R.string.west));
 		}	
 		edit_longitude_direction.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 			// TODO Auto-generated method stub
 
-				if(edit_longitude_direction.getText().equals("East")){
-					edit_longitude_direction.setText("West");
+				if(edit_longitude_direction.getText().equals(getString(R.string.east))){
+					edit_longitude_direction.setText(getString(R.string.west));
 				}
 				else{
-					edit_longitude_direction.setText("East");
+					edit_longitude_direction.setText(getString(R.string.east));
 				}
 			}
 		});
@@ -2410,20 +2410,20 @@ public class DTVScanDvbsConfig_advance  extends DTVActivity {
 
 		
 		if(latitude_direction.equals("North")){
-			edit_latitude_direction.setText("North");
+			edit_latitude_direction.setText(getString(R.string.north));
 		}
 		else{
-			edit_latitude_direction.setText("South");
+			edit_latitude_direction.setText(getString(R.string.south));
 		}
 		edit_latitude_direction.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 			// TODO Auto-generated method stub
-				if(edit_latitude_direction.getText().equals("North")){
-					edit_latitude_direction.setText("South");				
+				if(edit_latitude_direction.getText().equals(getString(R.string.north))){
+					edit_latitude_direction.setText(getString(R.string.south));				
 				}
 				else{
-					edit_latitude_direction.setText("North");
+					edit_latitude_direction.setText(getString(R.string.north));
 				}
 			}
 		});
@@ -2852,7 +2852,7 @@ public class DTVScanDvbsConfig_advance  extends DTVActivity {
 		}
 		@Override
 		public void onAnimationEnd(Animation animation) {
-			t.setText("Stop");
+			t.setText(getString(R.string.stop));
 		}
 		});
 	}
@@ -3251,14 +3251,14 @@ public class DTVScanDvbsConfig_advance  extends DTVActivity {
 
 					switch(arg2){
 						case 0:  //move continue
-							text.setText("Stop");	
+							text.setText(getString(R.string.stop));	
 							hideMoveIcon(icon);
 							hideMoveIcon(icon1);
 							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STOP_MOVING,null);
 							 t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
 							break;
 						case 1:  //move one step
-							text.setText("Stop");
+							text.setText(getString(R.string.stop));
 							//mLockDvb.sendRotorCommand(mLockDvb.ROTOR_CMD_STOP_MOVING,null);
 							 t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
 							break;
@@ -3366,7 +3366,7 @@ public class DTVScanDvbsConfig_advance  extends DTVActivity {
 							{
 								hideMoveIcon(icon);
 								hideMoveIcon(icon1);
-								text.setText("Stop");
+								text.setText(getString(R.string.stop));
 								//t.onSetupCmd(t.ROTOR_CMD_STOP_MOVING,null);
 								
 							}
@@ -5751,7 +5751,7 @@ public class DTVScanDvbsConfig_advance  extends DTVActivity {
 
 				String mode = holder.info.getText().toString();
 				if(mode.equals("")||mode.equals(null))
-					holder.info.setText("Stop");
+					holder.info.setText(getString(R.string.stop));
 				else
 					holder.info.setText(mode);	
 			} 

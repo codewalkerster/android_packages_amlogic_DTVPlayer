@@ -10,7 +10,8 @@
 	<LinearLayout
    		android:id="@+id/layout_head"
 		android:layout_width="match_parent"
-		android:layout_height="90dp"
+		android:layout_height="80dp"
+
 		android:orientation="vertical"
 		android:padding="14dp"
 		android:gravity="center"
@@ -19,16 +20,16 @@
 		>
 		
 		<TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="34px"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/enter_password"
-        android:textColor="#FFFFFFFF"
- 		android:gravity="center"
-        android:textSize="24px" 
-        android:layout_marginTop="20px"
-        android:layout_marginBottom="10px" />
+		android:id="@+id/title"
+		android:layout_width="match_parent"
+		android:layout_height="34dp"
+		android:layout_gravity="center_horizontal"
+		android:text="@string/enter_password"
+		android:textColor="#FFFFFFFF"
+		android:gravity="center"
+		android:textSize="24sp" 
+		android:layout_marginTop="20dp"
+		android:layout_marginBottom="10dp" />	
 	</LinearLayout> 
 
 	<LinearLayout
@@ -45,23 +46,24 @@
 		<LinearLayout 
      	 android:layout_width="fill_parent" 
          android:layout_height="wrap_content"
-         android:gravity="left"
+         android:layout_marginLeft="20dp"
+		android:layout_marginRight="20dp"
          android:orientation="horizontal">
        
-			<TextView 
-	         	 android:layout_width="250px" 
-	         	 android:gravity="left"
-	             android:layout_height="34px"
-	             android:text="@string/subtitle_switch" 
-	             android:layout_marginLeft = "30px"
-	             android.textSize="22px"
-			/>  
-			<CheckBox
-				android:id="@+id/checkSubtitleSwitch"
+			<TextView
+				android:layout_width="250px"
+				android:textSize="20sp"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft = "30px"
+				android:layout_gravity="center_vertical"
+				android:singleLine="true"
+				android:text="@string/subtitle_switch"/>
+
+			 <CheckBox
+			 	android:id="@+id/checkSubtitleSwitch"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft = "20px"
-			/> 
+				/> 
 		</LinearLayout>
 	</LinearLayout> 
 	

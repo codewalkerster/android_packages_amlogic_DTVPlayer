@@ -225,7 +225,7 @@ public class DTVBookList extends DTVActivity{
 		final int item = position;
 	
 		int pos = 0;
-		String items[] = new String[]{"delete", "Edit"};
+		String items[] = new String[]{getString(R.string.delete), getString(R.string.edit)};
 		
 		new SingleChoiseDialog(DTVBookList.this,items,pos){
 			public void onSetMessage(View v){
