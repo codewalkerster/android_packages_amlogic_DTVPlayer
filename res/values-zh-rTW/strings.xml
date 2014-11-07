@@ -221,6 +221,7 @@
 		<item>频率(KHz)</item>
 		<item>带宽(M)</item>
 		<item>信号检测</item>
+		<item>搜索</item>
 	</array>
 	<array name="search_settings_content_dvbc_manual" translatable="false">
 		<item>模式</item>	
