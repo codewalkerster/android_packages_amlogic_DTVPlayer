@@ -243,6 +243,11 @@ public class DTVSettings{
 		if(mLast!=null){
 			mLast.edit().putInt("recall_number",1).commit();
 			mLast.edit().putInt("screen_mode",1).commit();
+			
+			mLast.edit().putInt("fre",474000).commit();
+			mLast.edit().putInt("sym",6875000).commit();
+			mLast.edit().putInt("modulation",TVChannelParams.MODULATION_QAM_64).commit();
+			mLast.edit().putInt("bandwidth",0).commit();
 		}	
 		mContext.restoreFactorySetting();
 	}
@@ -340,38 +345,71 @@ public class DTVSettings{
 
 	private int dvbt_scan_frequency=474000;
 	public int getDvbtScanFrequency(){
+		int value = 474000;
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
+		if(mLast!=null)
+			value = mLast.getInt("fre",dvbt_scan_frequency);
+		dvbt_scan_frequency = value;
 		return dvbt_scan_frequency;
 	}
 
 	public void setDvbtScanFrequency(int fre){
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
 		dvbt_scan_frequency=fre;
+		if(mLast!=null)
+			mLast.edit().putInt("fre",fre).commit();
 	}
 
 	private int dvbc_scan_modulation=TVChannelParams.MODULATION_QAM_64;
 	public int getDvbcModulation(){
+		int value = TVChannelParams.MODULATION_QAM_64;
+
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
+		if(mLast!=null)
+			value = mLast.getInt("modulation",dvbc_scan_modulation);
+		dvbc_scan_modulation = value;
 		return dvbc_scan_modulation;
 	}
 
 	public void setDvbcModulation(int modulation){
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
 		dvbc_scan_modulation=modulation;
+		if(mLast!=null)
+			mLast.edit().putInt("modulation",modulation).commit();
 	}
 
 	private int dvbc_scan_symbole=6875000;
 	public int getDvbcSymbole(){
+		int value = 6875000;
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
+		if(mLast!=null)
+			value = mLast.getInt("sym",dvbc_scan_symbole);
+		dvbc_scan_symbole = value;
 		return dvbc_scan_symbole;
 	}
 
 	public void setDvbcSymbole(int sym){
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
 		dvbc_scan_symbole=sym;
+		if(mLast!=null)
+			mLast.edit().putInt("sym",sym).commit();
 	}
 
 	private int dvbt_band_width=0;
 	public int getDvbtScanBandwidth(){
+		int value = 0;
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
+		if(mLast!=null)
+			value = mLast.getInt("bandwidth",dvbt_band_width);
+		dvbt_band_width = value;
 		return dvbt_band_width;
 	}
 
-	public void setDvbtScanBandwidth(int bandwidth){
+	public void setDvbtScanBandwidth(int bandwidth){		
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
 		dvbt_band_width=bandwidth;
+		if(mLast!=null)
+			mLast.edit().putInt("bandwidth",bandwidth).commit();
 	}
 
 
@@ -400,11 +438,19 @@ public class DTVSettings{
 	}
 
 	public int getAtscScanFrequency(){
+		int value = 474000;
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
+		if(mLast!=null)
+			value = mLast.getInt("fre",dvbt_scan_frequency);
+		dvbt_scan_frequency = value;
 		return dvbt_scan_frequency;
 	}
 
 	public void setAtscScanFrequency(int fre){
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
 		dvbt_scan_frequency=fre;
+		if(mLast!=null)
+			mLast.edit().putInt("fre",fre).commit();
 	}
 
 	public void setStringConfig(String name, String value){

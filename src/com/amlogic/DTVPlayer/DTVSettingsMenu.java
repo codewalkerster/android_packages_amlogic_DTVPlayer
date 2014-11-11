@@ -1226,6 +1226,7 @@ public class DTVSettingsMenu extends DTVActivity {
 						intent_scan.putExtras(bundle_scan_dvbc);
 						//startActivityForResult(intent_scan,1);	
 						startActivity(intent_scan);	
+						DTVSettingsMenu.this.finish();
 						break;
 				}
 			}	
@@ -1366,9 +1367,14 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		if(dvbsandvbt_channelallbandlist != null)
 		{
-			mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channelallbandlist[0].frequency/1000);
+			/*mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channelallbandlist[0].frequency/1000);
 			mDTVSettings.setDvbcModulation(dvbsandvbt_channelallbandlist[0].modulation);
 			mDTVSettings.setDvbcSymbole(dvbsandvbt_channelallbandlist[0].symbolRate);
+			*/
+			mDTVSettings.setDvbtScanFrequency(mDTVSettings.getDvbtScanFrequency());
+			mDTVSettings.setDvbcModulation(mDTVSettings.getDvbcModulation());
+			mDTVSettings.setDvbcSymbole(mDTVSettings.getDvbcSymbole());
+			
 			mDTVSettings.setDvbtScanBand(0);
 			
 			int channel_count=0;
@@ -1381,6 +1387,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					}
 				}
 				if(channel_count==0){
+					mDTVSettings.setDvbtScanBand(1);
 					return;
 				}
 				
@@ -4331,7 +4338,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		else  if(mode==1){
 			pos = 1;
 		}
-		
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ getResources().getString(R.string.dtvscan_scan_band_vhf), getResources().getString(R.string.dtvscan_scan_band_uhf)},pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt_manual)[1]);
@@ -4351,10 +4358,68 @@ public class DTVSettingsMenu extends DTVActivity {
 					mDTVSettings.setDvbtScanBand(1);
 					break;
 				}	
+				
+				String region;
+				try {
+					region = getConfig("tv:scan:dtv:region").getString();
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.d(TAG, "Cannot read dtv region !!!");
+					return;
+				}
+				if(region.contains("DVB-T")){
+					DTVScanDVBT_UpdateChInfoByband(which);
+				}
+				else if (region.contains("DVB-C")){
+					DTVScanDVBC_UpdateChInfoByband(which);
+				}
 				DTVScanDVBT_UpdateChInfoByband(which);
 				refreshDvbtManualScanList();
 			}
 		};						
+	}
+
+	private boolean DTVScanDVBC_UpdateChInfoByband(int scanband)
+	{
+		boolean ret = false;
+
+		if(dvbsandvbt_channelallbandlist == null)
+			return ret;
+		
+		if(scanband == 0)
+		{
+			for (int i = 0; i < dvbsandvbt_channelallbandlist.length; i++)
+			{
+				if((dvbsandvbt_channelallbandlist[i].frequency/1000) < 300000)
+				{
+					mDTVSettings.setDvbtScanChannelIndex(i); 
+					mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channelallbandlist[i].frequency/1000);
+					mDTVSettings.setDvbcModulation(dvbsandvbt_channelallbandlist[i].modulation);
+					mDTVSettings.setDvbcSymbole(dvbsandvbt_channelallbandlist[i].symbolRate);
+					ret = true;
+					break;
+				}				
+			}	
+		}
+		else if(scanband == 1)
+		{
+			for (int i = 0; i < dvbsandvbt_channelallbandlist.length; i++)
+			{
+				if((dvbsandvbt_channelallbandlist[i].frequency/1000) >= 300000)
+				{
+					mDTVSettings.setDvbtScanChannelIndex(i); 
+					mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channelallbandlist[i].frequency/1000);
+					mDTVSettings.setDvbcModulation(dvbsandvbt_channelallbandlist[i].modulation);
+					mDTVSettings.setDvbcSymbole(dvbsandvbt_channelallbandlist[i].symbolRate);
+					ret = true;
+					break;
+				}				
+			}		
+		}
+
+		mDTVSettings.setDvbtScanChannelIndex(0);
+	
+		return ret;
 	}
 
 	private boolean DTVScanDVBT_UpdateChInfoByband(int scanband)
