@@ -47,7 +47,7 @@
 		<item>16:9 COMBINED</item>
 	</array>
 
-	
+	 <string name="stop">Stop</string>
 	<string name="stop_scan">Stop scan?</string>
 	<string name="mono">Mono</string>
 	<string name="SAP">SAP</string>	

@@ -248,6 +248,7 @@ public class DTVSettings{
 			mLast.edit().putInt("sym",6875000).commit();
 			mLast.edit().putInt("modulation",TVChannelParams.MODULATION_QAM_64).commit();
 			mLast.edit().putInt("bandwidth",0).commit();
+			mLast.edit().putInt("scan_mode",0).commit();
 		}	
 		mContext.restoreFactorySetting();
 	}
@@ -317,12 +318,20 @@ public class DTVSettings{
 	}
 
 	public int getDvbtScanMode(){
+		int value = 0;
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
+		if(mLast!=null)
+			value = mLast.getInt("scan_mode",dvbt_scan_mode);
+		dvbt_scan_mode = value;
 		return dvbt_scan_mode;
 	}
 
 	private int dvbt_scan_mode = 0;
 	public void setDvbtScanMode(int mode){
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
 		dvbt_scan_mode = mode;
+		if(mLast!=null)
+			mLast.edit().putInt("scan_mode",mode).commit();
 	}
 
 	private int dvbt_band=0;
