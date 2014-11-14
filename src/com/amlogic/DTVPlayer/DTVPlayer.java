@@ -162,6 +162,7 @@ public class DTVPlayer extends DTVActivity{
 				break;
 			case TVMessage.TYPE_PROGRAM_SWITCH:
 				hidePasswordDialog();
+				DismissDialog();
 				break;
 			case TVMessage.TYPE_PROGRAM_START:
 				SubAsyncTask mTask = new SubAsyncTask();  
