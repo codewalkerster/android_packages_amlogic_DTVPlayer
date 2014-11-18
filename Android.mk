@@ -15,7 +15,7 @@ LOCAL_PROGUARD_ENABLED := disabled
 LOCAL_CERTIFICATE := platform
 
 $(LOCAL_PATH)/AndroidManifest.xml: $(LOCAL_PATH)/AndroidManifest.xml.in
-	LOCAL_PATH=$(LOCAL_PATH) $(LOCAL_PATH)/makeversion.sh $< $@
+	LOCAL_PATH=packages/amlogic/DTVPlayer packages/amlogic/DTVPlayer/makeversion.sh $< $@
 
 .PHONY: $(LOCAL_PATH)/AndroidManifest.xml
 
