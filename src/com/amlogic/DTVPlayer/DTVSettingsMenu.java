@@ -1529,7 +1529,8 @@ public class DTVSettingsMenu extends DTVActivity {
 						bundle_scan_dvbs.putString("scan-mode","dvbt-auto-scan");
 						intent_scan.putExtras(bundle_scan_dvbs);
 						//startActivityForResult(intent_scan,1);	
-						startActivity(intent_scan);	
+						startActivity(intent_scan);
+						DTVSettingsMenu.this.finish();
 					}	
 					break;
 				case 1:   //manual scan

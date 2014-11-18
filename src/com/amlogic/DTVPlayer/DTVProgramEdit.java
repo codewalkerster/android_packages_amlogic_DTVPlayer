@@ -441,6 +441,106 @@ public class DTVProgramEdit extends DTVActivity{
 				        List_detail.setAdapter(listItemAdapter);   
 					}
 				}
+				else if(mDTVSettings.getScanRegion().contains("DVB-C")==true){
+					ListView detail= (ListView) findViewById(R.id.List_detail);
+					if(mTVProgramList[position].getChannel()!=null){
+						int fre = mTVProgramList[position].getChannel().getParams().getFrequency();
+						int sym = mTVProgramList[position].getChannel().getParams().getSymbolRate();
+						int modulation = mTVProgramList[position].getChannel().getParams().getModulation();	
+						String mod = null;
+						switch(modulation){
+							case TVChannelParams.MODULATION_QAM_16:
+								mod = "16QAM";
+								break;
+							case TVChannelParams.MODULATION_QAM_32:
+								mod = "32QAM";
+								break;
+							case TVChannelParams.MODULATION_QAM_64:
+								mod = "64QAM";
+								break;			
+							case TVChannelParams.MODULATION_QAM_128:
+								mod = "128QAM";
+								break;
+							case TVChannelParams.MODULATION_QAM_256:
+								mod = "256QAM";
+								break;	
+							default:
+								mod = "Auto";
+								break;
+						}
+							
+				        	ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();    
+
+						HashMap<String, Object> map1 = new HashMap<String, Object>();   
+						map1.put("ItemTitle", "Fre:");   
+						map1.put("ItemText", String.valueOf(fre/1000)+"MHz");   
+						listItem.add(map1); 
+
+						HashMap<String, Object> map2 = new HashMap<String, Object>();   
+						map2.put("ItemTitle", "Sym:");   
+						map2.put("ItemText", String.valueOf(sym/1000)+"Kbd/s");   
+						listItem.add(map2); 
+
+						HashMap<String, Object> map3 = new HashMap<String, Object>();   
+						map3.put("ItemTitle", "Modulation:");   
+						map3.put("ItemText", mod);   
+						listItem.add(map3); 
+								       
+				        SimpleAdapter listItemAdapter = new SimpleAdapter(DTVProgramEdit.this,listItem,
+							R.layout.simple_list_item,
+							new String[] {"ItemTitle", "ItemText"},
+							new int[] {R.id.ItemTitle,R.id.ItemText}   
+				        );   
+
+				        List_detail.setAdapter(listItemAdapter);   
+					}
+				}
+				else if((mDTVSettings.getScanRegion().contains("DVB-T")==true)||(mDTVSettings.getScanRegion().contains("ISDBT"))==true){
+					ListView detail= (ListView) findViewById(R.id.List_detail);
+					if(mTVProgramList[position].getChannel()!=null){
+						int fre = mTVProgramList[position].getChannel().getParams().getFrequency();
+						int bandwidth=mDTVSettings.getDvbtScanBandwidth();
+						String bw = null;
+					switch(bandwidth){
+						case TVChannelParams.BANDWIDTH_8_MHZ:
+							bw = "8M";
+							break;
+						case TVChannelParams.BANDWIDTH_7_MHZ:
+							bw = "7M";
+							break;
+						case TVChannelParams.BANDWIDTH_6_MHZ:
+							bw = "6M";
+							break;			
+						case TVChannelParams.BANDWIDTH_AUTO:
+							bw = "Auto";
+							break;
+						default:
+							bw = "Auto";
+							break;
+					}
+							
+			        	ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();    
+
+					HashMap<String, Object> map1 = new HashMap<String, Object>();   
+					map1.put("ItemTitle", "Fre:");   
+					map1.put("ItemText", String.valueOf(fre/1000)+"MHz");   
+					listItem.add(map1); 
+
+					HashMap<String, Object> map2 = new HashMap<String, Object>();   
+					map2.put("ItemTitle", "BandWidth:");   
+					map2.put("ItemText", bw);   
+					listItem.add(map2); 
+
+								       
+				        SimpleAdapter listItemAdapter = new SimpleAdapter(DTVProgramEdit.this,listItem,
+							R.layout.simple_list_item,
+							new String[] {"ItemTitle", "ItemText"},
+							new int[] {R.id.ItemTitle,R.id.ItemText}   
+				        );   
+
+				        List_detail.setAdapter(listItemAdapter);   
+					}
+				}
 			}
 			cur_select_item = position;
 		}
