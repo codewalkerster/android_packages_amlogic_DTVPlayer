@@ -1,5 +1,7 @@
 package com.amlogic.DTVPlayer;
 
+import java.util.*;
+import java.text.*;
 import android.util.Log;
 import android.os.Bundle;
 import android.os.SystemProperties;
@@ -2667,7 +2669,15 @@ public class DTVPlayer extends DTVActivity{
 			dtvplayer_next_event=null;
 			TVEvent mTVEventPresent=mTempTVProgram.getPresentEvent(this,getUTCTime());	
 			if(mTVEventPresent!=null){
-				dtvplayer_cur_event=mTVEventPresent.getName();
+				Date dt_start =  new Date(mTVEventPresent.getStartTime());
+			    	Date dt_end   =  new Date(mTVEventPresent.getEndTime());
+			    		
+		    		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
+		    		String str_start = sdf.format(dt_start); 
+		    		String str_end   = sdf.format(dt_end); 
+				String time = ""+str_start + "--" + str_end;	
+				
+				dtvplayer_cur_event=time+mTVEventPresent.getName();
 				dtvplayer_event_des=mTVEventPresent.getEventDescr();
 				dtvplayer_event_ext_des=mTVEventPresent.getEventExtDescr();
 				dtvplayer_b_epg = true;
@@ -2675,6 +2685,14 @@ public class DTVPlayer extends DTVActivity{
 
 			TVEvent mTVEventFollow=mTempTVProgram.getFollowingEvent(this,getUTCTime());	
 			if(mTVEventFollow!=null){
+				Date dt_start =  new Date(mTVEventPresent.getStartTime());
+			    	Date dt_end   =  new Date(mTVEventPresent.getEndTime());
+			    		
+		    		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
+		    		String str_start = sdf.format(dt_start); 
+		    		String str_end   = sdf.format(dt_end); 
+				String time = ""+str_start + "--" + str_end;	
+				
 				dtvplayer_next_event=mTVEventFollow.getName();
 				dtvplayer_b_epg = true;
 			}
