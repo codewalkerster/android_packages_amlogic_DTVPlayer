@@ -695,7 +695,7 @@
 
 	<!--event add dialog-->
 	<string name="channel_name">节目名称</string>
-	<string name="event_name">时间名称</string>
+	<string name="event_name">事件名称</string>
 	<string name="event_start_date">开始日期</string>
 	<string name="event_start_time">开始时间</string>
 	<string name="event_end_time">结束</string>

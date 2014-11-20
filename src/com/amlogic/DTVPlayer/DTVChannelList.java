@@ -436,14 +436,16 @@ public class DTVChannelList extends DTVActivity{
 				myAdapter.notifyDataSetChanged();			
 				break;		
 			case DTVActivity.KEYCODE_REC:
+				break;
+			case DTVActivity.KEYCODE_GOTO_BUTTON:
+				showSatellitesList();
+				return true;
+			case DTVActivity.KEYCODE_RED_BUTTON: 			
 				if(mTVProgramList!=null&&mTVProgramList.length>0){
 					showBookAddDialog();
 				}
 				return true;
-			case DTVActivity.KEYCODE_GOTO_BUTTON:
-				showSatellitesList();
-				return true;
-			case DTVActivity.KEYCODE_RED_BUTTON: 
+			case DTVActivity.KEYCODE_YELLOW_BUTTON:
 				showProgramSearchDialog();
 				return true;
 			/*	
