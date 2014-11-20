@@ -5090,7 +5090,7 @@ public class DTVSettingsMenu extends DTVActivity {
 							toast.show();
 						}
 						else{
-							if(Integer.parseInt(fre)==0){
+							if(Integer.parseInt(fre)==0||Integer.parseInt(fre)<51000||Integer.parseInt(fre)>858000){
 								editText.setText(null);
 								toast = Toast.makeText(
 								DTVSettingsMenu.this, 
