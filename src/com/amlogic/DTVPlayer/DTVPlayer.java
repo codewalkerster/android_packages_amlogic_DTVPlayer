@@ -2685,8 +2685,8 @@ public class DTVPlayer extends DTVActivity{
 
 			TVEvent mTVEventFollow=mTempTVProgram.getFollowingEvent(this,getUTCTime());	
 			if(mTVEventFollow!=null){
-				Date dt_start =  new Date(mTVEventPresent.getStartTime());
-			    	Date dt_end   =  new Date(mTVEventPresent.getEndTime());
+				Date dt_start =  new Date(mTVEventFollow.getStartTime());
+			    	Date dt_end   =  new Date(mTVEventFollow.getEndTime());
 			    		
 		    		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm"); 
 		    		String str_start = sdf.format(dt_start); 
@@ -2887,6 +2887,13 @@ public class DTVPlayer extends DTVActivity{
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 								// TODO Auto-generated method stub
 								int db_id=recall_tvprogram[position].getID();	
+								int serviceType = recall_tvprogram[position].getType();
+								if(serviceType==TVProgram.TYPE_RADIO){
+									setProgramType(TVProgram.TYPE_RADIO);
+								}	
+								else{
+									setProgramType(TVProgram.TYPE_TV);
+								}
 								DTVPlayerPlayById(db_id);
 								mCustomDialog.dismissDialog();
 							}
@@ -2900,6 +2907,13 @@ public class DTVPlayer extends DTVActivity{
 			);
 		}	
 		else if(recall_tvprogram.length==1){
+			int serviceType = recall_tvprogram[0].getType();
+			if(serviceType==TVProgram.TYPE_RADIO){
+				setProgramType(TVProgram.TYPE_RADIO);
+			}	
+			else{
+				setProgramType(TVProgram.TYPE_TV);
+			}
 			DTVPlayerPlayById(recall_tvprogram[0].getID());
 		}
 	}
