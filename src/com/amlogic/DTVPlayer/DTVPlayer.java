@@ -3156,6 +3156,14 @@ public class DTVPlayer extends DTVActivity{
 									toast.show();
 								}
 								else{
+									if(isHaveExternalStorage()==false){
+										CheckUsbdevice dev = new CheckUsbdevice(DTVPlayer.this);
+										String path  = dev.getDevice();
+										if(path!=null){
+											if(mDTVSettings!=null)
+												mDTVSettings.setRecordStoragePath(path);
+										}	
+									}
 									recordDurationMin = dration;
 									DTVPlayerStartRecording(dration*60*1000);
 									showPvrIcon();
