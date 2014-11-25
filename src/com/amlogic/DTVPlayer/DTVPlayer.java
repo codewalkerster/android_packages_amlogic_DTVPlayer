@@ -129,11 +129,8 @@ public class DTVPlayer extends DTVActivity{
 		openVideo();
 		DTVPlayerUIInit();
 		mDTVSettings = new DTVSettings(this);
-		
-
 		TVMessage msg = new TVMessage(TVMessage.TYPE_INPUT_SOURCE_CHANGED);
 		onMessage(msg);
-
 	}
 
 	public void onDisconnected(){
@@ -229,15 +226,8 @@ public class DTVPlayer extends DTVActivity{
 			case TVMessage.TYPE_SCREEN_ON:
 				Log.d(TAG,"---TYPE_SCREEN_ON---");
 				int mode = DTVGetScreenMode();
-				if(mode==0){
-					DTVSetScreenMode(0);
-				}
-				else if(mode==2){
-					DTVSetScreenMode(2);
-				}
-				else if(mode==3){
-					DTVSetScreenMode(3);
-				}
+				DTVSetScreenMode(mode);
+				
 				if (mDTVSettings.getBlackoutPolicyConfig()==1){			   
 					setBlackoutPolicy(1);
 				}
@@ -282,15 +272,8 @@ public class DTVPlayer extends DTVActivity{
 						}
 
 						int ScreenMode = DTVGetScreenMode();
-						if(ScreenMode==0){
-							DTVSetScreenMode(0);
-						}
-						else if(ScreenMode==2){
-							DTVSetScreenMode(2);
-						}
-						else if(ScreenMode==3){
-							DTVSetScreenMode(3);
-						}	
+						DTVSetScreenMode(ScreenMode);
+						
 						if (mDTVSettings.getBlackoutPolicyConfig()==1){			   
 							setBlackoutPolicy(1);
 						}
@@ -422,16 +405,8 @@ public class DTVPlayer extends DTVActivity{
 					playValid();
 				}
 
-				int mode = DTVGetScreenMode();
-				if(mode==0){
-					DTVSetScreenMode(0);
-				}
-				else if(mode==2){
-					DTVSetScreenMode(2);
-				}
-				else if(mode==3){
-					DTVSetScreenMode(3);
-				}
+				int mode = DTVGetScreenMode();	
+				DTVSetScreenMode(mode);				
 				if (mDTVSettings.getBlackoutPolicyConfig()==1){			   
 					setBlackoutPolicy(1);
 				}
