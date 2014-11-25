@@ -216,30 +216,24 @@ public class DTVProgramEdit extends DTVActivity{
 
 	}
 
+	private UpdateThread t=null;
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtv_program_edit); 
+		if(t==null){
+			t =new UpdateThread();  
+			t.start();
+		}
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
 		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
-		   
 		TVSubtitleView mSubtitleView= (TVSubtitleView) findViewById(R.id.mSubtitleView);
 		openVideo(video_view,mSubtitleView);
 		mDTVSettings = new DTVSettings(this);
-		/*
-		LinearLayout video_position= (LinearLayout) findViewById(R.id.video_position);
-		int[] location = new  int[2] ;
-		video_position.getLocationInWindow(location); 
-		//video_position.getLocationOnScreen(location);
-		int height = video_position.getMeasuredHeight();
-		int width = video_position.getMeasuredWidth();
-		Log.d(TAG,"x=="+location[0]+"-----y=="+location[1]+"---width=="+width+"----height=="+height);
-		setVideoWindow(new Rect(location[0], location[1], location[0]+width, location[1]+height));
-		*/
 		DTVChannelList_UI_Init();
 		myAdapter.notifyDataSetChanged();
 	}
@@ -247,6 +241,10 @@ public class DTVProgramEdit extends DTVActivity{
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
 		super.onDisconnected();
+		if(t!=null){
+			t.quitLoop();
+			t=null;
+		}
 	}
 
 	public void onMessage(TVMessage msg){
@@ -1375,13 +1373,17 @@ public class DTVProgramEdit extends DTVActivity{
 		class_total = getListProgramClass();
 		RelativeLayout_radio_bg = (RelativeLayout)findViewById(R.id.RelativeLayoutRadioBg);
 		if(service_type == TVProgram.TYPE_RADIO){
-			getListData(1);
+			if(t!=null){
+				t.onSetupCmd(1,null);
+			}
 			Text_title.setText(R.string.radio);
 			showRadioBg();
 		}	
 		else{
 			service_type = TVProgram.TYPE_TV;
-			getListData(0);
+			if(t!=null){
+				t.onSetupCmd(0,null);
+			}
 			Text_title.setText(R.string.tv);
 			hideRadioBg();
 		}
@@ -1796,6 +1798,86 @@ public class DTVProgramEdit extends DTVActivity{
 		  return recPara.getProgramID();
 		}  
 		else return -1;
+	}
+
+
+	public class UIHandler extends Handler {  
+		public UIHandler(Looper looper) {  
+		     super(looper);  
+		}  
+
+		@Override  
+		public void handleMessage(Message msg) {  
+			   switch (msg.what) {
+			   	case 0:	
+				case 1:
+					if(myAdapter!=null)
+						myAdapter.notifyDataSetChanged();
+					setFocusPosition();
+					break;
+				case 2:
+					
+					break;
+				case 3:				        
+					
+					break;
+			}
+		}
+	}  
+	
+	class UpdateThread extends Thread {
+		private Handler mHandler = null;
+		public void run() {
+			Looper.prepare();
+
+			mHandler = new Handler() {
+				public void handleMessage(Message msg) {
+					Message message=new Message();
+					UIHandler ha =new UIHandler(Looper.getMainLooper());
+					switch (msg.what) { 
+						case 0:
+							{		
+								getListData(0);
+								message.what=0;
+								ha.sendMessage(message);
+							}
+							break;
+						case 1:
+								getListData(1);
+								message.what=1;
+								ha.sendMessage(message);
+							break;
+						case 2:
+								message.what=2;
+								ha.sendMessage(message);
+							break;
+						case 3:
+								message.what=3;
+								ha.sendMessage(message);
+							break;	
+						default:
+							break;
+					}  
+				}
+			};
+
+			Looper.loop();
+		}
+
+		public void quitLoop() {
+			if (mHandler != null && mHandler.getLooper() != null) {
+				mHandler.getLooper().quit();
+			}
+		}
+		
+		public void onSetupCmd(int cmd, Object para ) {
+			if (mHandler != null){
+				mHandler.sendMessage(mHandler.obtainMessage(cmd,para));	
+			}	
+		}
+
+		
+
 	}
 
 	

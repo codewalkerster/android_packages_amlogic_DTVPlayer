@@ -244,7 +244,7 @@ public class DTVEpg extends DTVActivity{
 	        EitListView  = (ListView)findViewById(R.id.EitListView);
 	        EitListView.setItemsCanFocus(true);
 
-		EitListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+		 EitListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view,
 			int position, long id) {
 				Log.d(TAG,"sat_list setOnItemSelectedListener " + position);
@@ -544,7 +544,7 @@ public class DTVEpg extends DTVActivity{
 	        						,get_firstmillisofcurrentday()+ 1 * 24 * 60 * 60*1000-get_current_datetime());
 			if(mTempTVEvent[0]!=null)
 			Log.d("mTVEvent[0]:",""+mTempTVEvent[0].length);
-			
+
 	        mTempTVEvent[1] = DTVEpg_getDateEIT(get_firstmillisofcurrentday()+ 1 * 24 * 60 * 60*1000,
 	        						 1 * 24 * 60 * 60*1000);
 			if(mTempTVEvent[1]!=null)
@@ -569,7 +569,7 @@ public class DTVEpg extends DTVActivity{
 	        						1 * 24 * 60 * 60*1000);
 			if(mTempTVEvent[6]!=null)
 			Log.d("mTVEvent[6]:",""+mTempTVEvent[6].length);
-		
+			
 		//if (mTVEvent[0].length > 0)
 			//HelpInfoTextView.setText(R.string.epg_operate_des01);
 		//else
@@ -1525,7 +1525,6 @@ public class DTVEpg extends DTVActivity{
 		mTVProgramList=TVProgram.selectByFavorite(this,true);	
 	}
 
-
 	TVGroup[] mTVGroup=null;
 	private int getListProgramClass(){
 		mTVGroup=DTVProgramManagerGetGroupList();
@@ -1557,12 +1556,17 @@ public class DTVEpg extends DTVActivity{
 		
 		class_total = getListProgramClass();
 		if(service_type == TVProgram.TYPE_RADIO){
-			getListData(1);
+
+			if(t!=null){
+				t.onSetupCmd(EitUpdateThread.DATA_RADIO,null);
+			}
 			Text_title.setText(R.string.radio);
 		}	
 		else{
 			service_type = TVProgram.TYPE_TV;
-			getListData(0);
+			if(t!=null){
+				t.onSetupCmd(EitUpdateThread.DATA_TV,null);
+			}
 			Text_title.setText(R.string.tv);
 		}
 		
@@ -2217,6 +2221,14 @@ public class DTVEpg extends DTVActivity{
 				case 3:				        
 					dismissUpdateDialog();
 					break;
+				case 4:
+				case 5:
+					if(myAdapter!=null)
+						myAdapter.notifyDataSetChanged();
+					if(ListView_channel!=null)
+						ListView_channel.requestFocus();
+					break;
+					
 			}
 		}
 	}  
@@ -2224,6 +2236,8 @@ public class DTVEpg extends DTVActivity{
 	class EitUpdateThread extends Thread {
 		private Handler mHandler = null;
 		private static final int EIT_UPDATE = 0;
+		private static final int DATA_RADIO = 4;
+		private static final int DATA_TV = 5;
 		public void run() {
 			Looper.prepare();
 
@@ -2233,6 +2247,16 @@ public class DTVEpg extends DTVActivity{
 					Message message=new Message();
 					EventHandler ha =new EventHandler(Looper.getMainLooper());
 					switch (msg.what) { 
+						case DATA_RADIO:
+							getListData(1);
+							message.what=4;
+							ha.sendMessage(message);
+							break;
+						case DATA_TV:
+							getListData(0);
+							message.what=5;
+							ha.sendMessage(message);
+							break;	
 						case EIT_UPDATE:
 							{		
 								setup_db();
