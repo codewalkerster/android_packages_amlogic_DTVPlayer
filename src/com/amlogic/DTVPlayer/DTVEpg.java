@@ -2225,8 +2225,8 @@ public class DTVEpg extends DTVActivity{
 				case 5:
 					if(myAdapter!=null)
 						myAdapter.notifyDataSetChanged();
-					if(ListView_channel!=null)
-						ListView_channel.requestFocus();
+					if(ListView_channel!=null)	
+						setFocusPosition();
 					break;
 					
 			}
