@@ -217,6 +217,7 @@ public class DTVProgramEdit extends DTVActivity{
 	}
 
 	private UpdateThread t=null;
+	private String video_axis = null;
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
@@ -225,6 +226,7 @@ public class DTVProgramEdit extends DTVActivity{
 			t =new UpdateThread();  
 			t.start();
 		}
+		video_axis = getVideoWindowSize();
 	}
 
 	public void onConnected(){
@@ -855,18 +857,16 @@ public class DTVProgramEdit extends DTVActivity{
 			case KeyEvent.KEYCODE_BACK:
 				if(move_mode){
 					move_mode=false;
-					//savechanges();
 					setMoveItemPos(-1);
 					myAdapter.notifyDataSetChanged();
 					return true;
 				}
 				else{
-					//if(isHavePragram()==false){ 
-						Intent in = new Intent();
-						in.setClass(DTVProgramEdit.this, DTVPlayer.class);
-						DTVProgramEdit.this.startActivity(in);	
-						DTVProgramEdit.this.finish();
-					//}
+					setVideoWindowSize(video_axis);
+					Intent in = new Intent();
+					in.setClass(DTVProgramEdit.this, DTVPlayer.class);
+					DTVProgramEdit.this.startActivity(in);	
+					DTVProgramEdit.this.finish();
 				}
 				break;
 		}
