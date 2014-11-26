@@ -893,6 +893,15 @@ public class DTVPlayer extends DTVActivity{
 			Log.d(TAG, "Try to set input source to DTV.");
 			setInputSource(TVConst.SourceInput.SOURCE_DTV);
 
+			if(isHaveExternalStorage()==false){
+				CheckUsbdevice dev = new CheckUsbdevice(DTVPlayer.this);
+				String path  = dev.getDevice();
+				if(path!=null){
+					if(mDTVSettings!=null)
+						mDTVSettings.setRecordStoragePath(path);
+				}	
+			}
+			
 			Log.d(TAG, "Start playing for booking " + bookingID + " ...");
 			startBooking(bookingID);
 
