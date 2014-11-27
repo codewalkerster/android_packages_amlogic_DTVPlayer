@@ -5520,8 +5520,12 @@ public class DTVSettingsMenu extends DTVActivity {
 			public void onSetPositiveButton(){
 				switchScreenType(0);
 				mDTVSettings.factoryReset();
+
+				Bundle bundle = new Bundle();	
 				Intent pickerIntent = new Intent();
+				bundle.putString("activity_tag", "factory_reset");
 				pickerIntent.setClass(DTVSettingsMenu.this, DTVPlayer.class);
+				pickerIntent.putExtras(bundle);
  		        	startActivity(pickerIntent);
 				DTVSettingsMenu.this.finish();
 			}

@@ -395,6 +395,10 @@ public class DTVPlayer extends DTVActivity{
 					else if (tryBookingPlay()){
 						Log.d(TAG, "booking play started");
 					}
+					else if(checkFactoryReset()){
+						hideRadioBg();
+						showNoProgramDia(); 
+					}
 					else{
 						int db_id = DTVPlayerGetCurrentProgramID();
 						DTVPlayerPlayById(db_id);
@@ -535,7 +539,9 @@ public class DTVPlayer extends DTVActivity{
 				showTeltext(DTVPlayer.this);
 				return true;
 			case DTVActivity.KEYCODE_REC:
-				showPvrDurationTimeSetDialog(DTVPlayer.this);
+				if(DTVPlayerIsRecording()==false){
+					showPvrDurationTimeSetDialog(DTVPlayer.this);
+				}
 				return true;
 			case DTVActivity.KEYCODE_RECALL_BUTTON:
 				showRecallListDialog(DTVPlayer.this);
@@ -936,6 +942,18 @@ public class DTVPlayer extends DTVActivity{
 
 		return ret;
 	}
+
+	private boolean checkFactoryReset(){
+		boolean ret = false;
+		
+		if(bundle != null && bundle.containsKey("activity_tag")){
+			if (bundle.getString("activity_tag").equals("factory_reset")){
+				ret = true;
+			}
+		}
+		return ret;
+	}
+
 	
 	private class InfoDialog extends Dialog {
 		public InfoDialog(Context context, int theme) {
@@ -2353,20 +2371,21 @@ public class DTVPlayer extends DTVActivity{
 			int mode = DTVGetScreenMode();
 			if(mode==1){
 				DTVSetScreenMode(mode+5);
-				//ShowInformation(getString(R.string.type_16_9));
-				//Text_screentype_info.setText(getString(R.string.type_4_3));
 			}
 			else  if(mode==13){
 					
 				DTVSetScreenMode(1);
-				//Text_screentype_info.setText(getString(R.string.type_16_9));
 			}
 			else{
 				
 				DTVSetScreenMode(mode+1);
-				//Text_screentype_info.setText(getString(R.string.type_16_9));
 			}
-			ShowInformation(getScreenTypeStrings());		
+			String info = getScreenTypeStrings();
+			if(info!=null){
+				int pos = info.indexOf(":");
+				info = info.substring(pos+1,info.length());
+			}
+			ShowInformation(info);		
 		}
 		else if(key.equals("AUDIOTRACK")){
 			int mode = DTVGetAudioTrack();
