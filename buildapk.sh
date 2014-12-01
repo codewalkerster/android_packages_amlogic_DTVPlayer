@@ -30,7 +30,7 @@ function clean {
 #		mm clean-dvbdemotest
 		cd $ANDROID_BUILD_TOP
 		
-		mm clean-libam_adp clean-libam_mw clean-libjnitvmboxdevice clean-libjnitvdatabase clean-libjnitvdbcheck clean-libjnitvscanner clean-libjnitvsubtitle clean-libjnitvepgscanner clean-libzvbi clean-DTVPlayer clean-TVService
+		mm clean-libam_adp clean-libam_mw clean-libjnitvmboxdevice clean-libjnitvdatabase clean-libjnitvdbcheck clean-libjnitvscanner clean-libjnitvsubtitle clean-libjnitvepgscanner clean-libjnitvupdater clean-libzvbi clean-DTVPlayer clean-TVService
 		
 		cd $BUILD_TOPDIR
 	fi
@@ -88,9 +88,11 @@ mkdir .tmp/SYSTEM/etc
 mkdir .tmp/META
 
 APPS="TVService DTVPlayer"
-LIBS="am_adp am_mw jnitvmboxdevice jnitvdatabase jnitvdbcheck jnitvscanner jnitvsubtitle jnitvepgscanner zvbi"
+LIBS="am_adp am_mw jnitvmboxdevice jnitvdatabase jnitvdbcheck jnitvscanner jnitvsubtitle jnitvepgscanner jnitvupdater zvbi"
 CFG_FILES="tv_default.cfg tv_default.dtd tv_default.xml"
 
+echo "system 0 0 755" >> .tmp/META/filesystem_config.txt
+echo "system/app 0 0 755" >> .tmp/META/filesystem_config.txt
 for i in $APPS; do
 	cp $ANDROID_BUILD_TOP/out/target/product/$TARGET_PRODUCT/system/app/$i.apk .tmp/SYSTEM/app/
 	echo "system/app/$i.apk 0 0 644" >> .tmp/META/filesystem_config.txt
@@ -100,11 +102,13 @@ for i in $APPS; do
 	fi
 done
 
+echo "system/lib 0 0 755" >> .tmp/META/filesystem_config.txt
 for i in $LIBS; do
 	cp $ANDROID_BUILD_TOP/out/target/product/$TARGET_PRODUCT/system/lib/lib$i.so .tmp/SYSTEM/lib
 	echo "system/lib/lib$i.so 0 0 644" >> .tmp/META/filesystem_config.txt
 done
 
+echo "system/etc 0 0 755" >> .tmp/META/filesystem_config.txt
 for i in $CFG_FILES; do
 	cp $ANDROID_BUILD_TOP/out/target/product/$TARGET_PRODUCT/system/etc/$i .tmp/SYSTEM/etc
 	echo "system/etc/$i 0 0 644" >> .tmp/META/filesystem_config.txt
