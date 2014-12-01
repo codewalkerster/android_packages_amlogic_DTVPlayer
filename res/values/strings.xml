@@ -177,6 +177,7 @@
 		<item>Set password</item>	
 		<item>Parental rating age</item>
 		<item>TTX Region</item>
+		<item>Check for Update</item>
 	</array>
 
 	<array name="system_settings_content_atsc" translatable="false">	

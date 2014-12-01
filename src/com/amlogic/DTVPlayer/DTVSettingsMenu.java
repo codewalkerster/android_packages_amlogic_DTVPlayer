@@ -2592,8 +2592,12 @@ public class DTVSettingsMenu extends DTVActivity {
 					break;
 				case SETTINGS_CC:
 					{
-						DTVSetting_GotoDTVCC();
-						onStop();
+						if(mDTVSettings.getScanRegion().contains("ATSC")) {
+							DTVSetting_GotoDTVCC();
+							onStop();
+						} else {
+							controlUpdate(1/*restart monitor*/, 1/*check*/, "");
+						}
 					}	
 					break;	
 				case SETTINGS_ANTENNA_SOURCE:
