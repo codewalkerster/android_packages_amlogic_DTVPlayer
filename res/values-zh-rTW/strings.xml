@@ -206,6 +206,7 @@
 	<array name="search_settings_content_dvbc" translatable="false">
 		<item>全频段搜索</item>	
 		<item>手动搜索</item>
+		<item>网络搜索</item>
 	</array>
 	
 	<array name="search_settings_content_atsc" translatable="false">
