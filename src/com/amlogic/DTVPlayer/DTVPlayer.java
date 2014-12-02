@@ -250,10 +250,12 @@ public class DTVPlayer extends DTVActivity{
 			case TVMessage.TYPE_INPUT_SOURCE_CHANGED:
 				if((msg.getSource()==(int) TVConst.SourceInput.SOURCE_DTV.ordinal())){
 					if(isHavePragram()==false){ 
+						bHavePragram = false;
 						hideRadioBg();
 						showNoProgramDia(); 
 					}
 					else{
+						bHavePragram = true;
 						if(bundle!=null){	
 							if(tryChannelListPlay()){
 								Log.d(TAG, "channel list play started");
@@ -315,7 +317,10 @@ public class DTVPlayer extends DTVActivity{
 	@Override
 	protected void onResume(){
 		Log.d(TAG, ">>>>>>>>onResume<<<<<<<<");
-		mDialogManager.setActive(true);
+		if(bHavePragram)
+			mDialogManager.setActive(true);
+		else
+			mDialogManager.setActive(false);
 		super.onResume();
 		mDialogManager.resumeDialog();
 		DTVPlayerGetCurrentProgramData();
@@ -371,6 +376,7 @@ public class DTVPlayer extends DTVActivity{
 	}
 
 	private boolean newIntentFlag=false;
+	private boolean  bHavePragram = false;
 	public void onNewIntent(Intent intent){
 		Log.d(TAG, ">>>>>onNewIntent<<<<<");
 		super.onNewIntent(intent);
@@ -385,9 +391,11 @@ public class DTVPlayer extends DTVActivity{
 		}
 		else if(getStringConfig("tv:input_source").equals("dtv")){
 			if(isHavePragram()==false){ 
+				bHavePragram = false;
 				hideRadioBg();
 				showNoProgramDia(); 
 			}else{
+				bHavePragram = true;
 				if(bundle!=null){	
 					if(tryChannelListPlay()){
 						Log.d(TAG, "channel list play started");
@@ -396,6 +404,7 @@ public class DTVPlayer extends DTVActivity{
 						Log.d(TAG, "booking play started");
 					}
 					else if(checkFactoryReset()){
+						bHavePragram = false;
 						hideRadioBg();
 						showNoProgramDia(); 
 					}
