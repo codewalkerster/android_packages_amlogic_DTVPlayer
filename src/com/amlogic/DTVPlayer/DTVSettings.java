@@ -243,7 +243,7 @@ public class DTVSettings{
 		if(mLast!=null){
 			mLast.edit().putInt("recall_number",1).commit();
 			mLast.edit().putInt("screen_mode",1).commit();
-			
+			mLast.edit().putString("scan_mode","default").commit();
 			mLast.edit().putInt("fre",474000).commit();
 			mLast.edit().putInt("sym",6875000).commit();
 			mLast.edit().putInt("modulation",TVChannelParams.MODULATION_QAM_64).commit();
