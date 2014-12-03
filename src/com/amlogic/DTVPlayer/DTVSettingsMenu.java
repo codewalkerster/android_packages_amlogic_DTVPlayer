@@ -1442,6 +1442,21 @@ public class DTVSettingsMenu extends DTVActivity {
 		startActivity(intent_scan);	
 	}
 
+	private void DTVDvbcNitScan(){
+		Intent intent_scan= new Intent();
+		intent_scan.setClass(DTVSettingsMenu.this,DvbtScanResult.class);
+
+		Bundle bundle_scan_dvbc = new Bundle();	
+		bundle_scan_dvbc.putString("scan-mode","dvbc-nit-scan");
+		bundle_scan_dvbc.putInt("scan-fre",mDTVSettings.getDvbtScanFrequency());
+		bundle_scan_dvbc.putInt("scan-modulation",mDTVSettings.getDvbcModulation());
+		bundle_scan_dvbc.putInt("scan-symbole",mDTVSettings.getDvbcSymbole());
+			
+		intent_scan.putExtras(bundle_scan_dvbc);
+		//startActivityForResult(intent_scan,1);	
+		startActivity(intent_scan);	
+	}
+
 	private AdapterView.OnItemClickListener mSearchDvbtOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
@@ -1539,11 +1554,9 @@ public class DTVSettingsMenu extends DTVActivity {
 						DTVDvbcManualScanConfig_Data_Init();
 					}
 					break;
-				/*	
 				case 2: //NIT Scan
-					DTVDvbtNitScan();
+					DTVDvbcNitScan();
 					break;
-				*/	
 			}
 		}
 	};

@@ -207,6 +207,7 @@
 	<array name="search_settings_content_dvbc" translatable="false">
 		<item>Auto Scan</item>	
 		<item>Manual Scan</item>
+		<item>NIT Scan</item>
 	</array>
 
 	
