@@ -512,23 +512,6 @@ public class DvbtScanResult extends DTVActivity{
 		startScan(sp);
 	}
 
-	private int getScanOptions(){
-		int options = 0;
-	 	if (mLast.getString("scan_mode_crypted","all").equals("fta")) {
-	 		options |= TVScanParams.DTV_OPTION_FTA;
-	 	}
-
-		Log.d(TAG, "scan service mode " + mLast.getString("scan_service_mode","all"));
-	 	if (mLast.getString("scan_service_mode","all").equals("tv")) {
-	 		options |= TVScanParams.DTV_OPTION_NO_RADIO;
-	 	} else if (mLast.getString("scan_service_mode","all").equals("radio")) {
-	 		options |= TVScanParams.DTV_OPTION_NO_TV;
-	 	}
-
-		Log.d(TAG, "options "+options);
-		return options;
-	}
-
 	protected void onStart(){
 		super.onStart();
 	}
@@ -555,7 +538,7 @@ public class DvbtScanResult extends DTVActivity{
 			", Channel "+(msg.getScanCurChanNo()+1)+"/"+msg.getScanTotalChanCount()+
 			", Percent:"+msg.getScanProgress()+"%");
 		
-		String name = 	msg.getScanProgramName();
+		String name = msg.getScanProgramName();
 		int service_type = msg.getScanProgramType();
 		int service_id = 0;
 
