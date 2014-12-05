@@ -1294,8 +1294,13 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		if(dvbsandvbt_channelallbandlist != null)
 		{
+			/*
 			mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channelallbandlist[0].frequency/1000);
 			mDTVSettings.setDvbtScanBandwidth(dvbsandvbt_channelallbandlist[0].bandwidth);
+			*/
+
+			mDTVSettings.setDvbtScanFrequency(mDTVSettings.getDvbtScanFrequency());
+			mDTVSettings.setDvbcModulation(mDTVSettings.getDvbtScanBandwidth());
 			mDTVSettings.setDvbtScanBand(0);
 			
 			int channel_count=0;

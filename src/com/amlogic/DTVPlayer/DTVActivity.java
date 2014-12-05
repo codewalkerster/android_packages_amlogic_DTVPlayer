@@ -260,11 +260,11 @@ abstract public class DTVActivity extends TVActivity{
 	}
 	private void setContentViewdtv (int layoutResID){
 		/*reset layout by reproduction rate*/
-		String outputmode = SystemProperties.get("ubootenv.var.outputmode");
+		//String outputmode = SystemProperties.get("ubootenv.var.outputmode");
 		int x = 0, y = 0, w = 0, h = 0;
 		String x_s = null, y_s = null, w_s = null, h_s = null;
 		String not_set = "";
-		
+		/*
 		Log.d(TAG, "setContentView " + outputmode);
 		
 		if(outputmode.contains("1080p") == true){
@@ -362,7 +362,7 @@ abstract public class DTVActivity extends TVActivity{
 			}
 		}
 
-
+		*/
 		
 /*
 		AbsoluteLayout root = new AbsoluteLayout(this);
