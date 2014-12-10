@@ -40,13 +40,13 @@
 	<activity android:name=".DTVMainMenu"	android:theme="@style/Transparent"/> 
 	<activity android:name=".DTVSettingsUI"	android:theme="@style/Transparent"/> 
 	<activity android:name=".DTVChannelList" android:theme="@style/Transparent"/> 
-	<activity android:name=".DTVEpg" android:theme="@style/Transparent"/> 
+	<activity android:name=".DTVEpg"/> 
 	<activity android:name=".DTVTimeshifting" android:theme="@style/Transparent"/> 
 	<activity android:name=".DTVPvrPlayer"	android:theme="@style/Transparent"/> 
 	<activity android:name=".DTVRecManager"	android:theme="@style/Transparent"/> 
 	<activity android:name=".DTVPvrManager" android:launchMode="singleTask" android:theme="@style/Transparent"/>
 	<activity android:name=".DTVProgramManager"	android:theme="@style/Transparent"/> 
-	<activity android:name=".DTVProgramEdit"	android:theme="@style/Transparent"/> 
+	<activity android:name=".DTVProgramEdit" /> 
 	<activity android:name=".DTVBookList"	android:theme="@style/Transparent"/> 
 	<activity android:name=".DTVScanDVBC" android:theme="@style/Transparent"/> 
 	<activity android:name=".DTVScanDVBT" android:theme="@style/Transparent"/> 
