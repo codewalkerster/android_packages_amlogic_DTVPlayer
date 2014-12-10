@@ -528,6 +528,7 @@ public class DTVPlayer extends DTVActivity{
 					//HideMainMenu();
 				//else
 				//if(DTVPlayerInTeletextStatus==false)
+					HideControlBar();
 					ShowMainMenu();
 				return true;	
 			case KeyEvent.KEYCODE_DPAD_CENTER:

@@ -860,9 +860,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				switch(position){
 					case 0:
 						if(isHavePragram()){
-								
 							showProgramManagerPasswordDialog();
-							
 						}
 						else{
 							toast = Toast.makeText(
@@ -894,8 +892,8 @@ public class DTVSettingsMenu extends DTVActivity {
 					*/	
 					case 2:
 						Intent Intent_record_device = new Intent();
-		        		Intent_record_device.setClass(DTVSettingsMenu.this, DTVRecordDevice.class);
-		        		startActivityForResult(Intent_record_device,12);
+		        			Intent_record_device.setClass(DTVSettingsMenu.this, DTVRecordDevice.class);
+		        			startActivityForResult(Intent_record_device,12);
 						//DTVSettingsMenu.this.finish();
 						break;
 					case 3:

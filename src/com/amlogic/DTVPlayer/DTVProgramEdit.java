@@ -862,7 +862,7 @@ public class DTVProgramEdit extends DTVActivity{
 					return true;
 				}
 				else{
-					setVideoWindowSize(video_axis);
+					//setVideoWindowSize(video_axis);
 					Intent in = new Intent();
 					in.setClass(DTVProgramEdit.this, DTVPlayer.class);
 					DTVProgramEdit.this.startActivity(in);	
