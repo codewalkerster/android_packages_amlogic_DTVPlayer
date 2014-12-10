@@ -2690,7 +2690,7 @@ public class DTVPlayer extends DTVActivity{
 		    		String str_end   = sdf.format(dt_end); 
 				String time = ""+str_start + "--" + str_end;	
 				
-				dtvplayer_cur_event=time+mTVEventPresent.getName();
+				dtvplayer_cur_event=time+"  "+mTVEventPresent.getName();
 				dtvplayer_event_des=mTVEventPresent.getEventDescr();
 				dtvplayer_event_ext_des=mTVEventPresent.getEventExtDescr();
 				dtvplayer_b_epg = true;
@@ -2706,7 +2706,7 @@ public class DTVPlayer extends DTVActivity{
 		    		String str_end   = sdf.format(dt_end); 
 				String time = ""+str_start + "--" + str_end;	
 				
-				dtvplayer_next_event=mTVEventFollow.getName();
+				dtvplayer_next_event=time+"  "+mTVEventFollow.getName();
 				dtvplayer_b_epg = true;
 			}
 
