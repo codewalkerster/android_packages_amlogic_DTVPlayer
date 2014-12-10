@@ -16,6 +16,7 @@ import com.amlogic.tvutil.DTVRecordParams;
 import java.util.*;
 import java.text.*;
 import java.io.File;
+import java.net.URLDecoder;
 
 import android.view.*;
 import android.view.View.*;
@@ -299,7 +300,7 @@ public class DTVPvrManager extends DTVActivity{
 
 				HashMap<String, Object> map2 = new HashMap<String, Object>();   
 				map2.put("ItemTitle", getString(R.string.recmanager_filename)+":");
-				map2.put("ItemText", file.getName());   
+				map2.put("ItemText", URLDecoder.decode(file.getName()));   
 				listItem.add(map2); 
 						       
 		        SimpleAdapter listItemAdapter = new SimpleAdapter(DTVPvrManager.this,listItem,
