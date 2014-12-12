@@ -43,7 +43,8 @@ abstract public class PasswordDialog {
 	public PasswordDialog(Context context) {
 		mContext = context;
 		// cur_button_position=0;	
-		mDialog = new Dialog(mContext,R.style.MyDialog);
+		mDialog = new Dialog(mContext,R.style.transparentDialog);
+		//mDialog = new Dialog(mContext);
 		if(mDialog == null){
 			return;
 		}

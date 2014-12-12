@@ -969,7 +969,7 @@ public class DTVTimeshifting extends DTVActivity{
 	private void freshTimeAndSeekbar(long cur_time,long total_time){
 		myProgressBar = (SeekBar)findViewById(R.id.SeekBar02);
 		TextView text_cur_time = (TextView)findViewById(R.id.TextView03);
-        TextView text_total_time = (TextView)findViewById(R.id.TextView04);
+        	TextView text_total_time = (TextView)findViewById(R.id.TextView04);
 
 		curtime = cur_time;
 		totaltime = total_time;

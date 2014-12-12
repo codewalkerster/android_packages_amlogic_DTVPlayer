@@ -5957,7 +5957,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					debugMenuDialogShowFlag = 0x0;
 				}
 				return true;
-			case KeyEvent.KEYCODE_B:
+			case DTVActivity.KEYCODE_YELLOW_BUTTON:
 				if(debugMenuDialogShowFlag == 0xf){
 					showMenuAndDemodDebugDialog();
 				}

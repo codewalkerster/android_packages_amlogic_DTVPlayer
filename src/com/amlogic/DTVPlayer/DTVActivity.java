@@ -1040,13 +1040,13 @@ abstract public class DTVActivity extends TVActivity{
 
 	public boolean isHavePragram(){
 		TVProgram[]  mTVProgramList=null;
-		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,0);
+		mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,0,1);
 		if(mTVProgramList!=null){
 			if(mTVProgramList.length!=0){
 				return true;
 			}	
 			else{
-				mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
+				mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0,1);
 				
 				if(mTVProgramList==null){
 					return false;
@@ -1058,7 +1058,7 @@ abstract public class DTVActivity extends TVActivity{
 			
 		}
 		else{
-			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0);
+			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_RADIO,0,1);
 			if(mTVProgramList==null){
 				return false;
 			}	
