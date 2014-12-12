@@ -1138,6 +1138,7 @@ public class DTVSettingsMenu extends DTVActivity {
 						intent_scan.putExtras(bundle_scan_dvbt);
 						//startActivityForResult(intent_scan,1);	
 						startActivity(intent_scan);	
+						DTVSettingsMenu.this.finish();
 						break;
 				}
 			}	
@@ -1443,6 +1444,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		intent_scan.putExtras(bundle_scan_dvbt);
 		//startActivityForResult(intent_scan,1);	
 		startActivity(intent_scan);	
+		DTVSettingsMenu.this.finish();
 	}
 
 	private void DTVDvbcNitScan(){
@@ -1458,6 +1460,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		intent_scan.putExtras(bundle_scan_dvbc);
 		//startActivityForResult(intent_scan,1);	
 		startActivity(intent_scan);	
+		DTVSettingsMenu.this.finish();
 	}
 
 	private AdapterView.OnItemClickListener mSearchDvbtOnItemClickListener =new AdapterView.OnItemClickListener(){
@@ -1487,6 +1490,7 @@ public class DTVSettingsMenu extends DTVActivity {
 						intent_scan.putExtras(bundle_scan_dvbs);
 						//startActivityForResult(intent_scan,1);	
 						startActivity(intent_scan);	
+						DTVSettingsMenu.this.finish();
 					}	
 					break;
 				case 1:   //manual scan
