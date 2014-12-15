@@ -473,7 +473,7 @@ abstract public class DTVActivity extends TVActivity{
 	}
 
 
-	private void DTVActivity_ActivedStateManage(boolean actived){
+	private synchronized void DTVActivity_ActivedStateManage(boolean actived){
 		Log.d(TAG, "DTVActivity_ActivedStateManage actived " + actived + " dtvactivity_actived_num " + dtvactivity_actived_num);
 		if(actived){
 			if(dtvactivity_actived_num == 0){

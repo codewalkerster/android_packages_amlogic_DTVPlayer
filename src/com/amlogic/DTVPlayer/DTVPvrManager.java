@@ -90,9 +90,6 @@ public class DTVPvrManager extends DTVActivity{
 			case TVMessage.TYPE_SCAN_END:
 				Log.d(TAG, "Scan End");
 				break;
-			/*case DVBEvent.EVENT_RECORDS_CHANGED:
-				refresh_data();
-			*/	
 			case TVMessage.TYPE_PLAYBACK_START:
 				Log.d(TAG, "Playback start, media info:");
 

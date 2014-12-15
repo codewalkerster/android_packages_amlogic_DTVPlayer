@@ -129,7 +129,7 @@ public class DTVPlayer extends DTVActivity{
 		openVideo();
 		DTVPlayerUIInit();
 		mDTVSettings = new DTVSettings(this);
-		TVMessage msg = new TVMessage(TVMessage.TYPE_INPUT_SOURCE_CHANGED);
+		TVMessage msg = TVMessage.inputSourceChanged((int)(int) TVConst.SourceInput.SOURCE_DTV.ordinal());
 		onMessage(msg);
 	}
 
@@ -514,9 +514,8 @@ public class DTVPlayer extends DTVActivity{
 				}
 				else{
 					if(mDTVSettings.getIsLauncher()!=1){
-
 						finishPlayer();
-						setInputSource(TVConst.SourceInput.SOURCE_ATV);
+						//setInputSource(TVConst.SourceInput.SOURCE_ATV);
 						//System.exit(0);	
 						getApplication().onTerminate();
 					}	
@@ -3238,12 +3237,10 @@ public class DTVPlayer extends DTVActivity{
 				((TextView)v).setText(strMsg);
 			}
 			public void onSetNegativeButton(){
-				 
 			}
 			public void onSetPositiveButton(){
 				DTVPlayerStopRecording();
 				hidePvrIcon();
-
 				if (conflict == TVMessage.REC_CFLT_START_NEW){
 					if (getCurrentProgramID() != programID){
 						playProgram(programID);
