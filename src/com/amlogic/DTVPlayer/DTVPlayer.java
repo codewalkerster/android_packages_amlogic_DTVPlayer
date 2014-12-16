@@ -882,6 +882,7 @@ public class DTVPlayer extends DTVActivity{
 		findViewById(R.id.RelativeLayout_video).setOnLongClickListener(new View.OnLongClickListener(){
 			@Override
 			public boolean onLongClick(View v) {
+				HideControlBar();
 				ShowMainMenu(); 	
 				return false;
 			}
@@ -1209,63 +1210,65 @@ public class DTVPlayer extends DTVActivity{
 		
 	}
 	
-
+	SureDialog mSureDialog=null;
 	private void showNoProgramDia(){
-		new SureDialog(DTVPlayer.this,false){
-			public void onSetMessage(View v){
-				((TextView)v).setText(getString(R.string.dtvplayer_no_channel_stored));
-			}
-
-			public void onSetNegativeButton(){
-				DTVPlayer.this.finish();  
-			}
-			public void onSetPositiveButton(){
-				Intent Intent_scan = new Intent();
-				Bundle bundle = new Bundle();
-				Intent_scan.putExtras(bundle); 
-
-				String region;
-				try {
-					region = mDTVSettings.getScanRegion();
-				} catch (Exception e) {
-					e.printStackTrace();
-					Log.d(TAG, "Cannot read dtv region !!!");
-					return;
+		if(mSureDialog==null||(mSureDialog!=null&&mSureDialog.isShowing()==false)){
+			mSureDialog = new SureDialog(DTVPlayer.this,false){
+				public void onSetMessage(View v){
+					((TextView)v).setText(getString(R.string.dtvplayer_no_channel_stored));
 				}
 
-				Log.d(TAG, "region = " + region);
+				public void onSetNegativeButton(){
+					DTVPlayer.this.finish();  
+				}
+				public void onSetPositiveButton(){
+					Intent Intent_scan = new Intent();
+					Bundle bundle = new Bundle();
+					Intent_scan.putExtras(bundle); 
 
-				if(region.contains("DVB-T"))
-				{
-					Log.d(TAG, "goto DTVScanDVBT");
-					Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
+					String region;
+					try {
+						region = mDTVSettings.getScanRegion();
+					} catch (Exception e) {
+						e.printStackTrace();
+						Log.d(TAG, "Cannot read dtv region !!!");
+						return;
+					}
+
+					Log.d(TAG, "region = " + region);
+
+					if(region.contains("DVB-T"))
+					{
+						Log.d(TAG, "goto DTVScanDVBT");
+						Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
+					}
+					else if(region.contains("ATSC"))
+					{
+						Log.d(TAG, "goto DTVScanATSC");
+						Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
+					}
+					else if(region.contains("DVBS"))
+					{
+						Log.d(TAG, "goto DTVScanDVBS");
+						//Intent_scan.setClass(DTVPlayer.this, DTVScanDVBS.class);
+						Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
+					}	
+					else if(region.contains("DVB-C"))
+					{
+						Log.d(TAG, "goto DTVScanDVBC");
+						Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);				
+					}
+					else
+					{
+						Log.d(TAG, "goto DTVScanDVBS");
+						//Intent_scan.setClass(DTVPlayer.this, DTVScanDVBS.class);
+						Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
+					}		
+					
+					startActivity(Intent_scan);
 				}
-				else if(region.contains("ATSC"))
-				{
-					Log.d(TAG, "goto DTVScanATSC");
-					Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
-				}
-				else if(region.contains("DVBS"))
-				{
-					Log.d(TAG, "goto DTVScanDVBS");
-					//Intent_scan.setClass(DTVPlayer.this, DTVScanDVBS.class);
-					Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
-				}	
-				else if(region.contains("DVB-C"))
-				{
-					Log.d(TAG, "goto DTVScanDVBC");
-					Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);				
-				}
-				else
-				{
-					Log.d(TAG, "goto DTVScanDVBS");
-					//Intent_scan.setClass(DTVPlayer.this, DTVScanDVBS.class);
-					Intent_scan.setClass(DTVPlayer.this, DTVSettingsMenu.class);
-				}		
-				
-				startActivity(Intent_scan);
-			}
-		};
+			};
+		}
 		return;
 	}
 
@@ -2214,11 +2217,16 @@ public class DTVPlayer extends DTVActivity{
 								}
 
 								public void onSetNegativeButton(){
-									
+									pronumber = 0;	
+									pronumber_string ="";
+									HideProgramNo();
 								}
 								public void onSetPositiveButton(){
 									DTVPlayerStopRecording();
 									DTVPlayerPlayByProNo(pronumber);
+									pronumber = 0;	
+									pronumber_string ="";
+									HideProgramNo();
 								}
 							};
 						}

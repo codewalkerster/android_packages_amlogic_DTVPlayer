@@ -96,7 +96,6 @@ public class DTVPvrPlayer extends DTVActivity{
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
 		super.onDisconnected();
-		
 	}
 
 	public void onMessage(TVMessage msg){
