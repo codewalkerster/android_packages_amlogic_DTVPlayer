@@ -5600,6 +5600,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		new PasswordDialog(DTVSettingsMenu.this){
 			public void onCheckPasswordIsRight(){
 				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
+					stopPlaying();
 					Intent Intent_pvr_manager = new Intent();
 					Intent_pvr_manager.setClass(DTVSettingsMenu.this,DTVPvrManager.class);
 					startActivity(Intent_pvr_manager);

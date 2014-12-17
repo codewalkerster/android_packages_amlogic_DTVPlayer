@@ -17,6 +17,7 @@ import java.util.*;
 import java.text.*;
 import java.io.File;
 import java.net.URLDecoder;
+import java.io.*;
 
 import android.view.*;
 import android.view.View.*;
@@ -45,6 +46,7 @@ public class DTVPvrManager extends DTVActivity{
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dtv_pvr_manager);
+		writeSysFile("/sys/class/video/disable_video","2");
 		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
 		openVideo(video_view,null);
 	}
@@ -124,7 +126,10 @@ public class DTVPvrManager extends DTVActivity{
 					}
 				}
 				break;
-			
+			case TVMessage.TYPE_PLAYBACK_STOP:
+			case TVMessage.TYPE_PROGRAM_STOP:
+				writeSysFile("/sys/class/video/disable_video","2");
+				break;
 			default:
 				break;
 	
@@ -205,7 +210,7 @@ public class DTVPvrManager extends DTVActivity{
 		list.setAdapter(myAdapter);
 		list.requestFocus();
 
-		stopPlaying();
+		//stopPlaying();
 	}
 
 	private AdapterView.OnItemSelectedListener mOnSelectedListener = new AdapterView.OnItemSelectedListener(){
@@ -693,5 +698,19 @@ public class DTVPvrManager extends DTVActivity{
 
 	}
 
+	private void writeSysFile(String path,String value){
+		try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+            try {
+                writer.write(value);
+                } finally {
+                    writer.close();
+                }
+        }catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (Exception e) {
+                Log.e(TAG,"set File ERROR!",e);
+        } 
+	}
 }
 

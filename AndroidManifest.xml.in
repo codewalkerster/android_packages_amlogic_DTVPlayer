@@ -44,7 +44,7 @@
 	<activity android:name=".DTVTimeshifting" android:theme="@style/Transparent"/> 
 	<activity android:name=".DTVPvrPlayer"	android:theme="@style/Transparent"/> 
 	<activity android:name=".DTVRecManager"	android:theme="@style/Transparent"/> 
-	<activity android:name=".DTVPvrManager" android:launchMode="singleTask" android:theme="@style/Transparent"/>
+	<activity android:name=".DTVPvrManager" android:launchMode="singleTask"/>
 	<activity android:name=".DTVProgramManager"	android:theme="@style/Transparent"/> 
 	<activity android:name=".DTVProgramEdit" /> 
 	<activity android:name=".DTVBookList"	android:theme="@style/Transparent"/> 
