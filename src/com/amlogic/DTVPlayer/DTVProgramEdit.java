@@ -777,15 +777,8 @@ public class DTVProgramEdit extends DTVActivity{
 				
 				break;
 			case DTVActivity.KEYCODE_BLUE_BUTTON:
-				int p=0;			
-				p = cur_select_item+ListView_channel.getChildCount();
-				if(p<ListView_channel.getCount())
-					ListView_channel.setSelection(p-1);
-				else{
-					ListView_channel.setSelection(ListView_channel.getCount()-1);
-				}
-				myAdapter.notifyDataSetChanged();
-						
+				dealLock(cur_select_item);
+				myAdapter.notifyDataSetChanged();		
 				break;
 			case DTVActivity.KEYCODE_RED_BUTTON:
 				if(mTVProgramList!=null&&mTVProgramList.length>0){
@@ -805,11 +798,21 @@ public class DTVProgramEdit extends DTVActivity{
 				}
 				break;
 			case DTVActivity.KEYCODE_GREEN_BUTTON:
+				/*
 				if(mTVProgramList!=null&&mTVProgramList.length>0){
 					setMoveMode(true);
 					setMoveItemPos(cur_select_item);
 					myAdapter.notifyDataSetChanged();
 				}
+				*/
+				int p=0;			
+				p = cur_select_item+ListView_channel.getChildCount();
+				if(p<ListView_channel.getCount())
+					ListView_channel.setSelection(p-1);
+				else{
+					ListView_channel.setSelection(ListView_channel.getCount()-1);
+				}
+				myAdapter.notifyDataSetChanged();
 				break;
 			case DTVActivity.KEYCODE_GOTO_BUTTON:
 				showSatellitesList();
