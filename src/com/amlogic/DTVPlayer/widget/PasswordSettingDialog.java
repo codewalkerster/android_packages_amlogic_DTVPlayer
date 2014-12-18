@@ -25,6 +25,7 @@ abstract public class PasswordSettingDialog {
 	private static final String TAG="PasswordSettingDialog";
 	Dialog mDialog = null;
 	private Context mContext = null;
+	private Toast toast=null;
 
 	/* ImageButton pin0 ;
     ImageButton pin1 ;
@@ -286,12 +287,7 @@ abstract public class PasswordSettingDialog {
 		window.findViewById(R.id.ok_icon).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (check_pin()) {
-					dismissDialog();
-					onCheckPasswordIsRight();
-				} else {
-					onCheckPasswordIsFalse();
-				}
+				checkPassword();
 			}
 		});
 		window.findViewById(R.id.return_icon).setOnClickListener(new View.OnClickListener() {
@@ -308,6 +304,13 @@ abstract public class PasswordSettingDialog {
 			onCheckPasswordIsRight();
 		} else {
 			onCheckPasswordIsFalse();
+			if(toast!=null)
+				toast.cancel(); 
+			toast = Toast.makeText(	mContext, 
+	    		R.string.invalid_password,
+	    		Toast.LENGTH_SHORT);
+			toast.setGravity(Gravity.CENTER, 0, 0);
+			toast.show();
 		}
 	}
 

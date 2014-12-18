@@ -5561,12 +5561,6 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
-				toast = Toast.makeText(
-				DTVSettingsMenu.this, 
-	    		R.string.invalid_password,
-	    		Toast.LENGTH_SHORT);
-				toast.setGravity(Gravity.CENTER, 0, 0);
-				toast.show();
 			}
 			public boolean onDealUpDownKey(){
 				return false;
@@ -5583,12 +5577,6 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
-				toast = Toast.makeText(
-				DTVSettingsMenu.this, 
-		    		R.string.invalid_password,
-		    		Toast.LENGTH_SHORT);
-				toast.setGravity(Gravity.CENTER, 0, 0);
-				toast.show();
 			}
 			public boolean onDealUpDownKey(){
 				return false;
@@ -5608,15 +5596,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
-				if(toast!=null){
-					toast.cancel(); 
-					toast = Toast.makeText(
-					DTVSettingsMenu.this, 
-			    		R.string.invalid_password,
-			    		Toast.LENGTH_SHORT);
-					toast.setGravity(Gravity.CENTER, 0, 0);
-					toast.show();
-				}
+				
 			}
 			public boolean onDealUpDownKey(){
 				return false;
@@ -5649,12 +5629,6 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
-				toast = Toast.makeText(
-				DTVSettingsMenu.this, 
-	    		R.string.invalid_password,
-	    		Toast.LENGTH_SHORT);
-				toast.setGravity(Gravity.CENTER, 0, 0);
-				toast.show();
 			}
 			public boolean onDealUpDownKey(){
 				return false;
@@ -5748,12 +5722,6 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
-				toast = Toast.makeText(
-							DTVSettingsMenu.this, 
-				    		R.string.invalid_password,
-				    		Toast.LENGTH_SHORT);
-							toast.setGravity(Gravity.CENTER, 0, 0);
-							toast.show();
 			}
 			public boolean onDealUpDownKey(){
 				return false;
@@ -5813,12 +5781,6 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
-				toast = Toast.makeText(
-				DTVSettingsMenu.this, 
-	    		R.string.invalid_password,
-	    		Toast.LENGTH_SHORT);
-				toast.setGravity(Gravity.CENTER, 0, 0);
-				toast.show();
 			}
 			public boolean onDealUpDownKey(){
 				return false;
@@ -5834,12 +5796,6 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
-				toast = Toast.makeText(
-								DTVSettingsMenu.this, 
-					    		R.string.invalid_input,
-					    		Toast.LENGTH_SHORT);
-								toast.setGravity(Gravity.CENTER, 0, 0);
-								toast.show();
 			}
 			public boolean onDealUpDownKey(){
 				return false;
@@ -6078,12 +6034,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
-				toast = Toast.makeText(
-				DTVSettingsMenu.this, 
-	    		R.string.invalid_password,
-	    		Toast.LENGTH_SHORT);
-				toast.setGravity(Gravity.CENTER, 0, 0);
-				toast.show();
+				
 			}
 
 			public boolean onDealUpDownKey(){

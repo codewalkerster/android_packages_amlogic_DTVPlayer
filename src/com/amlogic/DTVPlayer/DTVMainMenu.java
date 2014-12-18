@@ -338,12 +338,7 @@ public class DTVMainMenu extends DTVActivity{
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
-				toast = Toast.makeText(
-				DTVMainMenu.this, 
-	    		R.string.invalid_password,
-	    		Toast.LENGTH_SHORT);
-				toast.setGravity(Gravity.CENTER, 0, 0);
-				toast.show();
+				
 			}
 			public boolean onDealUpDownKey(){
 				return false;

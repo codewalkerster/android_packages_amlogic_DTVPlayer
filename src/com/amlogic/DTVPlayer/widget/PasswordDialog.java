@@ -26,7 +26,7 @@ abstract public class PasswordDialog {
 	private static final String TAG="PasswordDialog";
 	Dialog mDialog = null;
 	private Context mContext = null;
-
+	private Toast toast=null;
 	/* ImageButton pin0 ;
     ImageButton pin1 ;
     ImageButton pin2 ;
@@ -232,12 +232,15 @@ abstract public class PasswordDialog {
 		window.findViewById(R.id.ok_icon).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				/*
 				if (check_pin()) {
 					dismissDialog();
 					onCheckPasswordIsRight();
 				} else {
 					onCheckPasswordIsFalse();
 				}
+				*/
+				checkPassword();
 			}
 		});
 		window.findViewById(R.id.return_icon).setOnClickListener(
@@ -256,6 +259,14 @@ abstract public class PasswordDialog {
 			onCheckPasswordIsRight();
 		} else {
 			onCheckPasswordIsFalse();
+
+			if(toast!=null)
+				toast.cancel(); 
+			toast = Toast.makeText(	mContext, 
+	    		R.string.invalid_password,
+	    		Toast.LENGTH_SHORT);
+			toast.setGravity(Gravity.CENTER, 0, 0);
+			toast.show();
 		}
 	}
 
@@ -291,12 +302,16 @@ abstract public class PasswordDialog {
     }
 	
 	public void dismissDialog(){
+		if(toast!=null)
+			toast.cancel(); 
 		if(mDialog!=null&& mDialog.isShowing()){
 			mDialog.dismiss();
 		}
 	}
 
 	public void cancelDialog(){
+		if(toast!=null)
+			toast.cancel(); 
 		if(mDialog!=null&& mDialog.isShowing()){
 			mDialog.cancel();
 		}

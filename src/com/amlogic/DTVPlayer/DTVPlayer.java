@@ -1097,12 +1097,6 @@ public class DTVPlayer extends DTVActivity{
 						}
 
 						public void onCheckPasswordIsFalse(){
-							toast = Toast.makeText(
-							mContext, 
-				    		R.string.invalid_password,
-				    		Toast.LENGTH_SHORT);
-							toast.setGravity(Gravity.CENTER, 0, 0);
-							toast.show();
 						}
 
 						public boolean onDealUpDownKey(){
@@ -1575,12 +1569,7 @@ public class DTVPlayer extends DTVActivity{
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
-				toast = Toast.makeText(
-				DTVPlayer.this, 
-	    		R.string.invalid_password,
-	    		Toast.LENGTH_SHORT);
-				toast.setGravity(Gravity.CENTER, 0, 0);
-				toast.show();
+				
 			}
 			public boolean onDealUpDownKey(){
 				return false;
@@ -3122,12 +3111,7 @@ public class DTVPlayer extends DTVActivity{
 			}
 
 			public void onCheckPasswordIsFalse(){
-				toast = Toast.makeText(
-				DTVPlayer.this, 
-	    		R.string.invalid_password,
-	    		Toast.LENGTH_SHORT);
-				toast.setGravity(Gravity.CENTER, 0, 0);
-				toast.show();
+				
 			}
 
 			public boolean onDealUpDownKey(){
