@@ -517,16 +517,7 @@ public class DTVPvrPlayer extends DTVActivity{
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
    		//showInforbar();
-		if(!connected){
-			return true;
-			}
 		switch (keyCode) {
-			case KeyEvent.KEYCODE_DPAD_LEFT:
-			case KeyEvent.KEYCODE_DPAD_RIGHT:
-				if(teletext_bar_flag == false){
-					showInforbar();
-				}	
-				break;
 			case KeyEvent.KEYCODE_BACK:
 				if(teletext_bar_flag){				
 					DTVSubtitleStop();	
@@ -541,6 +532,18 @@ public class DTVPvrPlayer extends DTVActivity{
 					showTimeshiftDialog();
 				}
 				return true;
+		}
+		if(!connected){
+			return true;
+		}
+		
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+			case KeyEvent.KEYCODE_DPAD_RIGHT:
+				if(teletext_bar_flag == false){
+					showInforbar();
+				}	
+				break;
 			case DTVActivity.KEYCODE_TTX:	
 				DTVPlayer.showTeltext(DTVPvrPlayer.this);	
 				return true;	

@@ -339,14 +339,25 @@ public class DTVPvrManager extends DTVActivity{
 		super.onAttachedToWindow();  
 	} 
 
-   @Override
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
+
+		 switch (keyCode){
+			case KeyEvent.KEYCODE_BACK:
+				DTVPvrPlayerStop();
+				Intent intent = new Intent();
+				intent.setClass(DTVPvrManager.this, DTVSettingsMenu.class);
+				startActivity(intent);
+				DTVPvrManager.this.finish();
+				return true;	
+		}
+		
 		if(!connected){
 			return true;
-			}
-	   switch (keyCode) {
-			
+		}
+		
+	   	switch (keyCode) {	
 			case KeyEvent.KEYCODE_DPAD_DOWN:			
 				if(cur_select_item== list.getCount()-1)
 			    	list.setSelection(0); 			
@@ -397,13 +408,6 @@ public class DTVPvrManager extends DTVActivity{
 					};	
 				}	
 				return true;		
-			case KeyEvent.KEYCODE_BACK:
-				DTVPvrPlayerStop();
-				Intent intent = new Intent();
-				intent.setClass(DTVPvrManager.this, DTVSettingsMenu.class);
-				startActivity(intent);
-				DTVPvrManager.this.finish();
-				return true;	
 		}
 		
 		return super.onKeyDown(keyCode, event);
