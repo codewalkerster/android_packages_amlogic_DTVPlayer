@@ -565,8 +565,6 @@ public class DTVPvrPlayer extends DTVActivity{
 			case KeyEvent.KEYCODE_TV_SUBTITLE:
 				showSubtitleSettingMenu(DTVPvrPlayer.this);
 				return true;	
-				
-
 			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
 				play.requestFocus();
 				

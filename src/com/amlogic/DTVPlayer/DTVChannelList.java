@@ -510,7 +510,8 @@ public class DTVChannelList extends DTVActivity{
 			case DTVActivity.KEYCODE_REC:
 				break;
 			case DTVActivity.KEYCODE_GOTO_BUTTON:
-				showSatellitesList();
+				if(mDTVSettings!=null&&(mDTVSettings.getScanRegion().contains("DVBS")))
+					showSatellitesList();
 				return true;
 			case DTVActivity.KEYCODE_RED_BUTTON: 			
 				if(myAdapter!=null&&myAdapter.getCount()>0){
