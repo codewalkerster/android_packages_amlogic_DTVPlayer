@@ -1428,6 +1428,19 @@ public class DTVProgramEdit extends DTVActivity{
 				}
 			}
 		);
+
+		if(getDTVSignalStatus()==false){
+			mTextInfo.setVisibility(View.VISIBLE);
+			mTextInfo.setText("No Signal");
+		}
+		else if(getDTVScrambledStatus()==true){
+			mTextInfo.setVisibility(View.VISIBLE);
+			mTextInfo.setText("Scrmbled");	
+		}
+		else{
+			mTextInfo.setVisibility(View.INVISIBLE);
+		}
+
 		
 	}
 
