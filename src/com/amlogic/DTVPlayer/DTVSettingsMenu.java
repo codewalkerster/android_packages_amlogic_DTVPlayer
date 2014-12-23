@@ -37,7 +37,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	private static final String TAG="DTVSettingsMenu";
 	DTVSettings mDTVSettings = null;
 	private boolean mMidUi = false;
-	
+	private Bundle bundle = null;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,6 +61,15 @@ public class DTVSettingsMenu extends DTVActivity {
 		super.onConnected();
 		mDTVSettings = new DTVSettings(this);
 		DTVSettingsMenu_UI_Init();
+		bundle = this.getIntent().getExtras();
+		if(bundle!=null){	
+			if(bundle.containsKey("activity_tag")){
+				if (bundle.getString("activity_tag").equals("DvbtScanResult")){
+					Log.d(TAG,">>>playValid<<<");
+					playValid();
+				}
+			}
+		}
 	}
 
 	public void onDisconnected(){
