@@ -758,7 +758,7 @@ public class DvbtScanResult extends DTVActivity{
 
 	private void returnSettings(){
 		Bundle bundle = new Bundle();	
-		bundle.putString("activity_tag", "DvbtScanResult");
+		bundle.putString("activity_tag", "play_program");
 		Intent intent = new Intent();
 		intent.setClass(DvbtScanResult.this, DTVSettingsMenu.class);
 		intent.putExtras(bundle);

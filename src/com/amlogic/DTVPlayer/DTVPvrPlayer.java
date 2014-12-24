@@ -70,10 +70,11 @@ public class DTVPvrPlayer extends DTVActivity{
 		super.onConnected();
 		openVideo();
 		setBlackoutPolicy(1);
+		pvrHandler.postDelayed(pvrTimer, 1000);
 		startPlayback(file_name);
 		DTVPvrPlayerUIInit();
 		Log.d(TAG,"play file ="+file_name);
-		pvrHandler.postDelayed(pvrTimer, 1000);
+		//pvrHandler.postDelayed(pvrTimer, 1000);
 		current_playback_flag=false;
 		setVideoViewWindow();
 	}
@@ -90,7 +91,7 @@ public class DTVPvrPlayer extends DTVActivity{
 		super.onStop();
 		pvrHandler.removeCallbacks(pvrTimer);
 		stopPlayback();
-		playValid();
+		//playValid();
 	}
 
 	public void onDisconnected(){

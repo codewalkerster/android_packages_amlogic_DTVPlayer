@@ -64,7 +64,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		bundle = this.getIntent().getExtras();
 		if(bundle!=null){	
 			if(bundle.containsKey("activity_tag")){
-				if (bundle.getString("activity_tag").equals("DvbtScanResult")){
+				if (bundle.getString("activity_tag").equals("play_program")){
 					Log.d(TAG,">>>playValid<<<");
 					playValid();
 				}
