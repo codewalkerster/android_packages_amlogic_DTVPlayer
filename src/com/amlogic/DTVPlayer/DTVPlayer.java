@@ -54,6 +54,9 @@ import java.lang.Process;
 
 public class DTVPlayer extends DTVActivity{
 	private static final String TAG="DTVPlayer";
+
+	private static final String Version = "1.0.0";
+
 	private Toast toast=null;
 	private Bundle bundle;
 	private TVConfig config;
@@ -131,6 +134,8 @@ public class DTVPlayer extends DTVActivity{
 		mDTVSettings = new DTVSettings(this);
 		TVMessage msg = TVMessage.inputSourceChanged((int)(int) TVConst.SourceInput.SOURCE_DTV.ordinal());
 		onMessage(msg);
+
+		controlUpdate(0/*cmd:setVersion*/, 0, Version);
 	}
 
 	public void onDisconnected(){
