@@ -374,6 +374,7 @@ public class DTVPvrManager extends DTVActivity{
 				return true;	
 			case DTVActivity.KEYCODE_YELLOW_BUTTON:
 				if(getFileListCount()>0){
+					DTVPvrPlayerStop();
 					filename = getServiceInfoByPostion(cur_select_item);
 					Bundle bundle_pvr_player = new Bundle();										           
 					bundle_pvr_player.putString("file_name", filename); 	
@@ -386,7 +387,8 @@ public class DTVPvrManager extends DTVActivity{
 				return true;	
 			case DTVActivity.KEYCODE_RED_BUTTON:
 				if(getFileListCount()>0){
-					stopPlaying();
+					//stopPlaying();
+					DTVPvrPlayerStop();
 					String file_name = getServiceInfoByPostion(cur_select_item);	
 					if(file_name!=null){
 						setBlackoutPolicy(1);
@@ -526,7 +528,8 @@ public class DTVPvrManager extends DTVActivity{
 				}
 				public void onSetPositiveButton(int which){
 					switch(which){
-						case 0:								
+						case 0:	
+							stopPlayback();
 							Bundle bundle_pvr_player = new Bundle();
 							filename = getServiceInfoByPostion(pos);
 							bundle_pvr_player.putString("file_name", filename); 	
