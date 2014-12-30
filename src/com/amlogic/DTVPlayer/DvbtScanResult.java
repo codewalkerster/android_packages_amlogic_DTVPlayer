@@ -650,8 +650,7 @@ public class DvbtScanResult extends DTVActivity{
 	protected void onStop(){
 		Log.d(TAG,"onStop");	
 		super.onStop();
-		stopScan(false);
-
+		stopScan(true);
 		DvbtScanResult.this.finish();
 	}
 

@@ -132,8 +132,8 @@ public class DTVPlayer extends DTVActivity{
 		openVideo();
 		DTVPlayerUIInit();
 		mDTVSettings = new DTVSettings(this);
-		TVMessage msg = TVMessage.inputSourceChanged((int)(int) TVConst.SourceInput.SOURCE_DTV.ordinal());
-		onMessage(msg);
+		//TVMessage msg = TVMessage.inputSourceChanged((int)(int) TVConst.SourceInput.SOURCE_DTV.ordinal());
+		//onMessage(msg);
 
 		controlUpdate(0/*cmd:setVersion*/, 0, Version);
 	}
@@ -449,13 +449,17 @@ public class DTVPlayer extends DTVActivity{
 				break;
 			case KeyEvent.KEYCODE_DPAD_LEFT:
 				Log.d(TAG,"KEYCODE_DPAD_LEFT");
-				ShowControlBar();
-				updateInforbar();
+				if(mSureDialog==null||(mSureDialog!=null&&mSureDialog.isShowing()==false)){
+					ShowControlBar();
+					updateInforbar();
+				}
 				break;
 			case KeyEvent.KEYCODE_DPAD_RIGHT:
 				Log.d(TAG,"KEYCODE_DPAD_RIGHT");
-				ShowControlBar();
-				updateInforbar();
+				if(mSureDialog==null||(mSureDialog!=null&&mSureDialog.isShowing()==false)){
+					ShowControlBar();
+					updateInforbar();
+				}	
 				break;
 			case KeyEvent.KEYCODE_DPAD_DOWN:
 				//if(mainmenu_show_flag){
@@ -537,10 +541,10 @@ public class DTVPlayer extends DTVActivity{
 				return true;	
 			case KeyEvent.KEYCODE_DPAD_CENTER:
 				Log.d(TAG,"KEYCODE_DPAD_CENTER");
-				if(inforbar_show_flag==false){
-					ShowControlBar();
-				}
-				else //if(mainmenu_show_flag==false)
+				//if(inforbar_show_flag==false){
+					//ShowControlBar();
+				//}
+				//else //if(mainmenu_show_flag==false)
 				{
 					HideControlBar();
 					ShowChannelList();
@@ -1447,8 +1451,9 @@ public class DTVPlayer extends DTVActivity{
 						DTVPlayerInTeletextStatus = false;
 					}
 					finishPlayer();
-					setInputSource(TVConst.SourceInput.SOURCE_ATV);
-					System.exit(0);
+					//setInputSource(TVConst.SourceInput.SOURCE_ATV);
+					//System.exit(0);
+					getApplication().onTerminate();
 					break;
 			}
 		}
@@ -1477,14 +1482,15 @@ public class DTVPlayer extends DTVActivity{
 					}	
 					
 					finishPlayer();
-					setInputSource(TVConst.SourceInput.SOURCE_ATV);
-					System.exit(0);
+					//setInputSource(TVConst.SourceInput.SOURCE_ATV);
+					//System.exit(0);
+					getApplication().onTerminate();
 					break;
 				case R.id.RelativeLayout_video:
-					if(inforbar_show_flag==false){
-						ShowControlBar();
-					}
-					else// if(mainmenu_show_flag==false)
+					//if(inforbar_show_flag==false){
+						//ShowControlBar();
+					//}
+					//else// if(mainmenu_show_flag==false)
 					{
 						HideControlBar();
 						ShowChannelList();

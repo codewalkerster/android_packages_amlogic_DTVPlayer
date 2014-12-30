@@ -199,6 +199,7 @@
 		android:background="@drawable/dtvplayer_inforbar_bg" 
 		android:layout_height="174dp"
 		android:paddingBottom="0dp"
+		android:visibility="invisible"
 		>
 		<RelativeLayout 
 			android:layout_height="2dp"
