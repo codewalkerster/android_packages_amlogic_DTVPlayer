@@ -601,6 +601,15 @@ public class DTVPlayer extends DTVActivity{
 				return true;
 			case DTVActivity.KEYCODE_TIMESHIFTING:
 				if(mDTVSettings.getCheckProgramLock()==false){
+					if(isHaveExternalStorage()==false){
+						CheckUsbdevice dev = new CheckUsbdevice(DTVPlayer.this);
+						String path  = dev.getDevice();
+						if(path!=null){
+						       if(mDTVSettings!=null)
+						               mDTVSettings.setRecordStoragePath(path);
+						}       
+					}
+					
 					if(isHaveExternalStorage()){						
 						Intent Intent_timeshifting = new Intent();
 						Intent_timeshifting.setClass(DTVPlayer.this,DTVTimeshifting.class);

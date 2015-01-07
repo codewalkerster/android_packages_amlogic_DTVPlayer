@@ -833,7 +833,16 @@ public class DTVSettingsMenu extends DTVActivity {
 						break;
 					case 4:
 						if(isHavePragram()){
-							if(mDTVSettings.getCheckProgramLock()==false){					
+							if(mDTVSettings.getCheckProgramLock()==false){
+								if(isHaveExternalStorage()==false){
+									CheckUsbdevice dev = new CheckUsbdevice(DTVSettingsMenu.this);
+									String path  = dev.getDevice();
+									if(path!=null){
+									       if(mDTVSettings!=null)
+									               mDTVSettings.setRecordStoragePath(path);
+									}       
+								}
+								
 								if(isHaveExternalStorage()){
 									Intent Intent_timeshifting = new Intent();
 									Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
@@ -910,7 +919,16 @@ public class DTVSettingsMenu extends DTVActivity {
 						break;
 					case 4:
 						if(isHavePragram()){
-							if(mDTVSettings.getCheckProgramLock()==false){					
+							if(mDTVSettings.getCheckProgramLock()==false){
+								if(isHaveExternalStorage()==false){
+									CheckUsbdevice dev = new CheckUsbdevice(DTVSettingsMenu.this);
+									String path  = dev.getDevice();
+									if(path!=null){
+									       if(mDTVSettings!=null)
+									               mDTVSettings.setRecordStoragePath(path);
+									}       
+								}
+								
 								if(isHaveExternalStorage()){
 									Intent Intent_timeshifting = new Intent();
 									Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
