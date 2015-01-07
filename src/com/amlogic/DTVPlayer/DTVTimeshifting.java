@@ -66,9 +66,9 @@ public class DTVTimeshifting extends DTVActivity{
 		startTimeshifting();
 		DTVTimeshiftingUIInit();
 		timeshiftingHandler.postDelayed(timeshiftingTimer, 1000);
-		DTVTimeShiftingPause();
-		play_status = STAT_PAUSE;
-		showStartOrExitDialog();
+		//DTVTimeShiftingPause();
+		//play_status = STAT_PAUSE;
+		//showStartOrExitDialog();
 	}
 
 	private MountEventReceiver mount_receiver=null;
