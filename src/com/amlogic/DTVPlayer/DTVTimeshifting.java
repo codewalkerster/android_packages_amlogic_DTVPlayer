@@ -62,10 +62,11 @@ public class DTVTimeshifting extends DTVActivity{
 		/* there may be a conflict in startTimeshifting, so
 		 * we need to sovle the RECORD_CONFLICT message.
 		 */
-		//setBlackoutPolicy(1);
+		getTotalTime = mDTVSettings.getTimeShiftingDuration();
+		timeshiftingStatusHandler.postDelayed(timeshiftingStatusTimer, 1000); 
 		startTimeshifting();
 		DTVTimeshiftingUIInit();
-		timeshiftingHandler.postDelayed(timeshiftingTimer, 1000);
+		timeshiftingUIHandler.postDelayed(timeshiftingUITimer, 1000);
 		//DTVTimeShiftingPause();
 		//play_status = STAT_PAUSE;
 		//showStartOrExitDialog();
@@ -87,9 +88,8 @@ public class DTVTimeshifting extends DTVActivity{
 	protected void onStop(){
 		Log.d(TAG, "onStop");
 		super.onStop();
-		timeshiftingHandler.removeCallbacks(timeshiftingTimer);
+		timeshiftingUIHandler.removeCallbacks(timeshiftingUITimer);
 		unblock();
-		//playValid();
 		if(toast!=null)
 			toast.cancel(); 
 		if(mount_receiver != null)
@@ -264,16 +264,45 @@ public class DTVTimeshifting extends DTVActivity{
 		Text_parent_control_info_icon = (TextView) findViewById(R.id.Text_parent_control_info_icon);
 
 		int mode = DTVGetScreenMode();
-		if(mode==0){
-			Text_screentype_info.setText(getString(R.string.auto));
+		int pos = 0;
+		final int step = 5;
+		if(mode==1){
+			pos = 0;
 		}
-		else  if(mode==2){
-			Text_screentype_info.setText(getString(R.string.type_4_3));
+		else {
+			pos = mode-step;
 		}
-		else  if(mode==3){
-			Text_screentype_info.setText(getString(R.string.type_16_9));
-		}
-		
+				 
+		switch(pos){
+			case 0:
+				Text_screentype_info.setText(R.string.full_screen);						
+				break;
+			case 1:
+				Text_screentype_info.setText(R.string.type_4_3_IGNORE);						
+				break;
+			case 2:
+				Text_screentype_info.setText(R.string.type_4_3_LETTER_BOX);
+			break;
+			case 3:
+				Text_screentype_info.setText(R.string.type_4_3_PAN_SCAN);
+				break;	
+			case 4:
+				Text_screentype_info.setText(R.string.type_4_3_COMBINED);						
+				break;
+			case 5:
+				Text_screentype_info.setText(R.string.type_16_9_IGNORE);						
+				break;
+			case 6:
+				Text_screentype_info.setText(R.string.type_16_9_LETTER_BOX);						
+				break;
+			case 7:
+				Text_screentype_info.setText(R.string.type_16_9_PAN_SCAN);						
+				break;
+			case 8:
+				Text_screentype_info.setText(R.string.type_16_9_COMBINED);						
+				break;
+			
+		}	
 		
 		mode = DTVGetAudioTrack();
 		if(mode==0){ 						
@@ -304,9 +333,9 @@ public class DTVTimeshifting extends DTVActivity{
 					menuItems[i] = ctx.getString(MENUS[i]);
 				new MenuDialog(DTVTimeshifting.this, menuItems, 0);
 			}
-        });	
+        	});	
 			
-        fastforword.setOnClickListener(new Button.OnClickListener(){
+        	fastforword.setOnClickListener(new Button.OnClickListener(){
 			public void onClick(View v) {
 				if (play_status == STAT_FF){
 					if (speed < 8)
@@ -333,48 +362,48 @@ public class DTVTimeshifting extends DTVActivity{
 						break;
 				}
 			}
-        });
-        
-        fastreverse.setOnClickListener(new Button.OnClickListener(){
-		public void onClick(View v) {
-			if (play_status == STAT_FB)
-			{
-				if (speed < 8)
-					speed=speed*2;
-			}
-			else
-			{
-				speed = 2;
-				play_status = STAT_FB;
-			}
-			
-			DTVTimeShiftingBackward(speed);
+	        });
+	        
+	        fastreverse.setOnClickListener(new Button.OnClickListener(){
+			public void onClick(View v) {
+				if (play_status == STAT_FB)
+				{
+					if (speed < 8)
+						speed=speed*2;
+				}
+				else
+				{
+					speed = 2;
+					play_status = STAT_FB;
+				}
+				
+				DTVTimeShiftingBackward(speed);
 
-			play.setBackgroundResource(R.drawable.play_button);
+				play.setBackgroundResource(R.drawable.play_button);
 
-			switch(speed)
-			{
-				case 2:
-					TimeshiftingIcon.setImageResource(R.drawable.backward_speed_2);
-					break;
-				case 4:
-					TimeshiftingIcon.setImageResource(R.drawable.backward_speed_4);
-					break;
-				case 8:
-					TimeshiftingIcon.setImageResource(R.drawable.backward_speed_8);
-					break;
+				switch(speed)
+				{
+					case 2:
+						TimeshiftingIcon.setImageResource(R.drawable.backward_speed_2);
+						break;
+					case 4:
+						TimeshiftingIcon.setImageResource(R.drawable.backward_speed_4);
+						break;
+					case 8:
+						TimeshiftingIcon.setImageResource(R.drawable.backward_speed_8);
+						break;
+				}
+
 			}
-
-		}
-        });
-        
-        if (play_status == STAT_PLAY)
-        {
+	        });
+	        
+		if (play_status == STAT_PLAY)
+		{
 			play.setBackgroundResource(R.drawable.pause_button);
 			play.setBackgroundResource(R.drawable.pause_button);
 		}
 		
-        play.setOnClickListener(new Button.OnClickListener(){
+        	play.setOnClickListener(new Button.OnClickListener(){
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				if (play_status == STAT_PLAY)
@@ -418,11 +447,11 @@ public class DTVTimeshifting extends DTVActivity{
 
 				}
 			}
-        });
+        	});
                 
  
-        if (curtime != 0)
-        	myProgressBar.setProgress((int)(curtime*100/totaltime/1000));
+        	if (curtime != 0)
+	    		myProgressBar.setProgress((int)(curtime*100/totaltime/1000));
 		
         	myProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
 			public void onStopTrackingTouch(SeekBar seekBar) {
@@ -546,6 +575,7 @@ public class DTVTimeshifting extends DTVActivity{
 				play.setBackgroundResource(R.drawable.pause_button);
 				play_status = STAT_PLAY;
 				DTVTimeShiftingResume();
+				timeshiftingUIHandler.postDelayed(timeshiftingUITimer, 500);
 			}
 		};
 	}
@@ -988,7 +1018,7 @@ public class DTVTimeshifting extends DTVActivity{
 		}
 	}
 
-	private static int playback_status = DTVPlaybackParams.PLAYBACK_ST_PLAYING;
+	private static int playback_status = DTVPlaybackParams.PLAYBACK_ST_PAUSED;
 	void statusChangeUpdate(int status){	
 		if(playback_status!=status){
 			switch(status) {
@@ -1015,19 +1045,37 @@ public class DTVTimeshifting extends DTVActivity{
 		}	
 	}
 
-	private Handler timeshiftingHandler = new Handler();
-	private Runnable timeshiftingTimer = new Runnable() {
+	long getCurrentTime = 0;
+	long getTotalTime = 0;
+	int getStatus = 0;
+	private Handler timeshiftingUIHandler = new Handler();
+	private Runnable timeshiftingUITimer = new Runnable() {
+		public void run() {
+			statusChangeUpdate(getStatus);
+			if(getCurrentTime<getTotalTime&&play_status!=STAT_PAUSE)
+				freshTimeAndSeekbar(getCurrentTime++,getTotalTime);
+			timeshiftingUIHandler.postDelayed(this, 1000);
+		}
+	};
+
+	private Handler timeshiftingStatusHandler = new Handler();
+	private Runnable timeshiftingStatusTimer = new Runnable() {
 		public void run() {
 			DTVPlaybackParams recPara = getPlaybackParams();
-			if (recPara != null) {
+			if (recPara != null) 
+			{
 				Log.d(TAG, "recPara: status("+recPara.getStatus()+
 					"), time "+recPara.getCurrentTime()/1000+" / "+
 					recPara.getTotalTime()/1000);
-				statusChangeUpdate(recPara.getStatus());
-				freshTimeAndSeekbar(recPara.getCurrentTime()/1000,recPara.getTotalTime()/1000);
+				getStatus = recPara.getStatus();
+				
+				if(getStatus!= play_status||getStatus==DTVPlaybackParams.PLAYBACK_ST_FFFB)
+				{
+					getCurrentTime = recPara.getCurrentTime()/1000;
+				}
 			}
 		
-			timeshiftingHandler.postDelayed(this, 1000);
+			timeshiftingStatusHandler.postDelayed(this, 800);
 		}
 	};
 
