@@ -156,8 +156,9 @@ abstract public class DTVActivity extends TVActivity{
 			case STATUS_SCRAMBLED:
 				if(scrambled!=value){
 					scrambled=value;
-					onDialogStatusChanged(STATUS_SCRAMBLED);
+					//onDialogStatusChanged(STATUS_SCRAMBLED);
 				}	
+				onDialogStatusChanged(STATUS_SCRAMBLED);
 				break;
 			case STATUS_DATA:
 				if(has_data!=value){
