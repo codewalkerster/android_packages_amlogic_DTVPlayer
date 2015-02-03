@@ -70,11 +70,11 @@ public class DTVPvrPlayer extends DTVActivity{
 		super.onConnected();
 		openVideo();
 		setBlackoutPolicy(1);
-		pvrHandler.postDelayed(pvrTimer, 1000);
+		pvrHandler.postDelayed(pvrTimer, 500);
 		startPlayback(file_name);
 		DTVPvrPlayerUIInit();
 		Log.d(TAG,"play file ="+file_name);
-		//pvrHandler.postDelayed(pvrTimer, 1000);
+		pvrStatusHandler.postDelayed(pvrStatusTimer, 500);
 		current_playback_flag=false;
 		setVideoViewWindow();
 	}
@@ -978,7 +978,7 @@ public class DTVPvrPlayer extends DTVActivity{
 	private void freshTimeAndSeekbar(long cur_time,long total_time){
 		myProgressBar = (SeekBar)findViewById(R.id.SeekBar02);
 		TextView text_cur_time = (TextView)findViewById(R.id.TextView03);
-        TextView text_total_time = (TextView)findViewById(R.id.TextView04);
+		TextView text_total_time = (TextView)findViewById(R.id.TextView04);
 
 		curtime = cur_time;
 		totaltime = total_time;
@@ -1020,6 +1020,44 @@ public class DTVPvrPlayer extends DTVActivity{
 			playback_status=status;
 		}	
 	}
+
+	long getCurrentTime = 0;
+	long getTotalTime = 0;
+	int getStatus = 0;
+	private Handler pvrHandler = new Handler();
+	private Runnable pvrTimer = new Runnable() {
+		public void run() {
+			statusChangeUpdate(getStatus);
+			if(getCurrentTime<=getTotalTime&&getStatus!=STAT_PAUSE){
+				Log.d(TAG,"UI time dis:"+getCurrentTime+"--"+getTotalTime);
+				freshTimeAndSeekbar(getCurrentTime++,getTotalTime);
+			}
+			pvrHandler.postDelayed(this, 1000);
+		}
+	};
+
+	private Handler pvrStatusHandler = new Handler();
+	private Runnable pvrStatusTimer = new Runnable() {
+		public void run() {
+			DTVPlaybackParams recPara = getPlaybackParams();
+			if (recPara != null) 
+			{
+				Log.d(TAG, "recPara: status("+recPara.getStatus()+
+					"), time "+recPara.getCurrentTime()/1000+" / "+
+					recPara.getTotalTime()/1000);
+				getStatus = recPara.getStatus();
+				getTotalTime=recPara.getTotalTime()/1000;
+				if(getStatus!= play_status||getStatus==DTVPlaybackParams.PLAYBACK_ST_FFFB)
+				{
+					getCurrentTime = recPara.getCurrentTime()/1000;
+				}
+			}
+		
+			pvrStatusHandler.postDelayed(this, 800);
+		}
+	};
+
+	/*
 	private Handler pvrHandler = new Handler();
 	private Runnable pvrTimer = new Runnable() {
 		public void run() {
@@ -1035,7 +1073,8 @@ public class DTVPvrPlayer extends DTVActivity{
 			pvrHandler.postDelayed(this, 1000);
 		}
 	};
-
+	*/
+	
 	private void setVideoViewWindow(){
 		RelativeLayout video_position= (RelativeLayout) findViewById(R.id.RelativeLayout_video);
 		int[] location = new  int[2] ;
