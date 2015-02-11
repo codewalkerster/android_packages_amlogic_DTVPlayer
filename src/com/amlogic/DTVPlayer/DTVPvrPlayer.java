@@ -559,11 +559,10 @@ public class DTVPvrPlayer extends DTVActivity{
 					DTVTTGotoPreviousPage();
 				}	
 				return true;
-			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
-				Log.d(TAG,"KEYCODE_TV_SHORTCUTKEY_VOICEMODE");
+			case DTVActivity.KEYCODE_AUDIO_LANGUAGE:
 				showAudioLanguageDialog(DTVPvrPlayer.this);
 				return true;		
-			case KeyEvent.KEYCODE_TV_SUBTITLE:
+			case DTVActivity.KEYCODE_SUBTITLE:
 				showSubtitleSettingMenu(DTVPvrPlayer.this);
 				return true;	
 			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
