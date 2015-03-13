@@ -578,7 +578,8 @@ public class DTVRecordDevice extends DTVActivity {
 		File[] files = new File("/storage/external_storage").listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+				if (((file.getPath().startsWith("/storage/external_storage/sd"))||(file.getPath().startsWith("/storage/external_storage/udisk"))) && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+	
 					File myfile = file;
 					Log.d(TAG,"device path: "+myfile.getName());
 					DeviceItem item = new DeviceItem();//getDeviceName(myfile.getName());								
@@ -616,7 +617,7 @@ public class DTVRecordDevice extends DTVActivity {
 		File[] files = new File("/storage/external_storage").listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+				if (((file.getPath().startsWith("/storage/external_storage/sd"))||(file.getPath().startsWith("/storage/external_storage/udisk"))) && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
 					File myfile = file;
 					Log.d(TAG,"device path: "+myfile.getName());
 

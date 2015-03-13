@@ -55,20 +55,20 @@ abstract public class DTVActivity extends TVActivity{
 	final public static int KEYCODE_BLUE_BUTTON=KeyEvent.KEYCODE_F3;
 	final public static int KEYCODE_GREEN_BUTTON=KeyEvent.KEYCODE_F4;
 	
-	final public static int KEYCODE_GOTO_BUTTON=KeyEvent.KEYCODE_F;
-	final public static int KEYCODE_REC=KeyEvent.KEYCODE_G;
+	final public static int KEYCODE_GOTO_BUTTON=KeyEvent.KEYCODE_MEDIA_REWIND;
+	final public static int KEYCODE_REC=KeyEvent.KEYCODE_ZOOM_OUT;
 	
 	final public static int KEYCODE_TIMESHIFTING=KeyEvent.KEYCODE_F8;
 	final public static int KEYCODE_EPG=KeyEvent.KEYCODE_H;
 	
-	final public static int KEYCODE_AUDIO_TRACK=KeyEvent.KEYCODE_I;
+	final public static int KEYCODE_AUDIO_TRACK=KeyEvent.KEYCODE_MEDIA_NEXT;
 	final public static int KEYCODE_AUDIO_LANGUAGE=KeyEvent.KEYCODE_J;
 	
 	final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_K;
 	final public static int KEYCODE_SUBTITLE_SWITCH=KeyEvent.KEYCODE_L;	
 	final public static int KEYCODE_RECALL_BUTTON=KeyEvent.KEYCODE_M;
-	final public static int KEYCODE_INFO=KeyEvent.KEYCODE_N;
-	final public static int KEYCODE_FAV_BUTTON=KeyEvent.KEYCODE_O;
+	final public static int KEYCODE_INFO=KeyEvent.KEYCODE_TAB;
+	final public static int KEYCODE_FAV_BUTTON=KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE;
 
 	final public static int KEYCODE_AD_BUTTION=KeyEvent.KEYCODE_F5;
 	final public static int KEYCODE_AD_VOLUME_UP = KeyEvent.KEYCODE_F6;

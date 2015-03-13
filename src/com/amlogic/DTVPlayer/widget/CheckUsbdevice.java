@@ -47,7 +47,8 @@ public class CheckUsbdevice
 		File[] files = new File("/storage/external_storage").listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+				if (((file.getPath().startsWith("/storage/external_storage/sd"))||(file.getPath().startsWith("/storage/external_storage/udisk"))) && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+	
 					/*File[] myfiles = new File(file.getPath()).listFiles();
 					if (myfiles != null){
 						for (File myfile : myfiles){*/
@@ -88,7 +89,8 @@ public class CheckUsbdevice
 		File[] files = new File("/storage/external_storage").listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+				if (((file.getPath().startsWith("/storage/external_storage/sd"))||(file.getPath().startsWith("/storage/external_storage/udisk"))) && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+	
 					/*File[] myfiles = new File(file.getPath()).listFiles();
 					if (myfiles != null){
 						for (File myfile : myfiles){*/
@@ -176,7 +178,9 @@ public class CheckUsbdevice
             	String cmd = "mount";
 		if(path.equals(" "))
 			return false;
-			
+		
+		String p = new File(path).getName();
+	
     		try {
 			Process proc = runtime.exec(cmd);
 			InputStream input = proc.getInputStream();
@@ -185,7 +189,7 @@ public class CheckUsbdevice
 			while(null != (strLine = br.readLine())){
 				Log.d(TAG,">>>"+strLine);
 					for(int i=0;i<strLine.length();i++){
-						if(strLine.regionMatches(i,path,0,path.length()))
+						if(strLine.regionMatches(i,p,0,p.length()))
 							return true;
 						
 					}
@@ -255,7 +259,8 @@ public class CheckUsbdevice
 		File[] files = new File("/storage/external_storage").listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+				if (((file.getPath().startsWith("/storage/external_storage/sd"))||(file.getPath().startsWith("/storage/external_storage/udisk"))) && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+		
 					File[] myfiles = new File(file.getPath()).listFiles();
 						if (myfiles != null){	
 							File[] db_files = new File(file.getPath()).listFiles();
@@ -304,7 +309,8 @@ public class CheckUsbdevice
 		File[] files = new File("/storage/external_storage").listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+				if (((file.getPath().startsWith("/storage/external_storage/sd"))||(file.getPath().startsWith("/storage/external_storage/udisk"))) && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+	
 					File[] myfiles = new File(file.getPath()).listFiles();
 						if (myfiles != null){	
 							for(File my_file : myfiles){
