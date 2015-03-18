@@ -768,7 +768,7 @@ public class DTVScanDvbsConfig_advance  extends DTVActivity {
 				showDeleteDia();
 				break;
 
-			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_DISPAYMODE:
+			case DTVActivity.KEYCODE_RECALL_BUTTON:
 				Log.d(TAG,"KEY:KEYCODE_MEDIA_RATIO");
 				
 				/*if(mLockDvb.isRecording()){
@@ -793,11 +793,11 @@ public class DTVScanDvbsConfig_advance  extends DTVActivity {
 				Log.d(TAG,"KEY:KEYCODE_MEDIA_NEXT");
 				break;
 			
-			case KeyEvent.KEYCODE_TV_SHORTCUTKEY_VOICEMODE:
+			case DTVActivity.KEYCODE_AUDIO_LANGUAGE:
 				Log.d(TAG,"KEY:KEYCODE_MEDIA_AUDIO");
 				showSetLocationDia();
 				break;
-			case KeyEvent.KEYCODE_TV_SUBTITLE:
+			case DTVActivity.KEYCODE_SUBTITLE:
 				Log.d(TAG,"KEY:KEYCODE_MEDIA_SUB_T");
 				if(ListStatus==1)
 					showSetLimitAndPositionDia();

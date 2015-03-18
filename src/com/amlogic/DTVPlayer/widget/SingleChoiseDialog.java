@@ -41,7 +41,8 @@ abstract public class SingleChoiseDialog {
 		mContext = context;
 		item_string = item;
 		cur_choise_index = pos;
-		mDialog = new AlertDialog(mContext){
+		//mDialog = new AlertDialog(mContext){
+		mDialog = new Dialog(mContext,R.style.MyDialog){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
