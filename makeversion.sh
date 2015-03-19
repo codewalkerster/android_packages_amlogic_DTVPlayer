@@ -15,5 +15,11 @@ popd
 APKVERSION=$DVBVERSION-$DTVPLAYERVERSION
 echo version: $APKVERSION
 
-cat $1 | sed s/android:versionName=\"1.0\"/android:versionName=\"$APKVERSION\"/ > $2
+if test $SDK_VERSION -gt 19;then
+        echo sdk_vserion:$SDK_VERSION
+        SHARE_USER_ID=android.uid.media
+else
+        SHARE_USER_ID=android.uid.system
+fi
 
+cat $1 | sed s/android:versionName=\"1.0\"/android:versionName=\"$APKVERSION\"/ | sed s/android:sharedUserId=\"android.uid.system\"/android:sharedUserId=\"$SHARE_USER_ID\"/ >$2
