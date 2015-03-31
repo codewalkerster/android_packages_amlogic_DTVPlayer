@@ -134,7 +134,8 @@ public class DTVPlayer extends DTVActivity{
 		mDTVSettings = new DTVSettings(this);
 		//TVMessage msg = TVMessage.inputSourceChanged((int)(int) TVConst.SourceInput.SOURCE_DTV.ordinal());
 		//onMessage(msg);
-
+		if(mDialogManager!=null)
+			mDialogManager.setActive(true);
 		controlUpdate(0/*cmd:setVersion*/, 0, Version);
 	}
 
