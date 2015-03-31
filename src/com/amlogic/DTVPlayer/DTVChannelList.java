@@ -508,30 +508,21 @@ public class DTVChannelList extends DTVActivity{
 				myAdapter.notifyDataSetChanged();			
 				break;		
 			case DTVActivity.KEYCODE_REC:
-				break;
+				if(myAdapter!=null&&myAdapter.getCount()>0)
+					showPvrTimeSetDialog(DTVChannelList.this);
+				return true;
 			case DTVActivity.KEYCODE_GOTO_BUTTON:
 				if(mDTVSettings!=null&&(mDTVSettings.getScanRegion().contains("DVBS")))
 					showSatellitesList();
 				return true;
 			case DTVActivity.KEYCODE_RED_BUTTON: 			
+				showProgramSearchDialog();
+				return true;
+			case DTVActivity.KEYCODE_YELLOW_BUTTON:
 				if(myAdapter!=null&&myAdapter.getCount()>0){
 					showBookAddDialog();
 				}
 				return true;
-			case DTVActivity.KEYCODE_YELLOW_BUTTON:
-				showProgramSearchDialog();
-				return true;
-			/*	
-			case DTVActivity.KEYCODE_GOTO_BUTTON:
-				showSatellitesList();
-				return true;
-			case DTVActivity.KEYCODE_REC:
-				showPvrTimeSetDialog(DTVChannelList.this);
-				return true;
-			case DTVActivity.KEYCODE_RED_BUTTON:
-				showProgramSearchDialog();
-				return true;
-			*/	
 		}
 		return super.onKeyDown(keyCode, event);
 	}	  

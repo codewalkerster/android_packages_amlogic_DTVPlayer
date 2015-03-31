@@ -901,6 +901,10 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 			case DTVActivity.KEYCODE_BLUE_BUTTON: 
 				showDeleteDia();
 				break;
+			case DTVActivity.KEYCODE_GREEN_BUTTON:
+				if(ScanSatAndtsInfoList.size()>0)
+					showScanConfigDia();
+				break;
 			case DTVActivity.KEYCODE_RECALL_BUTTON:
 				Log.d(TAG,"KEY:KEYCODE_MEDIA_RATIO");
 				

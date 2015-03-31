@@ -70,11 +70,11 @@ abstract public class DTVActivity extends TVActivity{
         
         final public static int KEYCODE_SUBTITLE=KeyEvent.KEYCODE_F10;
         final public static int KEYCODE_SUBTITLE_SWITCH=KeyEvent.KEYCODE_F11;     
-        final public static int KEYCODE_RECALL_BUTTON=KeyEvent.KEYCODE_M;
+        final public static int KEYCODE_RECALL_BUTTON=KeyEvent.KEYCODE_F7;
 
 	final public static int KEYCODE_AD_BUTTION=KeyEvent.KEYCODE_F5;
 	final public static int KEYCODE_AD_VOLUME_UP = KeyEvent.KEYCODE_F6;
-	final public static int KEYCODE_AD_VOLUME_DOWN = KeyEvent.KEYCODE_F7;
+	final public static int KEYCODE_AD_VOLUME_DOWN = KeyEvent.KEYCODE_M;
 	
 
 	private TVProgram TVProgram=null;
