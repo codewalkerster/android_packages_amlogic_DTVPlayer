@@ -579,18 +579,33 @@ public class DTVPlayer extends DTVActivity{
 				return true;
 			case DTVActivity.KEYCODE_GREEN_BUTTON: //tv/radio
 				Log.d(TAG,"KEYCODE_GREEN_BUTTON");	
-				showChannelInfo();
+				if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){
+					DTVTTGotoColorLink(3);
+				}	
+				else
+					showChannelInfo();
 				return true;	
 			case DTVActivity.KEYCODE_RED_BUTTON: //16:9/4:3
 				Log.d(TAG,"KEYCODE_RED_BUTTON");
-				shortcut_key_deal("pictrue_mode");
+				if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){
+					DTVTTGotoColorLink(0);
+				}	
+				else
+					shortcut_key_deal("pictrue_mode");
+				return true;
+			case DTVActivity.KEYCODE_YELLOW_BUTTON:
+				if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){
+					DTVTTGotoColorLink(1);
+				}	
 				return true;
 			case DTVActivity.KEYCODE_EPG: //epg
 				
 				return true;
 			case DTVActivity.KEYCODE_BLUE_BUTTON: //pvr manager
 				Log.d(TAG,"KEYCODE_BLUE_BUTTON");
-				
+				if(dtvplyaer_b_txt&&DTVPlayerInTeletextStatus){
+					DTVTTGotoColorLink(2);
+				}	
 				return true;
 			case DTVActivity.KEYCODE_SUBTITLE_SWITCH:
 				Log.d(TAG,"KEYCODE_SUBTITLE");
