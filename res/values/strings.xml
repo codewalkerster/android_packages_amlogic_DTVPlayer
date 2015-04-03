@@ -335,7 +335,7 @@
     <string name="epg_operate_des01">OK--BookPlay/BookRecord     		  INFO--EIT Dtails</string>
 	
     <string name="epg_title">EPG</string>
-    <string name="epg_ok">BOOK</string>
+    <string name="epg_book">BOOK</string>
     <string name="epg_info">EPG INFO</string>
     <string name="epg_booklist">BOOK LIST</string>
     <string name="epg_page_up">PAGE UP</string>

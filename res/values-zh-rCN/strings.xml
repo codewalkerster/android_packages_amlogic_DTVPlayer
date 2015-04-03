@@ -332,7 +332,7 @@
     <string name="epg_operate_des01">OK--预约播放/预约录像     		  INFO--时间信息</string>
 	
     <string name="epg_title">节目指南</string>
-    <string name="epg_ok">预约</string>
+    <string name="epg_book">预约</string>
     <string name="epg_info">节目指南信息</string>
     <string name="epg_booklist">预约列表</string>
     <string name="epg_page_up">向上翻页</string>
