@@ -421,6 +421,8 @@ public class DTVPvrPlayer extends DTVActivity{
 			
 			public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
 				// TODO Auto-generated method stub	
+				getCurrentTime = (int)totaltime*progress/100;
+				
 			}
 		});
 	     
