@@ -173,6 +173,11 @@ public class DTVPlayer extends DTVActivity{
 				SubAsyncTask mTask = new SubAsyncTask();  
 				mTask.execute();  
 				break;
+			case TVMessage.TYPE_BOOKING_START:
+				if(DTVPlayerIsRecording()){
+					showPvrIcon();
+				}
+				break;
 			case TVMessage.TYPE_RECORD_CONFLICT:
 				int recordConflict = msg.getRecordConflict();
 				
@@ -226,8 +231,9 @@ public class DTVPlayer extends DTVActivity{
 						
 						break;							
 				}
-
-				hidePvrIcon();
+				if(DTVPlayerIsRecording()==false){
+					hidePvrIcon();
+				}
 				break;	
 			case TVMessage.TYPE_SCREEN_ON:
 				Log.d(TAG,"---TYPE_SCREEN_ON---");
@@ -2191,6 +2197,7 @@ public class DTVPlayer extends DTVActivity{
 		long cur_recording_time=0;
 		cur_recording_time = DTVPlayerGetRecordDuration();	
 		TextView Text_recording_time = (TextView) findViewById(R.id.Text_recording_time);
+		Text_recording_time.setTextColor(Color.RED);
 		Text_recording_time.setText(secToTime(cur_recording_time,false));
 	}
 
