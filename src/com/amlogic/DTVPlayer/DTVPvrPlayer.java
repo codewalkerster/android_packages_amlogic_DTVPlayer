@@ -469,9 +469,10 @@ public class DTVPvrPlayer extends DTVActivity{
 
 			public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
 				// TODO Auto-generated method stub	
-				getCurrentTime = (int)totaltime*progress/100;
-				
-				// TODO Auto-generated method stub
+				if(SeekSliding){
+					getCurrentTime = (int)totaltime*progress/100;
+					SeekSliding=false;
+				}
 			}
 		});
 
@@ -1040,10 +1041,10 @@ public class DTVPvrPlayer extends DTVActivity{
 			myProgressBar.setProgress(0);
 		}
 		else {
-			if (!SeekSliding){
+			//if (!SeekSliding){
 				myProgressBar.setProgress(((int)curtime*100)/(int)totaltime);
 				myProgressBar_pos =((int)curtime*100)/(int)totaltime;
-			}
+			//}
 		}
 	}
 
