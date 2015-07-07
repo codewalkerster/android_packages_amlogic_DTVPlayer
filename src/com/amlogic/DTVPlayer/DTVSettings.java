@@ -54,7 +54,7 @@ public class DTVSettings{
 	public void setDtvDemodAndDmxConfig(String mode){
 		if(mode.equals("avl6211")){
 			mContext.setConfig("tv:dtv:config_demod_fe","dtv_demod 0 driver Avl6211|dtv_demod 0 i2c_id 2|dtv_demod 0 i2c_addr 0xc0|dtv_demod 0 reset_gpio GPIOY_5|frontend 0 dtv_demod 0|frontend 0 ts 0|enable 0|");
-			mContext.setConfig("tv:dtv:config_dmx","0 p 0 0");	
+			mContext.setConfig("tv:dtv:config_dmx","0 p 0 0");
 		}
 		else if(mode.equals("mxl101")){
 			mContext.setConfig("tv:dtv:config_demod_fe","dtv_demod 0 driver Mxl101|dtv_demod 0 i2c_id 2|dtv_demod 0 i2c_addr 0x60|dtv_demod 0 reset_gpio GPIOY_5|frontend 0 dtv_demod 0|frontend 0 ts 0|enable 0|");
@@ -62,6 +62,10 @@ public class DTVSettings{
 		}
 		else if(mode.equals("si2168")){
 			mContext.setConfig("tv:dtv:config_demod_fe","dtv_demod 0 driver Si2168|dtv_demod 0 i2c_id 2|dtv_demod 0 i2c_addr 0x64|dtv_demod 0 reset_gpio GPIOY_5|frontend 0 dtv_demod 0|frontend 0 ts 0|enable 0|");
+			mContext.setConfig("tv:dtv:config_dmx","0 p 0 0");	
+		}
+		else if(mode.equals("mxl241")){
+			mContext.setConfig("tv:dtv:config_demod_fe","dtv_demod 0 driver Mxl241|dtv_demod 0 i2c_id 2|dtv_demod 0 i2c_addr 0x60|dtv_demod 0 reset_gpio GPIOY_12|frontend 0 dtv_demod 0|frontend 0 ts 0|enable 0|");
 			mContext.setConfig("tv:dtv:config_dmx","0 p 0 0");	
 		}
 		

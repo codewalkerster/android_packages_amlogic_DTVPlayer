@@ -1,6 +1,10 @@
 #!/bin/bash
 
 DVBDIR=$ANDROID_BUILD_TOP/external/dvb
+if [ ! -d "$DVBDIR" ];then
+	DVBDIR=$ANDROID_BUILD_TOP/vendor/amlogic/external/dvb
+fi
+
 
 if test -d $DVBDIR; then
 	pushd $DVBDIR
@@ -21,5 +25,7 @@ if test $SDK_VERSION -gt 19;then
 else
         SHARE_USER_ID=android.uid.system
 fi
+
+SHARE_USER_ID=android.uid.system
 
 cat $1 | sed s/android:versionName=\"1.0\"/android:versionName=\"$APKVERSION\"/ | sed s/android:sharedUserId=\"android.uid.system\"/android:sharedUserId=\"$SHARE_USER_ID\"/ >$2
