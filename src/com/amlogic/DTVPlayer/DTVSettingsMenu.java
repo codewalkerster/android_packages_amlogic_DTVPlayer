@@ -55,14 +55,14 @@ public class DTVSettingsMenu extends DTVActivity {
 		Log.d(TAG, "onStop");
 		super.onStop();
 	}
-	
+
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
 		mDTVSettings = new DTVSettings(this);
 		DTVSettingsMenu_UI_Init();
 		bundle = this.getIntent().getExtras();
-		if(bundle!=null){	
+		if(bundle!=null){
 			if(bundle.containsKey("activity_tag")){
 				if (bundle.getString("activity_tag").equals("play_program")){
 					Log.d(TAG,">>>playValid<<<");
@@ -81,21 +81,21 @@ public class DTVSettingsMenu extends DTVActivity {
 		Log.d(TAG, "message "+msg.getType());
 		switch (msg.getType()) {
 			case TVMessage.TYPE_SCAN_PROGRESS:
-				
+
 				break;
 			case TVMessage.TYPE_SCAN_STORE_BEGIN:
 				Log.d(TAG, "Storing ...");
 				break;
 			case TVMessage.TYPE_SCAN_STORE_END:
 				Log.d(TAG, "Store Done !");
-				
+
 				break;
 			case TVMessage.TYPE_SCAN_END:
 				Log.d(TAG, "Scan End");
 				break;
 			default:
 				break;
-	
+
 		}
 	}
 
@@ -106,39 +106,39 @@ public class DTVSettingsMenu extends DTVActivity {
 	ImageButton button_av_setting=null;
 
 	public static final int BUTTON_PROGRAM = 0;
-	public static final int BUTTON_SEARCH = 1;	
+	public static final int BUTTON_SEARCH = 1;
 	public static final int BUTTON_SYSTEM = 2;
 	public static final int BUTTON_AV_SETTING = 3;
 	int button_status = BUTTON_SEARCH;
 
 	void DTVSettingsMenu_UI_Init(){
-	
-		//curr_content_layout =  (LinearLayout)findViewById(R.id.linearLayout_vod_home);		
-		//VodHomeLayout=(RelativeLayout)findViewById(R.id.VodHomeLayout);		
-		//bufferAnim = (AnimationDrawable)((ImageView)findViewById(R.id.BufferImage)).getBackground();	
-			
-		button_program = (ImageButton)findViewById(R.id.button_program);	
-		button_search = (ImageButton)findViewById(R.id.button_search);	
-		button_system = (ImageButton)findViewById(R.id.button_system);	
-		button_av_setting = (ImageButton)findViewById(R.id.button_av);	
+
+		//curr_content_layout =  (LinearLayout)findViewById(R.id.linearLayout_vod_home);
+		//VodHomeLayout=(RelativeLayout)findViewById(R.id.VodHomeLayout);
+		//bufferAnim = (AnimationDrawable)((ImageView)findViewById(R.id.BufferImage)).getBackground();
+
+		button_program = (ImageButton)findViewById(R.id.button_program);
+		button_search = (ImageButton)findViewById(R.id.button_search);
+		button_system = (ImageButton)findViewById(R.id.button_system);
+		button_av_setting = (ImageButton)findViewById(R.id.button_av);
 
 		findViewById(R.id.return_icon).setOnClickListener(
-			new View.OnClickListener(){	  
-				public void onClick(View v) {		
-					// TODO Auto-generated method stub	
+			new View.OnClickListener(){
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
 					Intent in = new Intent();
 					in.setClass(DTVSettingsMenu.this, DTVPlayer.class);
 					//setResult(RESULT_OK,null);
-					DTVSettingsMenu.this.startActivity(in);	
+					DTVSettingsMenu.this.startActivity(in);
 					DTVSettingsMenu.this.finish();
 				}
 			}
 		);
-				
-		button_program.setOnClickListener(new ButtonClick()); 	
-		button_search.setOnClickListener(new ButtonClick()); 	
-		button_system.setOnClickListener(new ButtonClick()); 	
-		button_av_setting.setOnClickListener(new ButtonClick()); 	
+
+		button_program.setOnClickListener(new ButtonClick());
+		button_search.setOnClickListener(new ButtonClick());
+		button_system.setOnClickListener(new ButtonClick());
+		button_av_setting.setOnClickListener(new ButtonClick());
 
 		button_program.setOnFocusChangeListener(new OnFocusChangeListener()
 		    {
@@ -210,8 +210,8 @@ public class DTVSettingsMenu extends DTVActivity {
 		      }
 		});
 		button_av_setting.setOnKeyListener(new buttonOnKeyListener());
-		//button_search.setBackgroundResource(R.drawable.search2);	
-		
+		//button_search.setBackgroundResource(R.drawable.search2);
+
 		Bundle bundle = this.getIntent().getExtras();
 		int menuId = R.string.setting_menu_search;
 		if (bundle != null)
@@ -236,65 +236,65 @@ public class DTVSettingsMenu extends DTVActivity {
 			default:
 				button_search.requestFocus();
 				SearchItem_Init();
-				break;	
+				break;
 		}
-		
+
 		//dialog
 		editBuilder = new AlertDialog.Builder(this);
 		editBuilder_password = editBuilder;
 	}
 
-	class ButtonClick  implements android.view.View.OnClickListener{	  
-		public void onClick(View v) {		
-			// TODO Auto-generated method stub		
-			switch (v.getId()) {			
-				case R.id.button_program:		
-					/*			
-					button_program.setBackgroundResource(R.drawable.program3);		
-					button_search.setBackgroundResource(R.drawable.button_search);		
+	class ButtonClick  implements android.view.View.OnClickListener{
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			switch (v.getId()) {
+				case R.id.button_program:
+					/*
+					button_program.setBackgroundResource(R.drawable.program3);
+					button_search.setBackgroundResource(R.drawable.button_search);
 					button_system.setBackgroundResource(R.drawable.button_system);
-					button_av_setting.setBackgroundResource(R.drawable.button_av);	
+					button_av_setting.setBackgroundResource(R.drawable.button_av);
 					*/
-					
-					//get data	
+
+					//get data
 					ProgramItem_Init();
 					break;
-				case R.id.button_search:	
+				case R.id.button_search:
 					/*
-					button_program.setBackgroundResource(R.drawable.button_program);		
-					button_search.setBackgroundResource(R.drawable.search3);		
+					button_program.setBackgroundResource(R.drawable.button_program);
+					button_search.setBackgroundResource(R.drawable.search3);
 					button_system.setBackgroundResource(R.drawable.button_system);
-					button_av_setting.setBackgroundResource(R.drawable.button_av);	
+					button_av_setting.setBackgroundResource(R.drawable.button_av);
 					*/
-					
-					//get data	
+
+					//get data
 					SearchItem_Init();
 					break;
-				case R.id.button_system:	
+				case R.id.button_system:
 					/*
-					button_program.setBackgroundResource(R.drawable.button_program);		
-					button_search.setBackgroundResource(R.drawable.button_search);		
+					button_program.setBackgroundResource(R.drawable.button_program);
+					button_search.setBackgroundResource(R.drawable.button_search);
 					button_system.setBackgroundResource(R.drawable.system3);
-					button_av_setting.setBackgroundResource(R.drawable.button_av);	
+					button_av_setting.setBackgroundResource(R.drawable.button_av);
 					*/
-					 
-					//get data	
+
+					//get data
 					SystemItem_Init();
-					break; 	
+					break;
 				case R.id.button_av:
 					/*
-					button_program.setBackgroundResource(R.drawable.button_program);		
-					button_search.setBackgroundResource(R.drawable.button_search);		
+					button_program.setBackgroundResource(R.drawable.button_program);
+					button_search.setBackgroundResource(R.drawable.button_search);
 					button_system.setBackgroundResource(R.drawable.button_system);
-					button_av_setting.setBackgroundResource(R.drawable.av3);	
+					button_av_setting.setBackgroundResource(R.drawable.av3);
 					*/
-					 
+
 					//get data
 					AVItem_Init();
-					break;	
-			}		
+					break;
+			}
 
-		}	
+		}
 	}
 
 	private static String[] DATA = null;
@@ -307,7 +307,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	public static final int SETTINGS_TTX_REGION=5;
 	public static final int SETTINGS_CC=6;
 	public static final int SETTINGS_ANTENNA_SOURCE=7;
-		
+
 	private String ttx_region_str=null;
 	private static String[] ttx_region_str_arry=null;
 	private int cur_select_item=0;
@@ -320,7 +320,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	private SearchATSCItemAdapter mySearchATSCItemAdapter=null;
 	private SystemItemAdapter mySystemAdapter=null;
 	private AvItemAdapter myAvAdapter=null;
-	
+
 	private AlertDialog.Builder editBuilder=null;
 	private AlertDialog.Builder editBuilder_password=null;
 
@@ -330,15 +330,15 @@ public class DTVSettingsMenu extends DTVActivity {
 
 	private void SystemItem_Init(){
 		Log.d(TAG,"scan region="+mDTVSettings.getScanRegion());
-		button_status = BUTTON_SYSTEM;  
-		if(mDTVSettings.getScanRegion().contains("ATSC"))	
+		button_status = BUTTON_SYSTEM;
+		if(mDTVSettings.getScanRegion().contains("ATSC"))
 			DATA = getResources().getStringArray(R.array.system_settings_content_atsc);
 		else
 			DATA = getResources().getStringArray(R.array.system_settings_content);
-	
+
 		//ttx_region_str = mDTVSettings.getTeletextRegionName();
 		//if(ttx_region_str!=null)
-			//ttx_region_str_arry = ttx_region_str.split(" "); 
+			//ttx_region_str_arry = ttx_region_str.split(" ");
 		ttx_region_str_arry = getResources().getStringArray(R.array.teletext_region_lauguage);
 
 		//listview
@@ -350,11 +350,11 @@ public class DTVSettingsMenu extends DTVActivity {
 		ListView_settings.setAdapter(mySystemAdapter);
 		mySystemAdapter.notifyDataSetChanged();
 		//ListView_settings.requestFocus();
-		
+
 	}
 
 	private void ProgramItem_Init(){
-		button_status = BUTTON_PROGRAM; 
+		button_status = BUTTON_PROGRAM;
 		if(mDTVSettings.getScanRegion().contains("DVBS")){
 			DATA = getResources().getStringArray(R.array.Program_settings_content_dvbs);
 		}
@@ -371,18 +371,18 @@ public class DTVSettingsMenu extends DTVActivity {
 		//ListView_settings.requestFocus();
 
 		/*
-		//title		
+		//title
 		TextView Title=(TextView)findViewById(R.id.title);
 		Title.setTextColor(Color.YELLOW);
 		Title.setText(R.string.settings_title);
 		*/
-		
+
 	}
 
 	private void SearchItem_Init(){
 		String region = null;
-		
-		
+
+
 		try {
 			region = mDTVSettings.getScanRegion();
 		} catch (Exception e) {
@@ -392,10 +392,10 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 
 		Log.d(TAG, "region = " + region);
-		
+
 		if(region.contains("DVB-T")||region.contains("ISDBT")){
 			Log.d(TAG, "goto DTVScanDVBT");
-			button_status = BUTTON_SEARCH;  
+			button_status = BUTTON_SEARCH;
 			DATA = getResources().getStringArray(R.array.search_settings_content_dvbt);
 			//listview
 			ListView_settings = (ListView)findViewById(R.id.settings_list);
@@ -408,14 +408,14 @@ public class DTVSettingsMenu extends DTVActivity {
 		else if(region.contains("ATSC")){
 			Log.d(TAG, "goto DTVScanATSC");
 
-			button_status = BUTTON_SEARCH;  
+			button_status = BUTTON_SEARCH;
 			DATA = getResources().getStringArray(R.array.search_settings_content_atsc);
 			//listview
 			ListView_settings = (ListView)findViewById(R.id.settings_list);
 			mySearchATSCItemAdapter = new SearchATSCItemAdapter(this,DATA);
 			ListView_settings.setOnItemSelectedListener(mOnSelectedListener);
 			ListView_settings.setOnKeyListener(new OnKeyListener(){
-			public boolean onKey(View v, int keyCode, KeyEvent event) {					
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				switch(keyCode){
 					case KeyEvent.KEYCODE_BACK:
 						if (event.getAction() == KeyEvent.ACTION_DOWN){
@@ -425,7 +425,7 @@ public class DTVSettingsMenu extends DTVActivity {
 								return true;
 							}
 						}
-				} 
+				}
 				return false;
 			}
 		});
@@ -435,7 +435,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		else if(region.contains("DVBS"))
 		{
 			Log.d(TAG, "goto DTVScanDVBS");
-			button_status = BUTTON_SEARCH;  
+			button_status = BUTTON_SEARCH;
 			DATA = getResources().getStringArray(R.array.search_settings_content_dvbs);
 			//listview
 			ListView_settings = (ListView)findViewById(R.id.settings_list);
@@ -445,11 +445,11 @@ public class DTVSettingsMenu extends DTVActivity {
 			ListView_settings.setOnItemClickListener(mSearchOnItemClickListener);
 			ListView_settings.setAdapter(mySearchAdapter);
 			//ListView_settings.requestFocus();
-		}	
+		}
 		else if(region.contains("DVB-C"))
 		{
 			Log.d(TAG, "goto DTVScanDVBC");
-			button_status = BUTTON_SEARCH;  
+			button_status = BUTTON_SEARCH;
 			DATA = getResources().getStringArray(R.array.search_settings_content_dvbc);
 			//listview
 			ListView_settings = (ListView)findViewById(R.id.settings_list);
@@ -457,15 +457,15 @@ public class DTVSettingsMenu extends DTVActivity {
 			ListView_settings.setOnItemSelectedListener(mOnSelectedListener);
 			ListView_settings.setOnKeyListener(new listOnKeyListener());
 			ListView_settings.setOnItemClickListener(mSearchDvbcOnItemClickListener);
-			ListView_settings.setAdapter(mySearchDvbcItemAdapter);			
-		}	
+			ListView_settings.setAdapter(mySearchDvbcItemAdapter);
+		}
 
-		
-		
+
+
 	}
 	private void AVItem_Init(){
 		Log.d(TAG,"scan region="+mDTVSettings.getScanRegion());
-		button_status = BUTTON_AV_SETTING;  
+		button_status = BUTTON_AV_SETTING;
 		DATA = getResources().getStringArray(R.array.av_settings_content);
 
 		//listview
@@ -478,7 +478,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		//ListView_settings.requestFocus();
 
 	}
-	
+
 	private AnimationSet listItemFocus ;
 	private void UIAnimationInit(){
 		listItemFocus = new AnimationSet(true);
@@ -490,7 +490,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	     scale.setRepeatCount(0);
 		 listItemFocus.addAnimation(scale);
 	}
-		
+
 	private AdapterView.OnItemSelectedListener mOnSelectedListener = new AdapterView.OnItemSelectedListener(){
 		public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
 			ListView_settings = (ListView)findViewById(R.id.settings_list);
@@ -502,31 +502,31 @@ public class DTVSettingsMenu extends DTVActivity {
 			*/
 			cur_select_item = position;
 		}
-		
+
 		public void onNothingSelected(AdapterView<?> parent){
 		}
-	}; 	
+	};
 
 	class listOnKeyListener implements OnKeyListener{
-		public boolean onKey(View v, int keyCode, KeyEvent event) {					
+		public boolean onKey(View v, int keyCode, KeyEvent event) {
 			switch(keyCode){
 				case KeyEvent.KEYCODE_DPAD_DOWN:
-				case KeyEvent.KEYCODE_DPAD_UP:	
+				case KeyEvent.KEYCODE_DPAD_UP:
 					if (event.getAction() == KeyEvent.ACTION_DOWN) {
 						//v.clearAnimation();
 					}
 					break;
-			} 
+			}
 			return false;
 		}
 	}
 
 	class buttonOnKeyListener implements OnKeyListener{
-		public boolean onKey(View v, int keyCode, KeyEvent event) {					
-			switch (v.getId()) {			
-				case R.id.button_program:		
-				case R.id.button_search:	
-				case R.id.button_system:					
+		public boolean onKey(View v, int keyCode, KeyEvent event) {
+			switch (v.getId()) {
+				case R.id.button_program:
+				case R.id.button_search:
+				case R.id.button_system:
 				case R.id.button_av:
 					{
 						switch(keyCode){
@@ -540,14 +540,14 @@ public class DTVSettingsMenu extends DTVActivity {
 										button_system.setBackgroundResource(R.drawable.system3);
 						        	else if(button_status == BUTTON_AV_SETTING)
 										button_av_setting.setBackgroundResource(R.drawable.av3);
-		    
+
 								}
 								break;
-							} 
+							}
 					}
-					break;	
-			}	
-			
+					break;
+			}
+
 			return false;
 		}
 	}
@@ -556,19 +556,19 @@ public class DTVSettingsMenu extends DTVActivity {
 		// TODO Auto-generated method stub
 		Log.d(TAG,"onActivityResult");
 		int p=-1;
-		
+
 		if(data!=null){
 			Bundle bundle =data.getExtras();
-			p = bundle.getInt("position");			
-		}		
+			p = bundle.getInt("position");
+		}
 
 		if(resultCode == RESULT_OK){
 			switch(requestCode){
 			  case 11:
 			  	 //onShow();
-				 switch(p){	
+				 switch(p){
 				    case 0:
-				 	//onShow();   	
+				 	//onShow();
 				    	break;
 				    case 1:
 				    	//onShow();
@@ -576,7 +576,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				  }
 				  break;
 			}
-		}	
+		}
 	}
 
 	private AdapterView.OnItemClickListener mAvOnItemClickListener =new AdapterView.OnItemClickListener(){
@@ -597,12 +597,12 @@ public class DTVSettingsMenu extends DTVActivity {
 
 			switch(position){
 				case 0:
-					showScreenTypeDialog(info_cur);		
+					showScreenTypeDialog(info_cur);
 					break;
 				case 1: //subtitle language
 					showSubtitleLanguageDialog(info_cur);
 					break;
-				case 2:  //audio language	
+				case 2:  //audio language
 					showAudioLanguageDialog(info_cur);
 					break;
 				case 3:
@@ -619,7 +619,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				    		info_cur.setText(R.string.off);
 						mDTVSettings.setBlackoutPolicyConfig(1);
 						setBlackoutPolicy(1);
-				    	}	
+				    	}
 					break;
 				case 4:
 					showInforbarShowTimeDialog(info_cur);
@@ -627,7 +627,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 		}
 	};
-	
+
 	private class AvItemAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Context cont;
@@ -636,11 +636,11 @@ public class DTVSettingsMenu extends DTVActivity {
 	 	class ViewHolder {
 			TextView text;
 			ImageView icon;
-		    TextView   info; 
+		    TextView   info;
 		    ImageButton  iboolean;
 		    ImageView icon1;
 		}
-	
+
 		public AvItemAdapter(Context context, String[] list) {
 			super();
 			cont = context;
@@ -655,11 +655,11 @@ public class DTVSettingsMenu extends DTVActivity {
 		public Object getItem(int position) {
 			return position;
 		}
-	
+
 		public long getItemId(int position) {
 			return position;
 		}
-	
+
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder=null;
 
@@ -693,9 +693,9 @@ public class DTVSettingsMenu extends DTVActivity {
 			holder.info.setVisibility(View.VISIBLE);
 			holder.icon1.setVisibility(View.INVISIBLE);
 			switch(position){
-			
+
 		     case 0://SETTINGS_SCREEN_TYPE:
-				 //int mode= mDTVSettings.getScreenMode();	
+				 //int mode= mDTVSettings.getScreenMode();
 				int mode = DTVGetScreenMode();
 				int pos = 0;
 				final int step = 5;
@@ -705,36 +705,36 @@ public class DTVSettingsMenu extends DTVActivity {
 				else {
 					pos = mode-step;
 				}
-				 
+
 				 switch(pos){
 					case 0:
-						holder.info.setText(R.string.full_screen);						
+						holder.info.setText(R.string.full_screen);
 						break;
 					case 1:
-						holder.info.setText(R.string.type_4_3_IGNORE);						
+						holder.info.setText(R.string.type_4_3_IGNORE);
 						break;
 					case 2:
 						holder.info.setText(R.string.type_4_3_LETTER_BOX);
 					break;
 					case 3:
 						holder.info.setText(R.string.type_4_3_PAN_SCAN);
-						break;	
+						break;
 					case 4:
-						holder.info.setText(R.string.type_4_3_COMBINED);						
+						holder.info.setText(R.string.type_4_3_COMBINED);
 						break;
 					case 5:
-						holder.info.setText(R.string.type_16_9_IGNORE);						
+						holder.info.setText(R.string.type_16_9_IGNORE);
 						break;
 					case 6:
-						holder.info.setText(R.string.type_16_9_LETTER_BOX);						
+						holder.info.setText(R.string.type_16_9_LETTER_BOX);
 						break;
 					case 7:
-						holder.info.setText(R.string.type_16_9_PAN_SCAN);						
+						holder.info.setText(R.string.type_16_9_PAN_SCAN);
 						break;
 					case 8:
-						holder.info.setText(R.string.type_16_9_COMBINED);						
+						holder.info.setText(R.string.type_16_9_COMBINED);
 						break;
-					
+
 				}
 		    	 	break;
 			case 1: //subtitle language
@@ -750,19 +750,19 @@ public class DTVSettingsMenu extends DTVActivity {
 					//holder.icon.setImageBitmap(mIcon1);
 					holder.info.setVisibility(View.VISIBLE);
 					holder.icon1.setVisibility(View.INVISIBLE);
-					if (mDTVSettings.getBlackoutPolicyConfig()==1){			   
-						//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+					if (mDTVSettings.getBlackoutPolicyConfig()==1){
+						//holder.icon1.setBackgroundResource(R.drawable.select_round_2);
 						holder.info.setText(R.string.off);
 					}
 					else{
-						//holder.icon1.setBackgroundResource(R.drawable.select_round_1); 
+						//holder.icon1.setBackgroundResource(R.drawable.select_round_1);
 						holder.info.setText(R.string.on);
-					}	  
+					}
 				}
-		  		break; 
+		  		break;
 			case 4:
 				{
-					
+
 					holder.info.setVisibility(View.VISIBLE);
 					holder.icon1.setVisibility(View.INVISIBLE);
 					holder.info.setText(String.valueOf(mDTVSettings.getInforBarShowTime())+"S");
@@ -772,7 +772,7 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		  return convertView;
 		}
-	}	
+	}
 
 
 	private AdapterView.OnItemClickListener mProgramOnItemClickListener =new AdapterView.OnItemClickListener(){
@@ -785,7 +785,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				if (position == count - 1) {
 					Intent in = new Intent();
 					in.setClass(DTVSettingsMenu.this, DTVPlayer.class);
-					DTVSettingsMenu.this.startActivity(in);	
+					DTVSettingsMenu.this.startActivity(in);
 					DTVSettingsMenu.this.finish();
 					return;
 				}
@@ -795,9 +795,9 @@ public class DTVSettingsMenu extends DTVActivity {
 				switch(position){
 					case 0:
 						if(isHavePragram()){
-								
+
 							showProgramManagerPasswordDialog();
-							
+
 						}
 						else{
 							toast = Toast.makeText(
@@ -808,7 +808,7 @@ public class DTVSettingsMenu extends DTVActivity {
 							toast.show();
 						}
 						break;
-					case 1:						
+					case 1:
 						if(isHavePragram()){
 							DTVStartEPG();
 							DTVSettingsMenu.this.finish();
@@ -840,9 +840,9 @@ public class DTVSettingsMenu extends DTVActivity {
 									if(path!=null){
 									       if(mDTVSettings!=null)
 									               mDTVSettings.setRecordStoragePath(path);
-									}       
+									}
 								}
-								
+
 								if(isHaveExternalStorage()){
 									Intent Intent_timeshifting = new Intent();
 									Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
@@ -851,14 +851,14 @@ public class DTVSettingsMenu extends DTVActivity {
 								}
 								else{
 									if(toast!=null)
-										toast.cancel(); 
+										toast.cancel();
 									toast = Toast.makeText(
 									DTVSettingsMenu.this,
 									R.string.check_usb_device,
 									Toast.LENGTH_SHORT);
 									toast.setGravity(Gravity.CENTER, 0, 0);
 									toast.show();
-								}	
+								}
 							}
 							else{
 								showTimeshiftingPasswordDialog();
@@ -903,11 +903,11 @@ public class DTVSettingsMenu extends DTVActivity {
 							toast.show();
 						}
 						break;
-					/*	
+					/*
 					case 2:
 						showSortByDialog(info_cur);
 						break;
-					*/	
+					*/
 					case 2:
 						Intent Intent_record_device = new Intent();
 		        			Intent_record_device.setClass(DTVSettingsMenu.this, DTVRecordDevice.class);
@@ -926,9 +926,9 @@ public class DTVSettingsMenu extends DTVActivity {
 									if(path!=null){
 									       if(mDTVSettings!=null)
 									               mDTVSettings.setRecordStoragePath(path);
-									}       
+									}
 								}
-								
+
 								if(isHaveExternalStorage()){
 									Intent Intent_timeshifting = new Intent();
 									Intent_timeshifting.setClass(DTVSettingsMenu.this,DTVTimeshifting.class);
@@ -937,14 +937,14 @@ public class DTVSettingsMenu extends DTVActivity {
 								}
 								else{
 									if(toast!=null)
-										toast.cancel(); 
+										toast.cancel();
 									toast = Toast.makeText(
 									DTVSettingsMenu.this,
 									R.string.check_usb_device,
 									Toast.LENGTH_SHORT);
 									toast.setGravity(Gravity.CENTER, 0, 0);
 									toast.show();
-								}	
+								}
 							}
 							else{
 								showTimeshiftingPasswordDialog();
@@ -962,7 +962,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 		}
 	};
-	
+
 	private class ProgramItemAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Context cont;
@@ -971,11 +971,11 @@ public class DTVSettingsMenu extends DTVActivity {
 	 	class ViewHolder {
 			TextView text;
 			ImageView icon;
-		    TextView   info; 
+		    TextView   info;
 		    ImageButton  iboolean;
 		    ImageView icon1;
 		}
-	
+
 		public ProgramItemAdapter(Context context, String[] list) {
 			super();
 			cont = context;
@@ -990,11 +990,11 @@ public class DTVSettingsMenu extends DTVActivity {
 		public Object getItem(int position) {
 			return position;
 		}
-	
+
 		public long getItemId(int position) {
 			return position;
 		}
-	
+
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder=null;
 
@@ -1028,15 +1028,15 @@ public class DTVSettingsMenu extends DTVActivity {
 			holder.info.setVisibility(View.INVISIBLE);
 			holder.icon1.setVisibility(View.INVISIBLE);
 			switch(position){
-				case 2: 
+				case 2:
 					holder.info.setVisibility(View.VISIBLE);
 					holder.icon1.setVisibility(View.INVISIBLE);
-				 	break;	
+				 	break;
 			}
 
 		  return convertView;
 		}
-	}	
+	}
 
 	private AdapterView.OnItemClickListener mSearchOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
@@ -1056,12 +1056,12 @@ public class DTVSettingsMenu extends DTVActivity {
 
 			switch(position){
 				case 0:
-					{	
+					{
 						Intent intent_dish_setup = new Intent();
 						intent_dish_setup.setClass(DTVSettingsMenu.this, DTVScanDvbsConfig.class);
 						startActivity(intent_dish_setup);
 						DTVSettingsMenu.this.finish();
-					}	
+					}
 					break;
 				case 1:     //DB management
 					{
@@ -1095,13 +1095,13 @@ public class DTVSettingsMenu extends DTVActivity {
 		myDvbtManualScanAdapter = new DvbtManualScanAdapter(this);
 		ListView_settings.setAdapter(myDvbtManualScanAdapter);
 		ListView_settings.setOnKeyListener(new OnKeyListener(){
-			public boolean onKey(View v, int keyCode, KeyEvent event) {					
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				switch(keyCode){
 					case KeyEvent.KEYCODE_BACK:
 						if (event.getAction() == KeyEvent.ACTION_DOWN)
 							SearchItem_Init();
 						return true;
-				} 
+				}
 				return false;
 			}
 		});
@@ -1134,7 +1134,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					case 0:    //scan mode
 						showDvbtScanModeDialog(info);
 						break;
-					case 1: 	//scan band	
+					case 1: 	//scan band
 						if(myDvbtManualScanAdapter.isEnabled(arg2))
 							showDvbtScanBandDialog(info);
 						break;
@@ -1148,7 +1148,7 @@ public class DTVSettingsMenu extends DTVActivity {
 						break;
 					case 4:  //bandwidth
 						if(myDvbtManualScanAdapter.isEnabled(arg2))
-							showDvbtScanBandwidthDialog(info);	
+							showDvbtScanBandwidthDialog(info);
 						break;
 					case 5:
 						showSignalCheckDialog();
@@ -1157,19 +1157,19 @@ public class DTVSettingsMenu extends DTVActivity {
 						Intent intent_scan= new Intent();
 						intent_scan.setClass(DTVSettingsMenu.this,DvbtScanResult.class);
 
-						Bundle bundle_scan_dvbt = new Bundle();	
+						Bundle bundle_scan_dvbt = new Bundle();
 						bundle_scan_dvbt.putString("scan-mode","dvbt-manual-scan");
 						bundle_scan_dvbt.putInt("scan-fre",mDTVSettings.getDvbtScanFrequency());
 						bundle_scan_dvbt.putInt("scan-band-width",mDTVSettings.getDvbtScanBandwidth());
-							
+
 						intent_scan.putExtras(bundle_scan_dvbt);
-						//startActivityForResult(intent_scan,1);	
-						startActivity(intent_scan);	
+						//startActivityForResult(intent_scan,1);
+						startActivity(intent_scan);
 						DTVSettingsMenu.this.finish();
 						break;
 				}
-			}	
-		});	
+			}
+		});
 	}
 
 	private DvbcManualScanAdapter myDvbcManualScanAdapter=null;
@@ -1178,13 +1178,13 @@ public class DTVSettingsMenu extends DTVActivity {
 		myDvbcManualScanAdapter = new DvbcManualScanAdapter(this);
 		ListView_settings.setAdapter(myDvbcManualScanAdapter);
 		ListView_settings.setOnKeyListener(new OnKeyListener(){
-			public boolean onKey(View v, int keyCode, KeyEvent event) {					
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				switch(keyCode){
 					case KeyEvent.KEYCODE_BACK:
 						if (event.getAction() == KeyEvent.ACTION_DOWN)
 							SearchItem_Init();
 						return true;
-				} 
+				}
 				return false;
 			}
 		});
@@ -1217,7 +1217,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					case 0:    //scan mode
 						showDvbtScanModeDialog(info);
 						break;
-					case 1: 	//scan band	
+					case 1: 	//scan band
 						if(myDvbcManualScanAdapter.isEnabled(arg2))
 							showDvbtScanBandDialog(info);
 						break;
@@ -1231,9 +1231,9 @@ public class DTVSettingsMenu extends DTVActivity {
 						break;
 					case 4:  //bandwidth
 						if(myDvbcManualScanAdapter.isEnabled(arg2))
-							showDvbcScanModulationDialog(info);	
+							showDvbcScanModulationDialog(info);
 						break;
-					case 5:   //symbol	
+					case 5:   //symbol
 						if(myDvbcManualScanAdapter.isEnabled(arg2))
 							showDvbcSymboleDialog(info,0);
 						break;
@@ -1244,23 +1244,23 @@ public class DTVSettingsMenu extends DTVActivity {
 						Intent intent_scan= new Intent();
 						intent_scan.setClass(DTVSettingsMenu.this,DvbtScanResult.class);
 
-						Bundle bundle_scan_dvbc = new Bundle();	
+						Bundle bundle_scan_dvbc = new Bundle();
 						bundle_scan_dvbc.putString("scan-mode","dvbc-manual-scan");
 						bundle_scan_dvbc.putInt("scan-fre",mDTVSettings.getDvbtScanFrequency());
 						bundle_scan_dvbc.putInt("scan-modulation",mDTVSettings.getDvbcModulation());
-						bundle_scan_dvbc.putInt("scan-symbole",mDTVSettings.getDvbcSymbole());	
+						bundle_scan_dvbc.putInt("scan-symbole",mDTVSettings.getDvbcSymbole());
 						intent_scan.putExtras(bundle_scan_dvbc);
-						//startActivityForResult(intent_scan,1);	
-						startActivity(intent_scan);	
+						//startActivityForResult(intent_scan,1);
+						startActivity(intent_scan);
 						DTVSettingsMenu.this.finish();
 						break;
 				}
-			}	
-		});	
+			}
+		});
 	}
 
 
-	TVChannelParams[] dvbsanatsc_channel_number_list=null; 
+	TVChannelParams[] dvbsanatsc_channel_number_list=null;
 	public void DTVAtscManualScanConfig_Data_Init(){
 		String region;
 		try {
@@ -1282,23 +1282,23 @@ public class DTVSettingsMenu extends DTVActivity {
 		if(dvbsanatsc_channelallbandlist != null)
 		{
 			mDTVSettings.setAtscScanFrequency(dvbsanatsc_channelallbandlist[0].frequency/1000);
-						
+
 			dvbsanatsc_channel_number_list = new TVChannelParams[dvbsanatsc_channelallbandlist.length];
 			int temp = 0;
 			for(int i=0;i<dvbsanatsc_channelallbandlist.length;i++){
 				if(dvbsanatsc_channelallbandlist[i].frequency/1000!= 0){
-					dvbsanatsc_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsanatsc_channelallbandlist[i].frequency, dvbsanatsc_channelallbandlist[i].modulation);			
+					dvbsanatsc_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsanatsc_channelallbandlist[i].frequency, dvbsanatsc_channelallbandlist[i].modulation);
 					temp++;
 				}
-				
+
 			}
-			
+
 		}
 	}
 
-	
+
 	TVChannelParams[] dvbsandvbt_channelallbandlist=null;
-	TVChannelParams[] dvbsandvbt_channel_number_list=null; 
+	TVChannelParams[] dvbsandvbt_channel_number_list=null;
 
 	public void DTVDvbtManualScanConfig_Data_Init(){
 		String region;
@@ -1328,11 +1328,11 @@ public class DTVSettingsMenu extends DTVActivity {
 			mDTVSettings.setDvbtScanFrequency(mDTVSettings.getDvbtScanFrequency());
 			mDTVSettings.setDvbcModulation(mDTVSettings.getDvbtScanBandwidth());
 			mDTVSettings.setDvbtScanBand(0);
-			
+
 			int channel_count=0;
 			//dvbsandvbt_channel_number_list = new String[dvbsandvbt_channelallbandlist.length];
 			if(mDTVSettings.getDvbtScanBand()==0){
-				
+
 				for(int m=0;m<dvbsandvbt_channelallbandlist.length;m++){
 					if(dvbsandvbt_channelallbandlist[m].frequency/1000<300000){
 						channel_count++;
@@ -1341,14 +1341,14 @@ public class DTVSettingsMenu extends DTVActivity {
 				if(channel_count==0){
 					return;
 				}
-				
+
 				dvbsandvbt_channel_number_list = new TVChannelParams[channel_count];
 				int temp = 0;
 				for(int i=0;i<dvbsandvbt_channelallbandlist.length;i++){
 					if(dvbsandvbt_channelallbandlist[i].frequency/1000<300000){
-						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].bandwidth);			
+						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].bandwidth);
 					}
-					
+
 				}
 			}
 			else{
@@ -1368,15 +1368,15 @@ public class DTVSettingsMenu extends DTVActivity {
 					int temp = 0;
 					for(int i=0;i<dvbsandvbt_channelallbandlist.length;i++){
 						if(dvbsandvbt_channelallbandlist[i].frequency/1000>=300000){
-						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].bandwidth);			
+						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].bandwidth);
 						temp++;
-						}					
+						}
 					}
 				}
-			}	
-			
+			}
+
 		}
-	}	
+	}
 
 	public void DTVDvbcManualScanConfig_Data_Init(){
 		String region;
@@ -1405,13 +1405,13 @@ public class DTVSettingsMenu extends DTVActivity {
 			mDTVSettings.setDvbtScanFrequency(mDTVSettings.getDvbtScanFrequency());
 			mDTVSettings.setDvbcModulation(mDTVSettings.getDvbcModulation());
 			mDTVSettings.setDvbcSymbole(mDTVSettings.getDvbcSymbole());
-			
+
 			mDTVSettings.setDvbtScanBand(0);
-			
+
 			int channel_count=0;
 			//dvbsandvbt_channel_number_list = new String[dvbsandvbt_channelallbandlist.length];
 			if(mDTVSettings.getDvbtScanBand()==0){
-				
+
 				for(int m=0;m<dvbsandvbt_channelallbandlist.length;m++){
 					if(dvbsandvbt_channelallbandlist[m].frequency/1000<300000){
 						channel_count++;
@@ -1421,14 +1421,14 @@ public class DTVSettingsMenu extends DTVActivity {
 					mDTVSettings.setDvbtScanBand(1);
 					return;
 				}
-				
+
 				dvbsandvbt_channel_number_list = new TVChannelParams[channel_count];
 				int temp = 0;
 				for(int i=0;i<dvbsandvbt_channelallbandlist.length;i++){
 					if(dvbsandvbt_channelallbandlist[i].frequency/1000<300000){
-						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbcParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].modulation,dvbsandvbt_channelallbandlist[i].symbolRate);			
+						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbcParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].modulation,dvbsandvbt_channelallbandlist[i].symbolRate);
 					}
-					
+
 				}
 			}
 			else{
@@ -1448,29 +1448,29 @@ public class DTVSettingsMenu extends DTVActivity {
 					int temp = 0;
 					for(int i=0;i<dvbsandvbt_channelallbandlist.length;i++){
 						if(dvbsandvbt_channelallbandlist[i].frequency/1000>=300000){
-						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbcParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].modulation,dvbsandvbt_channelallbandlist[i].symbolRate);			
+						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbcParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].modulation,dvbsandvbt_channelallbandlist[i].symbolRate);
 						temp++;
-						}					
+						}
 					}
 				}
-			}	
-			
+			}
+
 		}
-	}	
+	}
 
 
 	private void DTVDvbtNitScan(){
 		Intent intent_scan= new Intent();
 		intent_scan.setClass(DTVSettingsMenu.this,DvbtScanResult.class);
 
-		Bundle bundle_scan_dvbt = new Bundle();	
+		Bundle bundle_scan_dvbt = new Bundle();
 		bundle_scan_dvbt.putString("scan-mode","dvbt-nit-scan");
 		bundle_scan_dvbt.putInt("scan-fre",mDTVSettings.getDvbtScanFrequency());
 		bundle_scan_dvbt.putInt("scan-band-width",mDTVSettings.getDvbtScanBandwidth());
-			
+
 		intent_scan.putExtras(bundle_scan_dvbt);
-		//startActivityForResult(intent_scan,1);	
-		startActivity(intent_scan);	
+		//startActivityForResult(intent_scan,1);
+		startActivity(intent_scan);
 		DTVSettingsMenu.this.finish();
 	}
 
@@ -1478,15 +1478,15 @@ public class DTVSettingsMenu extends DTVActivity {
 		Intent intent_scan= new Intent();
 		intent_scan.setClass(DTVSettingsMenu.this,DvbtScanResult.class);
 
-		Bundle bundle_scan_dvbc = new Bundle();	
+		Bundle bundle_scan_dvbc = new Bundle();
 		bundle_scan_dvbc.putString("scan-mode","dvbc-nit-scan");
 		bundle_scan_dvbc.putInt("scan-fre",mDTVSettings.getDvbtScanFrequency());
 		bundle_scan_dvbc.putInt("scan-modulation",mDTVSettings.getDvbcModulation());
 		bundle_scan_dvbc.putInt("scan-symbole",mDTVSettings.getDvbcSymbole());
-			
+
 		intent_scan.putExtras(bundle_scan_dvbc);
-		//startActivityForResult(intent_scan,1);	
-		startActivity(intent_scan);	
+		//startActivityForResult(intent_scan,1);
+		startActivity(intent_scan);
 		DTVSettingsMenu.this.finish();
 	}
 
@@ -1508,17 +1508,17 @@ public class DTVSettingsMenu extends DTVActivity {
 
 			switch(position){
 				case 0:   //auto scan
-					{	
+					{
 						Intent intent_scan= new Intent();
 						intent_scan.setClass(DTVSettingsMenu.this,DvbtScanResult.class);
 
-						Bundle bundle_scan_dvbs = new Bundle();	
+						Bundle bundle_scan_dvbs = new Bundle();
 						bundle_scan_dvbs.putString("scan-mode","dvbt-auto-scan");
 						intent_scan.putExtras(bundle_scan_dvbs);
-						//startActivityForResult(intent_scan,1);	
-						startActivity(intent_scan);	
+						//startActivityForResult(intent_scan,1);
+						startActivity(intent_scan);
 						DTVSettingsMenu.this.finish();
-					}	
+					}
 					break;
 				case 1:   //manual scan
 					{
@@ -1546,7 +1546,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				    		image_cur.setBackgroundResource(R.drawable.select_round_1);
 				    		info_cur.setText(R.string.off);
 						mDTVSettings.setLCNStatus(false);
-				    	}		
+				    	}
 					break;
 			}
 		}
@@ -1570,17 +1570,17 @@ public class DTVSettingsMenu extends DTVActivity {
 
 			switch(position){
 				case 0:   //auto scan
-					{	
+					{
 						Intent intent_scan= new Intent();
 						intent_scan.setClass(DTVSettingsMenu.this,DvbtScanResult.class);
 
-						Bundle bundle_scan_dvbs = new Bundle();	
+						Bundle bundle_scan_dvbs = new Bundle();
 						bundle_scan_dvbs.putString("scan-mode","dvbt-auto-scan");
 						intent_scan.putExtras(bundle_scan_dvbs);
-						//startActivityForResult(intent_scan,1);	
+						//startActivityForResult(intent_scan,1);
 						startActivity(intent_scan);
 						DTVSettingsMenu.this.finish();
-					}	
+					}
 					break;
 				case 1:   //manual scan
 					{
@@ -1594,13 +1594,13 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 		}
 	};
-	
+
 	public void refreshAtscManualScanList(){
 		((SearchATSCItemAdapter)ListView_settings.getAdapter()).notifyDataSetChanged();
 
 	}
-	
-	
+
+
 
 	public void refreshDvbtManualScanList(){
 		String region;
@@ -1611,38 +1611,38 @@ public class DTVSettingsMenu extends DTVActivity {
 			Log.d(TAG, "Cannot read dtv region !!!");
 			return;
 		}
-		
+
 		if(region.contains("DVB-T")){
 			((DvbtManualScanAdapter)ListView_settings.getAdapter()).notifyDataSetChanged();
 		}
 		else if (region.contains("DVB-C")){
 			((DvbcManualScanAdapter)ListView_settings.getAdapter()).notifyDataSetChanged();
 		}
-		
+
 	}
-	
+
 	private class SearchDvbtItemAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Bitmap mIcon1;
-	
+
 		private Context cont;
 		private String[] listItems;
 
 	 	class ViewHolder {
 			TextView text;
 			ImageView icon;
-		    TextView   info; 
+		    TextView   info;
 		    ImageButton  iboolean;
 		    ImageView icon1;
 		}
-	
+
 		public SearchDvbtItemAdapter(Context context, String[] list) {
 			super();
 			cont = context;
 			listItems = list;
 			mInflater=LayoutInflater.from(context);
 			mIcon1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_channel_search);
-			
+
 		}
 
 		public int getCount() {
@@ -1652,11 +1652,11 @@ public class DTVSettingsMenu extends DTVActivity {
 		public Object getItem(int position) {
 			return position;
 		}
-	
+
 		public long getItemId(int position) {
 			return position;
 		}
-	
+
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder=null;
 
@@ -1687,16 +1687,16 @@ public class DTVSettingsMenu extends DTVActivity {
 				holder.text.setText(listItems[position]);
 			holder.icon.setVisibility(View.INVISIBLE);
 			holder.info.setTextColor(Color.YELLOW);
-			switch(position){				
+			switch(position){
 			     case 0:
 				 	holder.info.setVisibility(View.INVISIBLE);
 					 holder.icon1.setVisibility(View.INVISIBLE);
 					 holder.icon.setImageBitmap(mIcon1);
-					 break;		 
+					 break;
 			     case 1:
 				 	 holder.info.setVisibility(View.INVISIBLE);
 					 holder.icon1.setVisibility(View.INVISIBLE);
-			    	 	break;	
+			    	 	break;
 			     case 2:
 					 holder.info.setVisibility(View.INVISIBLE);
 					 holder.icon1.setVisibility(View.INVISIBLE);
@@ -1706,7 +1706,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					holder.icon.setImageBitmap(mIcon1);
 					holder.info.setVisibility(View.VISIBLE);
 					holder.icon1.setVisibility(View.INVISIBLE);
-					//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+					//holder.icon1.setBackgroundResource(R.drawable.select_round_2);
 					//////////holder.info.setText(String.valueOf(n));
 					String regions[]=mDTVSettings.getRegions();
 					if(regions!=null){
@@ -1718,16 +1718,16 @@ public class DTVSettingsMenu extends DTVActivity {
 						holder.icon.setImageBitmap(mIcon1);
 						holder.info.setVisibility(View.VISIBLE);
 						holder.icon1.setVisibility(View.INVISIBLE);
-						if (mDTVSettings.getLCNStatus()){			   
-							//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+						if (mDTVSettings.getLCNStatus()){
+							//holder.icon1.setBackgroundResource(R.drawable.select_round_2);
 							holder.info.setText(R.string.on);
 						}
 						else{
-							//holder.icon1.setBackgroundResource(R.drawable.select_round_1); 
+							//holder.icon1.setBackgroundResource(R.drawable.select_round_1);
 							holder.info.setText(R.string.off);
-						}	  
+						}
 					}
-			    	break;	 
+			    	break;
 			  }
 
 			return convertView;
@@ -1739,25 +1739,25 @@ public class DTVSettingsMenu extends DTVActivity {
 	private class SearchDvbcItemAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Bitmap mIcon1;
-	
+
 		private Context cont;
 		private String[] listItems;
 
 	 	class ViewHolder {
 			TextView text;
 			ImageView icon;
-		    TextView   info; 
+		    TextView   info;
 		    ImageButton  iboolean;
 		    ImageView icon1;
 		}
-	
+
 		public SearchDvbcItemAdapter(Context context, String[] list) {
 			super();
 			cont = context;
 			listItems = list;
 			mInflater=LayoutInflater.from(context);
 			mIcon1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_channel_search);
-			
+
 		}
 
 		public int getCount() {
@@ -1767,11 +1767,11 @@ public class DTVSettingsMenu extends DTVActivity {
 		public Object getItem(int position) {
 			return position;
 		}
-	
+
 		public long getItemId(int position) {
 			return position;
 		}
-	
+
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder=null;
 
@@ -1802,20 +1802,20 @@ public class DTVSettingsMenu extends DTVActivity {
 				holder.text.setText(listItems[position]);
 			holder.icon.setVisibility(View.INVISIBLE);
 			holder.info.setTextColor(Color.YELLOW);
-			switch(position){				
+			switch(position){
 			     case 0:
 				 	holder.info.setVisibility(View.INVISIBLE);
 					 holder.icon1.setVisibility(View.INVISIBLE);
 					 holder.icon.setImageBitmap(mIcon1);
-					 break;		 
+					 break;
 			     case 1:
 				 	 holder.info.setVisibility(View.INVISIBLE);
 					 holder.icon1.setVisibility(View.INVISIBLE);
-			    	 	break;	
+			    	 	break;
 			     case 2:
 					 holder.info.setVisibility(View.INVISIBLE);
 					 holder.icon1.setVisibility(View.INVISIBLE);
-					break;	 
+					break;
 			  }
 
 			return convertView;
@@ -1843,7 +1843,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	public static final int SETTINGS_CHNO = 1;
 	public static final int SETTINGS_FREQUENCY = 2;
 	/*not use now. if use atsc demod need set modulation, SETTINGS_MODULATION = 4;SETTINGS_SCAN = 5;SETTINGS_MANU_MAX = 6;*/
-	
+
 	public static final int SETTINGS_SCAN = 3;
 	public static final int SETTINGS_MANU_MAX = 5;
 	public static final int SETTINGS_MODULATION = 6;
@@ -1876,8 +1876,8 @@ public class DTVSettingsMenu extends DTVActivity {
 	public static final int SETTINGS_MODULATION_QAM_256 = 5;
 	public static final int SETTINGS_MODULATION_VSB_8   = 6;
 	public static final int SETTINGS_MODULATION_VSB_16  = 7;
-	
-	private int dtvscanatsc_scan_mode = DTVSCANATSC_SETTING_SCAN_MODE;	
+
+	private int dtvscanatsc_scan_mode = DTVSCANATSC_SETTING_SCAN_MODE;
 	private int dvbscanatsc_area = SETTINGS_AREA_USA;
 	private boolean dvbscanatsc_antennapwoer = false;
 	private int dfbscanatsc_signaltype = SETTINGS_SIGNAL_CABLE;
@@ -1888,7 +1888,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	private int dvbscanatsc_manu_freq = 474000;
 	private int dvbscanatsc_manu_modulation = SETTINGS_MODULATION_QAM_AUTO;
 	private int ui_dvbsanatsc_setting_list_count = SETTINGS_MAX;
-	
+
 	private AdapterView.OnItemClickListener mSearchATSCOnItemClickListener =new AdapterView.OnItemClickListener(){
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
@@ -1931,7 +1931,7 @@ public class DTVSettingsMenu extends DTVActivity {
 						case SETTINGS_ANTENNA_POWER:
 							break;
 						case SETTINGS_SIGNAL_TYPE:
-							break;								
+							break;
 						default:
 							break;
 					}
@@ -1945,12 +1945,12 @@ public class DTVSettingsMenu extends DTVActivity {
 						case SETTINGS_MANU_SCANMODE:    //scan mode
 							showAtscScanModeDialog(v);
 							break;
-						
-						case SETTINGS_SCAN_BAND: 	//scan band	
+
+						case SETTINGS_SCAN_BAND: 	//scan band
 							if(mySearchATSCItemAdapter.isEnabled(position))
 								showDvbtScanBandDialog(v);
 							break;
-						*/	
+						*/
 						case 0:  //channle number
 							if(mySearchATSCItemAdapter.isEnabled(position))
 								showAtscScanChannelNumberDialog(v);
@@ -1964,19 +1964,19 @@ public class DTVSettingsMenu extends DTVActivity {
 							break;
 						default:
 							break;
-					}						
+					}
 				}
 				break;
 			default:
 				break;
-		}		
+		}
 	}
 
 	private void DTVScanATSCUiScan(){
 		Log.d(TAG, "DTVScanATSCUiScan");
-		
+
 		//DTVScanATSC_ScanList();
-		
+
 		if(dtvscanatsc_scan_mode == DTVSCANATSC_SETTING_SCAN_MODE)
 		{
 			//ui_dvbsanatsc_scan_title.setText(R.string.dtvscan_scan_auto);
@@ -1989,41 +1989,41 @@ public class DTVSettingsMenu extends DTVActivity {
 
 			DTVScanATSC_StartManuScan();
 		}
-	}	
+	}
 
 	private void DTVScanATSC_StartAutoScan()
 	{
 		Log.d(TAG, "DTVScanATSC_StartAutoScan");
-		
+
 		Intent intent_scan= new Intent();
 		intent_scan.setClass(DTVSettingsMenu.this,ATSCScanResult.class);
 
-		Bundle bundle_scan_atsc = new Bundle();	
+		Bundle bundle_scan_atsc = new Bundle();
 		bundle_scan_atsc.putString("scan-mode","atsc-auto-scan");
 		intent_scan.putExtras(bundle_scan_atsc);
-		startActivity(intent_scan);	
+		startActivity(intent_scan);
 	}
 
 	private void DTVScanATSC_StartManuScan()
 	{
 		Log.d(TAG, "DTVScanATSC_StartManuScan" + dvbscanatsc_manu_freq);
-		
+
 		Intent intent_scan= new Intent();
 		intent_scan.setClass(DTVSettingsMenu.this,ATSCScanResult.class);
-		Bundle bundle_scan_atsc = new Bundle();	
+		Bundle bundle_scan_atsc = new Bundle();
 		bundle_scan_atsc.putString("scan-mode","atsc-manual-scan");
 		bundle_scan_atsc.putInt("scan-fre",dvbscanatsc_manu_freq);
 		bundle_scan_atsc.putInt("scan-atsc-mod",dvbscanatsc_manu_modulation);
 		intent_scan.putExtras(bundle_scan_atsc);
-		startActivity(intent_scan);	
+		startActivity(intent_scan);
 	}
-	
+
 	private void DTVScanATSC_SettingListItemClickedManuFreqEdit()
 	{
-		LinearLayout dtvscanatsc_edit_freq_layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dtvscan_edit_freq, null);      
+		LinearLayout dtvscanatsc_edit_freq_layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dtvscan_edit_freq, null);
 		final EditText dtvscanatsc_edit_freq_text = (EditText)dtvscanatsc_edit_freq_layout.findViewById(R.id.dvbscan_edit_freq);
 
-		/*  
+		/*
 		dvbscanatsc_editfreqbuilder.setTitle(R.string.dtvscan_edit_freq);
 		dvbscanatsc_editfreqbuilder.setView(dtvscanatsc_edit_freq_layout);
 
@@ -2037,7 +2037,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				}
 			}
 		});
-		   	
+
 		dvbscanatsc_editfreqbuilder.setNegativeButton(R.string.dtvscan_cancel, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 			// TODO Auto-generated method stub
@@ -2047,19 +2047,19 @@ public class DTVSettingsMenu extends DTVActivity {
 		AlertDialog alert = dvbscanatsc_editfreqbuilder.create();
 		alert.setOnShowListener(new DialogInterface.OnShowListener(){
 			public void onShow(DialogInterface dialog) {
-			}         
-		}); 	
+			}
+		});
 
 		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
 			public void onDismiss(DialogInterface dialog) {
-			}         
-		}); 	
-		
+			}
+		});
+
 
 		alert.show();
-			  
-		WindowManager m = getWindowManager();   
-		Display d = m.getDefaultDisplay();  	
+
+		WindowManager m = getWindowManager();
+		Display d = m.getDefaultDisplay();
 		WindowManager.LayoutParams lp = alert.getWindow().getAttributes();
 		lp.dimAmount = 0.0f;
 		lp.width = (int) (d.getWidth() * 0.65);
@@ -2067,14 +2067,14 @@ public class DTVSettingsMenu extends DTVActivity {
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		*/
 	}
-	
+
 	private TVChannelParams[] dvbsanatsc_channelallbandlist = null;
 	private void DTVScanATSCUiSettingManualScan(){
 		Log.d(TAG, "DTVScanATSCUiSettingManualScan");
-		
+
 		dtvscanatsc_scan_mode = DTVSCANATSC_SETTING_MANU_SCAN_MODE;
 		ui_dvbsanatsc_setting_list_count = SETTINGS_MANU_MAX;
-		
+
 		String region;
 		try {
 			region = getConfig("tv:scan:dtv:region").getString();
@@ -2104,30 +2104,30 @@ public class DTVSettingsMenu extends DTVActivity {
 	private void DTVScanATSC_SettingListItemClickedManuScan()
 	{
 		DTVScanATSCUiSettingManualScan();
-	}	
-	
+	}
+
 	private class SearchATSCItemAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Bitmap mIcon1;
-	
+
 		private Context cont;
 		private String[] listItems;
 
 	 	class ViewHolder {
 			TextView text;
 			ImageView icon;
-		    TextView   info; 
+		    TextView   info;
 		    ImageButton  iboolean;
 		    ImageView icon1;
 		}
-	
+
 		public SearchATSCItemAdapter(Context context, String[] list) {
 			super();
 			cont = context;
 			listItems = list;
 			mInflater=LayoutInflater.from(context);
 			mIcon1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_channel_search);
-			
+
 		}
 
 		public int getCount() {
@@ -2135,22 +2135,22 @@ public class DTVSettingsMenu extends DTVActivity {
 			{
 				case DTVSCANATSC_SETTING_SCAN_MODE:
 					return mMidUi ? (listItems.length + 1) : listItems.length;
-				case DTVSCANATSC_SETTING_MANU_SCAN_MODE:	
+				case DTVSCANATSC_SETTING_MANU_SCAN_MODE:
 					return mMidUi ? 3 : 2;
 				default:
 					return mMidUi ? (listItems.length + 1) : listItems.length;
 
-			}		
+			}
 		}
 
 		public Object getItem(int position) {
 			return position;
 		}
-	
+
 		public long getItemId(int position) {
 			return position;
 		}
-	
+
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder=null;
 
@@ -2179,26 +2179,26 @@ public class DTVSettingsMenu extends DTVActivity {
 				return convertView;
 			}
 		}
-		
+
 		switch(dtvscanatsc_scan_mode){
 			case DTVSCANATSC_SETTING_SCAN_MODE:
 			switch(position){
-			
+
 		     case 0:
 			 	holder.info.setVisibility(View.INVISIBLE);
 				 holder.icon1.setVisibility(View.INVISIBLE);
 				 holder.icon.setImageBitmap(mIcon1);
-				 break;		 
+				 break;
 		     case 1:
 			 	 holder.info.setVisibility(View.INVISIBLE);
 				 holder.icon1.setVisibility(View.INVISIBLE);
-		    	 break;	
+		    	 break;
 			 case 2:
 				/////int n = DTVPlayergetRecallNumber();
 				holder.icon.setImageBitmap(mIcon1);
 				holder.info.setVisibility(View.VISIBLE);
 				holder.icon1.setVisibility(View.INVISIBLE);
-				//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+				//holder.icon1.setBackgroundResource(R.drawable.select_round_2);
 				//////////holder.info.setText(String.valueOf(n));
 				String regions[]=mDTVSettings.getATSCRegions();
 				if(regions!=null){
@@ -2210,7 +2210,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					holder.icon.setImageBitmap(mIcon1);
 					holder.info.setVisibility(View.VISIBLE);
 					holder.icon1.setVisibility(View.INVISIBLE);
-					
+
 				}
 		    	break;
 		  }
@@ -2222,14 +2222,14 @@ public class DTVSettingsMenu extends DTVActivity {
 						holder.info.setVisibility(View.VISIBLE);
 						displayinfoscanmode(holder);
 						break;
-					
+
 					case SETTINGS_SCAN_BAND:
-						holder.info.setVisibility(View.VISIBLE);								
+						holder.info.setVisibility(View.VISIBLE);
 						displayinfoscanband(holder);
 
 						if (dvbscanatsc_manu_scanmode == SETTINGS_MANU_SCANMODE_CHAN)
 						{
-							
+
 							holder.info.setTextColor(Color.YELLOW);
 						}
 						else if (dvbscanatsc_manu_scanmode == SETTINGS_MANU_SCANMODE_FREQ)
@@ -2237,22 +2237,22 @@ public class DTVSettingsMenu extends DTVActivity {
 							holder.info.setTextColor(Color.DKGRAY);
 						}
 						break;
-					*/	
+					*/
 					case 0:  //chann no
 						holder.info.setVisibility(View.VISIBLE);
 						dvbscanatsc_manu_freq=mDTVSettings.getAtscScanFrequency();
 						displayinfoch(holder);
 						holder.info.setTextColor(Color.WHITE);
 						//holder.info.setTextColor(Color.DKGRAY);
-						
+
 						break;
-					/*	
+					/*
 					case 1:  //fre
 						holder.info.setVisibility(View.VISIBLE);
 						//displayinfofreq(holder);
 						dvbscanatsc_manu_freq=mDTVSettings.getAtscScanFrequency();
 						holder.info.setText(dvbscanatsc_manu_freq + "");
-						
+
 						//if (dvbscanatsc_manu_scanmode == SETTINGS_MANU_SCANMODE_FREQ)
 						//{
 							//holder.info.setTextColor(Color.WHITE);
@@ -2263,14 +2263,14 @@ public class DTVSettingsMenu extends DTVActivity {
 						}
 
 						break;
-						
+
 					case SETTINGS_MODULATION:
 						holder.info.setVisibility(View.VISIBLE);
 						displayinfomodulation(holder);
-							 
+
 						if (dvbscanatsc_manu_scanmode == SETTINGS_MANU_SCANMODE_FREQ)
 						{
-							
+
 							holder.info.setTextColor(Color.WHITE);
 						}
 						else if(dvbscanatsc_manu_scanmode == SETTINGS_MANU_SCANMODE_CHAN)
@@ -2278,7 +2278,7 @@ public class DTVSettingsMenu extends DTVActivity {
 							holder.info.setTextColor(Color.DKGRAY);
 						}
 						break;
-					*/	
+					*/
 					case 1:  //mau scan
 						holder.info.setVisibility(View.GONE);
 
@@ -2287,7 +2287,7 @@ public class DTVSettingsMenu extends DTVActivity {
 						holder.info.setVisibility(View.GONE);
 						break;
 					default:
-						break; 
+						break;
 				}
 				break;
 		   }
@@ -2314,14 +2314,14 @@ public class DTVSettingsMenu extends DTVActivity {
 									case SETTINGS_AREA:
 										vh.text.setText(R.string.dtvscan_erea);
 										break;
-									/*	
+									/*
 									case SETTINGS_ANTENNA_POWER:
 										vh.text.setText(R.string.dtvscanatsc_antennapower);
 										break;
 									case SETTINGS_SIGNAL_TYPE:
 										vh.text.setText(R.string.dtvscanatsc_signaltype);
-										break;	
-									*/	
+										break;
+									*/
 									default:
 										break;
 								}
@@ -2339,46 +2339,46 @@ public class DTVSettingsMenu extends DTVActivity {
 								case SETTINGS_AREA:
 									vh.text.setText(R.string.dtvscan_erea);
 									break;
-								/*	
+								/*
 								case SETTINGS_ANTENNA_POWER:
 									vh.text.setText(R.string.dtvscanatsc_antennapower);
 									break;
 								case SETTINGS_SIGNAL_TYPE:
 									vh.text.setText(R.string.dtvscanatsc_signaltype);
-									break;	
-								*/	
+									break;
+								*/
 								default:
 									break;
 							}
 						}
 					}
 					break;
-					
+
 				case DTVSCANATSC_SETTING_MANU_SCAN_MODE:
 					{
 						switch(position)
 						{
 							/*
-							case SETTINGS_MANU_SCANMODE:	
+							case SETTINGS_MANU_SCANMODE:
 								vh.text.setText(R.string.dtvscan_scan_mode);
 								break;
-								
-							case SETTINGS_SCAN_BAND:	
+
+							case SETTINGS_SCAN_BAND:
 								vh.text.setText(R.string.dtvscan_scan_band);
 								break;
-							*/	
-							case 0:  //chan no	
+							*/
+							case 0:  //chan no
 								vh.text.setText(R.string.dtvscan_channel_no);
 								break;
-							/*	
+							/*
 							case 1:	 //fre
 								vh.text.setText(R.string.dtvscan_base_frequence);
 								break;
-								
+
 							case SETTINGS_MODULATION:
 								vh.text.setText(R.string.dtvscanatsc_modulation);
 								break;
-							*/	
+							*/
 							case 1:   //manual scan
 								vh.text.setText(R.string.dtvscan_begain_search);
 								break;
@@ -2387,25 +2387,25 @@ public class DTVSettingsMenu extends DTVActivity {
 								break;
 							default:
 								break;
-						}						
+						}
 					}
 					break;
-					
+
 				default:
 					break;
 			}
-					
+
 		}
 
 
 		private void displayinfoscanmode(ViewHolder vh){
 		switch(dvbscanatsc_manu_scanmode)
 		{
-			case SETTINGS_MANU_SCANMODE_FREQ:	
+			case SETTINGS_MANU_SCANMODE_FREQ:
 				vh.info.setText(R.string.dtvscan_by_frequence);
-				break;			
-			
-			case SETTINGS_MANU_SCANMODE_CHAN:	
+				break;
+
+			case SETTINGS_MANU_SCANMODE_CHAN:
 				vh.info.setText(R.string.dtvscan_by_channel);
 				break;
 
@@ -2416,30 +2416,30 @@ public class DTVSettingsMenu extends DTVActivity {
 
 	private void displayinfoscanband(ViewHolder vh){
 		/*refresh dvbscanatsc_manu_scanband*/
-		
+
 		switch(dvbscanatsc_manu_scanband)
 		{
-			case SETTINGS_MANU_SCANBAND_VHF:	
+			case SETTINGS_MANU_SCANBAND_VHF:
 				vh.info.setText(R.string.dtvscan_scan_band_vhf);
-				break;			
-			
-			case SETTINGS_MANU_SCANBAND_UHF:	
+				break;
+
+			case SETTINGS_MANU_SCANBAND_UHF:
 				vh.info.setText(R.string.dtvscan_scan_band_uhf);
 				break;
 
 			default:
 				break;
 		}
-	}	
+	}
 
 	private void displayinfoch(ViewHolder vh){
 		/*refresh dvbscanatsc_manu_chno and dvbscanatsc_manu_freq*/
 		vh.info.setText( dvbscanatsc_manu_freq + "KHZ");
 	}
 
-	private void displayinfofreq(ViewHolder vh){			
+	private void displayinfofreq(ViewHolder vh){
 		vh.info.setText(dvbscanatsc_manu_freq + "");
-	}		
+	}
 
 	private void displayinfomodulation(ViewHolder vh){
 		switch(dvbscanatsc_manu_modulation)
@@ -2452,33 +2452,33 @@ public class DTVSettingsMenu extends DTVActivity {
 				break;
 			case SETTINGS_MODULATION_QAM_32:
 				vh.info.setText(R.string.dtvscanatsc_modulation_qam32);
-				break;			
+				break;
 			case SETTINGS_MODULATION_QAM_64:
 				vh.info.setText(R.string.dtvscanatsc_modulation_qam64);
-				break;	
+				break;
 			case SETTINGS_MODULATION_QAM_128:
 				vh.info.setText(R.string.dtvscanatsc_modulation_qam128);
-				break;	
+				break;
 			case SETTINGS_MODULATION_QAM_256:
 				vh.info.setText(R.string.dtvscanatsc_modulation_qam256);
-				break;					
-			case SETTINGS_MODULATION_VSB_8:	
+				break;
+			case SETTINGS_MODULATION_VSB_8:
 				vh.info.setText(R.string.dtvscanatsc_modulation_vsb8);
 				break;
-			case SETTINGS_MODULATION_VSB_16:	
+			case SETTINGS_MODULATION_VSB_16:
 				vh.info.setText(R.string.dtvscanatsc_modulation_vsb16);
 				break;
 			default:
 				break;
 		}
-		
+
 	}
 	}
 
 
     /*****************************************************************/
-	
-	
+
+
 	private class SearchItemAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Context cont;
@@ -2487,11 +2487,11 @@ public class DTVSettingsMenu extends DTVActivity {
 	 	class ViewHolder {
 			TextView text;
 			ImageView icon;
-		    TextView   info; 
+		    TextView   info;
 		    ImageButton  iboolean;
 		    ImageView icon1;
 		}
-	
+
 		public SearchItemAdapter(Context context, String[] list) {
 			super();
 			cont = context;
@@ -2506,11 +2506,11 @@ public class DTVSettingsMenu extends DTVActivity {
 		public Object getItem(int position) {
 			return position;
 		}
-	
+
 		public long getItemId(int position) {
 			return position;
 		}
-	
+
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder=null;
 
@@ -2541,42 +2541,42 @@ public class DTVSettingsMenu extends DTVActivity {
 				holder.text.setText(listItems[position]);
 			holder.info.setTextColor(Color.YELLOW);
 			switch(position){
-			
-		     
+
+
 			 case 0:
 			 	 holder.info.setVisibility(View.INVISIBLE);
 				 holder.icon1.setVisibility(View.INVISIBLE);
-		    	 
-		    	 break;	 
+
+		    	 break;
 		     case 1:
 			 	holder.info.setVisibility(View.INVISIBLE);
 				 holder.icon1.setVisibility(View.INVISIBLE);
-		    
+
 		    	 break;
-			 case 2: 
+			 case 2:
 			 	 holder.info.setVisibility(View.VISIBLE);
 				 holder.icon1.setVisibility(View.INVISIBLE);
 		    	 /*
-		    	 holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
-				
+		    	 holder.icon1.setBackgroundResource(R.drawable.pull_down_1);
+
 				 int tmp= mDTVSettings.getAudioTrack();
-			
+
 				 if(tmp == 2)
 				 	holder.info.setText(R.string.stereo);
 				 else if(tmp == 1)
 					holder.info.setText(R.string.right);
 				 else if(tmp == 0)
 				 	holder.info.setText(R.string.left);
-				 */	
-		    	 break;	 
+				 */
+		    	 break;
 		  }
 
 		  return convertView;
 		}
-	}	
+	}
 
 	private AdapterView.OnItemClickListener mSystemOnItemClickListener =new AdapterView.OnItemClickListener(){
-		public void onItemClick(AdapterView<?> parent, View v, int position, long id){			
+		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 			ImageView image_cur = (ImageView)v.findViewById(R.id.icon1);
 
 			final TextView info_cur = (TextView)v.findViewById(R.id.info);
@@ -2591,12 +2591,12 @@ public class DTVSettingsMenu extends DTVActivity {
 					return;
 				}
 			}
-			
+
 			switch(position){
 				case SETTINGS_RECALL_LIST:
 					showRcallSetDialog(info_cur);
 					break;
-			    case SETTINGS_SUBTILE_SWITCH:{	
+			    case SETTINGS_SUBTILE_SWITCH:{
 			    	if(mDTVSettings.getSubtitleStatus()==false)
 			    	{
 			    		image_cur.setBackgroundResource(R.drawable.select_round_2);
@@ -2608,24 +2608,24 @@ public class DTVSettingsMenu extends DTVActivity {
 			    		image_cur.setBackgroundResource(R.drawable.select_round_1);
 			    		info_cur.setText(R.string.off);
 						mDTVSettings.setSubtitleStatus(false);
-			    	}	
+			    	}
 				}
 			    break;
-				
+
 				case SETTINGS_DEFAULT:
 					showPasswordDialog();
 					break;
 				case SETTINGS_SET_PASSWORD:
 					showEnterPasswordSettingDialog();
 					break;
-				/*	
+				/*
 				case SETTINGS_SELECT_STORAGE:
-					
+
 					break;
 				 case SETTINGS_TIMESHIFT_TIME_SET:
 				 	//showTimeshiftingTimeSettingDialog(info_cur);
 					break;
-				*/	
+				*/
 				 case SETTINGS_PARENTAL_RATING_SET:
 				 	if(mDTVSettings.getScanRegion().contains("ATSC")){
 						//DTVVChip
@@ -2645,15 +2645,15 @@ public class DTVSettingsMenu extends DTVActivity {
 						} else {
 							controlUpdate(1/*restart monitor*/, 1/*check*/, "");
 						}
-					}	
-					break;	
+					}
+					break;
 				case SETTINGS_ANTENNA_SOURCE:
 					showAntennaSourceSettingDialog(info_cur);
-					break;	
+					break;
 			}
 		}
 	};
-	
+
 	private class SystemItemAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Bitmap mIcon1;
@@ -2668,18 +2668,18 @@ public class DTVSettingsMenu extends DTVActivity {
 		private Bitmap mIcon10;
 		private Bitmap mIcon11;
 		private Bitmap mIcon12;
-	
+
 		private Context cont;
 		private String[] listItems;
 
 	 	class ViewHolder {
 			TextView text;
 			ImageView icon;
-		    TextView   info; 
+		    TextView   info;
 		    ImageButton  iboolean;
 		    ImageView icon1;
 		}
-	
+
 		public SystemItemAdapter(Context context, String[] list) {
 			super();
 			cont = context;
@@ -2696,7 +2696,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		  	mIcon8 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_select_storage);
 			mIcon9 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_timeshifting_buffering);
 			mIcon11 = BitmapFactory.decodeResource(context.getResources(), R.drawable.settings_subtitle);
-			
+
 		}
 
 		public int getCount() {
@@ -2706,11 +2706,11 @@ public class DTVSettingsMenu extends DTVActivity {
 		public Object getItem(int position) {
 			return position;
 		}
-	
+
 		public long getItemId(int position) {
 			return position;
 		}
-	
+
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder=null;
 
@@ -2748,7 +2748,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				holder.icon.setImageBitmap(mIcon1);
 				holder.info.setVisibility(View.VISIBLE);
 				holder.icon1.setVisibility(View.INVISIBLE);
-				//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+				//holder.icon1.setBackgroundResource(R.drawable.select_round_2);
 				holder.info.setText(String.valueOf(n));
 				break;
 			case SETTINGS_SUBTILE_SWITCH:
@@ -2756,14 +2756,14 @@ public class DTVSettingsMenu extends DTVActivity {
 					holder.icon.setImageBitmap(mIcon1);
 					holder.info.setVisibility(View.VISIBLE);
 					holder.icon1.setVisibility(View.INVISIBLE);
-					if (mDTVSettings.getSubtitleStatus()){			   
-						//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+					if (mDTVSettings.getSubtitleStatus()){
+						//holder.icon1.setBackgroundResource(R.drawable.select_round_2);
 						holder.info.setText(R.string.on);
 					}
 					else{
-						//holder.icon1.setBackgroundResource(R.drawable.select_round_1); 
+						//holder.icon1.setBackgroundResource(R.drawable.select_round_1);
 						holder.info.setText(R.string.off);
-					}	  
+					}
 				}
 		    	break;
 		     case SETTINGS_DEFAULT:
@@ -2771,23 +2771,23 @@ public class DTVSettingsMenu extends DTVActivity {
 				 holder.icon1.setVisibility(View.INVISIBLE);
 				 holder.icon.setImageBitmap(mIcon5);
 				 break;
-		 
+
 		     case SETTINGS_SET_PASSWORD:
 			 	 holder.info.setVisibility(View.INVISIBLE);
 				 holder.icon1.setVisibility(View.INVISIBLE);
 		    	 holder.icon.setImageBitmap(mIcon6);
-		    	 break;	
-			 /*  	 
+		    	 break;
+			 /*
 		     case SETTINGS_SELECT_STORAGE:
 			 	 holder.info.setVisibility(View.INVISIBLE);
 				 holder.icon1.setVisibility(View.INVISIBLE);
 		    	 holder.icon.setImageBitmap(mIcon8);
-		    	 break;	 
+		    	 break;
 		     case SETTINGS_TIMESHIFT_TIME_SET:
 			 	holder.info.setVisibility(View.VISIBLE);
 				holder.icon1.setVisibility(View.INVISIBLE);
 				holder.icon.setImageBitmap(mIcon9);
-				holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
+				holder.icon1.setBackgroundResource(R.drawable.pull_down_1);
 
 				int time = mDTVSettings.getTimeShiftingDuration();
 				switch(time){
@@ -2799,10 +2799,10 @@ public class DTVSettingsMenu extends DTVActivity {
 						break;
 					case 60*60:
 						holder.info.setText("60 Min");
-						break;	
+						break;
 				}
 				break;
-			*/	
+			*/
 		     case SETTINGS_PARENTAL_RATING_SET:
 			 	if(mDTVSettings.getScanRegion().contains("ATSC")){
 					 holder.info.setVisibility(View.INVISIBLE);
@@ -2826,8 +2826,8 @@ public class DTVSettingsMenu extends DTVActivity {
 				holder.info.setVisibility(View.VISIBLE);
 				holder.icon1.setVisibility(View.INVISIBLE);
 				holder.icon.setImageBitmap(mIcon12);
-				
-				String region = mDTVSettings.getTeletextRegion(); 
+
+				String region = mDTVSettings.getTeletextRegion();
 				int pos = getTTXRegionIndex(region);
 
 				holder.info.setSingleLine(true);
@@ -2863,27 +2863,27 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		  return convertView;
 		}
-	}	
+	}
 
 
 	private AlertDialog.Builder satXmlBuilder;
 	private View dvbs_satxml;
 	private void showSatellitesDB(List<String> list){
-		final List<String> filelist = list;	
+		final List<String> filelist = list;
 
 		final Dialog mDialog = new AlertDialog(this){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
-					case KeyEvent.KEYCODE_BACK:	
+					case KeyEvent.KEYCODE_BACK:
 						dismiss();
 						break;
 				}
 				return super.onKeyDown(keyCode, event);
 			}
-			
+
 		};
-		
+
 		mDialog.setCancelable(false);
 		mDialog.setCanceledOnTouchOutside(false);
 
@@ -2903,11 +2903,11 @@ public class DTVSettingsMenu extends DTVActivity {
 		TextView title = (TextView)window.findViewById(R.id.title);
 		title.setText(getString(R.string.dvbs_dbm_load));
 		title.setTextColor(Color.YELLOW);
-		
+
 		ListView mListView =(ListView)window.findViewById(R.id.settings_list);
 		DvbsDBXmlAdapter mDvbsDBXmlAdapter = new DvbsDBXmlAdapter(this,filelist);
 		mListView.setAdapter(mDvbsDBXmlAdapter);
-		
+
 		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
 			public void onItemClick(AdapterView<?> arg0, View arg1,
@@ -2926,20 +2926,20 @@ public class DTVSettingsMenu extends DTVActivity {
 						Toast.LENGTH_SHORT);
 						toast.setGravity(Gravity.CENTER, 0, 0);
 						toast.show();
-				
+
 			}
-        	    
+
         });
-			
+
 		mListView.requestFocus();
 		mDvbsDBXmlAdapter.notifyDataSetChanged();
-		
+
 
 		/*
 		satXmlBuilder = new AlertDialog.Builder(this);
-		LayoutInflater layoutInflater = LayoutInflater.from(this);  
+		LayoutInflater layoutInflater = LayoutInflater.from(this);
 
-		dvbs_satxml = layoutInflater.inflate(R.layout.dtv_list_dialog, null); 
+		dvbs_satxml = layoutInflater.inflate(R.layout.dtv_list_dialog, null);
 		satXmlBuilder.setTitle(R.string.dvbs_dbm_load);
 
 		ListView mListView =(ListView)dvbs_satxml.findViewById(R.id.settings_list);
@@ -2963,11 +2963,11 @@ public class DTVSettingsMenu extends DTVActivity {
 						Toast.LENGTH_SHORT);
 						toast.setGravity(Gravity.CENTER, 0, 0);
 						toast.show();
-				
+
 			}
-        	    
+
         });
-			
+
 		mListView.requestFocus();
 		mDvbsDBXmlAdapter.notifyDataSetChanged();
 		satXmlBuilder.setView(dvbs_satxml);
@@ -2976,22 +2976,22 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		alert.setOnShowListener(new DialogInterface.OnShowListener(){
 							public void onShow(DialogInterface dialog) {
-								
-								}         
-								}); 	
+
+								}
+								});
 
 		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
 							public void onDismiss(DialogInterface dialog) {
-							
-							}         
-							});	
 
-		alert.show();	
-		
-		WindowManager m = getWindowManager();   
-		Display d = m.getDefaultDisplay();  	
+							}
+							});
+
+		alert.show();
+
+		WindowManager m = getWindowManager();
+		Display d = m.getDefaultDisplay();
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
-		lp.dimAmount=0.0f; 
+		lp.dimAmount=0.0f;
 		lp.width = (int) (d.getWidth() * 0.50);
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -2999,7 +2999,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	}
 
 	private void dealLoadSatelliteXML(){
-		
+
 		CheckUsbdevice Usbdevice = new CheckUsbdevice(this);
 
 		if(Usbdevice.getDevice()==null)
@@ -3014,25 +3014,25 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 		else
 		{
-			//read satellite.amdb 
+			//read satellite.amdb
 
 			List<String> filenameList = Usbdevice.getSatellitesDBFileList();
 			if(filenameList == null){
 			}
-				
-			showSatellitesDB(filenameList);	
-			
-		}	
+
+			showSatellitesDB(filenameList);
+
+		}
 
 	}
 
 	private void dealBackupSatelliteXML(){
-		
+
 		CheckUsbdevice Usbdevice = new CheckUsbdevice(this);
 		String satellites_db = null;
 
 		satellites_db = Usbdevice.getDevice();
-		
+
 		if(satellites_db==null){
 			toast = Toast.makeText(
 			DTVSettingsMenu.this,
@@ -3044,22 +3044,22 @@ public class DTVSettingsMenu extends DTVActivity {
 			return;
 		}
 		else{
-			Date date = new Date(getUTCTime()*1000 ); 
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss"); 
-			String today = sdf.format(date); 
+			Date date = new Date(getUTCTime()*1000 );
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+			String today = sdf.format(date);
 
 			//this.getContentResolver().query(DVBClient.EXPORT_DB,
 							//null, satellites_db+"/"+"satellites_"+today+".amdb", null, null);
 
 			exportDatabase(satellites_db+"/"+"satellites_"+today+".xml");
-			
+
 			toast = Toast.makeText(
 				DTVSettingsMenu.this,
 				R.string.xml_generator_success,
 				Toast.LENGTH_SHORT);
 				toast.setGravity(Gravity.CENTER, 0, 0);
 				toast.show();
-		}	
+		}
 
 	}
 
@@ -3070,7 +3070,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			final TextView info_cur = (TextView)v.findViewById(R.id.info);
 			switch(position){
 				case 0:
-					dealLoadSatelliteXML();	
+					dealLoadSatelliteXML();
 					break;
 				case 1:     //DB management
 					dealBackupSatelliteXML();
@@ -3083,7 +3083,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		private LayoutInflater mInflater;
 		private Bitmap mIcon1;
 		private Bitmap mIcon2;
-		
+
 		private Context cont;
 		private String[] listItems;
 
@@ -3091,7 +3091,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			ImageView icon;
 			TextView text;
 		}
-	
+
 		public DvbsDBMAdapter(Context context, String[] list) {
 			super();
 			cont = context;
@@ -3110,12 +3110,12 @@ public class DTVSettingsMenu extends DTVActivity {
 
 			return position;
 		}
-	
+
 		public long getItemId(int position) {
 			return position;
 		}
-	
-	
+
+
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder=null;
 
@@ -3123,10 +3123,10 @@ public class DTVSettingsMenu extends DTVActivity {
 			   convertView = mInflater.inflate(R.layout.dtvsettings_list_item, null);
 
 			   holder = new ViewHolder();
-			   
+
 			   holder.text = (TextView) convertView.findViewById(R.id.text);
 			   holder.icon = (ImageView) convertView.findViewById(R.id.icon);
-			 
+
 			   convertView.setTag(holder);
 			}else {
 				// Get the ViewHolder back to get fast access to the TextView
@@ -3144,19 +3144,19 @@ public class DTVSettingsMenu extends DTVActivity {
 					// holder.icon.setImageBitmap(mIcon2);
 					holder.icon.setVisibility(View.INVISIBLE);
 					holder.text.setText(R.string.dvbs_dbm_backup);
-					break;	
+					break;
 			}
-			  
+
 			return convertView;
 		}
 	}
 
 	private  class DvbsDBXmlAdapter extends BaseAdapter {
-		private LayoutInflater mInflater;		
+		private LayoutInflater mInflater;
 		private Context cont;
 		private List<String> listItems;
 
-		class ViewHolder {  
+		class ViewHolder {
 			TextView 	 filename;
 			TextView     Time;
 			ImageView icon;
@@ -3182,20 +3182,20 @@ public class DTVSettingsMenu extends DTVActivity {
 
 			return position;
 		}
-	
+
 		public long getItemId(int position) {
 			return position;
 		}
-	
+
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder=null;
 			if (convertView == null) {
 
 				convertView = mInflater.inflate(R.layout.pvr_manager_item, null);
 				holder = new ViewHolder();
-				
+
 		      	holder.Time=(TextView) convertView.findViewById(R.id.pvr_time);
-				holder.filename=(TextView) convertView.findViewById(R.id.filename);			   
+				holder.filename=(TextView) convertView.findViewById(R.id.filename);
 			    convertView.setTag(holder);
 			}else {
 				// Get the ViewHolder back to get fast access to the TextView
@@ -3203,7 +3203,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				holder = (ViewHolder) convertView.getTag();
 			}
 			// Bind the data efficiently with the holder.
-			
+
 			holder.filename.setText(listItems.get(position));
 			return convertView;
 		}
@@ -3213,36 +3213,36 @@ public class DTVSettingsMenu extends DTVActivity {
 	private void DBMInit(){
 		ListView_settings = (ListView)findViewById(R.id.settings_list);
 		myDBMAdapter = new DvbsDBMAdapter(this,null);
-	
+
 		ListView_settings.setOnItemSelectedListener(mOnSelectedListener);
 		ListView_settings.setOnKeyListener(new OnKeyListener(){
-			public boolean onKey(View v, int keyCode, KeyEvent event) {					
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				switch(keyCode){
 					case KeyEvent.KEYCODE_BACK:
 						SearchItem_Init();
 						return true;
-				} 
+				}
 				return false;
 			}
 		});
 		ListView_settings.setOnItemClickListener(mDBMOnItemClickListener);
 		ListView_settings.setAdapter(myDBMAdapter);
 		ListView_settings.requestFocus();
-		
+
 	}
 
 
 	private void DTVDvbsUnicableConfig_UIInit(){
 		ListView_settings = (ListView)findViewById(R.id.settings_list);
-		
+
 		ListView_settings.setAdapter(new DvbsUnicableAdapter(this));
 		ListView_settings.setOnKeyListener(new OnKeyListener(){
-			public boolean onKey(View v, int keyCode, KeyEvent event) {					
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				switch(keyCode){
 					case KeyEvent.KEYCODE_BACK:
 						SearchItem_Init();
 						return true;
-				} 
+				}
 				return false;
 			}
 		});
@@ -3265,8 +3265,8 @@ public class DTVSettingsMenu extends DTVActivity {
 						setUnicableSwitchStatus(!getUnicableSwitchStatus());
 						refreshListData();
 						break;
-					case 1: 		
-						if(((DvbsUnicableAdapter)ListView_settings.getAdapter()).isEnabled(arg2)){	
+					case 1:
+						if(((DvbsUnicableAdapter)ListView_settings.getAdapter()).isEnabled(arg2)){
 							int band = getUserBand();
 							if(band>=0&&band<7){
 								info.setText("LNB"+String.valueOf(band+2));
@@ -3279,19 +3279,19 @@ public class DTVSettingsMenu extends DTVActivity {
 						}
 						break;
 					case 2:
-						if(((DvbsUnicableAdapter)ListView_settings.getAdapter()).isEnabled(arg2)){	
+						if(((DvbsUnicableAdapter)ListView_settings.getAdapter()).isEnabled(arg2)){
 							showUnicableConfigEditDia();
-						}	
+						}
 						break;
 				}
-			}	
-		});	
+			}
+		});
 	}
-	 
+
 	private void setUnicableUserDefinedData(){
 		//usfs[index]=fre;
 		//setConfig("tv:dtv:unicableusebandfreq",usfs[index]);
-			
+
 		setConfig("tv:dtv:unicableuseband0freq",usfs[0]);
 		setConfig("tv:dtv:unicableuseband1freq",usfs[1]);
 		setConfig("tv:dtv:unicableuseband2freq",usfs[2]);
@@ -3305,7 +3305,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	private List<String> getUnicableUserDefinedData(){
 
 		List<String> dataList = new ArrayList<String>();
-		
+
 		usfs= new int[8];
 
 		usfs[0] = getIntConfig("tv:dtv:unicableuseband0freq");
@@ -3320,7 +3320,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		for (int i = 0; i<8; i++) {
 			dataList.add(""+usfs[i]);
 		}
-		
+
 		return dataList;
 	}
 
@@ -3342,21 +3342,21 @@ public class DTVSettingsMenu extends DTVActivity {
 	private void setUserBand(int band){
 		setConfig("tv:dtv:unicableuseband",band);
 	}
-	
+
 	private AlertDialog.Builder builder;
 	public void showEditUnicableFreDialog(View v,int pos){
 		final View view = v;
 		final int position = pos;
-		builder = new AlertDialog.Builder(this);	
+		builder = new AlertDialog.Builder(this);
 		final EditText editText = new EditText(this);
 		editText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(4)});
-		
+
 		//editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
 		builder.setTitle(R.string.edit_title);
 		TextView desFreText =(TextView) view.findViewById(R.id.edit_fre);
 		editText.setText(desFreText.getText().toString());
-		builder.setView(editText); 
+		builder.setView(editText);
 
 		AlertDialog alert = builder.create();
 
@@ -3364,14 +3364,14 @@ public class DTVSettingsMenu extends DTVActivity {
 			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
 				// TODO Auto-generated method stub
 				switch(keyCode)
-				{	
+				{
 					case KeyEvent.KEYCODE_DPAD_CENTER:
 					case KeyEvent.KEYCODE_ENTER:
 						String fre = editText.getText().toString();
 						if(fre==null||fre.equals("")){
 							editText.setText(null);
 							toast = Toast.makeText(
-							DTVSettingsMenu.this, 
+							DTVSettingsMenu.this,
 						    	R.string.invalid_input,
 						    	Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
@@ -3381,7 +3381,7 @@ public class DTVSettingsMenu extends DTVActivity {
 							if(Integer.parseInt(fre)==0){
 								editText.setText(null);
 								toast = Toast.makeText(
-								DTVSettingsMenu.this, 
+								DTVSettingsMenu.this,
 							    	R.string.invalid_input,
 							    	Toast.LENGTH_SHORT);
 								toast.setGravity(Gravity.CENTER, 0, 0);
@@ -3394,30 +3394,30 @@ public class DTVSettingsMenu extends DTVActivity {
 								usfs[position]= Integer.parseInt(editText.getText().toString());
 								Log.d(TAG,"New usf"+usfs[position]);
 								dialog.cancel();
-							}	
+							}
 						}
 						return true;
 					case  KeyEvent.KEYCODE_BACK:
 						dialog.cancel();
 						return true;
 				}
-				
+
 				return false;
 			}
-		});	
+		});
 
-		
+
 		alert.setOnShowListener(new DialogInterface.OnShowListener(){
 						public void onShow(DialogInterface dialog) {
-			
-							}         
-							}); 	
+
+							}
+							});
 
 		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
-						public void onDismiss(DialogInterface dialog) {	
-						}         
-						});	
-		alert.show();	
+						public void onDismiss(DialogInterface dialog) {
+						}
+						});
+		alert.show();
 		alert.getWindow().setLayout(500, -200);
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
 		lp.dimAmount=0.0f;
@@ -3434,14 +3434,14 @@ public class DTVSettingsMenu extends DTVActivity {
 		//final DVBUnicableSetting unicable_setting = setting;
 		ContentValues values=null;
 		diaBuilder = new AlertDialog.Builder(this);
-		LayoutInflater layoutInflater = LayoutInflater.from(this);  
-		
- 	 	dvbs_unicable_user_list = layoutInflater.inflate(R.layout.dvbs_unicable_list_dia, null); 
+		LayoutInflater layoutInflater = LayoutInflater.from(this);
+
+ 	 	dvbs_unicable_user_list = layoutInflater.inflate(R.layout.dvbs_unicable_list_dia, null);
 		diaBuilder.setTitle(R.string.dvbs_unicable_user_define);
 		usfs = new int[8];
 		List<String> dataList = getUnicableUserDefinedData();
-		ListView UnicableListView = (ListView)dvbs_unicable_user_list.findViewById(R.id.dvbs_sub_list); 
-		
+		ListView UnicableListView = (ListView)dvbs_unicable_user_list.findViewById(R.id.dvbs_sub_list);
+
 		UnicableListView.setAdapter(new DvbsUnicableUserDefineAdapter(this,dataList));
 
 		UnicableListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -3457,9 +3457,9 @@ public class DTVSettingsMenu extends DTVActivity {
 
 				showEditUnicableFreDialog(arg1,arg2);
 			}
-        	    
+
         });
-		
+
 		diaBuilder.setView(dvbs_unicable_user_list);
 		diaBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
               public void onClick(DialogInterface dialog, int id) {
@@ -3481,17 +3481,17 @@ public class DTVSettingsMenu extends DTVActivity {
 		AlertDialog alert = diaBuilder.create();
 		alert.setOnShowListener(new DialogInterface.OnShowListener(){
 							public void onShow(DialogInterface dialog) {
-								
-								}         
-								}); 	
+
+								}
+								});
 
 		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
 							public void onDismiss(DialogInterface dialog) {
-							}         
-							});	
+							}
+							});
 
-		alert.show();	
-		
+		alert.show();
+
 	}
 	*/
 
@@ -3502,7 +3502,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
-					case KeyEvent.KEYCODE_BACK:	
+					case KeyEvent.KEYCODE_BACK:
 						if(mDialog!=null&& mDialog.isShowing()){
 							mDialog.dismiss();
 						}
@@ -3510,9 +3510,9 @@ public class DTVSettingsMenu extends DTVActivity {
 				}
 				return super.onKeyDown(keyCode, event);
 			}
-			
+
 		};
-		
+
 		mDialog.setCancelable(false);
 		mDialog.setCanceledOnTouchOutside(false);
 
@@ -3522,14 +3522,14 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
 			public void onShow(DialogInterface dialog) {
-				
-			}         
-		}); 	
+
+			}
+		});
 		mDialog.show();
 		mDialog.setContentView(R.layout.dvbs_unicable_list_dia);
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
-		
+
 		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -3544,8 +3544,8 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		usfs = new int[8];
 		List<String> dataList = getUnicableUserDefinedData();
-		ListView UnicableListView = (ListView)window.findViewById(R.id.dvbs_sub_list); 
-		
+		ListView UnicableListView = (ListView)window.findViewById(R.id.dvbs_sub_list);
+
 		UnicableListView.setAdapter(new DvbsUnicableUserDefineAdapter(this,dataList));
 
 		UnicableListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -3561,18 +3561,18 @@ public class DTVSettingsMenu extends DTVActivity {
 
 				showEditUnicableFreDialog(arg1,arg2);
 			}
-        	    
+
         });
-		
-		no.setFocusable(true);     
-     	no.setFocusableInTouchMode(true);   
+
+		no.setFocusable(true);
+     	no.setFocusableInTouchMode(true);
 		no.setOnClickListener(new OnClickListener(){
-		          public void onClick(View v) {				  	 
+		          public void onClick(View v) {
 		        	 //onSetNegativeButton();
 					if(mDialog!=null&& mDialog.isShowing()){
 						mDialog.dismiss();
 					}
-		          }});	 
+		          }});
 		yes.setOnClickListener(new OnClickListener(){
 	          public void onClick(View v) {
 					setUnicableUserDefinedData();
@@ -3580,23 +3580,23 @@ public class DTVSettingsMenu extends DTVActivity {
 					unicable_setting.setUbFreqs(usfs);
 					mDvb.setUnicableSetting(unicable_setting);
 					*/
-				
+
 					if(mDialog!=null&& mDialog.isShowing()){
 						mDialog.dismiss();
 					}
 			}});
-		
+
 		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
 						public void onShow(DialogInterface dialog) {
-							
-							}         
-							}); 	
+
+							}
+							});
 
 		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
 						public void onDismiss(DialogInterface dialog) {
-							
-						}         
-						});	
+
+						}
+						});
 
 	}
 
@@ -3610,7 +3610,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		private Bitmap mIcon1;
 		private Bitmap mIcon2;
 		private Bitmap mIcon3;
-		
+
 		private Context cont;
 		private String[] listItems;
 
@@ -3619,9 +3619,9 @@ public class DTVSettingsMenu extends DTVActivity {
 			TextView text;
 			ImageButton  iboolean;
 			ImageView icon1;
-			TextView   info; 
+			TextView   info;
 		}
-	
+
 		public DvbtManualScanAdapter(Context context) {
 			super();
 			cont = context;
@@ -3641,14 +3641,14 @@ public class DTVSettingsMenu extends DTVActivity {
 
 			return position;
 		}
-	
+
 		public long getItemId(int position) {
 			return position;
 		}
-		
+
 		public boolean isEnabled(int position) {
-			
-			if (mDTVSettings.getDvbtScanMode()==0){    
+
+			if (mDTVSettings.getDvbtScanMode()==0){
 				if (position==3||position==4) {
 					return false;
 				}
@@ -3658,7 +3658,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					return false;
 				}
 			}
-			
+
 			return super.isEnabled(position);
 		}
 
@@ -3709,10 +3709,10 @@ public class DTVSettingsMenu extends DTVActivity {
 					else  if(mode==1){
 						holder.info.setText(R.string.dtvscan_by_frequence);
 					}
-					
+
 					break;
 				case 1:  //scan band
-					holder.icon.setImageBitmap(mIcon2);				
+					holder.icon.setImageBitmap(mIcon2);
 					int value = mDTVSettings.getDvbtScanBand();
 					if(value==0){
 						holder.info.setText(R.string.dtvscan_scan_band_vhf);
@@ -3723,16 +3723,16 @@ public class DTVSettingsMenu extends DTVActivity {
 					if(mDTVSettings.getDvbtScanMode()==1){
 						holder.text.setTextColor(Color.DKGRAY);
 						holder.info.setTextColor(Color.DKGRAY);
-						holder.info.setVisibility(View.INVISIBLE);	
+						holder.info.setVisibility(View.INVISIBLE);
 					}
 					else{
 						holder.text.setTextColor(Color.WHITE);
 						holder.info.setTextColor(Color.YELLOW);
-						holder.info.setVisibility(View.VISIBLE);	
-					}	
+						holder.info.setVisibility(View.VISIBLE);
+					}
 					break;
 				case 2:     //channel number
-					holder.icon.setImageBitmap(mIcon3);				
+					holder.icon.setImageBitmap(mIcon3);
 					int fre = mDTVSettings.getDvbtScanFrequency();
 					holder.info.setText(String.valueOf(fre)+"KHZ");
 					if(mDTVSettings.getDvbtScanMode()==1){
@@ -3744,11 +3744,11 @@ public class DTVSettingsMenu extends DTVActivity {
 						holder.text.setTextColor(Color.WHITE);
 						holder.info.setTextColor(Color.YELLOW);
 						holder.info.setVisibility(View.VISIBLE);
-					}	
-						
+					}
+
 					break;
 				case 3: //frequency
-					holder.icon.setImageBitmap(mIcon3);				
+					holder.icon.setImageBitmap(mIcon3);
 					int frequency=mDTVSettings.getDvbtScanFrequency();
 
 					holder.info.setText(String.valueOf(frequency));
@@ -3761,10 +3761,10 @@ public class DTVSettingsMenu extends DTVActivity {
 						holder.text.setTextColor(Color.WHITE);
 						holder.info.setTextColor(Color.YELLOW);
 						holder.info.setVisibility(View.VISIBLE);
-					}	
+					}
 					break;
 				case 4:   //band width
-					holder.icon.setImageBitmap(mIcon3);				
+					holder.icon.setImageBitmap(mIcon3);
 					holder.info.setVisibility(View.VISIBLE);
 					int bandwidth=mDTVSettings.getDvbtScanBandwidth();
 					switch(bandwidth){
@@ -3772,16 +3772,16 @@ public class DTVSettingsMenu extends DTVActivity {
 							holder.info.setText("8M");
 							break;
 						case TVChannelParams.BANDWIDTH_7_MHZ:
-							holder.info.setText("7M");	
+							holder.info.setText("7M");
 							break;
 						case TVChannelParams.BANDWIDTH_6_MHZ:
-							holder.info.setText("6M");	
-							break;			
+							holder.info.setText("6M");
+							break;
 						case TVChannelParams.BANDWIDTH_AUTO:
-							holder.info.setText("Auto");	
+							holder.info.setText("Auto");
 							break;
 						default:
-							holder.info.setText("Auto");	
+							holder.info.setText("Auto");
 							break;
 					}
 
@@ -3792,11 +3792,11 @@ public class DTVSettingsMenu extends DTVActivity {
 					else{
 						holder.text.setTextColor(Color.WHITE);
 						holder.info.setTextColor(Color.YELLOW);
-					}	
-	
+					}
+
 					break;
 			}
-			  
+
 			return convertView;
 		}
 	}
@@ -3806,7 +3806,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		private Bitmap mIcon1;
 		private Bitmap mIcon2;
 		private Bitmap mIcon3;
-		
+
 		private Context cont;
 		private String[] listItems;
 
@@ -3815,9 +3815,9 @@ public class DTVSettingsMenu extends DTVActivity {
 			TextView text;
 			ImageButton  iboolean;
 			ImageView icon1;
-			TextView   info; 
+			TextView   info;
 		}
-	
+
 		public DvbcManualScanAdapter(Context context) {
 			super();
 			cont = context;
@@ -3837,14 +3837,14 @@ public class DTVSettingsMenu extends DTVActivity {
 
 			return position;
 		}
-	
+
 		public long getItemId(int position) {
 			return position;
 		}
-		
+
 		public boolean isEnabled(int position) {
-			
-			if (mDTVSettings.getDvbtScanMode()==0){    
+
+			if (mDTVSettings.getDvbtScanMode()==0){
 				if (position==3||position==4||position==5) {
 					return false;
 				}
@@ -3854,7 +3854,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					return false;
 				}
 			}
-			
+
 			return super.isEnabled(position);
 		}
 
@@ -3905,10 +3905,10 @@ public class DTVSettingsMenu extends DTVActivity {
 					else  if(mode==1){
 						holder.info.setText(R.string.dtvscan_by_frequence);
 					}
-					
+
 					break;
 				case 1:  //scan band
-					holder.icon.setImageBitmap(mIcon2);				
+					holder.icon.setImageBitmap(mIcon2);
 					int value = mDTVSettings.getDvbtScanBand();
 					if(value==0){
 						holder.info.setText(R.string.dtvscan_scan_band_vhf);
@@ -3919,16 +3919,16 @@ public class DTVSettingsMenu extends DTVActivity {
 					if(mDTVSettings.getDvbtScanMode()==1){
 						holder.text.setTextColor(Color.DKGRAY);
 						holder.info.setTextColor(Color.DKGRAY);
-						holder.info.setVisibility(View.INVISIBLE);	
+						holder.info.setVisibility(View.INVISIBLE);
 					}
 					else{
 						holder.text.setTextColor(Color.WHITE);
 						holder.info.setTextColor(Color.YELLOW);
-						holder.info.setVisibility(View.VISIBLE);	
-					}	
+						holder.info.setVisibility(View.VISIBLE);
+					}
 					break;
 				case 2:     //channel number
-					holder.icon.setImageBitmap(mIcon3);				
+					holder.icon.setImageBitmap(mIcon3);
 					int fre = mDTVSettings.getDvbtScanFrequency();
 					holder.info.setText(String.valueOf(fre)+"KHZ");
 					if(mDTVSettings.getDvbtScanMode()==1){
@@ -3940,11 +3940,11 @@ public class DTVSettingsMenu extends DTVActivity {
 						holder.text.setTextColor(Color.WHITE);
 						holder.info.setTextColor(Color.YELLOW);
 						holder.info.setVisibility(View.VISIBLE);
-					}	
-						
+					}
+
 					break;
 				case 3: //frequency
-					holder.icon.setImageBitmap(mIcon3);				
+					holder.icon.setImageBitmap(mIcon3);
 					int frequency=mDTVSettings.getDvbtScanFrequency();
 
 					holder.info.setText(String.valueOf(frequency));
@@ -3957,10 +3957,10 @@ public class DTVSettingsMenu extends DTVActivity {
 						holder.text.setTextColor(Color.WHITE);
 						holder.info.setTextColor(Color.YELLOW);
 						holder.info.setVisibility(View.VISIBLE);
-					}	
+					}
 					break;
 				case 4:   //modulation
-					holder.icon.setImageBitmap(mIcon3);				
+					holder.icon.setImageBitmap(mIcon3);
 					holder.info.setVisibility(View.VISIBLE);
 					int mod=mDTVSettings.getDvbcModulation();
 					switch(mod){
@@ -3968,19 +3968,19 @@ public class DTVSettingsMenu extends DTVActivity {
 							holder.info.setText("16QAM");
 							break;
 						case TVChannelParams.MODULATION_QAM_32:
-							holder.info.setText("32QAM");	
+							holder.info.setText("32QAM");
 							break;
 						case TVChannelParams.MODULATION_QAM_64:
-							holder.info.setText("64QAM");	
-							break;			
+							holder.info.setText("64QAM");
+							break;
 						case TVChannelParams.MODULATION_QAM_128:
-							holder.info.setText("128QAM");	
+							holder.info.setText("128QAM");
 							break;
 						case TVChannelParams.MODULATION_QAM_256:
-							holder.info.setText("256QAM");	
-							break;	
+							holder.info.setText("256QAM");
+							break;
 						default:
-							holder.info.setText("Auto");	
+							holder.info.setText("Auto");
 							break;
 					}
 
@@ -3991,10 +3991,10 @@ public class DTVSettingsMenu extends DTVActivity {
 					else{
 						holder.text.setTextColor(Color.WHITE);
 						holder.info.setTextColor(Color.YELLOW);
-					}	
+					}
 					break;
 				case 5: //symbole
-					holder.icon.setImageBitmap(mIcon3);	
+					holder.icon.setImageBitmap(mIcon3);
 					holder.info.setVisibility(View.VISIBLE);
 					int sym=mDTVSettings.getDvbcSymbole();
 
@@ -4006,10 +4006,10 @@ public class DTVSettingsMenu extends DTVActivity {
 					else{
 						holder.text.setTextColor(Color.WHITE);
 						holder.info.setTextColor(Color.YELLOW);
-					}	
+					}
 					break;
 			}
-			  
+
 			return convertView;
 		}
 	}
@@ -4020,19 +4020,19 @@ public class DTVSettingsMenu extends DTVActivity {
 		private Bitmap mIcon1;
 		private Bitmap mIcon2;
 		private Bitmap mIcon3;
-		
+
 		private Context cont;
 		private String[] listItems;
 
 	 	class ViewHolder {
-			
+
 			ImageView icon;
 			TextView text;
 			ImageButton  iboolean;
 			ImageView icon1;
-			TextView   info; 
+			TextView   info;
 		}
-	
+
 		public DvbsUnicableAdapter(Context context) {
 			super();
 			cont = context;
@@ -4051,20 +4051,20 @@ public class DTVSettingsMenu extends DTVActivity {
 
 			return position;
 		}
-	
+
 		public long getItemId(int position) {
 			return position;
 		}
-		
+
 		public boolean isEnabled(int position) {
 			if (!getUnicableSwitchStatus()){
 				if (position>=1) {
 					return false;
 				}
-			}	
+			}
 			return super.isEnabled(position);
 		}
-	
+
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder=null;
 
@@ -4091,16 +4091,16 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 			*/
 			boolean unicable_on = getUnicableSwitchStatus();
-			
-			if(unicable_on==false){  
+
+			if(unicable_on==false){
 				if (position>=1){
 					holder.text.setTextColor(Color.DKGRAY);
-					holder.icon1.setVisibility(View.INVISIBLE); 
-				}	
-			}	
+					holder.icon1.setVisibility(View.INVISIBLE);
+				}
+			}
 			else{
 				holder.text.setTextColor(Color.WHITE);
-			}		
+			}
 
 			switch(position){
 				 case 0:
@@ -4109,26 +4109,26 @@ public class DTVSettingsMenu extends DTVActivity {
 					holder.info.setVisibility(View.VISIBLE);
 					holder.icon1.setVisibility(View.INVISIBLE);
 					holder.text.setText(R.string.dvbs_unicable_switch);
-					if (unicable_on==true){			   
-						//holder.icon1.setBackgroundResource(R.drawable.select_round_2); 
+					if (unicable_on==true){
+						//holder.icon1.setBackgroundResource(R.drawable.select_round_2);
 						holder.info.setText(R.string.on);
 					}
 					else
 					{
-						//holder.icon1.setBackgroundResource(R.drawable.select_round_1); 
+						//holder.icon1.setBackgroundResource(R.drawable.select_round_1);
 						holder.info.setText(R.string.off);
-					}	  
-					
+					}
+
 					break;
 				case 1:
-					holder.icon.setImageBitmap(mIcon2);				
-					holder.info.setVisibility(View.INVISIBLE);	
-					if (unicable_on==true){	
+					holder.icon.setImageBitmap(mIcon2);
+					holder.info.setVisibility(View.INVISIBLE);
+					if (unicable_on==true){
 						holder.icon.setVisibility(View.INVISIBLE);
 						holder.icon1.setVisibility(View.INVISIBLE);
-						holder.info.setVisibility(View.VISIBLE);	
-						//holder.icon1.setBackgroundResource(R.drawable.pull_right_1); 
-						
+						holder.info.setVisibility(View.VISIBLE);
+						//holder.icon1.setBackgroundResource(R.drawable.pull_right_1);
+
 						int band = getUserBand();
 						if(band>=0&&band<=7){
 							holder.info.setText("LNB"+String.valueOf(band+1));
@@ -4140,16 +4140,16 @@ public class DTVSettingsMenu extends DTVActivity {
 						holder.icon.setVisibility(View.INVISIBLE);
 						holder.icon1.setVisibility(View.INVISIBLE);
 					}
-					
+
 					holder.text.setText(R.string.dvbs_unicable_user_band);
 					break;
 				case 2:
-					holder.icon.setImageBitmap(mIcon3);				
-					holder.info.setVisibility(View.INVISIBLE);	
-					if (unicable_on==true){	
+					holder.icon.setImageBitmap(mIcon3);
+					holder.info.setVisibility(View.INVISIBLE);
+					if (unicable_on==true){
 						holder.icon.setVisibility(View.INVISIBLE);
 						holder.icon1.setVisibility(View.INVISIBLE);
-						//holder.icon1.setBackgroundResource(R.drawable.pull_down_1); 
+						//holder.icon1.setBackgroundResource(R.drawable.pull_down_1);
 					}
 					else{
 						holder.icon.setVisibility(View.INVISIBLE);
@@ -4158,7 +4158,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					holder.text.setText(R.string.dvbs_unicable_user_define);
 					break;
 			}
-			  
+
 			return convertView;
 		}
 	}
@@ -4171,11 +4171,11 @@ public class DTVSettingsMenu extends DTVActivity {
 		private List<String> listItems;
 		private String[] DATA;
 
-	 	static class ViewHolder {			
+	 	static class ViewHolder {
 			TextView text;
 			TextView  fre;
 		}
-	
+
 		public DvbsUnicableUserDefineAdapter(Context context,List<String> list) {
 			super();
 			cont = context;
@@ -4183,7 +4183,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			mInflater=LayoutInflater.from(context);
 
 			DATA = new String[8];
-			DATA[0]= cont.getResources().getString(R.string.dish_setup_conf_lnb_1);			
+			DATA[0]= cont.getResources().getString(R.string.dish_setup_conf_lnb_1);
 			DATA[1]= cont.getResources().getString(R.string.dish_setup_conf_lnb_2);
 			DATA[2]= cont.getResources().getString(R.string.dish_setup_conf_lnb_3);
 			DATA[3]= cont.getResources().getString(R.string.dish_setup_conf_lnb_4);
@@ -4191,7 +4191,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			DATA[5]= cont.getResources().getString(R.string.dish_setup_conf_lnb_6);
 			DATA[6]= cont.getResources().getString(R.string.dish_setup_conf_lnb_7);
 			DATA[7]= cont.getResources().getString(R.string.dish_setup_conf_lnb_8);
-			
+
 		}
 
 		public int getCount() {
@@ -4205,7 +4205,7 @@ public class DTVSettingsMenu extends DTVActivity {
 
 			return position;
 		}
-	
+
 		public long getItemId(int position) {
 			return position;
 		}
@@ -4225,11 +4225,11 @@ public class DTVSettingsMenu extends DTVActivity {
 				holder = (ViewHolder) convertView.getTag();
 			}
 
-			
+
 			holder.text.setText(DATA[position]);
 			holder.fre.setTextColor(Color.YELLOW);
 			holder.fre.setText(listItems.get(position));
-			  
+
 			return convertView;
 		}
 	}
@@ -4239,23 +4239,23 @@ public class DTVSettingsMenu extends DTVActivity {
 		for(int i=0;i<ttx_region_str_arry.length;i++){
 			if(region.equals(ttx_region_str_arry[i])){
 				return i;
-			}	
+			}
 		}
 
-		return 0; 
+		return 0;
 	}
 
 
 	public void showTTXRegionDialog(TextView v){
 		final TextView info_cur = v;
-		String region = mDTVSettings.getTeletextRegion(); 
+		String region = mDTVSettings.getTeletextRegion();
 		int pos = getTTXRegionIndex(region);
 		new SingleChoiseDialog(DTVSettingsMenu.this,ttx_region_str_arry,pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getString(R.string.ttx_region));
 			}
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				info_cur.setText(ttx_region_str_arry[which]);
@@ -4268,42 +4268,42 @@ public class DTVSettingsMenu extends DTVActivity {
 		final TextView info_cur = v;
 		final String regions[] = mDTVSettings.getRegions();
 		final int index = mDTVSettings.getRegionsIndex();
-	
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,regions,index){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt)[2]);
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 					mDTVSettings.setRegion(regions[which]);
 					mDTVSettings.setDvbtScanChannelIndex(0);
 					info_cur.setText(regions[which]);
 			}
-		};						
+		};
 	}
 
 	public void showATSCRegionsDialog(TextView v){
 		final TextView info_cur = v;
 		final String regions[] = mDTVSettings.getATSCRegions();
 		final int index = mDTVSettings.getATSCRegionsIndex();
-	
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,regions,index){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt)[2]);
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 					mDTVSettings.setRegion(regions[which]);
 					mDTVSettings.setDvbtScanChannelIndex(0);
 					info_cur.setText(regions[which]);
 			}
-		};						
+		};
 	}
 
 	public void showAtscScanModeDialog(TextView v){
@@ -4316,14 +4316,14 @@ public class DTVSettingsMenu extends DTVActivity {
 		else {
 			pos = 1;
 		}
-		
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ getResources().getString(R.string.dtvscan_by_channel), getResources().getString(R.string.dtvscan_by_frequence)},pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt_manual)[0]);
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				switch(which){
@@ -4335,12 +4335,12 @@ public class DTVSettingsMenu extends DTVActivity {
 					info_cur.setText(R.string.dtvscan_by_frequence);
 					mDTVSettings.setAtscScanMode(1);
 					break;
-				
-				}	
+
+				}
 				refreshAtscManualScanList();
 			}
-		};						
-	}							
+		};
+	}
 
 
 
@@ -4354,14 +4354,14 @@ public class DTVSettingsMenu extends DTVActivity {
 		else {
 			pos = 1;
 		}
-		
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ getResources().getString(R.string.dtvscan_by_channel), getResources().getString(R.string.dtvscan_by_frequence)},pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt_manual)[0]);
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				switch(which){
@@ -4373,12 +4373,12 @@ public class DTVSettingsMenu extends DTVActivity {
 					info_cur.setText(R.string.dtvscan_by_frequence);
 					mDTVSettings.setDvbtScanMode(1);
 					break;
-				
-				}	
+
+				}
 				refreshDvbtManualScanList();
 			}
-		};						
-	}							
+		};
+	}
 
 	public void showDvbtScanBandDialog(TextView v){
 		final TextView info_cur = v;
@@ -4397,7 +4397,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				switch(which){
@@ -4409,8 +4409,8 @@ public class DTVSettingsMenu extends DTVActivity {
 					info_cur.setText(R.string.dtvscan_scan_band_uhf);
 					mDTVSettings.setDvbtScanBand(1);
 					break;
-				}	
-				
+				}
+
 				String region;
 				try {
 					region = getConfig("tv:scan:dtv:region").getString();
@@ -4428,7 +4428,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				DTVScanDVBT_UpdateChInfoByband(which);
 				refreshDvbtManualScanList();
 			}
-		};						
+		};
 	}
 
 	private boolean DTVScanDVBC_UpdateChInfoByband(int scanband)
@@ -4437,21 +4437,21 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		if(dvbsandvbt_channelallbandlist == null)
 			return ret;
-		
+
 		if(scanband == 0)
 		{
 			for (int i = 0; i < dvbsandvbt_channelallbandlist.length; i++)
 			{
 				if((dvbsandvbt_channelallbandlist[i].frequency/1000) < 300000)
 				{
-					mDTVSettings.setDvbtScanChannelIndex(i); 
+					mDTVSettings.setDvbtScanChannelIndex(i);
 					mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channelallbandlist[i].frequency/1000);
 					mDTVSettings.setDvbcModulation(dvbsandvbt_channelallbandlist[i].modulation);
 					mDTVSettings.setDvbcSymbole(dvbsandvbt_channelallbandlist[i].symbolRate);
 					ret = true;
 					break;
-				}				
-			}	
+				}
+			}
 		}
 		else if(scanband == 1)
 		{
@@ -4459,18 +4459,18 @@ public class DTVSettingsMenu extends DTVActivity {
 			{
 				if((dvbsandvbt_channelallbandlist[i].frequency/1000) >= 300000)
 				{
-					mDTVSettings.setDvbtScanChannelIndex(i); 
+					mDTVSettings.setDvbtScanChannelIndex(i);
 					mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channelallbandlist[i].frequency/1000);
 					mDTVSettings.setDvbcModulation(dvbsandvbt_channelallbandlist[i].modulation);
 					mDTVSettings.setDvbcSymbole(dvbsandvbt_channelallbandlist[i].symbolRate);
 					ret = true;
 					break;
-				}				
-			}		
+				}
+			}
 		}
 
 		mDTVSettings.setDvbtScanChannelIndex(0);
-	
+
 		return ret;
 	}
 
@@ -4480,20 +4480,20 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		if(dvbsandvbt_channelallbandlist == null)
 			return ret;
-		
+
 		if(scanband == 0)
 		{
 			for (int i = 0; i < dvbsandvbt_channelallbandlist.length; i++)
 			{
 				if((dvbsandvbt_channelallbandlist[i].frequency/1000) < 300000)
 				{
-					mDTVSettings.setDvbtScanChannelIndex(i); 
+					mDTVSettings.setDvbtScanChannelIndex(i);
 					mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channelallbandlist[i].frequency/1000);
 					mDTVSettings.setDvbtScanBandwidth(dvbsandvbt_channelallbandlist[i].bandwidth);
 					ret = true;
 					break;
-				}				
-			}	
+				}
+			}
 		}
 		else if(scanband == 1)
 		{
@@ -4501,17 +4501,17 @@ public class DTVSettingsMenu extends DTVActivity {
 			{
 				if((dvbsandvbt_channelallbandlist[i].frequency/1000) >= 300000)
 				{
-					mDTVSettings.setDvbtScanChannelIndex(i); 
+					mDTVSettings.setDvbtScanChannelIndex(i);
 					mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channelallbandlist[i].frequency/1000);
 					mDTVSettings.setDvbtScanBandwidth(dvbsandvbt_channelallbandlist[i].bandwidth);
 					ret = true;
 					break;
-				}				
-			}		
+				}
+			}
 		}
 
 		mDTVSettings.setDvbtScanChannelIndex(0);
-	
+
 		return ret;
 	}
 
@@ -4527,7 +4527,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			int temp = 0;
 			for(int i=0;i<dvbsanatsc_channelallbandlist.length;i++){
 				if(dvbsanatsc_channelallbandlist[i].frequency/1000<300000){
-					dvbsanatsc_channelallbandlist[temp]=TVChannelParams.atscParams(dvbsanatsc_channelallbandlist[i].frequency, dvbsanatsc_channelallbandlist[i].modulation);			
+					dvbsanatsc_channelallbandlist[temp]=TVChannelParams.atscParams(dvbsanatsc_channelallbandlist[i].frequency, dvbsanatsc_channelallbandlist[i].modulation);
 					temp++;
 				}
 			}
@@ -4541,28 +4541,28 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		String list[] = new String[dvbsanatsc_channelallbandlist.length];
 		for(int i=0;i<dvbsanatsc_channelallbandlist.length;i++){
-			list[i]= dvbsanatsc_channelallbandlist[i].frequency/1000+"KHZ";	
+			list[i]= dvbsanatsc_channelallbandlist[i].frequency/1000+"KHZ";
 		}
-		
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,list,pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt_manual)[2]);
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				DTVScanATSC_UpdateChInfoByChNo(which);
 				refreshAtscManualScanList();
 			}
-		};						
+		};
 	}
 
 	public void DTVDvbtManualScanChannel_Data_Init(){
 		int channel_count=0;
 		if(dvbsandvbt_channelallbandlist != null){
-			if(mDTVSettings.getDvbtScanBand()==0){		
+			if(mDTVSettings.getDvbtScanBand()==0){
 				for(int m=0;m<dvbsandvbt_channelallbandlist.length;m++){
 					if(dvbsandvbt_channelallbandlist[m].frequency/1000<300000){
 						channel_count++;
@@ -4572,10 +4572,10 @@ public class DTVSettingsMenu extends DTVActivity {
 				int temp = 0;
 				for(int i=0;i<dvbsandvbt_channelallbandlist.length;i++){
 					if(dvbsandvbt_channelallbandlist[i].frequency/1000<300000){
-						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].bandwidth);			
+						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].bandwidth);
 						temp++;
 					}
-					
+
 				}
 			}
 			else{
@@ -4591,22 +4591,22 @@ public class DTVSettingsMenu extends DTVActivity {
 					DTVDvbtManualScanChannel_Data_Init();
 				}
 				else{
-				
+
 					dvbsandvbt_channel_number_list = new TVChannelParams[channel_count];
 					int temp = 0;
 					for(int i=0;i<dvbsandvbt_channelallbandlist.length;i++){
 						if(dvbsandvbt_channelallbandlist[i].frequency/1000>=300000){
-						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].bandwidth);			
+						dvbsandvbt_channel_number_list[temp]=TVChannelParams.dvbtParams(dvbsandvbt_channelallbandlist[i].frequency, dvbsandvbt_channelallbandlist[i].bandwidth);
 							temp++;
-						}	
+						}
 					}
-				}	
-			}	
-			
+				}
+			}
+
 		}
 
 	}
-			
+
 	public void showDvbtScanChannelNumberDialog(TextView v){
 		final TextView info_cur = v;
 		int pos = mDTVSettings.getDvbtScanChannelIndex();
@@ -4614,16 +4614,16 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		String list[] = new String[dvbsandvbt_channel_number_list.length];
 		for(int i=0;i<dvbsandvbt_channel_number_list.length;i++){
-			list[i]= dvbsandvbt_channel_number_list[i].frequency/1000+"KHZ";	
+			list[i]= dvbsandvbt_channel_number_list[i].frequency/1000+"KHZ";
 		}
-		
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,list,pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt_manual)[2]);
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				DTVScanDVBT_UpdateChInfoByChNo(which);
@@ -4632,16 +4632,16 @@ public class DTVSettingsMenu extends DTVActivity {
 
 			public void onDismissEvent(){
 			}
-		};						
+		};
 	}
 
-	private Handler timer_signal_check_handler = new Handler();   
+	private Handler timer_signal_check_handler = new Handler();
 
 	private Runnable timer_signal_check_runnable = new Runnable() {
 		public void run() {
-			timer_signal_check_handler.postDelayed(timer_signal_check_runnable,500);  
+			timer_signal_check_handler.postDelayed(timer_signal_check_runnable,500);
 			t.onSetupCmd(50,null);
-		}   
+		}
 	};
 
 	class DVBFrontendSignalInfo{
@@ -4652,19 +4652,19 @@ public class DTVSettingsMenu extends DTVActivity {
 	}
 
 	private void updataSignalInfo(DVBFrontendSignalInfo info ){
-		
+
 		int ber = info.ber;
 		int snr =  info.snr;
 		int strength =  info.strength;
 		boolean lock_status = info.lock_status;
-		
+
 		if(mDialog!=null){
 			Window window = mDialog.getWindow();
 			final CheckBox checkboxStatus = (CheckBox)window.findViewById(R.id.checkStatus);
-			
+
 			final ProgressBar ProgressBarSNR = (ProgressBar)window.findViewById(R.id.ProgressBarSNR);
 	    		ProgressBarSNR.setMax(100);
-	    		
+
 			final ProgressBar ProgressBarAGC = (ProgressBar)window.findViewById(R.id.ProgressBarAGC);
 	    		ProgressBarAGC.setMax(100);
 
@@ -4673,11 +4673,11 @@ public class DTVSettingsMenu extends DTVActivity {
 
 			final TextView snr_value = (TextView) window.findViewById(R.id.snr_value);
 			final TextView agc_value = (TextView) window.findViewById(R.id.agc_value);
-			//final TextView ber_value = (TextView) window.findViewById(R.id.ber_value);	
+			//final TextView ber_value = (TextView) window.findViewById(R.id.ber_value);
 
 			if(strength>100)
 				strength=0;
-			
+
 			ProgressBarSNR.setProgress(strength);
 			ProgressBarAGC.setProgress(snr);
 			//ProgressBarBER.setProgress(info.getBER());
@@ -4685,14 +4685,14 @@ public class DTVSettingsMenu extends DTVActivity {
 			snr_value.setText(Integer.toString((strength>100)?100:strength));
 			agc_value.setText(Integer.toString((snr>100)?100:snr));
 			//ber_value.setText(Integer.toString((info.getBER()>100)?100:info.getBER()));
-			
+
 			if(lock_status==false)
 				checkboxStatus.setChecked(false);
 			else
 				checkboxStatus.setChecked(true);
 
 		}
-		
+
 	}
 
 	signalCheckThread t =null;
@@ -4706,14 +4706,14 @@ public class DTVSettingsMenu extends DTVActivity {
 			return;
 		}
 
-		t =new signalCheckThread();  
-		t.start(); 
-		
+		t =new signalCheckThread();
+		t.start();
+
 		mDialog = new AlertDialog(DTVSettingsMenu.this){
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
-					case KeyEvent.KEYCODE_BACK:	
+					case KeyEvent.KEYCODE_BACK:
 						if(mDialog!=null&& mDialog.isShowing()){
 							mDialog.dismiss();
 						}
@@ -4721,9 +4721,9 @@ public class DTVSettingsMenu extends DTVActivity {
 				}
 				return super.onKeyDown(keyCode, event);
 			}
-			
+
 		};
-		
+
 		mDialog.setCancelable(false);
 		mDialog.setCanceledOnTouchOutside(false);
 
@@ -4738,23 +4738,23 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 		else
 			mDialog.setContentView(R.layout.dvbt_signal_check);
-		
+
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
-		
+
 		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-	
+
 		TextView title = (TextView)window.findViewById(R.id.title);
 		title.setTextColor(Color.YELLOW);
 		title.setText(DTVSettingsMenu.this.getResources().getStringArray(R.array.search_settings_content_dvbt_manual)[5]);
-	
+
 		final TextView edittext_frequency= (TextView) window.findViewById(R.id.edittext_frequency);
 
     		final ProgressBar ProgressBarSNR = (ProgressBar)window.findViewById(R.id.ProgressBarSNR);
     		ProgressBarSNR.setMax(100);
-    		
+
 		final ProgressBar ProgressBarAGC = (ProgressBar)window.findViewById(R.id.ProgressBarAGC);
     		ProgressBarAGC.setMax(100);
 
@@ -4763,11 +4763,11 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		final TextView snr_value = (TextView) window.findViewById(R.id.snr_value);
 		final TextView agc_value = (TextView) window.findViewById(R.id.agc_value);
-		//final TextView ber_value = (TextView) dvbs_set_limit_list.findViewById(R.id.ber_value);	
+		//final TextView ber_value = (TextView) dvbs_set_limit_list.findViewById(R.id.ber_value);
 		final CheckBox checkboxStatus = (CheckBox)window.findViewById(R.id.checkStatus);
 
-		checkboxStatus.setFocusable(false);  
-		
+		checkboxStatus.setFocusable(false);
+
 		if(region.contains("DVB-T")){
 			lock(TVChannelParams.dvbtParams(mDTVSettings.getDvbtScanFrequency()*1000,mDTVSettings.getDvbtScanBandwidth()));
 
@@ -4777,7 +4777,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			mRadio1.setText("DVBT");
 			final  RadioButton mRadio2 = (RadioButton) window.findViewById(R.id.dvbt2);
 			mRadio2.setText("DVBT2");
-			
+
 			mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
 			  @Override
 			  public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -4797,7 +4797,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			lock(TVChannelParams.isdbtParams(mDTVSettings.getDvbtScanFrequency()*1000,mDTVSettings.getDvbtScanBandwidth()));
 		}
 
-				
+
 		edittext_frequency.setText(String.valueOf(mDTVSettings.getDvbtScanFrequency())+"KHZ");
 
 		if((region.contains("ISDBT"))||(region.contains("DVB-T"))){
@@ -4811,11 +4811,11 @@ public class DTVSettingsMenu extends DTVActivity {
 					break;
 				case TVChannelParams.BANDWIDTH_6_MHZ:
 					bandwidth= "6M";
-					break;			
+					break;
 				case TVChannelParams.BANDWIDTH_AUTO:
 					bandwidth= "Auto";
 					break;
-			}	
+			}
 			final TextView edittext_band = (TextView) window.findViewById(R.id.band);
 			edittext_band.setText(bandwidth);
 		}
@@ -4831,31 +4831,31 @@ public class DTVSettingsMenu extends DTVActivity {
 					break;
 				case TVChannelParams.MODULATION_QAM_64:
 					edittext_modulation.setText("64QAM");
-					break;		
+					break;
 				case TVChannelParams.MODULATION_QAM_128:
 					edittext_modulation.setText("128QAM");
 					break;
 				case TVChannelParams.MODULATION_QAM_256:
 					edittext_modulation.setText("256QAM");
-					break;		
+					break;
 				case TVChannelParams.MODULATION_QAM_AUTO:
 					edittext_modulation.setText("Auto");
-					break;	
-			}	
-			
+					break;
+			}
+
 			edittext_symbole.setText(String.valueOf(mDTVSettings.getDvbcSymbole())+"Kbps");
 		}
-		
+
 		snr_value.setText("0%");
 		agc_value.setText("0%");
 		//ber_value.setText("0%");
-		
+
 		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
 						public void onShow(DialogInterface dialog) {
 								//stopPlaying();
 								t.onSetupCmd(50,null);
-							}         
-							}); 	
+							}
+							});
 
 		mDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
 						public void onDismiss(DialogInterface dialog) {
@@ -4864,36 +4864,36 @@ public class DTVSettingsMenu extends DTVActivity {
 							if(mTVProgram!=null){
 								lock(mTVProgram.getChannel().getParams());
 							}
-							t.quitLoop();	
-							timer_signal_check_handler.removeCallbacks(timer_signal_check_runnable);  
-						}         
-						});	
+							t.quitLoop();
+							timer_signal_check_handler.removeCallbacks(timer_signal_check_runnable);
+						}
+						});
 
 		timer_signal_check_handler.postDelayed(timer_signal_check_runnable, 500);
-		
+
 	}
 
-	public class EventHandler extends Handler {  
+	public class EventHandler extends Handler {
 
-		public EventHandler(Looper looper) {  
-		     super(looper);  
-		}  
+		public EventHandler(Looper looper) {
+		     super(looper);
+		}
 
-		@Override  
+		@Override
 
-		public void handleMessage(Message msg) {  
-			   switch (msg.what) { 
-					case 50: 
+		public void handleMessage(Message msg) {
+			   switch (msg.what) {
+					case 50:
 			   		 	updataSignalInfo((DVBFrontendSignalInfo)msg.obj);
 					break;
-				}  
+				}
 		}
-	}  
+	}
 
 	class cmdParams{
 		TVChannelParams channel;
 		int				unit;
-	} 
+	}
 
 	class signalCheckThread extends Thread {
 		private Handler mHandler = null;
@@ -4901,24 +4901,24 @@ public class DTVSettingsMenu extends DTVActivity {
 		private static final int ROTOR_CMD_STOP_MOVING		= 0;	//!< para: None
 		private static final int ROTOR_CMD_DISABLE_LIMIT	= 1;	//!< para: None
 		private static final int ROTOR_CMD_SET_ELIMIT		= 2;	//!< para: None
-		
+
 		public void run() {
 			Looper.prepare();
 
 			mHandler = new Handler() {
 				public void handleMessage(Message msg) {
 
-					switch (msg.what) { 
+					switch (msg.what) {
 						case 50:
-							{		
-								
+							{
+
 								DVBFrontendSignalInfo info = new DVBFrontendSignalInfo();
 
 								info.ber = getFrontendBER();
 								info.snr = getFrontendSNR();
 								info.strength = getFrontendSignalStrength();
 								if(getFrontendStatus()==32)
-								
+
 								 info.lock_status = false;
 								else
 									info.lock_status=true;
@@ -4928,14 +4928,14 @@ public class DTVSettingsMenu extends DTVActivity {
 								Message message=new Message();
 								message.what=50;
 								message.obj= (Object)info;
-			
-								EventHandler ha =new EventHandler(Looper.getMainLooper());  
+
+								EventHandler ha =new EventHandler(Looper.getMainLooper());
 								ha.sendMessage(message);
 							}
 							break;
 						default:
 							break;
-					}  
+					}
 				}
 			};
 
@@ -4948,17 +4948,17 @@ public class DTVSettingsMenu extends DTVActivity {
 				mHandler.getLooper().quit();
 			}
 		}
-		
+
 		public void onSetupCmd(int cmd, Object para ) {
 			if (mHandler != null){
-				mHandler.sendMessage(mHandler.obtainMessage(cmd,para));	
-			}	
+				mHandler.sendMessage(mHandler.obtainMessage(cmd,para));
+			}
 		}
 
-		
+
 
 	}
-	
+
 
 	private void DTVScanATSC_UpdateChInfoByChNo(int index)
 	{
@@ -4966,7 +4966,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			return;
 		if(dvbsanatsc_channel_number_list.length==0)
 			return;
-		mDTVSettings.setAtscScanChannelIndex(index); 
+		mDTVSettings.setAtscScanChannelIndex(index);
 		mDTVSettings.setAtscScanFrequency(dvbsanatsc_channel_number_list[index].frequency/1000);
 		//mDTVSettings.setAtscScanBandwidth(dvbsandvbt_channel_number_list[index].modulation);
 	}
@@ -4978,7 +4978,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			return;
 		if(dvbsandvbt_channel_number_list.length==0)
 			return;
-		mDTVSettings.setDvbtScanChannelIndex(index); 
+		mDTVSettings.setDvbtScanChannelIndex(index);
 		mDTVSettings.setDvbtScanFrequency(dvbsandvbt_channel_number_list[index].frequency/1000);
 		mDTVSettings.setDvbtScanBandwidth(dvbsandvbt_channel_number_list[index].bandwidth);
 	}
@@ -4986,16 +4986,16 @@ public class DTVSettingsMenu extends DTVActivity {
 	public void showAtscEditFreDialog(View v,int pos){
 		final View view = v;
 		final int position = pos;
-		builder = new AlertDialog.Builder(this);	
+		builder = new AlertDialog.Builder(this);
 		final EditText editText = new EditText(this);
 		editText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(6)});
-		
+
 		//editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
 		builder.setTitle(R.string.edit_title);
 		TextView desFreText = (TextView) view;
 		editText.setText(desFreText.getText().toString());
-		builder.setView(editText); 
+		builder.setView(editText);
 
 		AlertDialog alert = builder.create();
 
@@ -5003,14 +5003,14 @@ public class DTVSettingsMenu extends DTVActivity {
 			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
 				// TODO Auto-generated method stub
 				switch(keyCode)
-				{	
+				{
 					case KeyEvent.KEYCODE_DPAD_CENTER:
 					case KeyEvent.KEYCODE_ENTER:
 						String fre = editText.getText().toString();
 						if(fre==null||fre.equals("")){
 							editText.setText(null);
 							toast = Toast.makeText(
-							DTVSettingsMenu.this, 
+							DTVSettingsMenu.this,
 						    	R.string.invalid_input,
 						    	Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
@@ -5020,7 +5020,7 @@ public class DTVSettingsMenu extends DTVActivity {
 							if(Integer.parseInt(fre)==0){
 								editText.setText(null);
 								toast = Toast.makeText(
-								DTVSettingsMenu.this, 
+								DTVSettingsMenu.this,
 							    	R.string.invalid_input,
 							    	Toast.LENGTH_SHORT);
 								toast.setGravity(Gravity.CENTER, 0, 0);
@@ -5036,37 +5036,37 @@ public class DTVSettingsMenu extends DTVActivity {
 								*/
 								mDTVSettings.setDvbtScanFrequency(Integer.parseInt(editText.getText().toString()));
 								dialog.cancel();
-							}	
+							}
 						}
 						return true;
 					case  KeyEvent.KEYCODE_BACK:
 						dialog.cancel();
 						return true;
 				}
-				
+
 				return false;
 			}
-		});	
+		});
 
-		
+
 		alert.setOnShowListener(new DialogInterface.OnShowListener(){
 						public void onShow(DialogInterface dialog) {
-			
-							}         
-							}); 	
+
+							}
+							});
 
 		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
-						public void onDismiss(DialogInterface dialog) {	
-						}         
-						});	
-		alert.show();	
+						public void onDismiss(DialogInterface dialog) {
+						}
+						});
+		alert.show();
 		alert.getWindow().setLayout(500, -200);
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
 		lp.dimAmount=0.0f;
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
-						
+
 	public void showDvbtEditFreDialog(View v,int pos){
 		final View view = v;
 		final int position = pos;
@@ -5075,7 +5075,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
-					case KeyEvent.KEYCODE_BACK:	
+					case KeyEvent.KEYCODE_BACK:
 						if(mDialog!=null&& mDialog.isShowing()){
 							mDialog.dismiss();
 						}
@@ -5083,7 +5083,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				}
 				return super.onKeyDown(keyCode, event);
 			}
-			
+
 		};
 
 		if(mDialog == null){
@@ -5092,14 +5092,14 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
 			public void onShow(DialogInterface dialog) {
-				
-			}         
-		}); 	
+
+			}
+		});
 		mDialog.show();
 		mDialog.setContentView(R.layout.edit_number_dialog);
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
-		
+
 		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -5108,7 +5108,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		TextView title = (TextView)window.findViewById(R.id.title);
 		title.setTextColor(Color.YELLOW);
 		title.setText(getString(R.string.edit_title));
-		
+
 		final EditText editText= (EditText) window.findViewById(R.id.edit);
 		editText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(6)});
 		TextView desFreText = (TextView) view;
@@ -5119,14 +5119,14 @@ public class DTVSettingsMenu extends DTVActivity {
 		Button yes = (Button)window.findViewById(R.id.yes);
 		yes.setText(R.string.yes);
 
-		no.setFocusableInTouchMode(true);   
+		no.setFocusableInTouchMode(true);
 		no.setOnClickListener(new OnClickListener(){
-		          public void onClick(View v) {				  	 
+		          public void onClick(View v) {
 		        	 //onSetNegativeButton();
 					if(mDialog!=null&& mDialog.isShowing()){
 						mDialog.dismiss();
 					}
-		          }});	 
+		          }});
 		yes.setOnClickListener(new OnClickListener(){
 	          public void onClick(View v) {
 				 //onSetPositiveButton(cur_choise_index);
@@ -5134,7 +5134,7 @@ public class DTVSettingsMenu extends DTVActivity {
 						if(fre==null||fre.equals("")){
 							editText.setText(null);
 							toast = Toast.makeText(
-							DTVSettingsMenu.this, 
+							DTVSettingsMenu.this,
 						    	R.string.invalid_input,
 						    	Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
@@ -5144,7 +5144,7 @@ public class DTVSettingsMenu extends DTVActivity {
 							if(Integer.parseInt(fre)==0||Integer.parseInt(fre)<51000||Integer.parseInt(fre)>858000){
 								editText.setText(null);
 								toast = Toast.makeText(
-								DTVSettingsMenu.this, 
+								DTVSettingsMenu.this,
 							    	R.string.invalid_input,
 							    	Toast.LENGTH_SHORT);
 								toast.setGravity(Gravity.CENTER, 0, 0);
@@ -5159,16 +5159,16 @@ public class DTVSettingsMenu extends DTVActivity {
 								Log.d(TAG,"New usf"+usfs[position]);
 								*/
 								mDTVSettings.setDvbtScanFrequency(Integer.parseInt(editText.getText().toString()));
-							}	
+							}
 						}
-				 
+
 					if(mDialog!=null&& mDialog.isShowing()){
 						mDialog.dismiss();
 					}
 	          }});
 
 
-		
+
 	}
 
 	public void showDvbcSymboleDialog(View v,int pos){
@@ -5179,7 +5179,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
-					case KeyEvent.KEYCODE_BACK:	
+					case KeyEvent.KEYCODE_BACK:
 						if(mDialog!=null&& mDialog.isShowing()){
 							mDialog.dismiss();
 						}
@@ -5187,7 +5187,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				}
 				return super.onKeyDown(keyCode, event);
 			}
-			
+
 		};
 
 		if(mDialog == null){
@@ -5196,14 +5196,14 @@ public class DTVSettingsMenu extends DTVActivity {
 
 		mDialog.setOnShowListener(new DialogInterface.OnShowListener(){
 			public void onShow(DialogInterface dialog) {
-				
-			}         
-		}); 	
+
+			}
+		});
 		mDialog.show();
 		mDialog.setContentView(R.layout.edit_number_dialog);
 		Window window = mDialog.getWindow();
 		WindowManager.LayoutParams lp=mDialog.getWindow().getAttributes();
-		
+
 		lp.dimAmount=0.0f;
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -5212,7 +5212,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		TextView title = (TextView)window.findViewById(R.id.title);
 		title.setTextColor(Color.YELLOW);
 		title.setText(getString(R.string.edit_title));
-		
+
 		final EditText editText= (EditText) window.findViewById(R.id.edit);
 		editText.setFilters(new  android.text.InputFilter[]{ new  android.text.InputFilter.LengthFilter(6)});
 		TextView desFreText = (TextView) view;
@@ -5223,14 +5223,14 @@ public class DTVSettingsMenu extends DTVActivity {
 		Button yes = (Button)window.findViewById(R.id.yes);
 		yes.setText(R.string.yes);
 
-		no.setFocusableInTouchMode(true);   
+		no.setFocusableInTouchMode(true);
 		no.setOnClickListener(new OnClickListener(){
-		          public void onClick(View v) {				  	 
+		          public void onClick(View v) {
 		        	 //onSetNegativeButton();
 					if(mDialog!=null&& mDialog.isShowing()){
 						mDialog.dismiss();
 					}
-		          }});	 
+		          }});
 		yes.setOnClickListener(new OnClickListener(){
 	          public void onClick(View v) {
 				 //onSetPositiveButton(cur_choise_index);
@@ -5238,7 +5238,7 @@ public class DTVSettingsMenu extends DTVActivity {
 						if(fre==null||fre.equals("")){
 							editText.setText(null);
 							toast = Toast.makeText(
-							DTVSettingsMenu.this, 
+							DTVSettingsMenu.this,
 						    	R.string.invalid_input,
 						    	Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER, 0, 0);
@@ -5248,7 +5248,7 @@ public class DTVSettingsMenu extends DTVActivity {
 							if(Integer.parseInt(fre)==0){
 								editText.setText(null);
 								toast = Toast.makeText(
-								DTVSettingsMenu.this, 
+								DTVSettingsMenu.this,
 							    	R.string.invalid_input,
 							    	Toast.LENGTH_SHORT);
 								toast.setGravity(Gravity.CENTER, 0, 0);
@@ -5263,30 +5263,30 @@ public class DTVSettingsMenu extends DTVActivity {
 								Log.d(TAG,"New usf"+usfs[position]);
 								*/
 								mDTVSettings.setDvbcSymbole(Integer.parseInt(editText.getText().toString()));
-							}	
+							}
 						}
-				 
+
 					if(mDialog!=null&& mDialog.isShowing()){
 						mDialog.dismiss();
 					}
 	          }});
 
 
-		
+
 	}
 
 
 	public void showDvbcScanModulationDialog(TextView v){
 		final TextView info_cur = v;
 		int pos = mDTVSettings.getDvbcModulation()-1;
-		
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "16QAM", "32QAM","64QAM","128QAM","256QAM","Auto"},pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt_manual)[4]);
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				switch(which){
@@ -5301,7 +5301,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				case 2:
 					info_cur.setText("64QAM");
 					mDTVSettings.setDvbcModulation(TVChannelParams.MODULATION_QAM_64);
-					break;	
+					break;
 				case 3:
 					info_cur.setText("128QAM");
 					mDTVSettings.setDvbcModulation(TVChannelParams.MODULATION_QAM_128);
@@ -5314,23 +5314,23 @@ public class DTVSettingsMenu extends DTVActivity {
 					info_cur.setText("Auto");
 					mDTVSettings.setDvbcModulation(TVChannelParams.MODULATION_QAM_AUTO);
 					break;
-					
-				}	
+
+				}
 			}
-		};						
+		};
 	}
 
 	public void showDvbtScanBandwidthDialog(TextView v){
 		final TextView info_cur = v;
 		int pos = mDTVSettings.getDvbtScanBandwidth();
-		
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "8M", "7M","6M","Auto"},pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getResources().getStringArray(R.array.search_settings_content_dvbt_manual)[4]);
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				switch(which){
@@ -5345,7 +5345,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				case 2:
 					info_cur.setText("6M");
 					mDTVSettings.setDvbtScanBandwidth(TVChannelParams.BANDWIDTH_6_MHZ);
-					break;	
+					break;
 				case 3:
 					info_cur.setText("Auto");
 					mDTVSettings.setDvbtScanBandwidth(TVChannelParams.BANDWIDTH_AUTO);
@@ -5354,11 +5354,11 @@ public class DTVSettingsMenu extends DTVActivity {
 					info_cur.setText("8M");
 					mDTVSettings.setDvbtScanBandwidth(TVChannelParams.BANDWIDTH_8_MHZ);
 					break;
-				}	
+				}
 			}
-		};						
+		};
 	}
-	
+
 	public void showAudioTrackDialog(TextView v){
 		final TextView info_cur = v;
 		int mode = mDTVSettings.getAudioTrack();
@@ -5379,7 +5379,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				switch(which){
@@ -5394,10 +5394,10 @@ public class DTVSettingsMenu extends DTVActivity {
 				case 2:
 					info_cur.setText(R.string.stereo);
 					//setAudioTrack("s");
-					break;	
-				}	
+					break;
+				}
 			}
-		};						
+		};
 	}
 
 	private int getIndexLanguage(String lan){
@@ -5406,7 +5406,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			if(lan.equals(item_639_2[i]))
 				return i;
 		}
-		
+
 		return 0;
 	}
 
@@ -5421,66 +5421,66 @@ public class DTVSettingsMenu extends DTVActivity {
 		final String item[] = getResources().getStringArray(R.array.settings_lauguage);
 		final String item_639_2[] = getResources().getStringArray(R.array.lauguage_iso_639_2);
 		int pos = getIndexLanguage(lan);
-	
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,item,pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getResources().getStringArray(R.array.av_settings_content)[2]);
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 					mDTVSettings.setAudLanguage(item_639_2[which]);
 					info_cur.setText(item[which]);
 			}
-		};						
+		};
 	}
-	
+
 	public void showSubtitleLanguageDialog(TextView v){
 		final TextView info_cur = v;
 		String lan = mDTVSettings.getSubtitleLanguage();
 		final String item[] = getResources().getStringArray(R.array.settings_lauguage);
 		final String item_639_2[] = getResources().getStringArray(R.array.lauguage_iso_639_2);
 		int pos = getIndexLanguage(lan);
-	
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,item,pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getResources().getStringArray(R.array.av_settings_content)[1]);
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 					mDTVSettings.setSubtitleLanguage(item_639_2[which]);
 					info_cur.setText(item[which]);
 			}
-		};						
+		};
 	}
 
-			
+
 	public void showInforbarShowTimeDialog(TextView v){
 		final TextView info_cur = v;
 		int time = mDTVSettings.getInforBarShowTime();
 		int pos = time -2;
-		
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{"2s","3s","4s","5s","6s","7s","8s","9s","10s",},pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getString(R.string.screen_type));
 			}
-			
+
 			public void onSetNegativeButton(){
-				
+
 			}
 
 			public void onSetPositiveButton(int which){
-				info_cur.setText(String.valueOf(which+2)+"S");						
+				info_cur.setText(String.valueOf(which+2)+"S");
 				mDTVSettings.setInforBarShowTime(which+2);
 			}
-		};		
+		};
 	}
-	
+
 	public void showScreenTypeDialog(TextView v){
 		final TextView info_cur = v;
 		//int mode = mDTVSettings.getScreenMode();
@@ -5493,7 +5493,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		else {
 			pos = mode-step;
 		}
-		
+
 		/************************************
 		VIDEO_WIDEOPTION_4_3_IGNORE       = 6,
 		VIDEO_WIDEOPTION_4_3_LETTER_BOX   = 7,
@@ -5509,19 +5509,19 @@ public class DTVSettingsMenu extends DTVActivity {
 			public void onSetMessage(View v){
 				((TextView)v).setText(getString(R.string.screen_type));
 			}
-			
+
 			public void onSetNegativeButton(){
-				
+
 			}
 
 			public void onSetPositiveButton(int which){
 				switch(which){
 					case 0:
-						info_cur.setText(R.string.full_screen);						
+						info_cur.setText(R.string.full_screen);
 						DTVSetScreenMode(1);
 						break;
 					case 1:
-						info_cur.setText(R.string.type_4_3_IGNORE);						
+						info_cur.setText(R.string.type_4_3_IGNORE);
 						//mDTVSettings.setScreenMode(2);
 						DTVSetScreenMode(which+step);
 						break;
@@ -5532,33 +5532,33 @@ public class DTVSettingsMenu extends DTVActivity {
 					case 3:
 						info_cur.setText(R.string.type_4_3_PAN_SCAN);
 						DTVSetScreenMode(which+step);
-						break;	
+						break;
 					case 4:
-						info_cur.setText(R.string.type_4_3_COMBINED);						
+						info_cur.setText(R.string.type_4_3_COMBINED);
 						DTVSetScreenMode(which+step);
 						break;
 					case 5:
-						info_cur.setText(R.string.type_16_9_IGNORE);						
-						DTVSetScreenMode(which+step);	
+						info_cur.setText(R.string.type_16_9_IGNORE);
+						DTVSetScreenMode(which+step);
 						break;
 					case 6:
-						info_cur.setText(R.string.type_16_9_LETTER_BOX);						
+						info_cur.setText(R.string.type_16_9_LETTER_BOX);
 						DTVSetScreenMode(which+step);
 						break;
 					case 7:
-						info_cur.setText(R.string.type_16_9_PAN_SCAN);						
+						info_cur.setText(R.string.type_16_9_PAN_SCAN);
 						DTVSetScreenMode(which+step);
 						break;
 					case 8:
-						info_cur.setText(R.string.type_16_9_COMBINED);						
-						DTVSetScreenMode(which+step);						
+						info_cur.setText(R.string.type_16_9_COMBINED);
+						DTVSetScreenMode(which+step);
 						break;
-					
+
 				}
 			}
-		};		
+		};
 	}
-	
+
 	public void showFactorySureDialog(){
 		new SureDialog(DTVSettingsMenu.this){
 			public void onSetMessage(View v){
@@ -5566,13 +5566,13 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(){
 				switchScreenType(0);
 				mDTVSettings.factoryReset();
 
-				Bundle bundle = new Bundle();	
+				Bundle bundle = new Bundle();
 				Intent pickerIntent = new Intent();
 				bundle.putString("activity_tag", "factory_reset");
 				pickerIntent.setClass(DTVSettingsMenu.this, DTVPlayer.class);
@@ -5604,7 +5604,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		new PasswordDialog(DTVSettingsMenu.this){
 			public void onCheckPasswordIsRight(){
 				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
-				showFactorySureDialog();	
+				showFactorySureDialog();
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
@@ -5623,11 +5623,11 @@ public class DTVSettingsMenu extends DTVActivity {
 					Intent Intent_pvr_manager = new Intent();
 					Intent_pvr_manager.setClass(DTVSettingsMenu.this,DTVPvrManager.class);
 					startActivity(Intent_pvr_manager);
-					DTVSettingsMenu.this.finish();	
+					DTVSettingsMenu.this.finish();
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
-				
+
 			}
 			public boolean onDealUpDownKey(){
 				return false;
@@ -5649,14 +5649,14 @@ public class DTVSettingsMenu extends DTVActivity {
 				}
 				else{
 					if(toast!=null)
-						toast.cancel(); 
+						toast.cancel();
 					toast = Toast.makeText(
 					DTVSettingsMenu.this,
 					R.string.check_usb_device,
 					Toast.LENGTH_SHORT);
 					toast.setGravity(Gravity.CENTER, 0, 0);
 					toast.show();
-				}	
+				}
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
@@ -5666,11 +5666,11 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 		};
 	}
-	
+
 
 	private void parentalrating_set(TextView v){
 		final TextView info_cur = v;
-		
+
 		int pr = mDTVSettings.getParentalRating();
 		int pos = 0;
 
@@ -5678,14 +5678,14 @@ public class DTVSettingsMenu extends DTVActivity {
 			pos = pr-3;
 		else if(pr>18)
 			pos = 15;
-		
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{"all","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"},pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getString(R.string.parental_rating_set));
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				if(which==0){
@@ -5697,7 +5697,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				}
 				mDTVSettings.forceParentalRatingCheck();
 			}
-		};		
+		};
 	}
 
 	public void showTimeshiftingTimeSettingDialog(TextView v){
@@ -5713,7 +5713,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				break;
 			case 60*60:
 				pos=2;
-				break;	
+				break;
 		}
 
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "10 Min","30 Min","60 Min"},pos){
@@ -5722,7 +5722,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				switch(which){
@@ -5738,10 +5738,10 @@ public class DTVSettingsMenu extends DTVActivity {
 					case 2:
 						info_cur.setText("60 Min");
 						mDTVSettings.setTimeShiftingDuration(60*60);
-						break;	
+						break;
 				}
 			}
-		};				
+		};
 	}
 
 	public void showParentalRatingPasswordDialog(TextView v){
@@ -5749,7 +5749,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		new PasswordDialog(DTVSettingsMenu.this){
 			public void onCheckPasswordIsRight(){
 				Log.d(TAG,">>>>>PASSWORD IS RIGHT!<<<<<");
-				parentalrating_set(info_cur);		
+				parentalrating_set(info_cur);
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
@@ -5759,8 +5759,8 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 		};
 
-	}	
-	
+	}
+
 	public void showRcallSetDialog(TextView v){
 		final TextView info_cur = v;
 		int pos = 0;
@@ -5774,7 +5774,7 @@ public class DTVSettingsMenu extends DTVActivity {
 				break;
 			case 5:
 				pos=2;
-				break;	
+				break;
 		}
 
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "1","3","5"},pos){
@@ -5783,7 +5783,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				switch(which){
@@ -5799,10 +5799,10 @@ public class DTVSettingsMenu extends DTVActivity {
 					case 2:
 						info_cur.setText("5");
 						DTVPlayerSetRecallNumber(5);
-						break;	
+						break;
 				}
 			}
-		};				
+		};
 	}
 
 	private void showSetPasswordDialog(){
@@ -5843,15 +5843,15 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 		else{
 			pos = 1;
-		} 
-			
+		}
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "Air","Cable"},pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getString(R.string.timeshift_time_set));
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				switch(which){
@@ -5865,12 +5865,12 @@ public class DTVSettingsMenu extends DTVActivity {
 						break;
 				}
 			}
-		};				
+		};
 	}
 
 	public void showSortByDialog(TextView v){
 		final TextView info_cur = v;
-		
+
 		int mode = 0;// mDTVSettings.getScreenMode();
 		int pos = 0;
 		if(mode==0){
@@ -5884,19 +5884,19 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 
 		final String DATA[] = getResources().getStringArray(R.array.sort_by_content);
-		
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,DATA,pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getResources().getStringArray(R.array.Program_settings_content)[2]);
 			}
-			
+
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				switch(which){
 					case 0:
-						info_cur.setText(DATA[0]);						
+						info_cur.setText(DATA[0]);
 						//mDTVSettings.setScreenMode(2);
 						break;
 					case 1:
@@ -5906,18 +5906,18 @@ public class DTVSettingsMenu extends DTVActivity {
 					case 2:
 						info_cur.setText(DATA[2]);
 						//mDTVSettings.setScreenMode(0);
-						break;	
+						break;
 					case 3:
 						info_cur.setText(DATA[4]);
 						break;
 				}
 			}
-		};		
+		};
 	}
 
 
 	private int debugMenuDialogShowFlag=0;
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
@@ -5954,23 +5954,23 @@ public class DTVSettingsMenu extends DTVActivity {
 					showMenuAndDemodDebugDialog();
 				}
 				debugMenuDialogShowFlag = 0x0;
-				return true;	
-			case KeyEvent.KEYCODE_DPAD_DOWN:	
+				return true;
+			case KeyEvent.KEYCODE_DPAD_DOWN:
 				if(ListView_settings!=null){
 					if(cur_select_item== ListView_settings.getCount()-1)
-				    	ListView_settings.setSelection(0); 	
-				}	
+				    	ListView_settings.setSelection(0);
+				}
 				break;
 			case KeyEvent.KEYCODE_DPAD_UP:
 				if(ListView_settings!=null){
 					if(cur_select_item== 0)
-						ListView_settings.setSelection(ListView_settings.getCount()-1); 
+						ListView_settings.setSelection(ListView_settings.getCount()-1);
 					switch(button_status){
 						case BUTTON_PROGRAM:
-							//button_search.setBackgroundResource(R.drawable.search2);	
+							//button_search.setBackgroundResource(R.drawable.search2);
 							button_program.requestFocus();
 							break;
-						case BUTTON_SEARCH:	
+						case BUTTON_SEARCH:
 							button_search.requestFocus();
 							break;
 						case BUTTON_SYSTEM:
@@ -5980,18 +5980,18 @@ public class DTVSettingsMenu extends DTVActivity {
 							button_av_setting.requestFocus();
 							break;
 					}
-				}	
+				}
 				break;
-			case KeyEvent.KEYCODE_BACK:	
+			case KeyEvent.KEYCODE_BACK:
 				Intent in = new Intent();
 				in.setClass(DTVSettingsMenu.this, DTVPlayer.class);
 				//setResult(RESULT_OK,null);
-				DTVSettingsMenu.this.startActivity(in);	
+				DTVSettingsMenu.this.startActivity(in);
 				DTVSettingsMenu.this.finish();
 				break;
 		}
 		return super.onKeyDown(keyCode, event);
-	}	
+	}
 
 
 	private void DTVSetting_GotoDTVScan(){
@@ -6007,7 +6007,7 @@ public class DTVSettingsMenu extends DTVActivity {
 		}
 
 		Log.d(TAG, "region = " + region);
-		
+
 		if(region.contains("DVB-T")){
 			Log.d(TAG, "goto DTVScanDVBT");
 			Intent_scan.setClass(DTVSettingsMenu.this, DTVScanDVBT.class);
@@ -6020,15 +6020,15 @@ public class DTVSettingsMenu extends DTVActivity {
 		{
 			Log.d(TAG, "goto DTVScanDVBS");
 			Intent_scan.setClass(DTVSettingsMenu.this, DTVScanDVBS.class);
-		}	
+		}
 		else if(region.contains("DVB-C"))
 		{
 			Log.d(TAG, "goto DTVScanDVBC");
-			Intent_scan.setClass(DTVSettingsMenu.this, DTVScanDVBC.class);				
-		}		
-		
-		startActivityForResult(Intent_scan, 1);	
-		
+			Intent_scan.setClass(DTVSettingsMenu.this, DTVScanDVBC.class);
+		}
+
+		startActivityForResult(Intent_scan, 1);
+
 	}
 
 	private void DTVStartEPG(){
@@ -6037,8 +6037,9 @@ public class DTVSettingsMenu extends DTVActivity {
 		bundle.putInt("db_id", DTVPlayerGetCurrentProgramID());
 		intent.putExtras(bundle);
 		intent.setClass(this, DTVEpg.class);
-		startActivityForResult(intent, 11);	
-		onHide();	
+		startActivityForResult(intent, 11);
+		Log.d(TAG, "~DTVStartEPG should not hide setting Menu");
+		//onHide();
 	}
 
 	private void DTVStartProgramManager(){
@@ -6047,15 +6048,15 @@ public class DTVSettingsMenu extends DTVActivity {
 		bundle.putInt("db_id", DTVPlayerGetCurrentProgramID());
 		intent.putExtras(bundle);
 		intent.setClass(this, DTVProgramEdit.class);
-		startActivityForResult(intent, 11);	
-		onHide();	
+		startActivityForResult(intent, 11);
+		onHide();
 	}
 
 	private void DTVStartVChip(){
 		Intent intent = new Intent();
 		intent.setClass(this, DTVVChip.class);
-		startActivityForResult(intent, 11);	
-		//onHide();	
+		startActivityForResult(intent, 11);
+		//onHide();
 	}
 	private void DTVSetting_GotoDTVVChip(){
 		new PasswordDialog(DTVSettingsMenu.this){
@@ -6065,7 +6066,7 @@ public class DTVSettingsMenu extends DTVActivity {
 			}
 			public void onCheckPasswordIsFalse(){
 				Log.d(TAG,">>>>>PASSWORD IS False!<<<<<");
-				
+
 			}
 
 			public boolean onDealUpDownKey(){
@@ -6077,15 +6078,15 @@ public class DTVSettingsMenu extends DTVActivity {
 	private void DTVSetting_GotoDTVCC(){
 		Intent intent = new Intent();
 		intent.setClass(this, DTVCloseCaption.class);
-		startActivityForResult(intent, 11);	
+		startActivityForResult(intent, 11);
 		//onHide();
 	}
 
 	private  void onHide(){
 		RelativeLayout RelativeLayoutParent = (RelativeLayout)findViewById(R.id.RelativeLayoutParent);
 		RelativeLayoutParent.setVisibility(View.INVISIBLE);
-	} 
-	
+	}
+
 	private void onShow(){
 		RelativeLayout RelativeLayoutParent = (RelativeLayout)findViewById(R.id.RelativeLayoutParent);
 		RelativeLayoutParent.setVisibility(View.VISIBLE);
@@ -6131,14 +6132,14 @@ public class DTVSettingsMenu extends DTVActivity {
 		else if(mode.equals("dvbc")){
 			pos = 4;
 		}
-		
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "DVBS", "DVBT/T2","ISDBT","ATSC","DVBC"},pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText("DTV Mode");
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				switch(which){
@@ -6150,29 +6151,29 @@ public class DTVSettingsMenu extends DTVActivity {
 					break;
 				case 2:  //ISDBT
 					mDTVSettings.setDtvMode("isdbt");
-					break;	
+					break;
 				case 3:  //ATSC
 					mDTVSettings.setDtvMode("atsc");
 					break;
 				case 4:
 					mDTVSettings.setDtvMode("dvbc");
 					break;
-				}	
+				}
 			}
-		};						
+		};
 	}
 
 	public void showDemodAndDmxConfigMenuDebugDialog(){
 		//String mode = mDTVSettings.getDtvMode();
 		int pos = 0;
-	
+
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "AVL6211(DVBS)", "MXL101(DVBT)","SI2168(DVBT/T2)","MXL241(DVBC)"},pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText("DTV Mode");
 			}
 
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which){
 				switch(which){
@@ -6184,18 +6185,18 @@ public class DTVSettingsMenu extends DTVActivity {
 					break;
 				case 2:  //ISDBT
 					mDTVSettings.setDtvDemodAndDmxConfig("si2168");
-					break;	
+					break;
 				case 3:  //DVBC
 					mDTVSettings.setDtvDemodAndDmxConfig("mxl241");
 					break;
-				}	
+				}
 
-				
+
 			}
 			public void onDismissEvent(){
 				FeConfigAndDmxConfig();
 			}
-		};						
+		};
 	}
-				
+
 }
