@@ -1069,13 +1069,23 @@ public class DTVPlayer extends DTVActivity{
 			
 					//Log.d(TAG,"--snr-"+snr+"-min-"+signal_range_min+"-max-"+signal_range_max);
 					if(getDTVSignalStatus()==false){
-						showDia(1);
+						if(isHavePragram()==false){
+							Log.d(TAG, "0000000  only show No program, please scan first, not show no_signal");
+						} else {
+							Log.d(TAG, "0000000  showDia(1) -> no_signal");
+							showDia(1);
+						}
 					}
 					else if(snr>signal_range_min&&snr<signal_range_max){
 						showDia(4);
 					}
 					else if(snr <signal_range_min ){
-						showDia(1);
+						if(isHavePragram()==false){
+							Log.d(TAG, "@@@@@@@@  only show No program, please scan first, not show no_signal");
+						} else {
+							Log.d(TAG, "@@@@@@@@  showDia(1) -> no_signal");
+							showDia(1);
+						}
 					}
 					else if(getDTVAVDataStatus()==false){
 						showDia(2);

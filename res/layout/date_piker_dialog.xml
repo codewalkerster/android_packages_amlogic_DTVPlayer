@@ -46,11 +46,13 @@
 		      android:layout_width="wrap_content"
 		      android:layout_height="wrap_content"
 		      android:layout_gravity="center" 
+			  android:theme = "@android:style/Theme.Dialog" 
 		    ></TimePicker>
 		    <DatePicker
 		      android:id="@+id/dPicker"
 		      android:layout_width="wrap_content"
 		      android:layout_height="wrap_content"
+			  android:theme = "@android:style/Theme.Dialog" 
 		    ></DatePicker>
 	</LinearLayout> 
 	

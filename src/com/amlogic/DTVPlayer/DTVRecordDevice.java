@@ -586,9 +586,14 @@ public class DTVRecordDevice extends DTVActivity {
 					//if((item!= null)&&(item.format!=null)){
 						item.Path = myfile.getPath();
 						readUsbDevice(item.Path,item,0);
-						item.VolumeName = item.VolumeName+" ["+myfile.getName()+"]";
-						Log.d(TAG,"device path: "+item.Path+" device format: "+item.format+" name: "+item.VolumeName);
-						deviceList.add(item);
+						Log.d(TAG,"item.total: "+item.total+"item.spare: "+ item.spare);
+						if(item.total.equals("0.0K") && item.spare.equals("0.0K")) {
+							Log.d(TAG,"external storage device is invalid");
+						} else {
+							item.VolumeName = item.VolumeName+" ["+myfile.getName()+"]";
+							Log.d(TAG,"device path: "+item.Path+" device format: "+item.format+" name: "+item.VolumeName);
+							deviceList.add(item);
+						}
 					//}
 				}
 			}	

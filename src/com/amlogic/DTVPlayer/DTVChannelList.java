@@ -1277,13 +1277,18 @@ public class DTVChannelList extends DTVActivity{
 							}); 	
 
 		alert.setOnDismissListener(new DialogInterface.OnDismissListener(){
-						public void onDismiss(DialogInterface dialog) {	
-						}         
-						});	
-		alert.show();	
-		alert.getWindow().setLayout(500, -200);
+						public void onDismiss(DialogInterface dialog) {
+						}
+						});
+		alert.show();
+		//alert.getWindow().setLayout(500, -200);
+		//alert.getWindow().setLayout(500, 200);
 		WindowManager.LayoutParams lp=alert.getWindow().getAttributes();
 		lp.dimAmount=0.0f;
+		lp.x = 0;
+		lp.y = -500 ;
+		lp.width = 500;
+		lp.height = 200 ;
 		alert.getWindow().setAttributes(lp);
 		alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 	}
