@@ -12,6 +12,7 @@ import com.amlogic.tvutil.TVScanParams;
 import com.amlogic.tvutil.TVSatellite;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVGroup;
+import com.amlogic.tvutil.TVConfigResolver;
 
 import java.util.*;
 import java.text.*;
@@ -32,7 +33,7 @@ import android.os.*;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.SimpleAdapter;  
+import android.widget.SimpleAdapter;
 import java.lang.reflect.Field;
 
 import com.amlogic.tvutil.DTVRecordParams;
@@ -47,7 +48,7 @@ import com.amlogic.widget.SingleChoiseDialog;
 
 public class DTVProgramEdit extends DTVActivity{
 	private static final String TAG="DTVProgramEdit";
- 
+
 	private DTVSettings mDTVSettings=null;
 	private TextView mTextview=null;
 	private TextView mTextInfo=null;
@@ -90,7 +91,7 @@ public class DTVProgramEdit extends DTVActivity{
 		}
 
 		return -1;
-	}	
+	}
 	private void getListData(int type){
 		if(type==0)
 			mTVProgramList = TVProgram.selectByType(this,TVProgram.TYPE_TV,true);
@@ -124,7 +125,7 @@ public class DTVProgramEdit extends DTVActivity{
 		if(mTVProgramList[pos].getFavoriteFlag()){
 			mTVProgramList[pos].setFavoriteFlag(false);
 			if(TabIndex==-3){
-				mTVProgramList=removeProgramFromList(mTVProgramList,pos);	
+				mTVProgramList=removeProgramFromList(mTVProgramList,pos);
 			}
 		}
 		else
@@ -149,18 +150,24 @@ public class DTVProgramEdit extends DTVActivity{
 					toast.setGravity(Gravity.CENTER, 0, 0);
 					toast.show();
 		}
-		else{	
+		else{
 			mTVProgramList[index].deleteFromDb();
 			mTVProgramList = removeProgramFromList(mTVProgramList,index);
 			if(isHavePragram()==false){
 				switchScreenType(0);
 			}else{
-				for(int i=0;i<mTVProgramList.length;i++){
-					 mTVProgramList[i].modifyChanOrder(i);
-					 mTVProgramList[i].setProgramNumber(i+1);
+				if(TVConfigResolver.getConfig(DTVProgramEdit.this,"tv:dtv:dvbt:lcn",false)==false){
+					Log.d(TAG, "LCN is off, reset program info");
+					for(int i=0;i<mTVProgramList.length;i++){
+						 mTVProgramList[i].modifyChanOrder(i);
+						 mTVProgramList[i].setProgramNumber(i+1);
+					}
+				} else {
+					Log.d(TAG, "LCN is ON, don't reset program info");
 				}
+
 			}
-			
+
 			if(db_id==cur_db_id)
 				stopPlaying();
 		}
@@ -173,16 +180,16 @@ public class DTVProgramEdit extends DTVActivity{
 	    }
 	    TVProgram[] result=new TVProgram[len-1];
 	    System.arraycopy(a,0,result,0,index);
-	    System.arraycopy(a,index+1,result,index,len-index-1);		
+	    System.arraycopy(a,index+1,result,index,len-index-1);
 	    return result;
 	}
 
 	private void addIntoGroup(int pos,int group_id){
 		mTVProgramList[pos].addProgramToGroup(group_id);
-	}	
+	}
 
 	private void deleteProgramFromGroup(int pos,int group_id){
-		mTVProgramList[pos].deleteFromGroup(group_id);	
+		mTVProgramList[pos].deleteFromGroup(group_id);
 	}
 
 
@@ -221,9 +228,9 @@ public class DTVProgramEdit extends DTVActivity{
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dtv_program_edit); 
+		setContentView(R.layout.dtv_program_edit);
 		if(t==null){
-			t =new UpdateThread();  
+			t =new UpdateThread();
 			t.start();
 		}
 		video_axis = getVideoWindowSize();
@@ -257,7 +264,7 @@ public class DTVProgramEdit extends DTVActivity{
 				if(getCurrentProgramType()==TVProgram.TYPE_RADIO)
 					showRadioBg();
 				else
-					hideRadioBg();	
+					hideRadioBg();
 
 				db_id = getCurrentProgramID();
 				myAdapter.notifyDataSetChanged();
@@ -285,26 +292,26 @@ public class DTVProgramEdit extends DTVActivity{
 			showStopPVRDialog(-1, -1);
 		}
 	}
-	
+
 	private void showStopPVRDialog(final int conflict, final int programID){
 		new SureDialog(DTVProgramEdit.this){
 			public void onSetMessage(View v){
 				String strMsg = "";
-				
+
 				if (conflict == TVMessage.REC_CFLT_SWITCH_PROGRAM){
 					strMsg = getString(R.string.dtvplayer_change_channel);
 				}else{
 					strMsg = getString(R.string.dtvplayer_pvr_is_running);
 				}
-					
+
 				((TextView)v).setText(strMsg);
 			}
 			public void onSetNegativeButton(){
-				 
+
 			}
 			public void onSetPositiveButton(){
 				DTVPlayerStopRecording();
-				
+
 
 				if (conflict == TVMessage.REC_CFLT_START_NEW){
 					if (getCurrentProgramID() != programID){
@@ -314,10 +321,10 @@ public class DTVProgramEdit extends DTVActivity{
 				}else if (conflict == TVMessage.REC_CFLT_SWITCH_PROGRAM){
 					playProgram(programID);
 				}
-				
+
 			}
-			
-			public void onShowEvent(){				
+
+			public void onShowEvent(){
 			}
 
 			public void onDismissEvent(){
@@ -331,7 +338,7 @@ public class DTVProgramEdit extends DTVActivity{
 			case STATUS_LOCKED:
 				if(getDTVLockedStatus()){
 					mTextInfo.setVisibility(View.INVISIBLE);
-					//mTextInfo.setText("Locked");	
+					//mTextInfo.setText("Locked");
 				}
 				else if(getDTVSignalStatus()==false){
 					mTextInfo.setVisibility(View.VISIBLE);
@@ -339,7 +346,7 @@ public class DTVProgramEdit extends DTVActivity{
 				}
 				else if(getDTVScrambledStatus()==true){
 					mTextInfo.setVisibility(View.VISIBLE);
-					mTextInfo.setText("Scrmbled");	
+					mTextInfo.setText("Scrmbled");
 				}
 				else{
 					mTextInfo.setVisibility(View.INVISIBLE);
@@ -352,11 +359,11 @@ public class DTVProgramEdit extends DTVActivity{
 				}
 				else if(getDTVScrambledStatus()==true){
 					mTextInfo.setVisibility(View.VISIBLE);
-					mTextInfo.setText("Scrmbled");	
+					mTextInfo.setText("Scrmbled");
 				}
 				else if(getDTVLockedStatus()){
 					mTextInfo.setVisibility(View.VISIBLE);
-					mTextInfo.setText("Locked");	
+					mTextInfo.setText("Locked");
 				}
 				else {
 					mTextInfo.setVisibility(View.INVISIBLE);
@@ -365,7 +372,7 @@ public class DTVProgramEdit extends DTVActivity{
 			case STATUS_SCRAMBLED:
 				if(getDTVScrambledStatus()==true){
 					mTextInfo.setVisibility(View.VISIBLE);
-					mTextInfo.setText("Scrmbled");	
+					mTextInfo.setText("Scrmbled");
 				}
 				else if(getDTVSignalStatus()==false){
 					mTextInfo.setVisibility(View.VISIBLE);
@@ -373,7 +380,7 @@ public class DTVProgramEdit extends DTVActivity{
 				}
 				else if(getDTVLockedStatus()){
 					mTextInfo.setVisibility(View.VISIBLE);
-					mTextInfo.setText("Locked");	
+					mTextInfo.setText("Locked");
 				}
 				else {
 					mTextInfo.setVisibility(View.INVISIBLE);
@@ -399,46 +406,46 @@ public class DTVProgramEdit extends DTVActivity{
 							pol="H";
 						int sat_id = mTVProgramList[position].getChannel().getParams().getSatId();
 						String sat_name = TVSatellite.tvSatelliteSelect(DTVProgramEdit.this,sat_id).getSatelliteName();
-						
+
 						//info.setText(String.valueOf(fre/1000)+" "+pol+" "+String.valueOf(sym/1000)+"  "+sat_name);
 	 					/*
-				        ArrayAdapter<String> adapter = new ArrayAdapter<String>(DTVProgramEdit.this,R.layout.simple_list_item);   
-				        adapter.add("Satellite Name:	"+sat_name);   
-				        adapter.add("Fre:	"+String.valueOf(fre/1000));   
-				        adapter.add("Sym:	"+String.valueOf(sym/1000));      
-						adapter.add("Pol:	"+pol);   
-				        List_detail.setAdapter(adapter);  
+				        ArrayAdapter<String> adapter = new ArrayAdapter<String>(DTVProgramEdit.this,R.layout.simple_list_item);
+				        adapter.add("Satellite Name:	"+sat_name);
+				        adapter.add("Fre:	"+String.valueOf(fre/1000));
+				        adapter.add("Sym:	"+String.valueOf(sym/1000));
+						adapter.add("Pol:	"+pol);
+				        List_detail.setAdapter(adapter);
 				        */
- 
-				        ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();   
-				       
-						HashMap<String, Object> map = new HashMap<String, Object>();   
-						map.put("ItemTitle", "Satellite Name:");   
-						map.put("ItemText", sat_name);   
-						listItem.add(map);   
 
-						HashMap<String, Object> map1 = new HashMap<String, Object>();   
-						map1.put("ItemTitle", "Fre:");   
-						map1.put("ItemText", String.valueOf(fre/1000)+"MHz");   
-						listItem.add(map1); 
+				        ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
 
-						HashMap<String, Object> map2 = new HashMap<String, Object>();   
-						map2.put("ItemTitle", "Sym:");   
-						map2.put("ItemText", String.valueOf(sym/1000)+"KS/s");   
-						listItem.add(map2); 
+						HashMap<String, Object> map = new HashMap<String, Object>();
+						map.put("ItemTitle", "Satellite Name:");
+						map.put("ItemText", sat_name);
+						listItem.add(map);
 
-						HashMap<String, Object> map3 = new HashMap<String, Object>();   
-						map3.put("ItemTitle", "Pol:");   
-						map3.put("ItemText", pol);   
-						listItem.add(map3); 
-								       
+						HashMap<String, Object> map1 = new HashMap<String, Object>();
+						map1.put("ItemTitle", "Fre:");
+						map1.put("ItemText", String.valueOf(fre/1000)+"MHz");
+						listItem.add(map1);
+
+						HashMap<String, Object> map2 = new HashMap<String, Object>();
+						map2.put("ItemTitle", "Sym:");
+						map2.put("ItemText", String.valueOf(sym/1000)+"KS/s");
+						listItem.add(map2);
+
+						HashMap<String, Object> map3 = new HashMap<String, Object>();
+						map3.put("ItemTitle", "Pol:");
+						map3.put("ItemText", pol);
+						listItem.add(map3);
+
 				        SimpleAdapter listItemAdapter = new SimpleAdapter(DTVProgramEdit.this,listItem,
 							R.layout.simple_list_item,
 							new String[] {"ItemTitle", "ItemText"},
-							new int[] {R.id.ItemTitle,R.id.ItemText}   
-				        );   
+							new int[] {R.id.ItemTitle,R.id.ItemText}
+				        );
 
-				        List_detail.setAdapter(listItemAdapter);   
+				        List_detail.setAdapter(listItemAdapter);
 					}
 				}
 				else if(mDTVSettings.getScanRegion().contains("DVB-C")==true){
@@ -446,7 +453,7 @@ public class DTVProgramEdit extends DTVActivity{
 					if(mTVProgramList[position].getChannel()!=null){
 						int fre = mTVProgramList[position].getChannel().getParams().getFrequency();
 						int sym = mTVProgramList[position].getChannel().getParams().getSymbolRate();
-						int modulation = mTVProgramList[position].getChannel().getParams().getModulation();	
+						int modulation = mTVProgramList[position].getChannel().getParams().getModulation();
 						String mod = null;
 						switch(modulation){
 							case TVChannelParams.MODULATION_QAM_16:
@@ -457,42 +464,42 @@ public class DTVProgramEdit extends DTVActivity{
 								break;
 							case TVChannelParams.MODULATION_QAM_64:
 								mod = "64QAM";
-								break;			
+								break;
 							case TVChannelParams.MODULATION_QAM_128:
 								mod = "128QAM";
 								break;
 							case TVChannelParams.MODULATION_QAM_256:
 								mod = "256QAM";
-								break;	
+								break;
 							default:
 								mod = "Auto";
 								break;
 						}
-							
-				        	ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();    
 
-						HashMap<String, Object> map1 = new HashMap<String, Object>();   
-						map1.put("ItemTitle", "Fre:");   
-						map1.put("ItemText", String.valueOf(fre/1000)+"MHz");   
-						listItem.add(map1); 
+				        	ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
 
-						HashMap<String, Object> map2 = new HashMap<String, Object>();   
-						map2.put("ItemTitle", "Sym:");   
-						map2.put("ItemText", String.valueOf(sym/1000)+"Kbd/s");   
-						listItem.add(map2); 
+						HashMap<String, Object> map1 = new HashMap<String, Object>();
+						map1.put("ItemTitle", "Fre:");
+						map1.put("ItemText", String.valueOf(fre/1000)+"MHz");
+						listItem.add(map1);
 
-						HashMap<String, Object> map3 = new HashMap<String, Object>();   
-						map3.put("ItemTitle", "Modulation:");   
-						map3.put("ItemText", mod);   
-						listItem.add(map3); 
-								       
+						HashMap<String, Object> map2 = new HashMap<String, Object>();
+						map2.put("ItemTitle", "Sym:");
+						map2.put("ItemText", String.valueOf(sym/1000)+"Kbd/s");
+						listItem.add(map2);
+
+						HashMap<String, Object> map3 = new HashMap<String, Object>();
+						map3.put("ItemTitle", "Modulation:");
+						map3.put("ItemText", mod);
+						listItem.add(map3);
+
 				        SimpleAdapter listItemAdapter = new SimpleAdapter(DTVProgramEdit.this,listItem,
 							R.layout.simple_list_item,
 							new String[] {"ItemTitle", "ItemText"},
-							new int[] {R.id.ItemTitle,R.id.ItemText}   
-				        );   
+							new int[] {R.id.ItemTitle,R.id.ItemText}
+				        );
 
-				        List_detail.setAdapter(listItemAdapter);   
+				        List_detail.setAdapter(listItemAdapter);
 					}
 				}
 				else if((mDTVSettings.getScanRegion().contains("DVB-T")==true)||(mDTVSettings.getScanRegion().contains("ISDBT"))==true){
@@ -510,7 +517,7 @@ public class DTVProgramEdit extends DTVActivity{
 							break;
 						case TVChannelParams.BANDWIDTH_6_MHZ:
 							bw = "6M";
-							break;			
+							break;
 						case TVChannelParams.BANDWIDTH_AUTO:
 							bw = "Auto";
 							break;
@@ -518,27 +525,27 @@ public class DTVProgramEdit extends DTVActivity{
 							bw = "Auto";
 							break;
 					}
-							
-			        	ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();    
 
-					HashMap<String, Object> map1 = new HashMap<String, Object>();   
-					map1.put("ItemTitle", "Fre:");   
-					map1.put("ItemText", String.valueOf(fre/1000)+"MHz");   
-					listItem.add(map1); 
+			        	ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
 
-					HashMap<String, Object> map2 = new HashMap<String, Object>();   
-					map2.put("ItemTitle", "BandWidth:");   
-					map2.put("ItemText", bw);   
-					listItem.add(map2); 
+					HashMap<String, Object> map1 = new HashMap<String, Object>();
+					map1.put("ItemTitle", "Fre:");
+					map1.put("ItemText", String.valueOf(fre/1000)+"MHz");
+					listItem.add(map1);
 
-								       
+					HashMap<String, Object> map2 = new HashMap<String, Object>();
+					map2.put("ItemTitle", "BandWidth:");
+					map2.put("ItemText", bw);
+					listItem.add(map2);
+
+
 				        SimpleAdapter listItemAdapter = new SimpleAdapter(DTVProgramEdit.this,listItem,
 							R.layout.simple_list_item,
 							new String[] {"ItemTitle", "ItemText"},
-							new int[] {R.id.ItemTitle,R.id.ItemText}   
-				        );   
+							new int[] {R.id.ItemTitle,R.id.ItemText}
+				        );
 
-				        List_detail.setAdapter(listItemAdapter);   
+				        List_detail.setAdapter(listItemAdapter);
 					}
 				}
 			}
@@ -547,7 +554,7 @@ public class DTVProgramEdit extends DTVActivity{
 		public void onNothingSelected(AdapterView<?> parent){
 		}
 	};
-	
+
 
 	private boolean move_mode=false;
 	private int moveItemPos = -1;
@@ -560,20 +567,20 @@ public class DTVProgramEdit extends DTVActivity{
 				if(DTVPlayerGetCurrentProgramType()!=type){
 					if(type==TVProgram.TYPE_RADIO){
 						setProgramType(TVProgram.TYPE_RADIO);
-					}	
+					}
 					else{
 						setProgramType(TVProgram.TYPE_TV);
 					}
-				}	
-				
+				}
+
 				if(DTVPlayerGetCurrentProgramID()!=db_id){
-					Log.d(TAG,"mOnItemClickListener pos="+position);	
+					Log.d(TAG,"mOnItemClickListener pos="+position);
 					int serviceType = mTVProgramList[position].getType();
 					DTVPlayerPlayById(db_id);
 					if(mTVProgramList[position].getLockFlag())
 						unblock();
 				}
-				
+
 		}
 	};
 
@@ -596,7 +603,7 @@ public class DTVProgramEdit extends DTVActivity{
 	public void exchageItem(int first, int second){
 		Log.d(TAG,"cur_pos="+first+"-----"+"temp_pos="+second);
 		TVProgram mTemp;
-		
+
 		if(first<second){
 			mTemp = mTVProgramList[first];
 			System.arraycopy(mTVProgramList,first+1,mTVProgramList,first,second-first);
@@ -607,7 +614,7 @@ public class DTVProgramEdit extends DTVActivity{
 			System.arraycopy(mTVProgramList,second,mTVProgramList,second+1,first-second);
 			mTVProgramList[second]=mTemp;
 		}
-		
+
 		for(int i=0;i<mTVProgramList.length;i++){
 			 mTVProgramList[i].modifyChanOrder(i);
 			 mTVProgramList[i].setProgramNumber(i+1);
@@ -624,7 +631,7 @@ public class DTVProgramEdit extends DTVActivity{
 				{
 					case KeyEvent.KEYCODE_DPAD_CENTER:
 					case KeyEvent.KEYCODE_ENTER:
-						if (getMoveMode()){	
+						if (getMoveMode()){
 							Log.d(TAG,"switch itme " + getMoveItemPos() + "   "+cur_select_item);
 							//saveChange();
 
@@ -641,10 +648,10 @@ public class DTVProgramEdit extends DTVActivity{
 						}
 						break;
 					case KeyEvent.KEYCODE_DPAD_UP:
-						
+
 						break;
 					case KeyEvent.KEYCODE_DPAD_DOWN:
-						
+
 						break;
 				}
 			}
@@ -678,19 +685,19 @@ public class DTVProgramEdit extends DTVActivity{
 						break;
 						/*
 					case KeyEvent.KEYCODE_DPAD_UP:
-						
+
 						 break;
 					case KeyEvent.KEYCODE_DPAD_DOWN:
-						
+
 						break;
 						*/
 				   }
 			}
-        	      	
+
 			return false;
-			
+
 		}
-    	 
+
     }
 
 	private void DTVListDealLeftAndRightKey(int mode){
@@ -702,13 +709,13 @@ public class DTVProgramEdit extends DTVActivity{
 					mButton.requestFocus();
 				break;
 		}
-		
+
 	}
 
 	private void DTVListDealUpAndDownKey(int mode){
 		switch(mode){
 			case 0://up
-				
+
 				cur_pos=temp_pos;
 				myAdapter.notifyDataSetChanged();
 				break;
@@ -717,21 +724,21 @@ public class DTVProgramEdit extends DTVActivity{
 				break;
 		}
 	}
-	
-	
-		
+
+
+
 	class listOnScroll implements OnScrollListener{
 		public void onScroll(AbsListView view, int firstVisibleItem,int visibleItemCount, int totalItemCount) {
-			//reset_timer();	
+			//reset_timer();
 		}
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
 			//reset_timer();
 		}
-    }	
-	
-	class MouseClick implements OnClickListener{    
+    }
+
+	class MouseClick implements OnClickListener{
 		public void onClick(View v) {
-				// TODO Auto-generated method stub	
+				// TODO Auto-generated method stub
 		    	//reset_timer();
 				switch (v.getId()) {
 					case R.id.arrow_left:
@@ -749,17 +756,17 @@ public class DTVProgramEdit extends DTVActivity{
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_DPAD_LEFT:
 				DTVListDealLeftAndRightKey(0);
-				break;		
+				break;
 			case KeyEvent.KEYCODE_DPAD_RIGHT:
 				DTVListDealLeftAndRightKey(1);
 				return true;
 			case KeyEvent.KEYCODE_DPAD_DOWN:
 				if(cur_select_item == ListView_channel.getCount()-1){
-					ListView_channel.setSelection(0); 	
+					ListView_channel.setSelection(0);
 					return true;
-				}	
+				}
 				break;
-			case KeyEvent.KEYCODE_DPAD_UP:		
+			case KeyEvent.KEYCODE_DPAD_UP:
 				if(cur_select_item== 0){
 					Button mButton=getGroupButtonById(TabIndex);
 					if(mButton!=null)
@@ -767,18 +774,18 @@ public class DTVProgramEdit extends DTVActivity{
 				}
 				break;
 			case DTVActivity.KEYCODE_YELLOW_BUTTON:
-				
+
 				if(ListView_channel.getChildCount()>cur_select_item)
 					ListView_channel.setSelection(0);
 				else{
 					ListView_channel.setSelection(cur_select_item-ListView_channel.getChildCount());
 				}
 				myAdapter.notifyDataSetChanged();
-				
+
 				break;
 			case DTVActivity.KEYCODE_BLUE_BUTTON:
 				dealLock(cur_select_item);
-				myAdapter.notifyDataSetChanged();		
+				myAdapter.notifyDataSetChanged();
 				break;
 			case DTVActivity.KEYCODE_RED_BUTTON:
 				if(mTVProgramList!=null&&mTVProgramList.length>0){
@@ -788,7 +795,7 @@ public class DTVProgramEdit extends DTVActivity{
 						}
 
 						public void onSetNegativeButton(){
-				  
+
 						}
 						public void onSetPositiveButton(){
 							deleteProgramFromDB(cur_select_item);
@@ -805,7 +812,7 @@ public class DTVProgramEdit extends DTVActivity{
 					myAdapter.notifyDataSetChanged();
 				}
 				*/
-				int p=0;			
+				int p=0;
 				p = cur_select_item+ListView_channel.getChildCount();
 				if(p<ListView_channel.getCount())
 					ListView_channel.setSelection(p-1);
@@ -839,14 +846,14 @@ public class DTVProgramEdit extends DTVActivity{
 								public void onClick(View v) {
 									mEditCustomDialog.dismissDialog();
 								}
-							});	 
+							});
 							yes.setOnClickListener(new OnClickListener(){
-								public void onClick(View v) {	
+								public void onClick(View v) {
 									mTVProgramList[cur_select_item].setProgramName(mEditText.getText().toString());
 									myAdapter.notifyDataSetChanged();
 									mEditCustomDialog.dismissDialog();
 								}
-							});	    
+							});
 						}
 					});
 				}
@@ -868,26 +875,26 @@ public class DTVProgramEdit extends DTVActivity{
 					//setVideoWindowSize(video_axis);
 					Intent in = new Intent();
 					in.setClass(DTVProgramEdit.this, DTVPlayer.class);
-					DTVProgramEdit.this.startActivity(in);	
+					DTVProgramEdit.this.startActivity(in);
 					DTVProgramEdit.this.finish();
 				}
 				break;
 		}
 		return super.onKeyDown(keyCode, event);
-	}	  
-	
+	}
+
 	private boolean [] b=null;
 	public void programGroupOperate(int pos){
 		final int p = pos;
-		
+
 		final TVGroup[] group = DTVProgramManagerGetGroupList();
 		if(group==null)
 			return;
 		if(group.length<=0)
 			return;
 
-		Log.d(TAG,"group.length="+group.length);	 
-		String[] items = new String[group.length];        	 
+		Log.d(TAG,"group.length="+group.length);
+		String[] items = new String[group.length];
 		b = new boolean[group.length];
 
 		for (int j = 0; j < group.length; j++){
@@ -895,13 +902,13 @@ public class DTVProgramEdit extends DTVActivity{
 			b[j]= mTVProgramList[pos].checkGroup(group[j].getID());
 			Log.d(TAG,">>>"+j+"item="+items[j]+"----"+b[j]);
 		}
-		
+
 		new MutipleChoiseDialog(DTVProgramEdit.this,items,b,0){
 			public void onSetMessage(View v){
 				((TextView)v).setText(getString(R.string.add));
 			}
 			public void onSetNegativeButton(){
-				
+
 			}
 			public void onSetPositiveButton(int which,boolean[] b){
 				if(b!=null)
@@ -913,7 +920,7 @@ public class DTVProgramEdit extends DTVActivity{
 			}
 		};
 	}
-	
+
 	void createMenuChoiceDialogForGroup(Context context){
 		final Context mContext = context;
 		final String[] itemChoices = {
@@ -933,12 +940,12 @@ public class DTVProgramEdit extends DTVActivity{
 					TextView title = (TextView)window.findViewById(R.id.title);
 					title.setTextColor(Color.YELLOW);
 					title.setText(getString(R.string.operations));
-					
+
 					ListView list_item = (ListView)window.findViewById(R.id.list_item);
 					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.menu_list_item,itemChoices);
-					list_item.setAdapter(adapter);  
+					list_item.setAdapter(adapter);
 					list_item.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-						public void onItemClick(AdapterView<?> parent, View v, int position, long id){			
+						public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 							switch(position){
 								case 0: //add
 									final CustomDialog mAddCustomDialog = new CustomDialog(mContext,R.style.MyDialog);
@@ -961,15 +968,15 @@ public class DTVProgramEdit extends DTVActivity{
 													public void onClick(View v) {
 														mAddCustomDialog.dismissDialog();
 													}
-												});	 
+												});
 												yes.setOnClickListener(new OnClickListener(){
-													public void onClick(View v) {	
+													public void onClick(View v) {
 														DTVProgramManagerAddGroup(mAddText.getText().toString());
 														DTVProgramEditGroupButtonData();
 														refreshGroupButton();
 														mAddCustomDialog.dismissDialog();
 													}
-												});	    
+												});
 											}
 										});
 									break;
@@ -995,17 +1002,17 @@ public class DTVProgramEdit extends DTVActivity{
 													public void onClick(View v) {
 														mEditCustomDialog.dismissDialog();
 													}
-												});	 
+												});
 												yes.setOnClickListener(new OnClickListener(){
-													public void onClick(View v) {	
+													public void onClick(View v) {
 														editCurrentGroupName(mEditText.getText().toString());
 														DTVProgramEditGroupButtonData();
 														mEditCustomDialog.dismissDialog();
 													}
-												});	    
+												});
 											}
 										});
-									}	
+									}
 									break;
 								case 2: //delete
 									deleteCurrentGroup();
@@ -1014,17 +1021,17 @@ public class DTVProgramEdit extends DTVActivity{
 									break;
 							}
 						}
-					}	
+					}
 					);
 				}
-			}	
-		);		
+			}
+		);
 	}
 
 	void createMenuChoiceDialog(Context context, int position){
 		final Context mContext = context;
 		final int pos = position;
-		boolean fav = false; 
+		boolean fav = false;
 		boolean lock = false;
 		boolean skip = false;
 
@@ -1033,13 +1040,13 @@ public class DTVProgramEdit extends DTVActivity{
 			lock = mTVProgramList[position].getLockFlag();
 			//skip = mTVProgramList[pos].get
 		}
-		
+
 		final String[] itemChoices = {
 			getString(R.string.rename),
 			getString(R.string.delete),
 			(fav==false)?getString(R.string.add_fav):getString(R.string.del_fav),
 			//(skip==false)?getString(R.string.add_skip):getString(R.string.del_skip),
-			(lock==false)?getString(R.string.add_lock):getString(R.string.del_lock),		
+			(lock==false)?getString(R.string.add_lock):getString(R.string.del_lock),
 			getString(R.string.move),
 			//getString(R.string.add_into_group)
 		};
@@ -1055,13 +1062,13 @@ public class DTVProgramEdit extends DTVActivity{
 					TextView title = (TextView)window.findViewById(R.id.title);
 					title.setTextColor(Color.YELLOW);
 					title.setText(R.string.program_operation);
-					
+
 					ListView list_item = (ListView)window.findViewById(R.id.list_item);
 					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.menu_list_item,itemChoices);
 					//ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,R.layout.dtvsettings_list_item,itemChoices);
-					list_item.setAdapter(adapter);  
+					list_item.setAdapter(adapter);
 					list_item.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-						public void onItemClick(AdapterView<?> parent, View v, int position, long id){			
+						public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 							switch(position){
 								case 0: //edit
 									final CustomDialog mEditCustomDialog = new CustomDialog(mContext,R.style.MyDialog);
@@ -1084,15 +1091,15 @@ public class DTVProgramEdit extends DTVActivity{
 												public void onClick(View v) {
 													mEditCustomDialog.dismissDialog();
 												}
-											});	 
+											});
 											yes.setOnClickListener(new OnClickListener(){
-												public void onClick(View v) {	
+												public void onClick(View v) {
 													mTVProgramList[pos].setProgramName(mEditText.getText().toString());
 													myAdapter.notifyDataSetChanged();
 													mEditCustomDialog.dismissDialog();
 													mCustomDialog.dismissDialog();
 												}
-											});	    
+											});
 										}
 									});
 									break;
@@ -1103,7 +1110,7 @@ public class DTVProgramEdit extends DTVActivity{
 										}
 
 										public void onSetNegativeButton(){
-								  
+
 										}
 										public void onSetPositiveButton(){
 											deleteProgramFromDB(pos);
@@ -1122,7 +1129,7 @@ public class DTVProgramEdit extends DTVActivity{
 									myAdapter.notifyDataSetChanged();
 									mCustomDialog.dismissDialog();
 									break;
-									
+
 								case 4: //move
 									setMoveMode(true);
 									setMoveItemPos(pos);
@@ -1134,24 +1141,24 @@ public class DTVProgramEdit extends DTVActivity{
 									programGroupOperate(pos);
 									//mCustomDialog.dismissDialog();
 									break;
-								*/	
+								*/
 								default:
 									break;
 							}
 						}
-					}	
+					}
 					);
 				}
-			}	
-		);		
+			}
+		);
 	}
 
 	private void create_group_button() {
 		LinearLayout mLinearLayout = (LinearLayout)findViewById(R.id.LinearLayoutGroupButton) ;
 		for(int i=0; i<TVGroupCount; i++){
 			Log.d(TAG,"create_group_button="+i);
-			LinearLayout.LayoutParams TempLP = 
-				new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);					
+			LinearLayout.LayoutParams TempLP =
+				new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			TempLP.leftMargin = 2;
 			TempLP.bottomMargin = 1;
 
@@ -1169,13 +1176,13 @@ public class DTVProgramEdit extends DTVActivity{
 					mButtonFav= TempButton;
 					break;
 			}
-						
+
 			TempButton.setId(mProgramGroup[i].getID());
 			TempButton.setTextColor(Color.WHITE);
 			TempButton.setTextSize(22F);
 			TempButton.setLayoutParams(TempLP);
 			//TempButton.setVisibility(View.GONE);
-			
+
 			TempButton.setFocusableInTouchMode(true);
 			TempButton.setOnFocusChangeListener(new GroupButtonItemOnFocusChange());
 			TempButton.setOnClickListener(new GroupButtonItemOnClick());
@@ -1197,23 +1204,23 @@ public class DTVProgramEdit extends DTVActivity{
 								ListView_programmanager.requestFocus();
 							}
 							break;
-					} 	
+					}
 					return false;
 				}
-				
+
 			});
-			
+
 			TempButton.setSingleLine(true);
 			TempButton.setEllipsize(TextUtils.TruncateAt.valueOf("MARQUEE"));
 
 			TempButton.setWidth(128);
 			TempButton.setHeight(50);
 			TempButton.setHint(" "+mProgramGroup[i].getID());
-			TempButton.setBackgroundColor(GROUP_TIEM_UNFOCUSCOLOR_EVEN);	
+			TempButton.setBackgroundColor(GROUP_TIEM_UNFOCUSCOLOR_EVEN);
 			TempButton.setText(mProgramGroup[i].getName());
 			TempButton.setVisibility(View.VISIBLE);
-			
-			((LinearLayout)mLinearLayout).addView(TempButton); 
+
+			((LinearLayout)mLinearLayout).addView(TempButton);
 		}
 	}
 
@@ -1222,11 +1229,11 @@ public class DTVProgramEdit extends DTVActivity{
 		mLinearLayout.removeAllViews();
 		for(int i=0; i<TVGroupCount; i++){
 			Log.d(TAG,"create_group_button="+i);
-			LinearLayout.LayoutParams TempLP = 
-				new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);					
+			LinearLayout.LayoutParams TempLP =
+				new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			TempLP.leftMargin = 2;
 			TempLP.bottomMargin = 1;
-			
+
 			Button TempButton;
 			TempButton = new Button(this);
 
@@ -1241,13 +1248,13 @@ public class DTVProgramEdit extends DTVActivity{
 					mButtonFav= TempButton;
 					break;
 			}
-			
+
 			TempButton.setId(mProgramGroup[i].getID());
 			TempButton.setTextColor(Color.WHITE);
 			TempButton.setTextSize(22F);
 			TempButton.setLayoutParams(TempLP);
 			//TempButton.setVisibility(View.GONE);
-			
+
 			TempButton.setFocusableInTouchMode(true);
 			TempButton.setOnFocusChangeListener(new GroupButtonItemOnFocusChange());
 			TempButton.setOnClickListener(new GroupButtonItemOnClick());
@@ -1255,7 +1262,7 @@ public class DTVProgramEdit extends DTVActivity{
 				public boolean onLongClick(View view) {
 					Log.d(TAG,"long Click");
 					createMenuChoiceDialogForGroup(DTVProgramEdit.this);
-					
+
 					return false;
 				}
 			});
@@ -1268,27 +1275,27 @@ public class DTVProgramEdit extends DTVActivity{
 						case KeyEvent.KEYCODE_DPAD_DOWN:
 							if (event.getAction() == KeyEvent.ACTION_DOWN) {
 								ListView_programmanager.requestFocus();
-								ListView_programmanager.setSelection(0); 
+								ListView_programmanager.setSelection(0);
 								return true;
 							}
 							break;
-					} 	
+					}
 					return false;
 				}
-				
+
 			});
-			
+
 			TempButton.setSingleLine(true);
 			TempButton.setEllipsize(TextUtils.TruncateAt.valueOf("MARQUEE"));
 
 			TempButton.setWidth(128);
 			TempButton.setHeight(50);
 			TempButton.setHint(" "+mProgramGroup[i].getID());
-			TempButton.setBackgroundColor(GROUP_TIEM_UNFOCUSCOLOR_EVEN);	
+			TempButton.setBackgroundColor(GROUP_TIEM_UNFOCUSCOLOR_EVEN);
 			TempButton.setText(mProgramGroup[i].getName());
 			TempButton.setVisibility(View.VISIBLE);
-			
-			((LinearLayout)mLinearLayout).addView(TempButton); 
+
+			((LinearLayout)mLinearLayout).addView(TempButton);
 		}
 	}
 
@@ -1330,16 +1337,16 @@ public class DTVProgramEdit extends DTVActivity{
 
 				myAdapter.notifyDataSetChanged();
 			}
-			else {				  
-				((Button)v).setBackgroundColor(GROUP_TIEM_UNFOCUSCOLOR_EVEN);	
+			else {
+				((Button)v).setBackgroundColor(GROUP_TIEM_UNFOCUSCOLOR_EVEN);
 			}
-	    }	
+	    }
 	}
 
 	/****************************Channel List****************************/
 
 	ListView ListView_channel=null;
-	
+
 	private int class_total=0;
 	private int cur_class_no=-1;
 	private int list_status=-1;
@@ -1353,7 +1360,7 @@ public class DTVProgramEdit extends DTVActivity{
 		else
 			return 0;
 	}
-	
+
 	private void getClassData(int class_no){
 		mTVProgramList=DTVProgramManagerGetProByGroup(class_no);
 	}
@@ -1365,14 +1372,14 @@ public class DTVProgramEdit extends DTVActivity{
 		if(bundle!=null){
 	    	db_id = bundle.getInt("db_id");
 			service_type=getCurrentProgramType();
-		}	
+		}
 
 		ImageButton prolist_button = (ImageButton)findViewById(R.id.prolist_button);
-		prolist_button.setOnClickListener(new channelListButtonClick()); 	
+		prolist_button.setOnClickListener(new channelListButtonClick());
 
 		Text_title=(TextView)findViewById(R.id.prolist);
 		Text_title.setTextColor(Color.YELLOW);
-		
+
 		class_total = getListProgramClass();
 		RelativeLayout_radio_bg = (RelativeLayout)findViewById(R.id.RelativeLayoutRadioBg);
 		if(service_type == TVProgram.TYPE_RADIO){
@@ -1381,7 +1388,7 @@ public class DTVProgramEdit extends DTVActivity{
 			}
 			Text_title.setText(R.string.radio);
 			showRadioBg();
-		}	
+		}
 		else{
 			service_type = TVProgram.TYPE_TV;
 			if(t!=null){
@@ -1392,11 +1399,11 @@ public class DTVProgramEdit extends DTVActivity{
 		}
 
 		mTextInfo = (TextView)findViewById(R.id.text_info);
-		
+
 		ListView_channel = (ListView) findViewById(R.id.programListView);
 		myAdapter = new IconAdapter(this,null);
 		ListView_channel.setOnItemSelectedListener(mOnSelectedListener);
-		ListView_channel.setOnScrollListener(new listOnScroll()); 
+		ListView_channel.setOnScrollListener(new listOnScroll());
 		ListView_channel.setOnItemClickListener(mOnItemClickListener);
 		ListView_channel.setOnKeyListener(new listOnKeyListener());
 		ListView_channel.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -1407,23 +1414,23 @@ public class DTVProgramEdit extends DTVActivity{
 				return false;
 			}
 		});
-		
+
 		ListView_channel.setAdapter(myAdapter);
 		setFocusPosition();
 
 		findViewById(R.id.return_icon).setOnClickListener(
-			new View.OnClickListener(){	  
-				public void onClick(View v) {		
-					// TODO Auto-generated method stub	
+			new View.OnClickListener(){
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
 					 finish();
 				}
 			}
 		);
 
 		findViewById(R.id.return_icon).setOnClickListener(
-			new View.OnClickListener(){	  
-				public void onClick(View v) {		
-					// TODO Auto-generated method stub	
+			new View.OnClickListener(){
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
 					 finish();
 				}
 			}
@@ -1435,13 +1442,13 @@ public class DTVProgramEdit extends DTVActivity{
 		}
 		else if(getDTVScrambledStatus()==true){
 			mTextInfo.setVisibility(View.VISIBLE);
-			mTextInfo.setText("Scrmbled");	
+			mTextInfo.setText("Scrmbled");
 		}
 		else{
 			mTextInfo.setVisibility(View.INVISIBLE);
 		}
 
-		
+
 	}
 
 	private RelativeLayout RelativeLayout_radio_bg=null;
@@ -1450,7 +1457,7 @@ public class DTVProgramEdit extends DTVActivity{
 		if(radio_bg_flag==false){
 			RelativeLayout_radio_bg.setVisibility(View.VISIBLE);
 			radio_bg_flag = true;
-		}	
+		}
 	}
 
 	private void hideRadioBg(){
@@ -1459,12 +1466,12 @@ public class DTVProgramEdit extends DTVActivity{
 			radio_bg_flag = false;
 		}
 	}
-	
-	class channelListButtonClick  implements android.view.View.OnClickListener{	  
-		public void onClick(View v) {		
-			// TODO Auto-generated method stub		
-			switch (v.getId()) {			
-				case R.id.prolist_button:		
+
+	class channelListButtonClick  implements android.view.View.OnClickListener{
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			switch (v.getId()) {
+				case R.id.prolist_button:
 					if((service_type == TVProgram.TYPE_RADIO)&&(favor!=true)){
 						getListData(0);
 						Text_title.setText(R.string.tv);
@@ -1473,20 +1480,20 @@ public class DTVProgramEdit extends DTVActivity{
 					}
 					else if((service_type == TVProgram.TYPE_TV)&&(favor!=true)){
 						Log.d(TAG,"##########"+class_total);
-						if(class_total>0){	
+						if(class_total>0){
 							service_type = -1;
 						   	cur_class_no = class_total-1;
 							Text_title.setText(mTVGroup[cur_class_no].getName());
 							getClassData(mTVGroup[cur_class_no].getID());
 							myAdapter.notifyDataSetChanged();
 						}
-						else{					
+						else{
 							Text_title.setText(R.string.favorite);
 							getListFavorite();
 							myAdapter.notifyDataSetChanged();
 							favor=true;
-						}	
-					}	
+						}
+					}
 					else if((favor!=true)&&(service_type != TVProgram.TYPE_TV)&&(service_type != TVProgram.TYPE_RADIO)){
 						if(cur_class_no>0&&class_total>0)
 						{
@@ -1495,7 +1502,7 @@ public class DTVProgramEdit extends DTVActivity{
 							Text_title.setText(mTVGroup[cur_class_no].getName());
 							getClassData(mTVGroup[cur_class_no].getID());
 							myAdapter.notifyDataSetChanged();
-							
+
 						}
 						else
 						{
@@ -1512,13 +1519,13 @@ public class DTVProgramEdit extends DTVActivity{
 						service_type = TVProgram.TYPE_RADIO;
 						myAdapter.notifyDataSetChanged();
 						favor=false;
-					}	
-					setFocusPosition();							
+					}
+					setFocusPosition();
 					break;
-				
-			}		
 
-		}	
+			}
+
+		}
 	}
 
 	public void setFocusPosition(){
@@ -1527,38 +1534,38 @@ public class DTVProgramEdit extends DTVActivity{
 			for(i=0;i<mTVProgramList.length;i++){
 				if(db_id == mTVProgramList[i].getID()){
 					ListView_channel.setFocusableInTouchMode(true);
-	   			  	
+
 	        			ListView_channel.setSelection(i);
 					cur_select_item = i;
 					if (mTVProgramList[i].getLockFlag())
 						unblock();
 					break;
 				}
-			}	
+			}
 			ListView_channel.requestFocus();
 	   		ListView_channel.requestFocusFromTouch();
 		}
 	}
-	
+
 	private class IconAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Context cont;
 		private List<String> listItems;
 		private int selectItem;
-		
+
 		class ViewHolder {
 			ImageView move_icon;
 			TextView prono;
-			TextView text;	
+			TextView text;
 			ImageView icon_scrambled;
 			ImageView icon_fav;
 			ImageView icon;
 		}
-		
+
 		public IconAdapter(Context context, List<String> list) {
 			super();
 			cont = context;
-			mInflater=LayoutInflater.from(context);			  
+			mInflater=LayoutInflater.from(context);
 		}
 
 		public int getCount() {
@@ -1571,7 +1578,7 @@ public class DTVProgramEdit extends DTVActivity{
 		public Object getItem(int position) {
 			return position;
 		}
-		
+
 		public long getItemId(int position) {
 			return position;
 		}
@@ -1579,16 +1586,16 @@ public class DTVProgramEdit extends DTVActivity{
 		public void setSelectItem(int position){
 			this.selectItem = position;
 		}
-        
+
         public int getSelectItem(){
 			return this.selectItem;
         }
-		
+
 		public View getView(int position, View convertView, ViewGroup parent) {
-			ViewHolder holder;	
-			if (convertView == null){    
+			ViewHolder holder;
+			if (convertView == null){
 				convertView = mInflater.inflate(R.layout.program_edit_list, null);
-				
+
 				holder = new ViewHolder();
 				holder.move_icon = (ImageView)convertView.findViewById(R.id.move_icon);
 				holder.prono = (TextView)convertView.findViewById(R.id.prono);
@@ -1603,7 +1610,7 @@ public class DTVProgramEdit extends DTVActivity{
 				// and the ImageView.
 				holder = (ViewHolder) convertView.getTag();
 			}
-		
+
 			// Bind the data efficiently with the holder.
 
 			if(mDTVSettings.getScanRegion().contains("ATSC")==false){
@@ -1617,83 +1624,83 @@ public class DTVProgramEdit extends DTVActivity{
 			else{
 				holder.prono.setText(Integer.toString(mTVProgramList[position].getNumber().getNumber())+"-"+Integer.toString(mTVProgramList[position].getNumber().getMinor()));
 			}
-			
+
 			holder.text.setText(mTVProgramList[position].getName());
-			
+
 			Log.d(TAG,"db_id="+db_id);
 			Log.d(TAG,"mTVProgramList[position].getID()="+mTVProgramList[position].getID());
-			if(db_id == mTVProgramList[position].getID()){  
-				//convertView.setBackgroundColor(Color.RED);  
+			if(db_id == mTVProgramList[position].getID()){
+				//convertView.setBackgroundColor(Color.RED);
 				holder.text.setTextColor(Color.YELLOW);
-			}	
+			}
 			else{
-				//convertView.setBackgroundColor(Color.TRANSPARENT); 
+				//convertView.setBackgroundColor(Color.TRANSPARENT);
 				holder.text.setTextColor(Color.WHITE);
-			}	
-		
+			}
+
 			if(mTVProgramList[position].getLockFlag()){
-				holder.icon.setBackgroundResource(R.drawable.dtvplayer_icon_lock); 
-			}	
+				holder.icon.setBackgroundResource(R.drawable.dtvplayer_icon_lock);
+			}
 			else{
 				holder.icon.setBackgroundResource(Color.TRANSPARENT);
 			}
 
 			if(mTVProgramList[position].getFavoriteFlag()){
-				holder.icon_fav.setBackgroundResource(R.drawable.dtvplayer_icon_fav); 
-			}	
+				holder.icon_fav.setBackgroundResource(R.drawable.dtvplayer_icon_fav);
+			}
 			else{
 				holder.icon_fav.setBackgroundResource(Color.TRANSPARENT);
-			}	
+			}
 
 			if(mTVProgramList[position].getScrambledFlag()){
-				holder.icon_scrambled.setBackgroundResource(R.drawable.dtvplayer_icon_scrambled); 
-			}	
+				holder.icon_scrambled.setBackgroundResource(R.drawable.dtvplayer_icon_scrambled);
+			}
 			else{
 				holder.icon_scrambled.setBackgroundResource(Color.TRANSPARENT);
-			}	
+			}
 
 			if(getMoveItemPos()==position){
-				holder.move_icon.setBackgroundResource(R.drawable.move_flag); 
-			}	
+				holder.move_icon.setBackgroundResource(R.drawable.move_flag);
+			}
 			else{
 				holder.move_icon.setBackgroundResource(Color.TRANSPARENT);
-			}	
-				
-			
+			}
+
+
 			return convertView;
 		}
-	}	
+	}
 
 	private static class mySatListAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private Context cont;
 		private List<String> listItems;
 		private int selectItem;
-		
+
 		static class ViewHolder {
-			TextView text;	
+			TextView text;
 			ImageView icon;
 		}
-		
+
 		public mySatListAdapter(Context context, List<String> list) {
 			super();
 			cont = context;
 			listItems = list;
-			mInflater=LayoutInflater.from(context);			  
+			mInflater=LayoutInflater.from(context);
 		}
 
 		public int getCount() {
 			if(list_sat==null)
 				return 0;
-			else	
+			else
 				return list_sat.length;
 		}
 
 		public Object getItem(int position) {
-		
+
 			return position;
 		}
-		
+
 		public long getItemId(int position) {
 			return position;
 		}
@@ -1707,14 +1714,14 @@ public class DTVProgramEdit extends DTVActivity{
 	        {
 	       	 return this.selectItem;
 	        }
-		
-		
+
+
 		public View getView(int position, View convertView, ViewGroup parent) {
-		ViewHolder holder;	
+		ViewHolder holder;
 		if (convertView == null) {
-		   
+
 		   convertView = mInflater.inflate(R.layout.listitem, null);
-			
+
 		   holder = new ViewHolder();
 		   holder.text = (TextView) convertView.findViewById(R.id.ItemText);
 		   holder.icon = (ImageView) convertView.findViewById(R.id.icon);
@@ -1724,15 +1731,15 @@ public class DTVProgramEdit extends DTVActivity{
 		  // and the ImageView.
 		  holder = (ViewHolder) convertView.getTag();
 		  }
-		
+
 		  // Bind the data efficiently with the holder.
 		  if(list_sat!=null)
 		  	holder.text.setText(list_sat[position].getSatelliteName());
-		  
+
 		  return convertView;
 		}
 	  }
-		
+
 	private AlertDialog.Builder diaBuilder;
 	private void showSatellitesList(){
 
@@ -1742,15 +1749,15 @@ public class DTVProgramEdit extends DTVActivity{
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event){
 				 switch (keyCode) {
-					case KeyEvent.KEYCODE_BACK:	
+					case KeyEvent.KEYCODE_BACK:
 						dismiss();
 						break;
 				}
 				return super.onKeyDown(keyCode, event);
 			}
-			
+
 		};
-		
+
 		mDialog.setCancelable(false);
 		mDialog.setCanceledOnTouchOutside(false);
 
@@ -1767,7 +1774,7 @@ public class DTVProgramEdit extends DTVActivity{
 		//WindowManager m = getWindowManager();
 		//Display d = m.getDefaultDisplay();
 		lp.dimAmount=0.0f;
-		lp.x=600;	
+		lp.x=600;
 
 		mDialog.getWindow().setAttributes(lp);
 		mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -1775,9 +1782,9 @@ public class DTVProgramEdit extends DTVActivity{
 		TextView title = (TextView)window.findViewById(R.id.title);
 		title.setTextColor(Color.YELLOW);
 		title.setText(getString(R.string.satellites_info_list));
-		
+
 		ListView LimitListView =(ListView)window.findViewById(R.id.set_list);
-		
+
 		LimitListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
 			public void onItemClick(AdapterView<?> arg0, View arg1,
@@ -1793,9 +1800,9 @@ public class DTVProgramEdit extends DTVActivity{
 				myAdapter.notifyDataSetChanged();
 				mDialog.dismiss();
 			}
-        	    
+
         });
-		LimitListView.setAdapter(new mySatListAdapter(this,null));		
+		LimitListView.setAdapter(new mySatListAdapter(this,null));
 	}
 
 
@@ -1803,44 +1810,44 @@ public class DTVProgramEdit extends DTVActivity{
 	private  void  getSatellitesListData(){
 	 	list_sat = TVSatellite.tvSatelliteList(this);
 	}
-	
+
 	private void getProgBySatellites(int sat_id){
 		mTVProgramList=TVProgram.selectBySatID(this,sat_id);
 	}
 
 	private int getIsRecordingProgramID(){
 		DTVRecordParams recPara = getRecordingParams();
-		if (recPara != null) {	
+		if (recPara != null) {
 		  return recPara.getProgramID();
-		}  
+		}
 		else return -1;
 	}
 
 
-	public class UIHandler extends Handler {  
-		public UIHandler(Looper looper) {  
-		     super(looper);  
-		}  
+	public class UIHandler extends Handler {
+		public UIHandler(Looper looper) {
+		     super(looper);
+		}
 
-		@Override  
-		public void handleMessage(Message msg) {  
+		@Override
+		public void handleMessage(Message msg) {
 			   switch (msg.what) {
-			   	case 0:	
+			   	case 0:
 				case 1:
 					if(myAdapter!=null)
 						myAdapter.notifyDataSetChanged();
 					setFocusPosition();
 					break;
 				case 2:
-					
+
 					break;
-				case 3:				        
-					
+				case 3:
+
 					break;
 			}
 		}
-	}  
-	
+	}
+
 	class UpdateThread extends Thread {
 		private Handler mHandler = null;
 		public void run() {
@@ -1850,9 +1857,9 @@ public class DTVProgramEdit extends DTVActivity{
 				public void handleMessage(Message msg) {
 					Message message=new Message();
 					UIHandler ha =new UIHandler(Looper.getMainLooper());
-					switch (msg.what) { 
+					switch (msg.what) {
 						case 0:
-							{		
+							{
 								getListData(0);
 								message.what=0;
 								ha.sendMessage(message);
@@ -1870,10 +1877,10 @@ public class DTVProgramEdit extends DTVActivity{
 						case 3:
 								message.what=3;
 								ha.sendMessage(message);
-							break;	
+							break;
 						default:
 							break;
-					}  
+					}
 				}
 			};
 
@@ -1885,17 +1892,17 @@ public class DTVProgramEdit extends DTVActivity{
 				mHandler.getLooper().quit();
 			}
 		}
-		
+
 		public void onSetupCmd(int cmd, Object para ) {
 			if (mHandler != null){
-				mHandler.sendMessage(mHandler.obtainMessage(cmd,para));	
-			}	
+				mHandler.sendMessage(mHandler.obtainMessage(cmd,para));
+			}
 		}
 
-		
+
 
 	}
 
-	
+
 }
 
