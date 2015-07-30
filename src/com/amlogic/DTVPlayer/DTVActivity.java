@@ -77,8 +77,10 @@ abstract public class DTVActivity extends TVActivity{
 	final public static int KEYCODE_AD_VOLUME_DOWN = KeyEvent.KEYCODE_M;
 	
 
+	private boolean isStop = false;
 	private TVProgram TVProgram=null;
 	private static int dtvactivity_actived_num = 0;
+	//private static boolean activity_set_flag = false;
 	//private static int dtvlayout_gravity = Gravity.CENTER;
 	public boolean connected = false;
 	private boolean delay_setinput_source = false;
@@ -116,6 +118,7 @@ abstract public class DTVActivity extends TVActivity{
 		connected = true;
 		if(delay_setinput_source){
 			delay_setinput_source = false;			
+			Log.d(TAG, "set input source to DTV");
 			setInputSource(TVConst.SourceInput.SOURCE_DTV);
 		}
 		mDTVSettings = new DTVSettings(this); 
@@ -451,6 +454,7 @@ abstract public class DTVActivity extends TVActivity{
 	@Override
 	protected void onStart(){
 		Log.d(TAG, "onStart");
+		//activity_set_flag = false;
 		DTVActivity_ActivedStateManage(true);
 		super.onStart();
 		
@@ -459,13 +463,31 @@ abstract public class DTVActivity extends TVActivity{
 	@Override
 	protected void onStop(){
 		Log.d(TAG, "onStop");
+		isStop = true;
 		DTVActivity_ActivedStateManage(false);
 		super.onStop();
+	}
+
+	@Override
+	protected void onPause(){
+		Log.d(TAG, "onPause");
+		boolean result = isFinishing();
+		Log.d(TAG, "@@onPause, ifFinishing:"+result);
+		if(result == true) {
+			Log.d(TAG, "@@DTVActivity is finishing, actived_num:"+dtvactivity_actived_num);
+			dtvactivity_actived_num--;
+			if(dtvactivity_actived_num == 0){
+				Log.d(TAG, "no alived activity, set source to atv");
+				setInputSource(TVConst.SourceInput.SOURCE_ATV);
+			}
+		}
+		super.onPause();
 	}
 
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
+		isStop = true;
         super.onDestroy();
     }
 
@@ -493,6 +515,7 @@ abstract public class DTVActivity extends TVActivity{
 
 				/*set vpath*/
 				if(connected){
+					Log.d(TAG, "set input source to DTV");
 					setInputSource(TVConst.SourceInput.SOURCE_DTV);
 				}
 				else{
@@ -502,13 +525,20 @@ abstract public class DTVActivity extends TVActivity{
 				Log.d(TAG, "DTVActivity_ActivedStateManage actived stop music set vpath");
 			}
 
-			dtvactivity_actived_num++;
+			if(isStop == true) {
+				Log.d(TAG, "DTVPlayer is restart , for some reason ??");
+			} else {
+				dtvactivity_actived_num++;
+				Log.d(TAG, "start a new activity, count:"+dtvactivity_actived_num);
+			}
+			isStop = false;
 		}
 		else{
-			dtvactivity_actived_num--;
+			//dtvactivity_actived_num--;
 
 			if(dtvactivity_actived_num == 0){
 				/*reset vpath, this is borrow SOURCE_ATV parameter*/
+				Log.d(TAG, "set input source to ATV");
 				setInputSource(TVConst.SourceInput.SOURCE_ATV);
 			}			
 		}
