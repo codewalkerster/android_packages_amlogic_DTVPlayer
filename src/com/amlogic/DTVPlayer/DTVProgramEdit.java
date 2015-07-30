@@ -234,14 +234,16 @@ public class DTVProgramEdit extends DTVActivity{
 			t.start();
 		}
 		video_axis = getVideoWindowSize();
+
+		TVSubtitleView mSubtitleView= (TVSubtitleView) findViewById(R.id.mSubtitleView);
+		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
+		openVideo(video_view, mSubtitleView);
 	}
 
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
-		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
-		TVSubtitleView mSubtitleView= (TVSubtitleView) findViewById(R.id.mSubtitleView);
-		openVideo(video_view,mSubtitleView);
+		showVideo();
 		mDTVSettings = new DTVSettings(this);
 		DTVChannelList_UI_Init();
 		myAdapter.notifyDataSetChanged();
@@ -258,7 +260,7 @@ public class DTVProgramEdit extends DTVActivity{
 
 	public void onMessage(TVMessage msg){
 		super.onMessage(msg);
-		Log.d(TAG, "message "+msg.getType());
+		Log.d(TAG+"-MSG", "message "+msg.getType());
 		switch (msg.getType()) {
 			case TVMessage.TYPE_PROGRAM_START:
 				if(getCurrentProgramType()==TVProgram.TYPE_RADIO)

@@ -132,7 +132,7 @@ abstract public class DTVActivity extends TVActivity{
 	}	
 
 	public void onMessage(TVMessage msg){
-		Log.d(TAG, "message "+msg.getType());
+		Log.d(TAG+"-MSG", "message "+msg.getType());
 		onDialogStatusRecord(msg);
 	}
 

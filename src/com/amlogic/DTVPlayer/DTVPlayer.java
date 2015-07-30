@@ -135,7 +135,7 @@ public class DTVPlayer extends DTVActivity{
 		//TVMessage msg = TVMessage.inputSourceChanged((int)(int) TVConst.SourceInput.SOURCE_DTV.ordinal());
 		//onMessage(msg);
 		if(mDialogManager!=null)
-			mDialogManager.setActive(true);
+			mDialogManager.setActive(bHavePragram);
 		controlUpdate(0/*cmd:setVersion*/, 0, Version);
 	}
 
@@ -146,7 +146,7 @@ public class DTVPlayer extends DTVActivity{
 
 	public void onMessage(TVMessage msg){
 		super.onMessage(msg);
-		Log.d(TAG, "message "+msg.getType());
+		Log.d(TAG+"-MSG", "message "+msg.getType());
 		switch (msg.getType()) {
 			case TVMessage.TYPE_SCAN_PROGRESS:
 				
