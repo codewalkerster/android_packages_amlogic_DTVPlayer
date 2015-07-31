@@ -6166,6 +6166,7 @@ public class DTVSettingsMenu extends DTVActivity {
 	public void showDemodAndDmxConfigMenuDebugDialog(){
 		//String mode = mDTVSettings.getDtvMode();
 		int pos = 0;
+	
 		new SingleChoiseDialog(DTVSettingsMenu.this,new String[]{ "AVL6211(DVBS)", "MXL101(DVBT)","SI2168(DVBT/T2)","MXL241(DVBC)"},pos){
 			public void onSetMessage(View v){
 				((TextView)v).setText("DTV Mode");
