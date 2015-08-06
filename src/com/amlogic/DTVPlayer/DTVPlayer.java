@@ -35,6 +35,8 @@ import android.os.PowerManager;
 import android.text.*;
 import android.text.method.*;
 import android.graphics.Color;
+import android.content.Context; 
+import android.content.res.Resources;
 
 import com.amlogic.widget.PasswordDialog;
 import com.amlogic.widget.SureDialog;
@@ -87,6 +89,7 @@ public class DTVPlayer extends DTVActivity{
 	}
 	private static final int[] MENUS = new int[menu.MENU_NUM.ordinal()];
 
+	private int cur_db_id = -1;
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
@@ -985,6 +988,7 @@ public class DTVPlayer extends DTVActivity{
 					Log.d(TAG,"setProgramType(TVProgram.TYPE_TV)");
 				}
 				DTVPlayerPlayById(db_id);
+				cur_db_id = db_id;
 
 				ret = true;
 			}
@@ -1757,7 +1761,21 @@ public class DTVPlayer extends DTVActivity{
 	private void ShowChannelList(){
 		Intent pickerIntent = new Intent();
 		Bundle bundle_list = new Bundle();
-		bundle_list.putInt("db_id", DTVPlayerGetCurrentProgramID());
+		/*
+		 * BUG PD #110435: save vaild db_id to bundle.
+		 */
+		if(cur_db_id == -1){
+			if(-1 != DTVPlayerGetCurrentProgramID()) {
+				Log.d(TAG, "not save cur_db_id, put db_id:"+DTVPlayerGetCurrentProgramID());
+				bundle_list.putInt("db_id", DTVPlayerGetCurrentProgramID());
+			} else {
+				Log.d(TAG, "error, not find valid db_id");
+			}
+
+		} else {
+			Log.d(TAG, "put cur_db_id:"+cur_db_id+", getProgramID:"+DTVPlayerGetCurrentProgramID());
+			bundle_list.putInt("db_id", cur_db_id);
+		}
 		pickerIntent.putExtras(bundle_list);
 		pickerIntent.setClass(DTVPlayer.this, DTVChannelList.class);
 		startActivity(pickerIntent);
@@ -2274,9 +2292,19 @@ public class DTVPlayer extends DTVActivity{
 						}
 						else{
 							DTVPlayerPlayByProNo(pronumber);
-							pronumber = 0;	
+							//pronumber = 0;	
 							pronumber_string ="";
 							HideProgramNo();
+							/*
+							 * BUG PD #110435: save vaild db_id when play by program number.
+							 */
+							TVProgram prog  = null;
+							int type = getCurrentProgramType();
+							TVProgramNumber num = new TVProgramNumber(pronumber);
+							prog = TVProgram.selectByNumber(DTVPlayer.this, type, num);
+							cur_db_id = prog.getID();
+							Log.d(TAG, "DTVPlayerPlayByProNo:"+pronumber+", save db_id:"+cur_db_id);
+							pronumber = 0;
 						}
 					}	
 				}	
