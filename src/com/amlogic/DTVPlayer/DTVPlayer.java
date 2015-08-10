@@ -2302,8 +2302,12 @@ public class DTVPlayer extends DTVActivity{
 							int type = getCurrentProgramType();
 							TVProgramNumber num = new TVProgramNumber(pronumber);
 							prog = TVProgram.selectByNumber(DTVPlayer.this, type, num);
-							cur_db_id = prog.getID();
-							Log.d(TAG, "DTVPlayerPlayByProNo:"+pronumber+", save db_id:"+cur_db_id);
+							if( prog != null ) {
+								cur_db_id = prog.getID();
+								Log.d(TAG, "DTVPlayerPlayByProNo:"+pronumber+", save db_id:"+cur_db_id);
+							} else {
+								Log.d(TAG, "Error: can't get TVProgram, DTVPlayerPlayByProNo:"+pronumber);
+							}
 							pronumber = 0;
 						}
 					}	
