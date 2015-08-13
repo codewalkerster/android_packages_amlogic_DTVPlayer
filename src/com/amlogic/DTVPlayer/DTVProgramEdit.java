@@ -236,6 +236,12 @@ public class DTVProgramEdit extends DTVActivity{
 		video_axis = getVideoWindowSize();
 
 		TVSubtitleView mSubtitleView= (TVSubtitleView) findViewById(R.id.mSubtitleView);
+		/*
+		 *	#PD 110690: for some reason , bitmap heap error. disable subtitleView when create 
+		 *	ProgramEdit activity
+		 * 	Fixed me!
+		 */
+		mSubtitleView.setVisible(false);
 		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
 		openVideo(video_view, mSubtitleView);
 	}
