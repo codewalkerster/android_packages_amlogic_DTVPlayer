@@ -501,7 +501,7 @@ abstract public class DTVActivity extends TVActivity{
 	private synchronized void DTVActivity_ActivedStateManage(boolean actived){
 		Log.d(TAG, "DTVActivity_ActivedStateManage actived " + actived + " dtvactivity_actived_num " + dtvactivity_actived_num);
 		if(actived){
-			if(dtvactivity_actived_num == 0){
+			/*if(dtvactivity_actived_num == 0)*/{
 				/*stop music play when dtv actived*/
 				Intent stopMusicIntent = new Intent();
 				stopMusicIntent.setAction("com.android.music.musicservicecommand.pause");

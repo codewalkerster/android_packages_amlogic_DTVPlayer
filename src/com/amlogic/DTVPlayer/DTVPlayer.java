@@ -362,7 +362,7 @@ public class DTVPlayer extends DTVActivity{
 	protected void onStop(){
 		Log.d(TAG, "onStop");
 		switchScreenType(0);
-		//stopPlaying();
+		stopPlaying();
 		if(toast!=null)
 			toast.cancel(); 
 		//writeSysFile("/sys/class/graphics/fb0/free_scale","1");
