@@ -66,6 +66,7 @@ public class DTVPlayer extends DTVActivity{
 	DTVSettings mDTVSettings=null;	
 	private PowerManager.WakeLock wakeLock = null;
 	private HomeKeyEventBroadCastReceiver home_receiver=null;
+
 	private enum menu{
 		PROGRAM,
 		SEARCH,
@@ -263,7 +264,9 @@ public class DTVPlayer extends DTVActivity{
 				}
 				break;
 			case TVMessage.TYPE_INPUT_SOURCE_CHANGED:
-				if((msg.getSource()==(int) TVConst.SourceInput.SOURCE_DTV.ordinal())){
+				Log.d(TAG,"---TYPE_INPUT_SOURCE_CHANGED---");
+				if(getPlaying() && isTopActivity(this) &&
+					(msg.getSource()==(int) TVConst.SourceInput.SOURCE_DTV.ordinal())){
 					if(isHavePragram()==false){ 
 						bHavePragram = false;
 						hideRadioBg();
@@ -337,6 +340,12 @@ public class DTVPlayer extends DTVActivity{
 		else
 			mDialogManager.setActive(false);
 		super.onResume();
+
+		if(!getPlaying()){
+			Log.d(TAG,">>>playValid<<<");
+			playValid();
+		}
+
 		mDialogManager.resumeDialog();
 		DTVPlayerGetCurrentProgramData();
 		updateInforbar();
@@ -362,7 +371,7 @@ public class DTVPlayer extends DTVActivity{
 	protected void onStop(){
 		Log.d(TAG, "onStop");
 		switchScreenType(0);
-		//stopPlaying();
+		stopPlaying();
 		if(toast!=null)
 			toast.cancel(); 
 		//writeSysFile("/sys/class/graphics/fb0/free_scale","1");

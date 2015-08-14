@@ -77,7 +77,7 @@ public class DTVPvrManager extends DTVActivity{
 	}
 
 	public void onMessage(TVMessage msg){
-		Log.d(TAG, "message "+msg.getType());
+		Log.d(TAG+"-MSG", "message "+msg.getType());
 		switch (msg.getType()) {
 			case TVMessage.TYPE_SCAN_PROGRESS:
 				

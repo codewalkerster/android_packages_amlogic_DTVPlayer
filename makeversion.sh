@@ -26,6 +26,6 @@ else
         SHARE_USER_ID=android.uid.system
 fi
 
-#SHARE_USER_ID=android.uid.system
+SHARE_USER_ID=android.uid.system
 
 cat $1 | sed s/android:versionName=\"1.0\"/android:versionName=\"$APKVERSION\"/ | sed s/android:sharedUserId=\"android.uid.system\"/android:sharedUserId=\"$SHARE_USER_ID\"/ >$2

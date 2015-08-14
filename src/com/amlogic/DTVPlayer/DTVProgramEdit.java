@@ -252,6 +252,7 @@ public class DTVProgramEdit extends DTVActivity{
 		showVideo();
 		mDTVSettings = new DTVSettings(this);
 		DTVChannelList_UI_Init();
+		playProgram(db_id);
 		myAdapter.notifyDataSetChanged();
 	}
 
