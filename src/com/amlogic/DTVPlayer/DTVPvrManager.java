@@ -347,7 +347,8 @@ public class DTVPvrManager extends DTVActivity{
 			case KeyEvent.KEYCODE_BACK:
 				DTVPvrPlayerStop();
 				Bundle bundle = new Bundle();	
-				bundle.putString("activity_tag", "play_program");				
+				bundle.putString("activity_tag", "play_program");
+				bundle.putInt("menu", R.string.setting_menu_program);
 				Intent intent = new Intent();
 				intent.setClass(DTVPvrManager.this, DTVSettingsMenu.class);
 				intent.putExtras(bundle);

@@ -644,7 +644,8 @@ public class DTVPlayer extends DTVActivity{
 						}       
 					}
 					
-					if(isHaveExternalStorage()){						
+					if(isHaveExternalStorage()){
+						stopPlaying();
 						Intent Intent_timeshifting = new Intent();
 						Intent_timeshifting.setClass(DTVPlayer.this,DTVTimeshifting.class);
 						startActivity(Intent_timeshifting);
@@ -1440,6 +1441,7 @@ public class DTVPlayer extends DTVActivity{
 				case R.string.timeshift_time_set:
 					if (!mDTVSettings.getCheckProgramLock()) {
 						if (isHaveExternalStorage()) {
+							stopPlaying();
 							Intent timeshift = new Intent();
 							timeshift.setClass(DTVPlayer.this, DTVTimeshifting.class);
 							startActivity(timeshift);
@@ -1574,6 +1576,7 @@ public class DTVPlayer extends DTVActivity{
 					break;
 				case R.id.Button_mainmenu_timeshift:
 					if(isHaveExternalStorage()){
+						stopPlaying();
 						Intent Intent_timeshift = new Intent();
 						Intent_timeshift.setClass(DTVPlayer.this, DTVTimeshifting.class);
 						startActivity(Intent_timeshift);
