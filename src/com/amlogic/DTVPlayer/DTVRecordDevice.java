@@ -534,6 +534,12 @@ public class DTVRecordDevice extends DTVActivity {
 		switch(keyCode){
 		
 			case KeyEvent.KEYCODE_BACK:
+				Intent intent = new Intent();
+				Bundle bundle = new Bundle();
+				bundle.putInt("menu", R.string.setting_menu_program);
+				intent.putExtras(bundle);
+				intent.setClass(DTVRecordDevice.this, DTVSettingsMenu.class);
+				startActivity(intent);
 	            finish();
 	            break;
 		}

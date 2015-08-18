@@ -825,8 +825,9 @@ public class DTVSettingsMenu extends DTVActivity {
 					case 2:
 						Intent Intent_record_device = new Intent();
 		        		Intent_record_device.setClass(DTVSettingsMenu.this, DTVRecordDevice.class);
-		        		startActivityForResult(Intent_record_device,12);
-						//DTVSettingsMenu.this.finish();
+		        		//startActivityForResult(Intent_record_device,12);
+						startActivity(Intent_record_device);
+						DTVSettingsMenu.this.finish();
 						break;
 					case 3:
 						showPvrManagerPasswordDialog();
@@ -911,8 +912,9 @@ public class DTVSettingsMenu extends DTVActivity {
 					case 2:
 						Intent Intent_record_device = new Intent();
 		        			Intent_record_device.setClass(DTVSettingsMenu.this, DTVRecordDevice.class);
-		        			startActivityForResult(Intent_record_device,12);
-						//DTVSettingsMenu.this.finish();
+		        		//	startActivityForResult(Intent_record_device,12);
+						startActivity(Intent_record_device);
+						DTVSettingsMenu.this.finish();
 						break;
 					case 3:
 						showPvrManagerPasswordDialog();
