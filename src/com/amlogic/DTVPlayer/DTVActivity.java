@@ -1132,6 +1132,12 @@ abstract public class DTVActivity extends TVActivity{
 		else
 			return false;
 	}
-	
+
+	public void onVideoViewFixStart(){
+		DTVSetScreenMode(DTVGetScreenMode());
+	}
+	public void onVideoViewFixStop(){
+		DTVSetScreenMode(DTVGetScreenMode());
+	}
 }
 	

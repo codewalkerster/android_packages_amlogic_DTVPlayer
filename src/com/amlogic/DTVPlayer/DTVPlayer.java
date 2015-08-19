@@ -361,7 +361,7 @@ public class DTVPlayer extends DTVActivity{
 	
 	@Override
 	protected void onStart(){
-		Log.d(TAG, "onStart");
+		Log.d(TAG, ">>>>>>>>onStart<<<<<<<<");
 		super.onStart();
 		//writeSysFile("/sys/class/graphics/fb0/free_scale","0");
 		//writeSysFile("/sys/class/graphics/fb0/request2XScale","8");
@@ -369,8 +369,7 @@ public class DTVPlayer extends DTVActivity{
 
 	@Override
 	protected void onStop(){
-		Log.d(TAG, "onStop");
-		switchScreenType(0);
+		Log.d(TAG, ">>>>>>>>onStop<<<<<<<<");
 		stopPlaying();
 		if(toast!=null)
 			toast.cancel(); 
@@ -380,7 +379,7 @@ public class DTVPlayer extends DTVActivity{
 	}
 
 	public void onDestroy() {
-		Log.d(TAG, "onDestroy");
+		Log.d(TAG, ">>>>>>>>onDestroy<<<<<<<<");
 
 		 if(home_receiver!=null)
 			unregisterReceiver(home_receiver);

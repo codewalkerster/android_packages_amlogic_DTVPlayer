@@ -256,6 +256,11 @@ public class DTVProgramEdit extends DTVActivity{
 		myAdapter.notifyDataSetChanged();
 	}
 
+	public void onVideoViewFixStart(){
+		//force default screen mode setting.
+		//waiting for the vpp fix.
+	}
+
 	public void onDisconnected(){
 		Log.d(TAG, "disconnected");
 		super.onDisconnected();
