@@ -6050,8 +6050,9 @@ public class DTVSettingsMenu extends DTVActivity {
 		bundle.putInt("db_id", DTVPlayerGetCurrentProgramID());
 		intent.putExtras(bundle);
 		intent.setClass(this, DTVProgramEdit.class);
-		startActivityForResult(intent, 11);
-		onHide();
+		//startActivityForResult(intent, 11);
+		//onHide();
+		startActivity(intent);
 	}
 
 	private void DTVStartVChip(){
