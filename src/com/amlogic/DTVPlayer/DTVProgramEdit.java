@@ -246,6 +246,15 @@ public class DTVProgramEdit extends DTVActivity{
 		openVideo(video_view, mSubtitleView);
 	}
 
+	@Override
+	protected void onStop(){
+		Log.d(TAG, "onStop");
+
+		stopPlaying();
+
+		super.onStop();
+	}
+
 	public void onConnected(){
 		Log.d(TAG, "connected");
 		super.onConnected();
@@ -295,6 +304,10 @@ public class DTVProgramEdit extends DTVActivity{
 				}
 				if(isTopActivity(this))
 					showStopPVRDialog(recordConflict, msg.getProgramID());
+				break;
+			case TVMessage.TYPE_INPUT_SOURCE_CHANGED:
+				Log.d(TAG,"---TYPE_INPUT_SOURCE_CHANGED---");
+				playProgram(db_id);
 				break;
 			default:
 				break;

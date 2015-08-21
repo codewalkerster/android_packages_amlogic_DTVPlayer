@@ -76,25 +76,35 @@ public class DTVTimeshifting extends DTVActivity{
 	@Override
 	protected void onStart(){
 		Log.d(TAG, "onStart");
+
 		super.onStart();
+
+		if(stopped)
+			this.finish();
+
 		mount_receiver = new MountEventReceiver();
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(Intent.ACTION_MEDIA_EJECT);
 		filter.addDataScheme("file");
 		registerReceiver(mount_receiver, filter);
 	}
-	
+
+	private boolean stopped = false;
+
 	@Override
 	protected void onStop(){
 		Log.d(TAG, "onStop");
+		if(!stopped) {
+			DTVTimeShiftingStop();
+			timeshiftingUIHandler.removeCallbacks(timeshiftingUITimer);
+			unblock();
+			if(toast!=null)
+				toast.cancel(); 
+			if(mount_receiver != null)
+				unregisterReceiver(mount_receiver);
+		}
+		stopped = true;
 		super.onStop();
-		timeshiftingUIHandler.removeCallbacks(timeshiftingUITimer);
-		unblock();
-		if(toast!=null)
-			toast.cancel(); 
-		if(mount_receiver != null)
-			unregisterReceiver(mount_receiver);
-		this.finish();
 	}
 
 	public void onDisconnected(){
@@ -550,10 +560,7 @@ public class DTVTimeshifting extends DTVActivity{
 			}
 			public void onSetPositiveButton(){
 				DTVTimeShiftingStop();
-				Intent intent = new Intent();
-				intent.setClass(DTVTimeshifting.this, DTVPlayer.class);
-				startActivity(intent);
-				finish();	
+				gotoDTVPlayer();
 			}
 		};
 	}
