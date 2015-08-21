@@ -370,7 +370,13 @@ public class DTVPlayer extends DTVActivity{
 	@Override
 	protected void onStop(){
 		Log.d(TAG, ">>>>>>>>onStop<<<<<<<<");
+
+		if(DTVPlayerIsRecording()){
+			DTVPlayerStopRecording();
+		}
+
 		stopPlaying();
+
 		if(toast!=null)
 			toast.cancel(); 
 		//writeSysFile("/sys/class/graphics/fb0/free_scale","1");
