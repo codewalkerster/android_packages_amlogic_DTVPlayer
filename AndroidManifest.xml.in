@@ -42,7 +42,7 @@
 	<activity android:name=".DTVMainMenu"	android:theme="@style/Transparent"/> 
 	<activity android:name=".DTVSettingsUI"	android:theme="@style/Transparent"/> 
 	<activity android:name=".DTVChannelList" android:theme="@style/Transparent"/> 
-	<activity android:name=".DTVEpg"/> 
+	<activity android:name=".DTVEpg" android:theme="@style/Transparent"/> 
 	<activity android:name=".DTVTimeshifting"/> 
 	<activity android:name=".DTVPvrPlayer"/> 
 	<activity android:name=".DTVRecManager"	android:theme="@style/Transparent"/> 
