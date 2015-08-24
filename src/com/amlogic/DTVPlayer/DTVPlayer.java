@@ -964,9 +964,6 @@ public class DTVPlayer extends DTVActivity{
 		if (bundle != null && bundle.containsKey("booking_id")){
 			int bookingID = bundle.getInt("booking_id");
 
-			Log.d(TAG, "Try to set input source to DTV.");
-			setInputSource(TVConst.SourceInput.SOURCE_DTV);
-
 			if(isHaveExternalStorage()==false){
 				CheckUsbdevice dev = new CheckUsbdevice(DTVPlayer.this);
 				String path  = dev.getDevice();
