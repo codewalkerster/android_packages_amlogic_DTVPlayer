@@ -371,8 +371,9 @@ public class DTVPlayer extends DTVActivity{
 	protected void onStop(){
 		Log.d(TAG, ">>>>>>>>onStop<<<<<<<<");
 
-		if(DTVPlayerIsRecording()){
+		if(player_start_recording && DTVPlayerIsRecording()){
 			DTVPlayerStopRecording();
+			player_start_recording = false;
 		}
 
 		stopPlaying();
@@ -2672,6 +2673,7 @@ public class DTVPlayer extends DTVActivity{
 		}
 	}
 
+	private boolean player_start_recording = false;
 	private String pronumber_string="";
 	private int pronumber=0;
 	private int recordDurationMin=1;
@@ -3294,6 +3296,7 @@ public class DTVPlayer extends DTVActivity{
 									}
 									recordDurationMin = dration;
 									DTVPlayerStartRecording(dration*60*1000);
+									player_start_recording = true;
 									showPvrIcon();
 									mCustomDialog.dismissDialog();
 								}
@@ -3337,6 +3340,7 @@ public class DTVPlayer extends DTVActivity{
 						playProgram(programID);
 					}
 					DTVPlayerStartRecording(recordDurationMin*60*1000);
+					player_start_recording = true;
 					showPvrIcon();
 				}else if (conflict == TVMessage.REC_CFLT_SWITCH_PROGRAM){
 					playProgram(programID);
@@ -3535,6 +3539,7 @@ public class DTVPlayer extends DTVActivity{
 		      // TODO Auto-generated method stub
 		     	Log.d(TAG, "@@@ready to record...");
 		     	DTVPlayerStartRecording(60*60*1000);
+				player_start_recording = true;
 		     	showDebugRecordProgressDialog();
 		     }
 		    })
