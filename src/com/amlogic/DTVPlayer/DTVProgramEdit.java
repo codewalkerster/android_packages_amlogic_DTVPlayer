@@ -604,8 +604,9 @@ public class DTVProgramEdit extends DTVActivity{
 					Log.d(TAG,"mOnItemClickListener pos="+position);
 					int serviceType = mTVProgramList[position].getType();
 					DTVPlayerPlayById(db_id);
-					if(mTVProgramList[position].getLockFlag())
+					if(!mTVProgramList[position].getLockFlag())
 						unblock();
+					Log.d(TAG, "mOnItemClickListener, lock flag:"+mTVProgramList[position].getLockFlag());
 				}
 
 		}
@@ -813,6 +814,10 @@ public class DTVProgramEdit extends DTVActivity{
 			case DTVActivity.KEYCODE_BLUE_BUTTON:
 				dealLock(cur_select_item);
 				myAdapter.notifyDataSetChanged();
+				/*
+				 * #pd 112208 , click lock/unlock key, check the lock mode again.
+				 */
+				replay();
 				break;
 			case DTVActivity.KEYCODE_RED_BUTTON:
 				if(mTVProgramList!=null&&mTVProgramList.length>0){
@@ -1565,8 +1570,9 @@ public class DTVProgramEdit extends DTVActivity{
 
 	        			ListView_channel.setSelection(i);
 					cur_select_item = i;
-					if (mTVProgramList[i].getLockFlag())
+					if (!mTVProgramList[i].getLockFlag())
 						unblock();
+					Log.d(TAG, "setFocusPosition, get lock flag:"+mTVProgramList[i].getLockFlag());
 					break;
 				}
 			}

@@ -1125,8 +1125,13 @@ public class DTVPlayer extends DTVActivity{
 					
 				}
 				else{
-					hidePasswordDialog();
-					DismissDialog();
+					if(!mDTVSettings.getCheckProgramLock()) {
+						hidePasswordDialog();
+						DismissDialog();
+					} else {
+						Log.d(TAG, "program is lock, it's not need to hide passWordDialog");
+						DismissDialog();
+					}
 				}
 				
 		}
