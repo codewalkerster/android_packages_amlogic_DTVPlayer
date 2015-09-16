@@ -436,6 +436,8 @@ public class DTVPlayer extends DTVActivity{
 					else if(checkFactoryReset()){
 						bHavePragram = false;
 						hideRadioBg();
+						mDialogManager.DismissDialog();
+						Log.d(TAG, "factory reset, showNoProgramDia, dismiss last dialog first");
 						showNoProgramDia(); 
 					}
 					else{
@@ -2659,6 +2661,7 @@ public class DTVPlayer extends DTVActivity{
 					text.setText(R.string.dtvplayer_no_signal);
 					text.setTextSize(27); 
 					text.setGravity(Gravity.CENTER);
+					break;
 				case 3:
 					text.setText(R.string.dtvplayer_scrambled);
 					text.setTextSize(27); 
