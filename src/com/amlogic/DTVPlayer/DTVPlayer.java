@@ -3032,7 +3032,9 @@ public class DTVPlayer extends DTVActivity{
 			else{
 				setProgramType(TVProgram.TYPE_TV);
 			}
+			Log.d(TAG, "play recall program, save db_id:"+recall_tvprogram[0].getID());
 			DTVPlayerPlayById(recall_tvprogram[0].getID());
+			cur_db_id = recall_tvprogram[0].getID();
 		}
 	}
 
