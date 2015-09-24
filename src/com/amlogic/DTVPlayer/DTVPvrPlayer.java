@@ -229,7 +229,6 @@ public class DTVPvrPlayer extends DTVActivity{
 	ImageButton fastreverse;
 	ImageView TimeshiftingIcon;
 	private boolean SeekSliding = false;
-	int myProgressBar_pos=0;
 	private Toast toast=null;
 	private boolean teletext_bar_flag=false;
 
@@ -451,7 +450,7 @@ public class DTVPvrPlayer extends DTVActivity{
         });
 
 
-        if (curtime != 0)
+        if (curtime != 0 && totaltime != 0)
         	myProgressBar.setProgress((int)(curtime*100/totaltime/1000));
 
         	myProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
@@ -460,7 +459,6 @@ public class DTVPvrPlayer extends DTVActivity{
 				int dest = myProgressBar.getProgress();
 				int pos = (int)totaltime * dest / 100;
 				DTVTimeShiftingSeek(pos);
-				myProgressBar_pos = (int)curtime*100/(int)totaltime;
 			}
 			public void onStartTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
@@ -469,9 +467,13 @@ public class DTVPvrPlayer extends DTVActivity{
 
 			public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
 				// TODO Auto-generated method stub	
-				if(SeekSliding){
+					/*
+					 * PD #112293, save current pos when progress is changed from user
+					 */
+				if(fromUser){
 					getCurrentTime = (int)totaltime*progress/100;
-					SeekSliding=false;
+					Log.d(TAG, "curTime change to:"+getCurrentTime+", userFlag:"+fromUser);
+					//SeekSliding=false;
 				}
 			}
 		});
@@ -1037,13 +1039,11 @@ public class DTVPvrPlayer extends DTVActivity{
 		text_total_time.setText(secToTime(totaltime, true));
 
 		if (totaltime == 0){
-			myProgressBar_pos = 0;
 			myProgressBar.setProgress(0);
 		}
 		else {
 			//if (!SeekSliding){
 				myProgressBar.setProgress(((int)curtime*100)/(int)totaltime);
-				myProgressBar_pos =((int)curtime*100)/(int)totaltime;
 			//}
 		}
 	}
