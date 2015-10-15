@@ -259,7 +259,8 @@ public class DTVProgramEdit extends DTVActivity{
 		Log.d(TAG, "connected");
 		super.onConnected();
 		showVideo();
-		mDTVSettings = new DTVSettings(this);
+		if(mDTVSettings == null)
+			mDTVSettings = new DTVSettings(this);
 		DTVChannelList_UI_Init();
 		playProgram(db_id);
 		myAdapter.notifyDataSetChanged();
@@ -277,6 +278,8 @@ public class DTVProgramEdit extends DTVActivity{
 			t.quitLoop();
 			t=null;
 		}
+		if(mDTVSettings != null)
+			mDTVSettings = null;
 	}
 
 	public void onMessage(TVMessage msg){
