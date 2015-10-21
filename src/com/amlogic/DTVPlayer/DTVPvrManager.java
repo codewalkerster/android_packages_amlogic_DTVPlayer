@@ -49,6 +49,8 @@ public class DTVPvrManager extends DTVActivity{
 		writeSysFile("/sys/class/video/disable_video","2");
 		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
 		openVideo(video_view,null);
+
+		mHandler = new Handler();
 	}
 
 	protected void onRestart() {
@@ -125,8 +127,10 @@ public class DTVPvrManager extends DTVActivity{
 							","+teletexts[i].getPageNumber());
 					}
 				}
+				isPlayStarted = true;
 				break;
 			case TVMessage.TYPE_PLAYBACK_STOP:
+				isPlayStarted = false;
 			case TVMessage.TYPE_PROGRAM_STOP:
 				writeSysFile("/sys/class/video/disable_video","2");
 				break;
@@ -342,7 +346,6 @@ public class DTVPvrManager extends DTVActivity{
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
-
 		 switch (keyCode){
 			case KeyEvent.KEYCODE_BACK:
 				DTVPvrPlayerStop();
@@ -377,13 +380,7 @@ public class DTVPvrManager extends DTVActivity{
 				if(getFileListCount()>0){
 					DTVPvrPlayerStop();
 					filename = getServiceInfoByPostion(cur_select_item);
-					Bundle bundle_pvr_player = new Bundle();										           
-					bundle_pvr_player.putString("file_name", filename); 	
-					Intent Intent_pvrplayer = new Intent();
-					Intent_pvrplayer.setClass(DTVPvrManager.this, DTVPvrPlayer.class);
-					Intent_pvrplayer.putExtras(bundle_pvr_player);
-	                		startActivity(Intent_pvrplayer);
-					DTVPvrManager.this.finish();
+					tryPlayFile(filename);
 				}	
 				return true;	
 			case DTVActivity.KEYCODE_RED_BUTTON:
@@ -393,6 +390,7 @@ public class DTVPvrManager extends DTVActivity{
 					String file_name = getServiceInfoByPostion(cur_select_item);	
 					if(file_name!=null){
 						setBlackoutPolicy(1);
+						filename = getServiceInfoByPostion(cur_select_item);
 						startPlayback(file_name);
 					}	
 				}	
@@ -418,7 +416,51 @@ public class DTVPvrManager extends DTVActivity{
 		
 		return super.onKeyDown(keyCode, event);
 	}	  
-    
+
+	private TryPlayFileRunnable mTryPlayFileRunnable;
+	private Handler mHandler;
+	private boolean isPlayStarted = false;
+
+	private void playFile(String filename){
+		Bundle bundle_pvr_player = new Bundle();
+		bundle_pvr_player.putString("file_name", filename);
+		Intent Intent_pvrplayer = new Intent();
+		Intent_pvrplayer.setClass(DTVPvrManager.this, DTVPvrPlayer.class);
+		Intent_pvrplayer.putExtras(bundle_pvr_player);
+		startActivity(Intent_pvrplayer);
+		DTVPvrManager.this.finish();
+	}
+
+	private class TryPlayFileRunnable implements Runnable {
+		private static final int RETRY_DELAY_MS = 200;
+		private final String mFilename;
+
+		public TryPlayFileRunnable(String filename) {
+			mFilename = filename;
+		}
+
+		@Override
+		public void run() {
+			if (!isPlayStarted) {
+				playFile(mFilename);
+			} else {
+				Log.w(TAG, "waiting for play:" + mFilename + ". Retry in " +
+						RETRY_DELAY_MS + "ms.");
+				mHandler.postDelayed(mTryPlayFileRunnable, RETRY_DELAY_MS);
+			}
+		}
+	}
+
+	/*play-end-evt behindhand may confuse the pvrplayer when quick op on F1&F2.
+	   so wait for play-end-evt first, then jump.
+	*/
+	private void tryPlayFile(String filename) {
+		mHandler.removeCallbacks(mTryPlayFileRunnable);
+		mTryPlayFileRunnable = new TryPlayFileRunnable(filename);
+		mHandler.post(mTryPlayFileRunnable);
+	}
+
+
     public String getServiceInfoByPostion(int position){
 		if(filenameList!=null)
     		return filenameList.get(position).getPath();
