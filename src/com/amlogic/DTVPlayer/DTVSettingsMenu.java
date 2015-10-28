@@ -4718,6 +4718,7 @@ public class DTVSettingsMenu extends DTVActivity {
 					case KeyEvent.KEYCODE_BACK:
 						if(mDialog!=null&& mDialog.isShowing()){
 							mDialog.dismiss();
+							resumeEpg();
 						}
 						break;
 				}
@@ -4732,6 +4733,8 @@ public class DTVSettingsMenu extends DTVActivity {
 		if(mDialog == null){
 			return;
 		}
+
+		pauseEpg();
 
 		mDialog.show();
 
