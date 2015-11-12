@@ -461,6 +461,8 @@
 	<!--Digital Caption Options-->
 	<string name="cc_digital_options">Digital Caption Options</string>
 
+	<string name="cc_digital_options_xxx_default">Default</string>
+
   	<string name="cc_digital_options_size">Size</string>
   	<string name="cc_digital_options_size_large">Large</string>
   	<string name="cc_digital_options_size_small">Small</string>
@@ -478,7 +480,8 @@
   	
 	<string name="cc_digital_options_foreground_color">Foreground Color</string>
 	<string name="cc_digital_options_background_color">Background Color</string>
-	
+
+	<string name="cc_digital_options_color_white">White</string>	
 	<string name="cc_digital_options_color_black">Black</string>
 	<string name="cc_digital_options_color_red">Red</string>
 	<string name="cc_digital_options_color_green">Green</string>
@@ -490,7 +493,6 @@
   	<string name="cc_digital_options_foreground_opacity">Foreground Opacity</string>
 	<string name="cc_digital_options_background_opacity">Background Opacity</string>
 	
-	<string name="cc_digital_options_opacity_default">Default</string>
 	<string name="cc_digital_options_opacity_transparent">Transparent</string>
 	<string name="cc_digital_options_opacity_translucent">Translucent</string>
 	<string name="cc_digital_options_opacity_solid">Solid</string>

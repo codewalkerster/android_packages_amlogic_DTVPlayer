@@ -34,15 +34,15 @@ public class DTVCaptionOptions extends DTVActivity {
 	private static SharedPreferences mLast = null;
 	IconAdapter adapter=null;
 	List<Map<String, Object>> list = null;
-	
+
 	int ListItemTitle[]={
-		R.string.cc_digital_options_size,
-		R.string.cc_digital_options_font_sytle,
+		//R.string.cc_digital_options_size,
+		//R.string.cc_digital_options_font_sytle,
 		R.string.cc_digital_options_foreground_color,
 		R.string.cc_digital_options_foreground_opacity,
 		R.string.cc_digital_options_background_color,
 		R.string.cc_digital_options_background_opacity,
-		R.string.cc_digital_options_retune_default
+		//R.string.cc_digital_options_retune_default
 	};
 
 	public void onCreate(Bundle savedInstanceState){
@@ -112,34 +112,33 @@ public class DTVCaptionOptions extends DTVActivity {
 			final TextView info_cur = (TextView)arg1.findViewById(R.id.info);
  			switch((int)position){
  				//FontSize
- 			    case 0:  
- 			    	showFontSizeDialog(info_cur);
- 			    	break;
+ 			    //case 0:  
+ 			    //	showFontSizeDialog(info_cur);
+ 			    //	break;
 				//FontStyle	
-				 case 1:
- 			    	showFontStyleDialog(info_cur);		
- 			    	break;
+				// case 1:
+ 			    //	showFontStyleDialog(info_cur);		
+ 			    //	break;
 				//ForegroundColor	
-				 case 2:
+				 case 0:
  			    	showForegroundColorDialog(info_cur);		
  			    	break;
 				//ForegroundOpacity	
-				 case 3:
+				 case 1:
  			    	showForegroundOpacityDialog(info_cur);		
  			    	break;
 				//BackgroundColor	
-				 case 4:
- 			    
+				 case 2:
  			    	showBackgroundColorDialog(info_cur);		
  			    	break;
 				//BackgroundOpacity	
-				 case 5:
+				 case 3:
  			    	showBackgroundOpacityDialog(info_cur);		
  			    	break;
 				//ReturnToDefault	
-				 case 6:
-				 	
- 			    	break;
+				// case 6:
+				// 	
+ 			    //	break;
 					
  			}
 			/*
@@ -209,32 +208,32 @@ public class DTVCaptionOptions extends DTVActivity {
 			holder.text2.setTextColor(Color.YELLOW);
 			switch(position){
 				//FontSize
- 			    case 0:  
-					holder.text2.setVisibility(View.VISIBLE);
- 			    	holder.text2.setText(getFontSize());
- 			    	break;
+ 			    //case 0:  
+				//	holder.text2.setVisibility(View.VISIBLE);
+ 			    //	holder.text2.setText(getFontSize());
+ 			    //	break;
 				//FontStyle	
-				 case 1:
-				 	holder.text2.setVisibility(View.VISIBLE);
- 			    	holder.text2.setText(getFontStyle());			
- 			    	break;
+				// case 1:
+				// 	holder.text2.setVisibility(View.VISIBLE);
+ 			    //	holder.text2.setText(getFontStyle());			
+ 			    //	break;
 				//ForegroundColor	
-				 case 2:
+				 case 0:
 				 	holder.text2.setVisibility(View.VISIBLE);
  			    	holder.text2.setText(getForegroundColor());	
  			    	break;
 				//ForegroundOpacity	
-				 case 3:
+				 case 1:
  					holder.text2.setVisibility(View.VISIBLE);
  			    	holder.text2.setText(getForegroundOpacity());	
  			    	break;
 				//BackgroundColor	
-				 case 4:
+				 case 2:
  			    	holder.text2.setVisibility(View.VISIBLE);
  			    	holder.text2.setText(getBackgroundColor());	
  			    	break;
 				//BackgroundOpacity	
-				 case 5:
+				 case 3:
  			    	holder.text2.setVisibility(View.VISIBLE);
  			    	holder.text2.setText(getBackgroundOpacity());	
  			    	break;
@@ -307,13 +306,14 @@ public class DTVCaptionOptions extends DTVActivity {
 	}	  
 
 	int FontSize_menu_items[] = {
-		R.string.cc_digital_options_size_standard,
+		R.string.cc_digital_options_xxx_default,
 		R.string.cc_digital_options_size_small,
+		R.string.cc_digital_options_size_standard,
 		R.string.cc_digital_options_size_large
 	};
 
 	int FontStyle_menu_items[] = {
-		R.string.cc_digital_options_font_sytle0,
+		R.string.cc_digital_options_xxx_default,
 		R.string.cc_digital_options_font_sytle1,
 		R.string.cc_digital_options_font_sytle2,
 		R.string.cc_digital_options_font_sytle3,
@@ -324,6 +324,8 @@ public class DTVCaptionOptions extends DTVActivity {
 	};
 
 	int ColorMode_menu_items[] = {
+		R.string.cc_digital_options_xxx_default,
+		R.string.cc_digital_options_color_white,
 		R.string.cc_digital_options_color_black,
 		R.string.cc_digital_options_color_red,
 		R.string.cc_digital_options_color_green,
@@ -334,7 +336,7 @@ public class DTVCaptionOptions extends DTVActivity {
 	 };
 	
 	int OpacityMode_menu_items[] = {
-		R.string.cc_digital_options_opacity_default,
+		R.string.cc_digital_options_xxx_default,
 		R.string.cc_digital_options_opacity_transparent,
 		R.string.cc_digital_options_opacity_translucent,
 		R.string.cc_digital_options_opacity_solid,
