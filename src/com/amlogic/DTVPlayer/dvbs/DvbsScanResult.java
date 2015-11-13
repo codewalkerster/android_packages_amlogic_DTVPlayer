@@ -369,7 +369,9 @@ public class DvbsScanResult extends DTVActivity{
 
 				if(mSatScanCount<DTVScanDvbsConfig.getDefaultList().size()){
 					
-					TVScanParams sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_QPSK, DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).ts_list);
+					//TVScanParams sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_QPSK, DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).ts_list);
+					TVScanParams sp = TVScanParams.dtvAutoScanParams(0, TVChannelParams.MODE_QPSK, DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).ts_list.get(0));
+
 					sp.setDtvOptions(getScanOptions());
 					startScan(sp);		
 					sat_info.setText(String.valueOf(mSatScanCount+1)+"/"+String.valueOf(DTVScanDvbsConfig.getDefaultList().size())+"						"+DTVScanDvbsConfig.getDefaultList().get(mSatScanCount).sat.sat_name);
