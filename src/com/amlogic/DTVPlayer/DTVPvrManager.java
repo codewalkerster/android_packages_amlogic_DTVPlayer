@@ -48,6 +48,7 @@ public class DTVPvrManager extends DTVActivity{
 		setContentView(R.layout.dtv_pvr_manager);
 		writeSysFile("/sys/class/video/disable_video","2");
 		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
+		switchScreenType(0);
 		openVideo(video_view,null);
 
 		mHandler = new Handler();

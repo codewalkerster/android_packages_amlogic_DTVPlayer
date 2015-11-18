@@ -243,6 +243,7 @@ public class DTVProgramEdit extends DTVActivity{
 		 */
 		mSubtitleView.setVisible(false);
 		VideoView video_view= (VideoView) findViewById(R.id.VideoView);
+		switchScreenType(0);
 		openVideo(video_view, mSubtitleView);
 	}
 
