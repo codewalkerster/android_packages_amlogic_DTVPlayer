@@ -2731,13 +2731,13 @@ public class DTVScanDvbsConfig  extends DTVActivity {
 						TVChannelParams mTVChannelParams = mTVChannel.getParams();
 
 						my_cmdParams.channel = mTVChannelParams;
-						t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+						//t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
 					}
 				}
 				else{
 					TVChannelParams mTVChannelParams = TVChannelParams.dvbsParams(DTVScanDvbsConfig.this, 0,0,sat_id, 0);
 					my_cmdParams.channel = mTVChannelParams;
-					t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
+					//t.onSetupCmd(t.LNB_CONTROL_CMD_22K_AUTO,(Object)my_cmdParams);
 				}		
 				myLnbSetAdapter.notifyDataSetChanged();
 			}
