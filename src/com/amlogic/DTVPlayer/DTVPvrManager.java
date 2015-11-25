@@ -393,6 +393,7 @@ public class DTVPvrManager extends DTVActivity{
 						setBlackoutPolicy(1);
 						filename = getServiceInfoByPostion(cur_select_item);
 						startPlayback(file_name);
+						DTVSetScreenMode(0);
 					}	
 				}	
 				return true;
