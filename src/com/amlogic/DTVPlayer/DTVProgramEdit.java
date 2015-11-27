@@ -858,7 +858,9 @@ public class DTVProgramEdit extends DTVActivity{
 				myAdapter.notifyDataSetChanged();
 				break;
 			case DTVActivity.KEYCODE_GOTO_BUTTON:
-				showSatellitesList();
+				if(mDTVSettings.getScanRegion().contains("DVBS")==true){
+					showSatellitesList();
+				}
 				break;
 			case DTVActivity.KEYCODE_INFO:
 				if(mTVProgramList!=null&&mTVProgramList.length>0){
