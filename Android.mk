@@ -21,6 +21,6 @@ $(LOCAL_PATH)/AndroidManifest.xml: $(LOCAL_PATH)/AndroidManifest.xml.in
 
 include $(BUILD_PACKAGE)
 
-##################################################
+###################################################
 
 include $(call all-makefiles-under,$(LOCAL_PATH))
