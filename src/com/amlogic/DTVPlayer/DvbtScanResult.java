@@ -311,6 +311,12 @@ public class DvbtScanResult extends DTVActivity{
 			else if(bundle.getString("scan-mode").equals("dvbc-nit-scan")){
 				DTVScanDVBC_StartNitScan(bundle.getInt("scan-fre"),bundle.getInt("scan-modulation"),bundle.getInt("scan-symbole"));
 			}
+			else if(bundle.getString("scan-mode").equals("dtmb-manual-scan")){
+				DTVScanDTMB_StartManuScan(bundle.getInt("scan-fre"),bundle.getInt("scan-modulation"));
+			}
+			else if(bundle.getString("scan-mode").equals("dtmb-nit-scan")){
+				DTVScanDTMB_StartNitScan(bundle.getInt("scan-fre"),bundle.getInt("scan-modulation"));
+			}
 		}		
 	}
 
@@ -379,8 +385,11 @@ public class DvbtScanResult extends DTVActivity{
 		else if (mDTVSettings.getScanRegion().contains("ISDBT")){
 			sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_ISDBT);
 		}
-		if(mDTVSettings.getScanRegion().contains("DVB-C")){
+		else if(mDTVSettings.getScanRegion().contains("DVB-C")){
 			sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_QAM);
+		}
+		else if(mDTVSettings.getScanRegion().contains("DTMB")){	
+			sp = TVScanParams.dtvAllbandScanParams(0, TVChannelParams.MODE_DTMB);
 		}
 
 		startScan(sp);
@@ -443,6 +452,15 @@ public class DvbtScanResult extends DTVActivity{
 		startScan(sp);
 	}
 
+	private void DTVScanDTMB_StartNitScan(int fre,int modulation)
+	{
+		TVScanParams sp=TVScanParams.dtvAutoScanParams(0, TVChannelParams.dtmbParams(fre*1000, modulation ));
+		startScan(sp);
+	}
+	private void DTVScanDTMB_StartManuScan(int fre,int modulation){
+		TVScanParams sp=TVScanParams.dtvManualScanParams(0, TVChannelParams.dtmbParams(fre*1000, modulation ));
+		startScan(sp);
+	}
 	private void DTVScanDVBC_StartNitScan(int fre,int modulation,int symbole)
 	{
 		Log.d(TAG, "DTVScanDVBC_StartNitScan");

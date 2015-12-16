@@ -211,6 +211,10 @@
 		<item>NIT Scan</item>
 	</array>
 
+	<array name="search_settings_content_dtmb" translatable="false">
+		<item>Auto Scan</item>
+		<item>Manual Scan</item>
+	</array>
 	
 	<array name="search_settings_content_atsc" translatable="false">
 		<item>Auto Scan</item>	
@@ -235,6 +239,15 @@
 		<item>Frequency(KHz)</item>
 		<item>Modulation</item>
 		<item>Symbole(bps)</item>
+		<item>Signal Check</item>
+		<item>Search</item>
+	</array>
+	<array name="search_settings_content_dtmb_manual" translatable="false">
+		<item>Scan Mode</item>
+		<item>Scan Band</item>
+		<item>Channel</item>
+		<item>Frequency(KHz)</item>
+		<item>Modulation</item>
 		<item>Signal Check</item>
 		<item>Search</item>
 	</array>

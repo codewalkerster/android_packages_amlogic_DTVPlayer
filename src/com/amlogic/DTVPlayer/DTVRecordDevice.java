@@ -2,6 +2,7 @@ package com.amlogic.DTVPlayer;
 
 import android.util.Log;
 import android.os.Bundle;
+import com.amlogic.DTVPlayer.storage.StorageUtils;
 import com.amlogic.tvutil.TVMessage;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVProgram;
@@ -58,12 +59,15 @@ public class DTVRecordDevice extends DTVActivity {
 	private static int widthPixels=0;
 	private static int heightPixels=0;
 	private static float density =0;	
-	private String sd_path="/storage/external_storage/sdcard1";
+	private String sd_path = null;
 	private TextView disk_type=null;
 	private TextView disk_total=null;
 	private TextView disk_space=null;
 	private boolean mMidUi = false;
-	
+	public DTVRecordDevice()
+	{
+		sd_path = StorageUtils.getSdCardPath();
+	}
 	class MountEventReceiver extends BroadcastReceiver {
 
 		@Override
@@ -581,10 +585,10 @@ public class DTVRecordDevice extends DTVActivity {
 
 	private void getDevice() {
 		deviceList.clear();
-		File[] files = new File("/storage/external_storage").listFiles();
+		File[] files = new File(StorageUtils.externalDirBase).listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (((file.getPath().startsWith("/storage/external_storage/sd"))||(file.getPath().startsWith("/storage/external_storage/udisk"))) && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+				if (StorageUtils.onExtDir(file)){
 	
 					File myfile = file;
 					Log.d(TAG,"device path: "+myfile.getName());
@@ -625,10 +629,10 @@ public class DTVRecordDevice extends DTVActivity {
 
 	private void getDeviceOnBack() {
 		deviceList.clear();
-		File[] files = new File("/storage/external_storage").listFiles();
+		File[] files = new File(StorageUtils.externalDirBase).listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (((file.getPath().startsWith("/storage/external_storage/sd"))||(file.getPath().startsWith("/storage/external_storage/udisk"))) && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+				if (StorageUtils.onExtDir(file)){
 					File myfile = file;
 					Log.d(TAG,"device path: "+myfile.getName());
 
@@ -823,7 +827,7 @@ public class DTVRecordDevice extends DTVActivity {
 
 			if(deviceList!=null)
 			{
-				readSDCard("/storage/external_storage/sdcard1",item);
+				readSDCard(StorageUtils.getSdCardPath(),item);
 				deviceList.add(item);
 
 			}	

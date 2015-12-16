@@ -45,6 +45,9 @@ public class DTVSettings{
 		else  if(mode.equals("dvbc")){
 			mContext.setConfig("tv:scan:dtv:region","China,DVB-C allband");
 		}
+		else  if(mode.equals("dtmb")){
+			mContext.setConfig("tv:scan:dtv:region","China,DTMB");
+		}
 	}
 
 	public String getDtvDemodAndDmxConfig(){
@@ -68,6 +71,10 @@ public class DTVSettings{
 			mContext.setConfig("tv:dtv:config_demod_fe","dtv_demod 0 driver Mxl241|dtv_demod 0 i2c_id 2|dtv_demod 0 i2c_addr 0x60|dtv_demod 0 reset_gpio GPIOY_12|frontend 0 dtv_demod 0|frontend 0 ts 0|enable 0|");
 			mContext.setConfig("tv:dtv:config_dmx","0 p 0 0");	
 		}
+        else if(mode.equals("atbm8881")){
+            mContext.setConfig("tv:dtv:config_demod_fe","dtv_demod 0 driver Atbm8881|dtv_demod 0 i2c_id 2|dtv_demod 0 i2c_addr 0x40|dtv_demod 0 reset_gpio GPIOY_5|frontend 0 dtv_demod 0|frontend 0 ts 0|enable 0|");
+            mContext.setConfig("tv:dtv:config_dmx","0 s 0 1");
+        }
 		
 	}
 	
@@ -298,6 +305,8 @@ public class DTVSettings{
 				value = region+",Default DVB-T";
 			else if (mContext.getStringConfig("tv:dtv:mode").equals("isdbt"))
 				value = region+",Default ISDBT";
+            else if (mContext.getStringConfig("tv:dtv:mode").equals("dtmb"))
+                value = region+",China,DTMB";
 		}
 		mContext.setConfig("tv:scan:dtv:region",value);
 	} 
@@ -308,6 +317,8 @@ public class DTVSettings{
 			countries= TVRegion.getCountryByDVBT(mContext);
 	      else if(mContext.getStringConfig("tv:dtv:mode").equals("isdbt"))
 			countries= TVRegion.getCountryByISDBT(mContext);
+        else if(mContext.getStringConfig("tv:dtv:mode").equals("dtmb"))
+            countries = TVRegion.getCountryByDVBT(mContext);
 		  
 		if(countries!=null){
 			String cur_region = mContext.getStringConfig("tv:scan:dtv:region");
@@ -391,6 +402,21 @@ public class DTVSettings{
 			mLast.edit().putInt("modulation",modulation).commit();
 	}
 
+	private int dtmb_scan_modulation=TVChannelParams.MODULATION_QAM_16;
+	public int getDtmbModulation(){
+		int value = TVChannelParams.MODULATION_QAM_16;
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
+		if(mLast!=null)
+			value = mLast.getInt("modulation",dtmb_scan_modulation);
+		dtmb_scan_modulation = value;
+		return dtmb_scan_modulation;
+	}
+	public void setDtmbModulation(int modulation){
+		SharedPreferences mLast= PreferenceManager.getDefaultSharedPreferences(mContext);
+		dtmb_scan_modulation=modulation;
+		if(mLast!=null)
+			mLast.edit().putInt("modulation",modulation).commit();
+	}
 	private int dvbc_scan_symbole=6875000;
 	public int getDvbcSymbole(){
 		int value = 6875000;

@@ -210,9 +210,8 @@
 	</array>
 	
 	<array name="search_settings_content_atsc" translatable="false">
-		<item>Auto Scan</item>	
-		<item>Manual Scan</item>
-		<item>Area</item>
+		<item>全频段搜索</item>	
+		<item>手动搜索</item>
 	</array>
 
 	<array name="search_settings_content_dvbt_manual" translatable="false">
@@ -235,6 +234,21 @@
 		<item>搜索</item>
 	</array>
 
+    <array name="search_settings_content_dtmb" translatable="false">
+        <item>自动搜索</item>
+        <item>手动搜索</item>
+    </array>
+
+	<array name="search_settings_content_dtmb_manual" translatable="false">
+		<item>模式</item>
+		<item>范围</item>
+		<item>频道</item>
+		<item>频率(KHz)</item>
+		<item>调制方式</item>
+		<item>信号检测</item>
+		<item>搜索</item>
+	</array>
+
 	<array name="Program_settings_content" translatable="false">
 		<item>节目管理</item>	
 		<item>节目指南</item>
@@ -244,7 +258,6 @@
 		<item>时移电视</item>
 	</array>
 
-	
 	<array name="Program_settings_content_dvbs" translatable="false">
 		<item>节目管理</item>	
 		<item>节目指南</item>

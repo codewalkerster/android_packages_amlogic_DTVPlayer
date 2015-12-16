@@ -2,6 +2,7 @@ package com.amlogic.DTVPlayer;
 
 import android.util.Log;
 import android.os.Bundle;
+import com.amlogic.DTVPlayer.storage.StorageUtils;
 import com.amlogic.tvutil.TVMessage;
 import com.amlogic.tvutil.TVConst;
 import com.amlogic.tvutil.TVProgram;
@@ -35,6 +36,7 @@ import java.io.*;
 import java.util.*;
 import com.amlogic.widget.SureDialog;
 
+import static com.amlogic.DTVPlayer.storage.StorageUtils.onExtDir;
 
 public class DTVDeviceBrowser extends DTVActivity implements OnItemClickListener {
 	private static final String TAG="DTVDeviceBrowser";
@@ -54,7 +56,12 @@ public class DTVDeviceBrowser extends DTVActivity implements OnItemClickListener
 	private static int widthPixels=0;
 	private static int heightPixels=0;
 	private static float density =0;	
-	private String sd_path="/storage/external_storage/sdcard1";
+	private String sd_path = null;
+
+	public DTVDeviceBrowser()
+	{
+		sd_path = StorageUtils.getSdCardPath();
+	}
     
     class MountEventReceiver extends BroadcastReceiver {
 
@@ -426,10 +433,11 @@ public class DTVDeviceBrowser extends DTVActivity implements OnItemClickListener
 
 	private void getDevice() {
 		deviceList.clear();
-		File[] files = new File("/storage/external_storage").listFiles();
+		File[] files = new File(StorageUtils.externalDirBase).listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+				if(onExtDir(file))
+				{
 					File myfile = file;
 					Log.d(TAG,"device path: "+myfile.getName());
 					DeviceItem item = new DeviceItem();//getDeviceName(myfile.getName());								
@@ -453,10 +461,11 @@ public class DTVDeviceBrowser extends DTVActivity implements OnItemClickListener
 
 	private void getDeviceOnBack() {
 		deviceList.clear();
-		File[] files = new File("/storage/external_storage").listFiles();
+		File[] files = new File(StorageUtils.externalDirBase).listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (file.getPath().startsWith("/storage/external_storage/sd") && !(file.getPath().startsWith("/storage/external_storage/sdcard"))) {
+				if (StorageUtils.onExtDir(file))
+				{
 					File myfile = file;
 					Log.d(TAG,"device path: "+myfile.getName());
 
@@ -652,7 +661,7 @@ public class DTVDeviceBrowser extends DTVActivity implements OnItemClickListener
 
 			if(deviceList!=null)
 			{
-				readSDCard("/storage/external_storage/sdcard1",item);
+				readSDCard(sd_path,item);
 				deviceList.add(item);
 
 			}	
