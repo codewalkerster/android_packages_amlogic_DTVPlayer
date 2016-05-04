@@ -59,6 +59,7 @@ public class DTVPlayer extends DTVActivity{
 
 	private static final String Version = "1.0.0";
 
+
 	private Toast toast=null;
 	private Bundle bundle;
 	private TVConfig config;
@@ -93,6 +94,7 @@ public class DTVPlayer extends DTVActivity{
 	private int cur_db_id = -1;
 	public void onCreate(Bundle savedInstanceState){
 		Log.d(TAG, "onCreate");
+		
 		super.onCreate(savedInstanceState);
 		MENUS[menu.PROGRAM.ordinal()] = R.string.setting_menu_program;
 		MENUS[menu.SEARCH.ordinal()] = R.string.setting_menu_search;
@@ -156,7 +158,7 @@ public class DTVPlayer extends DTVActivity{
 				
 				break;
 			case TVMessage.TYPE_SCAN_STORE_BEGIN:
-				Log.d(TAG, "Storing ...");
+				Log.d(TAG, "Storing-- ...");
 				showTeltext(this);
 				break;
 			case TVMessage.TYPE_SCAN_STORE_END:
@@ -3429,19 +3431,39 @@ public class DTVPlayer extends DTVActivity{
 		DTVPlayerStopPlay();
 	}
 
+	private String readSysFile(String path){
+		if(path!=null)
+		{
+		  return am_read_sysfile(path);	
+		}
+		else
+		{
+			Log.e(TAG,"writeSysFile File ERROR!");
+		}
+		return "";
+	}
+
 	private void writeSysFile(String path,String value){
-		try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-            try {
-                writer.write(value);
-                } finally {
-                    writer.close();
-                }
-        }catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }catch (Exception e) {
-                Log.e(TAG,"set File ERROR!",e);
-        } 
+		if(path!=null&&value!=null)
+		{
+		  am_write_sysfile(path,value);	
+		}
+		else
+		{
+			Log.e(TAG,"writeSysFile File ERROR!");
+		}
+		// try {
+  //           BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+  //           try {
+  //               writer.write(value);
+  //               } finally {
+  //                   writer.close();
+  //               }
+  //       }catch (FileNotFoundException e) {
+  //           e.printStackTrace();
+  //       }catch (Exception e) {
+  //               Log.e(TAG,"set File ERROR!",e);
+  //       } 
 	}
 	
 	public class SubAsyncTask extends AsyncTask<Object, Integer, String>{ 
@@ -3741,17 +3763,18 @@ public class DTVPlayer extends DTVActivity{
 		File file=null;
 		BufferedReader br=null;
 		String audio_pts=null;
-		try{
-			file=new File("/sys/class/tsync/pts_audio");
-			br=new BufferedReader(new FileReader(file));
+		audio_pts = readSysFile("/sys/class/tsync/pts_audio");
+		// try{
+		// 	file=new File("/sys/class/tsync/pts_audio");
+		// 	br=new BufferedReader(new FileReader(file));
 
-			audio_pts=br.readLine();
-			if(br != null){
-				br.close();
-			}
-			Log.d(TAG, "=====>>read audio pts: "+audio_pts);
-		}catch(Exception e){
-		}
+		// 	audio_pts=br.readLine();
+		// 	if(br != null){
+		// 		br.close();
+		// 	}
+		// 	Log.d(TAG, "=====>>read audio pts: "+audio_pts);
+		// }catch(Exception e){
+		// }
 		return audio_pts;
 	}
 
@@ -3759,51 +3782,54 @@ public class DTVPlayer extends DTVActivity{
 		File file=null;
 		BufferedReader br=null;
 		String video_pts=null;
-		try{
-			file=new File("/sys/class/tsync/pts_video");
-			br=new BufferedReader(new FileReader(file));
+		video_pts = readSysFile("/sys/class/tsync/pts_video");
+		// try{
+		// 	file=new File("/sys/class/tsync/pts_video");
+		// 	br=new BufferedReader(new FileReader(file));
 
-			video_pts=br.readLine();
-			if(br != null){
-				br.close();
-			}
-			Log.d(TAG, "=====>>read video pts: "+video_pts);
-		}catch(Exception e){
-		}
+		// 	video_pts=br.readLine();
+		// 	if(br != null){
+		// 		br.close();
+		// 	}
+		// 	Log.d(TAG, "=====>>read video pts: "+video_pts);
+		// }catch(Exception e){
+		// }
 		return video_pts;
 	}
 	private String getDemuxAudioPts(){
 		File file=null;
 		BufferedReader br=null;
 		String demux_audio_pts=null;
-		try{
-			file=new File("/sys/class/stb/audio_pts");
-			br=new BufferedReader(new FileReader(file));
+		demux_audio_pts = readSysFile("/sys/class/stb/audio_pts");
+		// try{
+		// 	file=new File("/sys/class/stb/audio_pts");
+		// 	br=new BufferedReader(new FileReader(file));
 
-			demux_audio_pts=br.readLine();
-			if(br != null){
-				br.close();
-			}
-			Log.d(TAG, "=====>>read demux audio pts: "+demux_audio_pts);
-		}catch(Exception e){
-		}
+		// 	demux_audio_pts=br.readLine();
+		// 	if(br != null){
+		// 		br.close();
+		// 	}
+		// 	Log.d(TAG, "=====>>read demux audio pts: "+demux_audio_pts);
+		// }catch(Exception e){
+		// }
 		return demux_audio_pts;
 	}
 	private String getDemuxVideoPts(){
 		File file=null;
 		BufferedReader br=null;
 		String demux_video_pts=null;
-		try{
-			file=new File("/sys/class/stb/video_pts");
-			br=new BufferedReader(new FileReader(file));
+		demux_video_pts = readSysFile("/sys/class/stb/video_pts");
+		// try{
+		// 	file=new File("/sys/class/stb/video_pts");
+		// 	br=new BufferedReader(new FileReader(file));
 
-			demux_video_pts=br.readLine();
-			if(br != null){
-				br.close();
-			}
-			Log.d(TAG, "=====>>read demux video pts: "+demux_video_pts);
-		}catch(Exception e){
-		}
+		// 	demux_video_pts=br.readLine();
+		// 	if(br != null){
+		// 		br.close();
+		// 	}
+		// 	Log.d(TAG, "=====>>read demux video pts: "+demux_video_pts);
+		// }catch(Exception e){
+		// }
 		return demux_video_pts;
 	}
 	private String getBufferLevel(int index){

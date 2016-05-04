@@ -10,6 +10,11 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src)
 LOCAL_PACKAGE_NAME := DTVPlayer
 LOCAL_STATIC_JAVA_LIBRARIES := tvmiddleware
 LOCAL_JNI_SHARED_LIBRARIES := libam_adp libam_mw libjnitvmboxdevice libjnitvdatabase libjnitvdbcheck libjnitvscanner libjnitvsubtitle libjnitvepgscanner libzvbi libjnitvupdater
+
+ifeq (1,$(strip $(shell expr $(PLATFORM_SDK_VERSION) \>= 22)))
+LOCAL_JNI_SHARED_LIBRARIES += libam_sysfs
+endif
+
 LOCAL_PROGUARD_ENABLED := disabled
 
 LOCAL_CERTIFICATE := platform
