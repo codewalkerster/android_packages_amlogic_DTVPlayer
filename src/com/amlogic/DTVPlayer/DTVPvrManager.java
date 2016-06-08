@@ -754,18 +754,26 @@ public class DTVPvrManager extends DTVActivity{
 	}
 
 	private void writeSysFile(String path,String value){
-		try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-            try {
-                writer.write(value);
-                } finally {
-                    writer.close();
-                }
-        }catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }catch (Exception e) {
-                Log.e(TAG,"set File ERROR!",e);
-        } 
+	    if(path!=null&&value!=null)
+		{
+		  am_write_sysfile(path,value);	
+		}
+		else
+		{
+			Log.e(TAG,"writeSysFile File ERROR!");
+		}
+		// try {
+  //           BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+  //           try {
+  //               writer.write(value);
+  //               } finally {
+  //                   writer.close();
+  //               }
+  //       }catch (FileNotFoundException e) {
+  //           e.printStackTrace();
+  //       }catch (Exception e) {
+  //               Log.e(TAG,"set File ERROR!",e);
+  //       } 
 	}
 }
 

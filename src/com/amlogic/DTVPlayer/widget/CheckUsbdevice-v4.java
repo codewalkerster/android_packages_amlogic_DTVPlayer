@@ -22,26 +22,15 @@ import java.io.InputStream;
 import com.amlogic.DTVPlayer.R;
 import com.amlogic.DTVPlayer.storage.StorageUtils;
 
-import android.os.storage.*;
-import java.lang.reflect.Method;
-import android.text.*;
-import android.text.method.*;
-import java.util.*;
-import android.os.Build;
-import android.os.SystemProperties;
-
-
 public class CheckUsbdevice
 {
 	public static final String TAG = "CheckUsbdevice";
 
 	private Context mContext = null;
-	private StorageManager mStorageManager;
 	
 	public CheckUsbdevice(Context context)
 	{
 		this.mContext =  context;
-		mStorageManager = (StorageManager)this.mContext.getSystemService(Context.STORAGE_SERVICE);
 	}
 
 	private class DeviceItem{
@@ -53,53 +42,9 @@ public class CheckUsbdevice
 		Bitmap icon;//device icon
 	}	
 
-	public String checkPvrFilePath_6v(String file_path)
-	{
-		String tpath=null;
-		//external storage for 6.0
-        Class<?> volumeInfoClazz = null;
-        Method getDescriptionComparator = null;
-        Method getBestVolumeDescription = null;
-        Method getVolumes = null;
-        Method isMountedReadable = null;
-        Method getType = null;
-        Method getPath = null;
-        List<?> volumes = null;
-        try {
-            volumeInfoClazz = Class.forName("android.os.storage.VolumeInfo");
-            getDescriptionComparator = volumeInfoClazz.getMethod("getDescriptionComparator");
-            getBestVolumeDescription = StorageManager.class.getMethod("getBestVolumeDescription", volumeInfoClazz);
-            getVolumes = StorageManager.class.getMethod("getVolumes");
-            isMountedReadable = volumeInfoClazz.getMethod("isMountedReadable");
-            getType = volumeInfoClazz.getMethod("getType");
-            getPath = volumeInfoClazz.getMethod("getPath");
-            volumes = (List<?>)getVolumes.invoke(mStorageManager);
-
-            for (Object vol : volumes) {
-                if (vol != null && (boolean)isMountedReadable.invoke(vol) && (int)getType.invoke(vol) == 0) {
-                    File path = (File)getPath.invoke(vol);
-                    Log.d(TAG, "getDevice() path.getName():" + path.getName() + ", path.getPath():" + path.getPath());
-                    {
-						tpath=path.getPath()+"/"+file_path;
-						File pvr_file = new File(tpath);
-						if(pvr_file.canRead())
-							return tpath;
-                    }
-                }
-            }
-        }catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-	}
-
 	public String checkPvrFilePath(String file_path){
 		String path=null;
-		//Log.d(TAG, "file_path:"+file_path);
-		if(Build.VERSION.SDK_INT==23)
-		{
-			return checkPvrFilePath_6v(file_path);
-		}
+
 		File[] files = new File(StorageUtils.externalDirBase).listFiles();
 		if (files != null) {
 			for (File file : files) {
@@ -137,6 +82,9 @@ public class CheckUsbdevice
 		return null;
 		
 	}
+
+
+
 
 	public String getDevice() {
 		File[] files = new File(StorageUtils.externalDirBase).listFiles();
@@ -224,54 +172,11 @@ public class CheckUsbdevice
 				R.drawable.list_disk_unsel);
 		return item;
 	 }
-	public boolean findSdcardString_v6(String file_path)
-	{
-		//Log.d(TAG,"findSdcardString_v6>>>"+file_path);
-		//external storage for 6.0
-        Class<?> volumeInfoClazz = null;
-        Method getDescriptionComparator = null;
-        Method getBestVolumeDescription = null;
-        Method getVolumes = null;
-        Method isMountedReadable = null;
-        Method getType = null;
-        Method getPath = null;
-        List<?> volumes = null;
-        try {
-            volumeInfoClazz = Class.forName("android.os.storage.VolumeInfo");
-            getDescriptionComparator = volumeInfoClazz.getMethod("getDescriptionComparator");
-            getBestVolumeDescription = StorageManager.class.getMethod("getBestVolumeDescription", volumeInfoClazz);
-            getVolumes = StorageManager.class.getMethod("getVolumes");
-            isMountedReadable = volumeInfoClazz.getMethod("isMountedReadable");
-            getType = volumeInfoClazz.getMethod("getType");
-            getPath = volumeInfoClazz.getMethod("getPath");
-            volumes = (List<?>)getVolumes.invoke(mStorageManager);
-
-            for (Object vol : volumes) {
-                if (vol != null && (boolean)isMountedReadable.invoke(vol) && (int)getType.invoke(vol) == 0) {
-                    File path = (File)getPath.invoke(vol);
-                    Log.d(TAG, "getDevice() path.getName():" + path.getName() + ", path.getPath():" + path.getPath());
-                    {		
-                    	//for androd version 6.0,if exist mount dev,return true
-						return true;
-                    }
-                }
-            }
-        }catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return false;
-	}
 
 	public boolean findSdcardString(String path){ 	
 		 Runtime runtime = Runtime.getRuntime();  
-        if(Build.VERSION.SDK_INT==23)
-        {
-        	Log.d(TAG,"findSdcardString_v6 path"+path);
-            return findSdcardString_v6(path);	
-        }
-            	
-
-         String cmd = "mount";
+            
+            	String cmd = "mount";
 		if(path.equals(" "))
 			return false;
 		
@@ -283,7 +188,7 @@ public class CheckUsbdevice
 			BufferedReader br = new BufferedReader(new InputStreamReader(input));
 			String strLine;
 			while(null != (strLine = br.readLine())){
-				//Log.d(TAG,">>>"+strLine+"path"+path);
+				Log.d(TAG,">>>"+strLine);
 					for(int i=0;i<strLine.length();i++){
 						if(strLine.regionMatches(i,p,0,p.length()))
 							return true;
@@ -341,66 +246,12 @@ public class CheckUsbdevice
 		}
 	}
 
-	public List<String> getSatellitesDBFileList_6v()
-	{
-		//external storage for 6.0
-        Class<?> volumeInfoClazz = null;
-        Method getDescriptionComparator = null;
-        Method getBestVolumeDescription = null;
-        Method getVolumes = null;
-        Method isMountedReadable = null;
-        Method getType = null;
-        Method getPath = null;
-        List<?> volumes = null;
-        List<String> satellites_db_file_list = null;
 
-		if(satellites_db_file_list == null)
-			satellites_db_file_list =  new ArrayList<String>();
-        try {
-            volumeInfoClazz = Class.forName("android.os.storage.VolumeInfo");
-            getDescriptionComparator = volumeInfoClazz.getMethod("getDescriptionComparator");
-            getBestVolumeDescription = StorageManager.class.getMethod("getBestVolumeDescription", volumeInfoClazz);
-            getVolumes = StorageManager.class.getMethod("getVolumes");
-            isMountedReadable = volumeInfoClazz.getMethod("isMountedReadable");
-            getType = volumeInfoClazz.getMethod("getType");
-            getPath = volumeInfoClazz.getMethod("getPath");
-            volumes = (List<?>)getVolumes.invoke(mStorageManager);
-
-            for (Object vol : volumes) {
-                if (vol != null && (boolean)isMountedReadable.invoke(vol) && (int)getType.invoke(vol) == 0) {
-                    File path = (File)getPath.invoke(vol);
-                    Log.d(TAG, "getDevice() path.getName():" + path.getName() + ", path.getPath():" + path.getPath());
-                    {
-						File[] db_file_sds = new File(path.getName()).listFiles();
-						if(db_file_sds!=null){
-							for(File db_file_sd : db_file_sds){
-								if(db_file_sd.isDirectory()){
-
-								}else{
-									if((db_file_sd.getName().endsWith("xml"))&&(db_file_sd.getName().startsWith("satellites"))){
-										satellites_db_file_list.add(path.getName()+"/"+db_file_sd.getName());
-										Log.d("SDCard","DB satellites file name:"+db_file_sd.getName());
-										}
-									}
-								}
-						}
-                    }
-                }
-            }
-        }catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return satellites_db_file_list;
-	}
 	//for dvbs/s2 dbmanagement get all satellites.amdb files on external disk
 	
 	public List<String> getSatellitesDBFileList() {
 		String externalStorageState = Environment.getExternalStorageState();  
 
-		if(Build.VERSION.SDK_INT==23)
-		{
-			return getSatellitesDBFileList_6v();
-		}
 		List<String> satellites_db_file_list = null;
 
 		if(satellites_db_file_list == null)
@@ -448,81 +299,9 @@ public class CheckUsbdevice
 		return satellites_db_file_list;
 	}
 	
-	public List<File> getPvrFileList_6v()
-	{
-		//external storage for 6.0
-        Class<?> volumeInfoClazz = null;
-        Method getDescriptionComparator = null;
-        Method getBestVolumeDescription = null;
-        Method getVolumes = null;
-        Method isMountedReadable = null;
-        Method getType = null;
-        Method getPath = null;
-        List<?> volumes = null;
-        List<File> pvr_file_list = null;
-        if(pvr_file_list == null)
-			pvr_file_list =  new ArrayList<File>();
-        try {
-            volumeInfoClazz = Class.forName("android.os.storage.VolumeInfo");
-            getDescriptionComparator = volumeInfoClazz.getMethod("getDescriptionComparator");
-            getBestVolumeDescription = StorageManager.class.getMethod("getBestVolumeDescription", volumeInfoClazz);
-            getVolumes = StorageManager.class.getMethod("getVolumes");
-            isMountedReadable = volumeInfoClazz.getMethod("isMountedReadable");
-            getType = volumeInfoClazz.getMethod("getType");
-            getPath = volumeInfoClazz.getMethod("getPath");
-            volumes = (List<?>)getVolumes.invoke(mStorageManager);
-            //Log.d(TAG,"getPvrFileList--v6-1");
-            for (Object vol : volumes) {
-            	//Log.d(TAG,"getPvrFileList--v6-2");
-                if (vol != null && (boolean)isMountedReadable.invoke(vol) && (int)getType.invoke(vol) == 0) {
-                    File path = (File)getPath.invoke(vol);
-                    Log.d(TAG, "getDevice() path.getName():" + path.getName() + ", path.getPath():" + path.getPath());
-                    {
-						File[] ts_file_sds = new File(path.getPath()).listFiles();
-						if(ts_file_sds!=null){
-							for(File ts_file_sd : ts_file_sds){
-								Log.d(TAG, "ts_file_sd.getPath():"+ts_file_sd.getPath());
-								if (ts_file_sd.getPath().endsWith("TVRecordFiles")){
-									File[] mytsfiles = new File(ts_file_sd.getPath()).listFiles();
-									if (mytsfiles != null){	
-										for(File myts_file : mytsfiles){
-											if(myts_file.isDirectory()){
-													Log.d(TAG,"pvr list file is dir:");
-											}else{
-												if(myts_file.getName().endsWith(".ts")){
-													//pvr_file_list.add(myts_file.getPath());
-													pvr_file_list.add(myts_file);
-													Log.d(TAG,"pvr list file name:"+myts_file.getName());
-													}
-											}
-										}	
-									}
-									else
-									{
-										Log.d(TAG,"pvr list mytsfiles is null:");
-									}
-								}
-								else
-								{
-									Log.d(TAG,"pvr list mytsfiles is not record dir:");
-								}
-							}
-						}	
-                    }
-                }
-            }
-        }catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return pvr_file_list;
-	}
 	public List<File> getPvrFileList() {
 		String externalStorageState = Environment.getExternalStorageState();  
-		if(Build.VERSION.SDK_INT==23)
-		{
-			//Log.d(TAG,"getPvrFileList--v6");
-			return getPvrFileList_6v();
-		}
+
 		List<File> pvr_file_list = null;
 
 		if(pvr_file_list == null)

@@ -21,8 +21,6 @@ import android.app.*;
 import android.content.*;
 import android.net.*;
 
-import java.lang.reflect.Method;
-import android.os.storage.*;
 import android.os.Bundle;
 import android.os.SystemProperties;
 import android.os.Environment; 
@@ -36,7 +34,7 @@ import android.text.method.*;
 import android.graphics.*;
 import java.io.*;
 import java.util.*;
-import android.os.Build;
+
 import com.amlogic.widget.PasswordDialog;
 import com.amlogic.widget.SureDialog;
 import com.amlogic.widget.SingleChoiseDialog;
@@ -66,19 +64,6 @@ public class DTVRecordDevice extends DTVActivity {
 	private TextView disk_total=null;
 	private TextView disk_space=null;
 	private boolean mMidUi = false;
-	private StorageManager mStorageManager;
-
-    Comparator  mFileComparator = new Comparator<File>(){
-        @Override
-        public int compare(File o1, File o2) {
-            if (o1.isDirectory() && o2.isFile())
-                return -1;
-            if (o1.isFile() && o2.isDirectory())
-                return 1;
-            return o1.getName().compareTo(o2.getName());
-        }
-    };
-
 	public DTVRecordDevice()
 	{
 		sd_path = StorageUtils.getSdCardPath();
@@ -123,7 +108,7 @@ public class DTVRecordDevice extends DTVActivity {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 	  	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 	  	WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		mStorageManager = (StorageManager)getSystemService(Context.STORAGE_SERVICE);
+		
 		if (SystemProperties.get("ro.product.brand", "").equals("MID")) {
 			mMidUi = true;
 			setContentView(R.layout.mid_dtv_record_device);
@@ -309,10 +294,7 @@ public class DTVRecordDevice extends DTVActivity {
 	
 	void refreshDevice(){
 		if(t!=null)
-		{
-			Log.d(TAG,"refreshDevice--");
 			t.onGetDiskInfo();
-		}
 		mDeviceItemAdapter.notifyDataSetChanged();
 	}
 
@@ -600,215 +582,9 @@ public class DTVRecordDevice extends DTVActivity {
 		String total; 
 		Bitmap icon;//device icon
 	}	
-	private void getPvrDevice_V6()
-	{
-		//external storage for 6.0
-        Class<?> volumeInfoClazz = null;
-        Method getDescriptionComparator = null;
-        Method getBestVolumeDescription = null;
-        Method getVolumes = null;
-        Method isMountedReadable = null;
-        Method getType = null;
-        Method getPath = null;
-        List<?> volumes = null;
-        try {
-            volumeInfoClazz = Class.forName("android.os.storage.VolumeInfo");
-            getDescriptionComparator = volumeInfoClazz.getMethod("getDescriptionComparator");
-            getBestVolumeDescription = StorageManager.class.getMethod("getBestVolumeDescription", volumeInfoClazz);
-            getVolumes = StorageManager.class.getMethod("getVolumes");
-            isMountedReadable = volumeInfoClazz.getMethod("isMountedReadable");
-            getType = volumeInfoClazz.getMethod("getType");
-            getPath = volumeInfoClazz.getMethod("getPath");
-            volumes = (List<?>)getVolumes.invoke(mStorageManager);
 
-            for (Object vol : volumes) {
-                if (vol != null && (boolean)isMountedReadable.invoke(vol) && (int)getType.invoke(vol) == 0) {
-                    File path = (File)getPath.invoke(vol);
-                    Log.d(TAG, "getDevice() path.getName():" + path.getName() + ", path.getPath():" + path.getPath());
-                    {
-						DeviceItem item = new DeviceItem();//getDeviceName(myfile.getName());								
-					    //if((item!= null)&&(item.format!=null)){
-						item.Path = path.getPath();
-						readUsbDevice(item.Path,item,0);
-						//Log.d(TAG,"item.total: "+item.total+"item.spare: "+ item.spare);
-						if(item.total==null||item.spare==null||item.total.equals("0.0K") && item.spare.equals("0.0K")) {
-							Log.d(TAG,"external storage device is invalid");
-						} else {
-							item.VolumeName = item.VolumeName+(String)getBestVolumeDescription.invoke(mStorageManager, vol);
-							Log.d(TAG,"device path: "+item.Path+" device format: "+item.format+" name: "+item.VolumeName);
-							deviceList.add(item);
-						}
-					   //}
-                    }
-                }
-            }
-        }catch (Exception ex) {
-            ex.printStackTrace();
-        }
-	}
-	
-	private static final String ROOT_PATH = "/storage";
-	private static final String MNT_PATH = "/mnt/media_rw";
- 	private static final String SD_PATH = "/storage/external_storage/sdcard1";
-    private static final String SD_PATH_EQUAL = "/storage/sdcard1";
-    private static final String USB_PATH ="/storage/external_storage";
-    private static final String SATA_PATH ="/storage/external_storage/sata";
-
-	private void getPvrDevice_V5() {
-
-        File dir ;
-        
-        dir = new File(USB_PATH);
-        if (dir.exists() && dir.isDirectory()) {
-            if (dir.listFiles() != null) {
-                int dev_count=0;
-                List<File> files = Arrays.asList(dir.listFiles());
-                Collections.sort(files, mFileComparator);
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        String devname = null;
-                        String path = file.getAbsolutePath();
-                        if (path.startsWith(USB_PATH + "/sd") && !path.equals(SD_PATH)) {
-                            String stateStr = Environment.getStorageState(new File(path));
-                            if (stateStr.equals(Environment.MEDIA_MOUNTED)) {
-                                File myfile = dir;
-								Log.d(TAG,"device path: "+myfile.getName()+" path:"+path);
-								DeviceItem item = new DeviceItem();
-								item.Path = myfile.getPath();
-								readUsbDevice(item.Path,item,0);
-								//Log.d(TAG,"item.total: "+item.total+"item.spare: "+ item.spare);
-								if(item.total==null||item.spare==null||item.total.equals("0.0K") && item.spare.equals("0.0K")) {
-									Log.d(TAG,"external storage device is invalid");
-								} else {
-								    item.VolumeName = item.VolumeName+" ["+myfile.getName()+"]";
-									Log.d(TAG,"device path: "+item.Path+" device format: "+item.format+" name: "+item.VolumeName);
-									deviceList.add(item);
-								}
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        dir = new File(ROOT_PATH);
-        if (dir.exists() && dir.isDirectory()) {
-            if (dir.listFiles() != null) {
-                List<File> files = Arrays.asList(dir.listFiles());
-                Collections.sort(files, mFileComparator);
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        String devname = null;
-                        String path = file.getAbsolutePath();
-                        Log.d(TAG,"ROOT_PATH path: "+path);
-                        if (path.startsWith(ROOT_PATH+"/udisk")) {
-
-                            String stateStr = Environment.getStorageState(new File(path));
-                            //if((dirtmp.listFiles() != null) && (dirtmp.listFiles().length > 0)) {
-                            if (stateStr.equals(Environment.MEDIA_MOUNTED)) {
-				            	File myfile = file;
-								Log.d(TAG,"device path: "+myfile.getName());
-								DeviceItem item = new DeviceItem();
-								item.Path = myfile.getPath();
-								//String tpath=MNT_PATH+item.Path.substring(ROOT_PATH.length());
-								//Log.d(TAG,"tpath path: "+tpath);
-								readUsbDevice(item.Path,item,0);
-								
-								if(item.total==null||item.spare==null||item.total.equals("0.0K") && item.spare.equals("0.0K")) {
-									Log.d(TAG,"external storage device is invalid");
-								} else {
-								    item.VolumeName = item.VolumeName+" ["+myfile.getName()+"]";
-									Log.d(TAG,"device path: "+item.Path+" device format: "+item.format+" name: "+item.VolumeName);
-									Log.d(TAG,"item.total: "+item.total+"item.spare: "+ item.spare);
-									deviceList.add(item);
-								}
-                            }
-                            else
-                            {
-                            	Log.d(TAG,"ROOT_PATH path:umount "+path);
-                            }
-                        }
-                        else
-                        {
-                        	Log.d(TAG,"ROOT_PATH path not udisk : ");
-                        }
-                    }
-                    else
-                    {
-                    	Log.d(TAG,"ROOT_PATH path not dir : ");
-                    }
-                }
-
-            }
-            else
-            {
-            	Log.d(TAG,"ROOT_PATH -----listFiles is null");
-            }
-        }
-        else
-        {
-        	Log.d(TAG,"ROOT_PATH -----not dir");
-        }
-        //get sd path
-        dir = new File(SD_PATH);
-        if (dir.exists() && dir.isDirectory()) {
-            
-            String stateStr = Environment.getStorageState(dir);
-            if (stateStr.equals(Environment.MEDIA_MOUNTED)) {
-            	File myfile = dir;
-				Log.d(TAG,"device path: "+myfile.getName());
-				DeviceItem item = new DeviceItem();
-				item.Path = myfile.getPath();
-				readUsbDevice(item.Path,item,0);
-				if(item.total==null||item.spare==null||item.total.equals("0.0K") && item.spare.equals("0.0K")) {
-					Log.d(TAG,"external storage device is invalid");
-				} else {
-				    item.VolumeName = item.VolumeName+" ["+myfile.getName()+"]";
-					Log.d(TAG,"device path: "+item.Path+" device format: "+item.format+" name: "+item.VolumeName);
-					Log.d(TAG,"item.total: "+item.total+"item.spare: "+ item.spare);
-					deviceList.add(item);
-				}
-            }
-        }
-
-        dir = new File(SATA_PATH);
-        if (dir.exists() && dir.isDirectory()) {
-
-            String stateStr = Environment.getStorageState(dir);
-            if (stateStr.equals(Environment.MEDIA_MOUNTED)) {
-    	            File myfile = dir;
-					Log.d(TAG,"device path: "+myfile.getName());
-					DeviceItem item = new DeviceItem();
-					item.Path = myfile.getPath();
-					readUsbDevice(item.Path,item,0);
-					//Log.d(TAG,"item.total: "+item.total+"item.spare: "+ item.spare);
-					if(item.total==null||item.spare==null||item.total.equals("0.0K") && item.spare.equals("0.0K")) {
-						Log.d(TAG,"external storage device is invalid");
-					} else {
-					    item.VolumeName = item.VolumeName+" ["+myfile.getName()+"]";
-						Log.d(TAG,"device path: "+item.Path+" device format: "+item.format+" name: "+item.VolumeName);
-						deviceList.add(item);
-					}
-            }
-        }
-
-    }
-
-    private void getDevice() {
+	private void getDevice() {
 		deviceList.clear();
-		Log.d(TAG,"--StorageUtils device path: "+StorageUtils.externalDirBase);
-		Log.d(TAG,"sdk int: "+Build.VERSION.SDK_INT);
-		Log.d(TAG,"getDevice sum="+deviceList.size());
-		if(Build.VERSION.SDK_INT==23)
-		{
-			getPvrDevice_V6();
-			return;
-		}
-		else if(Build.VERSION.SDK_INT==22)
-		{
-			getPvrDevice_V5();
-			return;
-		}
 		File[] files = new File(StorageUtils.externalDirBase).listFiles();
 		if (files != null) {
 			for (File file : files) {
@@ -821,7 +597,7 @@ public class DTVRecordDevice extends DTVActivity {
 						item.Path = myfile.getPath();
 						readUsbDevice(item.Path,item,0);
 						Log.d(TAG,"item.total: "+item.total+"item.spare: "+ item.spare);
-						if(item.total==null||item.spare==null||item.total.equals("0.0K") && item.spare.equals("0.0K")) {
+						if(item.total.equals("0.0K") && item.spare.equals("0.0K")) {
 							Log.d(TAG,"external storage device is invalid");
 						} else {
 							item.VolumeName = item.VolumeName+" ["+myfile.getName()+"]";
@@ -831,8 +607,6 @@ public class DTVRecordDevice extends DTVActivity {
 					//}
 				}
 			}	
-		}else{
-			Log.d(TAG,"StorageUtils device path:no files "+StorageUtils.externalDirBase);
 		}
 
 		sdcard_deal(sd_path);
@@ -855,26 +629,7 @@ public class DTVRecordDevice extends DTVActivity {
 
 	private void getDeviceOnBack() {
 		deviceList.clear();
-		if(Build.VERSION.SDK_INT==23)
-		{
-			getPvrDevice_V6();
-			return;
-		}
-		else if(Build.VERSION.SDK_INT==22) 
-		{
-			getPvrDevice_V5();
-			return;
-		}
 		File[] files = new File(StorageUtils.externalDirBase).listFiles();
-		File dir = new File(StorageUtils.externalDirBase);
-		if(dir.listFiles()!=null)
-		{
-			Log.d(TAG,"getDevice listFiles no null");
-		}
-		else
-		{
-			Log.d(TAG,"getDevice listFiles is null");
-		}
 		if (files != null) {
 			for (File file : files) {
 				if (StorageUtils.onExtDir(file)){
@@ -893,10 +648,6 @@ public class DTVRecordDevice extends DTVActivity {
 				}
 			}	
 
-		}
-		else
-		{
-			Log.d(TAG,"getDeviceOnBack device path:no path "+StorageUtils.externalDirBase);
 		}
 
 		sdcard_deal(sd_path);
@@ -1016,7 +767,7 @@ public class DTVRecordDevice extends DTVActivity {
 			Runtime runtime = Runtime.getRuntime();  
             
 			String cmd = "df "+path ;
-            Log.d(TAG,"cmd>>>:"+cmd);
+            
     		try {
 				Process proc = runtime.exec(cmd);
 				InputStream input = proc.getInputStream();
@@ -1029,8 +780,9 @@ public class DTVRecordDevice extends DTVActivity {
 						strLine = deleteExtraSpace(strLine);	
 						String[] byteStrings = strLine.split(" "); 
 						Log.d(TAG,"size="+byteStrings[1]+"free=="+byteStrings[3]);
+						
 						item.total= byteStrings[1];
-						item.spare= byteStrings[3]; 	
+						item.spare=byteStrings[3]; 	
 						break;	
 					}			
 				}	
@@ -1140,12 +892,7 @@ public class DTVRecordDevice extends DTVActivity {
 
 			if(deviceList!=null){
 				readSDCard(sd_path,item);
-				Log.d(TAG,">>>readSDCard--:"+item.total+" item.spare:"+item.spare);
-				if(item.total==null||item.spare==null||item.total.equals("0.0K") && item.spare.equals("0.0K")) {
-					Log.d(TAG,"sdcard_deal  device is invalid");
-				} else {
-					deviceList.add(item);
-				}
+				deviceList.add(item);
 			}
 			return true;
 		}
@@ -1219,14 +966,7 @@ public class DTVRecordDevice extends DTVActivity {
 			mHandler = new Handler() {
 				public void handleMessage(Message msg) {
 					switch (msg.what) { 
-						case 1: {	
-								/*add sleep 1s,unmoun op is slow,we need sleep 1s when we get usb and sd df info*/
-								try {
-						            Thread.sleep(1000);
-						        } catch (InterruptedException e) {
-							        // TODO Auto-generated catch block
-							        e.printStackTrace();
-						        }
+						case 1: {							
 								getDeviceOnBack();
 								Message message=new Message();
 								message.what=1;

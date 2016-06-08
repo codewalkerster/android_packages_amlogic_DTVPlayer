@@ -500,6 +500,8 @@ public class DTVPlayer extends DTVActivity{
 						DTVTTGotoPreviousPage();
 					}	
 					else{
+						/*set cur_db_id ==-1,when switch to channel list,reload current pg id*/
+						cur_db_id = -1;
 						DTVPlayerPlayDown();
 					}
 					return true;
@@ -515,6 +517,8 @@ public class DTVPlayer extends DTVActivity{
 						DTVTTGotoNextPage();
 					}	
 					else{
+						/*set cur_db_id ==-1,when switch to channel list,reload current pg id*/
+						cur_db_id = -1;
 						DTVPlayerPlayUp();
 					}
 					return true;
