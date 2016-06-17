@@ -169,7 +169,36 @@ public class DTVProgramEdit extends DTVActivity{
 			}
 
 			if(db_id==cur_db_id)
+			{
 				stopPlaying();
+				int position=-1;
+				if(mTVProgramList.length>0&&index>mTVProgramList.length-1)
+				{
+					//need play last
+					position = mTVProgramList.length-1;
+					cur_db_id=mTVProgramList[position].getID();
+					DTVPlayerPlayById(cur_db_id);
+					if(!mTVProgramList[position].getLockFlag())
+					{
+						unblock();
+					}
+				}
+				else if(mTVProgramList.length>0)
+				{
+					//need play next
+					position = index;
+					cur_db_id=mTVProgramList[position].getID();	
+					DTVPlayerPlayById(cur_db_id);
+					if(!mTVProgramList[position].getLockFlag())
+					{
+						unblock();
+					}
+				}
+				else
+				{
+					Log.d(TAG, "no program info");
+				}
+			}
 		}
 	}
 
