@@ -67,7 +67,7 @@ public class DTVPlayer extends DTVActivity{
 	DTVSettings mDTVSettings=null;	
 	private PowerManager.WakeLock wakeLock = null;
 	private HomeKeyEventBroadCastReceiver home_receiver=null;
-
+	SubAsyncTask mTask = null;
 	private enum menu{
 		PROGRAM,
 		SEARCH,
@@ -176,7 +176,11 @@ public class DTVPlayer extends DTVActivity{
 				DismissDialog();
 				break;
 			case TVMessage.TYPE_PROGRAM_START:
-				SubAsyncTask mTask = new SubAsyncTask();  
+				if (mTask != null && mTask.getStatus() != AsyncTask.Status.FINISHED)
+				{
+                    mTask.cancel(true);
+				}
+                mTask = new SubAsyncTask();  
 				mTask.execute();  
 				break;
 			case TVMessage.TYPE_BOOKING_START:
@@ -2037,6 +2041,7 @@ public class DTVPlayer extends DTVActivity{
 
 		TextView Text_curevent = (TextView) findViewById(R.id.Text_curevent);
 		Text_curevent.setTextColor(Color.YELLOW);
+		Log.d(TAG,"dtvplayer event:---"+dtvplayer_cur_event);
 		if(dtvplayer_cur_event==null)
 			Text_curevent.setText(getString(R.string.dtvplayer_no_current_event));
 		else
@@ -2047,19 +2052,19 @@ public class DTVPlayer extends DTVActivity{
 			Text_title_info.setText(getString(R.string.dtvplayer_title_info));
 		else
 			Text_title_info.setText(dtvplayer_event_des);
-	
+		Log.d(TAG,"dtvplayer event des:---"+dtvplayer_event_des);
 		TextView Text_detail_info = (TextView) findViewById(R.id.Text_detail_info);
 		if(dtvplayer_event_ext_des==null)
 			Text_detail_info.setText(getString(R.string.dtvplayer_detail_info));
 		else
 			Text_detail_info.setText(dtvplayer_event_ext_des);
-
+		Log.d(TAG,"dtvplayer event ext des:---"+dtvplayer_event_ext_des);
 		TextView Text_nextevent = (TextView) findViewById(R.id.Text_nextevent);
 		if(dtvplayer_next_event==null)
 			Text_nextevent.setText(getString(R.string.dtvplayer_no_next_event));
 		else
 			Text_nextevent.setText(dtvplayer_next_event);
-
+		Log.d(TAG,"dtvplayer next event ext des:---"+dtvplayer_next_event);
 		TextView Text_parent_rate = (TextView) findViewById(R.id.Text_parent_rate);	
 		
 
@@ -3478,23 +3483,83 @@ public class DTVPlayer extends DTVActivity{
 	          
 	        @Override
 	        protected String doInBackground(Object... params) {  
-			DTVPlayerGetCurrentProgramData();
-			if(mTVProgram!=null)
-				DTVPlayerSetRecallList(mTVProgram.getID());
-			return null;  
+				DTVPlayerGetCurrentProgramData();
+				if(mTVProgram!=null)
+					DTVPlayerSetRecallList(mTVProgram.getID());
+				/*add re get epg info if epg not get*/
+				Integer[] progress = new Integer[1];
+				progress[0]=0;
+				publishProgress(progress);
+			     if(dtvplayer_event_des == null
+                	||dtvplayer_cur_event == null
+                	||dtvplayer_event_ext_des == null
+                	||dtvplayer_next_event == null)
+			    {
+			    	while (true) 
+					{
+		                try {
+		                    Thread.sleep(200);
+		                } catch (InterruptedException e) {
+		                    Log.e("ERROR", "SubAsyncTask Thread Interrupted");
+		                }
+
+		                if (isCancelled())
+		                {
+		                    Log.e("ERROR", "SubAsyncTask Thread canceled");
+		                    return null; 
+		                }
+		                DTVPlayerGetCurrentProgramData();
+
+		                if(dtvplayer_b_epg==true)
+		                {
+		                	progress[0]=1;
+							publishProgress(progress);
+		                	//break;
+		                }
+		                else
+		                {
+		                	Log.e("OK", "SubAsyncTask not get epg date");
+		                }
+		                if(dtvplayer_event_des!=null
+		                	&&dtvplayer_cur_event!=null
+		                	&&dtvplayer_event_ext_des!=null
+		                	&&dtvplayer_next_event!=null
+		                	)
+		                {
+		                	Log.e("OK", "SubAsyncTask epg is get all--");
+		                	break;
+		                }
+		                if(inforbar_show_flag == false)
+		                {
+		                	Log.e("OK", "SubAsyncTask banner is hidden---");
+		                	break;
+		                }
+		            }
+			    }
+				return null;  
 	        }  
 	  
 	        @Override
 	        protected void onProgressUpdate(Integer... progress) { 
-			super.onProgressUpdate(progress);  
+		        if(progress[0]==0)
+		        {
+		        	RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
+					ShowControlBar();
+					updateInforbar();
+		        }
+		        else
+		        {	
+		        	if(inforbar_show_flag == true)
+		        	{
+		        		updateInforbar();
+		        	}
+		        }
+				super.onProgressUpdate(progress);  
 	        }  
 	  
 	        @Override
 	        protected void onPostExecute(String result) {  
-			RelativeLayout_loading_icon.setVisibility(View.INVISIBLE);
-			ShowControlBar();
-			updateInforbar();
-			super.onPostExecute(result);  
+				super.onPostExecute(result);  
 	        }  
 	  
 	}  
